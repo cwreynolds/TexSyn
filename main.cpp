@@ -6,11 +6,13 @@
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
 
-#include <iostream>
+#include "Utilities.h"
+#include "UnitTests.h"
 
 int main(int argc, const char * argv[])
 {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+    // TODO TEMP run unit tests
+    UnitTests::allTestsOK();
+    
+    return EXIT_SUCCESS;
 }

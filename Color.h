@@ -12,14 +12,25 @@
 // Simple class to represent color as RGB float values on [0, 1]
 class Color
 {
+public:
     // Constructors:
     Color(){};
-    Color(float r, float g, float b) : red_(r), green_(r), blue_(b) {}
+    Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
     Color(const Color& color) : red_(color.r()),
                                 green_(color.green()),
                                 blue_(color.blue()) {}
-    // assignment, set rgb
-    /////////////////////////////
+    // assignment, set RGB components
+    Color operator=(const Color& c)
+    {
+        setRGB(c.r(), c.g(), c.b());
+        return *this;
+    }
+    void setRGB(float r, float g, float b) { red_ = r; green_ = g; blue_ = b; }
+    // Equality:
+    bool operator==(const Color& c)
+    {
+        return ((r() == c.r()) && (g() == c.g()) && (b() == c.b()));
+    }
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }
