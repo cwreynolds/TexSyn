@@ -31,6 +31,8 @@ public:
     {
         return ((r() == c.r()) && (g() == c.g()) && (b() == c.b()));
     }
+    // Luma (relative luminance?) see https://en.wikipedia.org/wiki/Luma_(video)
+    float luminance() const {return 0.2126 * r() + 0.7152 * g() + 0.0722 * b();}
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }

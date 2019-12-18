@@ -7,3 +7,9 @@
 //
 
 #include "Utilities.h"
+
+// True when a and b differ by no more than epsilon.
+bool withinEpsilon(float a, float b, float epsilon)
+{
+    return std::abs(a - b) < epsilon;
+}

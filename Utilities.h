@@ -9,9 +9,11 @@
 #pragma once
 
 #include <iostream>
-
+#include <cmath>
 
 // for debugging: prints one line with a given C expression, an equals sign,
 // and the value of the expression.  For example "angle = 35.6"
 #define debugPrint(e) (std::cout << #e" = " << (e) << std::endl << std::flush)
 
+// True when a and b differ by no more than epsilon.
+bool withinEpsilon(float a, float b, float epsilon);
