@@ -9,6 +9,7 @@
 #pragma once
 
 #include <iostream>
+#include <cassert>
 #include <cmath>
 
 // for debugging: prints one line with a given C expression, an equals sign,

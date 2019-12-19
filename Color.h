@@ -27,12 +27,26 @@ public:
     }
     void setRGB(float r, float g, float b) { red_ = r; green_ = g; blue_ = b; }
     // Equality:
-    bool operator==(const Color& c)
+    bool operator==(const Color& c) const
     {
         return ((r() == c.r()) && (g() == c.g()) && (b() == c.b()));
     }
     // Luma (relative luminance?) see https://en.wikipedia.org/wiki/Luma_(video)
     float luminance() const {return 0.2126 * r() + 0.7152 * g() + 0.0722 * b();}
+    // TODO still thinking about this API and these names:
+    // Set this color to the one described by the given HSV values.
+    void setHSV(float h, float s, float v);
+    // Return a Color made from the given HSV values
+    static Color makeHSV(float h, float s, float v);
+    // Get H, S, or V components of this Color.
+    float getH() const;
+    float getS() const;
+    float getV() const;
+    // Static utilities to convert RGB→HSV and HSV→RGB
+    static void convertRGBtoHSV(float red, float green, float blue,
+                                float& H, float& S, float& V);
+    static void convertHSVtoRGB(float h, float s, float v,
+                                float& R, float& G, float& B);
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }
