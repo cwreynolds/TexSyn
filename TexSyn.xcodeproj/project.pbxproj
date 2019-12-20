@@ -11,6 +11,7 @@
 		849FF57F23A70F93008B4326 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57D23A70F93008B4326 /* Texture.cpp */; };
 		84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3C23A85C1F00911365 /* UnitTests.cpp */; };
 		84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3F23A85E0A00911365 /* Utilities.cpp */; };
+		84F6BB4423AC6AF800911365 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB4223AC6AF800911365 /* Vec2.cpp */; };
 		84FE3C7223A71E8100600F2A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84FE3C7023A71E8100600F2A /* Color.cpp */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,8 @@
 		84F6BB3D23A85C1F00911365 /* UnitTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitTests.h; sourceTree = "<group>"; };
 		84F6BB3F23A85E0A00911365 /* Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
 		84F6BB4023A85E0A00911365 /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		84F6BB4223AC6AF800911365 /* Vec2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Vec2.cpp; sourceTree = "<group>"; };
+		84F6BB4323AC6AF800911365 /* Vec2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vec2.h; sourceTree = "<group>"; };
 		84FE3C7023A71E8100600F2A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		84FE3C7123A71E8100600F2A /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,15 +56,17 @@
 		849FF56A23A70EC2008B4326 = {
 			isa = PBXGroup;
 			children = (
-				84FE3C7023A71E8100600F2A /* Color.cpp */,
 				84FE3C7123A71E8100600F2A /* Color.h */,
+				84FE3C7023A71E8100600F2A /* Color.cpp */,
 				849FF57623A70EC2008B4326 /* main.cpp */,
-				849FF57D23A70F93008B4326 /* Texture.cpp */,
 				849FF57E23A70F93008B4326 /* Texture.h */,
-				84F6BB3C23A85C1F00911365 /* UnitTests.cpp */,
+				849FF57D23A70F93008B4326 /* Texture.cpp */,
 				84F6BB3D23A85C1F00911365 /* UnitTests.h */,
-				84F6BB3F23A85E0A00911365 /* Utilities.cpp */,
+				84F6BB3C23A85C1F00911365 /* UnitTests.cpp */,
 				84F6BB4023A85E0A00911365 /* Utilities.h */,
+				84F6BB3F23A85E0A00911365 /* Utilities.cpp */,
+				84F6BB4323AC6AF800911365 /* Vec2.h */,
+				84F6BB4223AC6AF800911365 /* Vec2.cpp */,
 				849FF57423A70EC2008B4326 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -134,6 +139,7 @@
 				849FF57723A70EC2008B4326 /* main.cpp in Sources */,
 				84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */,
 				84FE3C7223A71E8100600F2A /* Color.cpp in Sources */,
+				84F6BB4423AC6AF800911365 /* Vec2.cpp in Sources */,
 				849FF57F23A70F93008B4326 /* Texture.cpp in Sources */,
 				84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */,
 			);

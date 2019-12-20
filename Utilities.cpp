@@ -13,3 +13,16 @@ bool withinEpsilon(float a, float b, float epsilon)
 {
     return std::abs(a - b) < epsilon;
 }
+
+// Returns a float randomly distributed between 0 and 1
+float frandom01()
+{
+    return (((float) rand()) / ((float) RAND_MAX));
+}
+
+// Returns a float randomly distributed between lowerBound and upperBound
+//
+inline float frandom2 (float lowerBound, float upperBound)
+{
+    return lowerBound + (frandom01 () * (upperBound - lowerBound));
+}
