@@ -88,11 +88,20 @@ bool UnitTests::allTestsOK()
                 (v2 == Vec2(1, -2)) &&
                 (v2 == (v2 = Vec2(1, -2))));
     }();
-    bool vec2_operators = []()
+    bool vec2_vector_operations = []()
     {
         return ((Vec2(2, 4).dot(Vec2(10, 20)) == 100) &&
                 (Vec2(3, 4).length() == 5) &&
                 (Vec2(3, 4).normalize() == Vec2(0.6, 0.8)));
+    }();
+    bool vec2_basic_operators = []()
+    {
+        return ((-Vec2(1, 2) == Vec2(-1, -2)) &&
+                ((Vec2(1, 2) + Vec2(10, 20)) == Vec2(11, 22)) &&
+                ((Vec2(10, 20) - Vec2(1, 2)) == Vec2(9, 18)) &&
+                ((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
+                ((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
+                (Vec2(1, 2) < Vec2(-3, -4)));
     }();
     bool vec2_random_point = []()
     {
@@ -124,9 +133,10 @@ bool UnitTests::allTestsOK()
     debugPrint(vec2_constructors);
     debugPrint(vec2_equality);
     debugPrint(vec2_assignment);
-    debugPrint(vec2_operators);
-    debugPrint(vec2_rotate);
+    debugPrint(vec2_vector_operations);
+    debugPrint(vec2_basic_operators);
     debugPrint(vec2_random_point);
+    debugPrint(vec2_rotate);
     bool all_tests_ok = (color_constructors &&
                          color_equality &&
                          color_assignment &&
@@ -135,9 +145,10 @@ bool UnitTests::allTestsOK()
                          vec2_constructors &&
                          vec2_equality &&
                          vec2_assignment &&
-                         vec2_operators &&
-                         vec2_rotate &&
-                         vec2_random_point);
+                         vec2_vector_operations &&
+                         vec2_basic_operators &&
+                         vec2_random_point &&
+                         vec2_rotate);
     debugPrint(all_tests_ok);
     return all_tests_ok;
 }
