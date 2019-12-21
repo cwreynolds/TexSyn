@@ -22,7 +22,7 @@ float frandom01()
 
 // Returns a float randomly distributed between lowerBound and upperBound
 //
-inline float frandom2 (float lowerBound, float upperBound)
+float frandom2 (float lowerBound, float upperBound)
 {
     return lowerBound + (frandom01 () * (upperBound - lowerBound));
 }

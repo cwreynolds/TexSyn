@@ -102,6 +102,19 @@ bool UnitTests::allTestsOK()
                 all_ok = false;
         return all_ok;
     }();
+    bool vec2_rotate = []()
+    {
+        bool all_ok = true;
+        for (int i = 0; i < 100; i ++)
+        {
+            float angle = frandom2(-60, +60);
+            float cos = std::cos(angle);
+            float sin = std::sin(angle);
+            Vec2 v = Vec2(1, 0).rotate(angle);
+            if ((v.x() != cos) || (v.y() != -sin)) all_ok = false;
+        }
+        return all_ok;
+    }();
     // Log sub-test results
     debugPrint(color_constructors);
     debugPrint(color_equality);
@@ -112,6 +125,7 @@ bool UnitTests::allTestsOK()
     debugPrint(vec2_equality);
     debugPrint(vec2_assignment);
     debugPrint(vec2_operators);
+    debugPrint(vec2_rotate);
     debugPrint(vec2_random_point);
     bool all_tests_ok = (color_constructors &&
                          color_equality &&
@@ -122,6 +136,7 @@ bool UnitTests::allTestsOK()
                          vec2_equality &&
                          vec2_assignment &&
                          vec2_operators &&
+                         vec2_rotate &&
                          vec2_random_point);
     debugPrint(all_tests_ok);
     return all_tests_ok;
