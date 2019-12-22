@@ -45,6 +45,20 @@ float Color::getV() const
     return v;
 }
 
+// Inline operators: + - *
+Color Color::operator+(Color v) const
+{
+    return Color(r() + v.r(), g() + v.g(), b() + v.b());
+}
+Color Color::operator-(Color v) const
+{
+    return Color(r() - v.r(), g() - v.g(), b() - v.b());
+}
+Color Color::operator*(float s) const
+{
+    return Color(r() * s, g() * s, b() * s);
+}
+
 //------------------------------------------------------------------------------
 // TODO Dec 18, 2019 -- I copied the code below from the Utilities.h file of the
 // 2009 version of TextureSynthesisTest. It needs to be cleaned up.

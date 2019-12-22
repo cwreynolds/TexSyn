@@ -12,6 +12,7 @@
 		84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3C23A85C1F00911365 /* UnitTests.cpp */; };
 		84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3F23A85E0A00911365 /* Utilities.cpp */; };
 		84F6BB4423AC6AF800911365 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB4223AC6AF800911365 /* Vec2.cpp */; };
+		84F6BB4723AEF4DC00911365 /* Generators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB4523AEF4DC00911365 /* Generators.cpp */; };
 		84FE3C7223A71E8100600F2A /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84FE3C7023A71E8100600F2A /* Color.cpp */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,8 @@
 		84F6BB4023A85E0A00911365 /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		84F6BB4223AC6AF800911365 /* Vec2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Vec2.cpp; sourceTree = "<group>"; };
 		84F6BB4323AC6AF800911365 /* Vec2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vec2.h; sourceTree = "<group>"; };
+		84F6BB4523AEF4DC00911365 /* Generators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Generators.cpp; sourceTree = "<group>"; };
+		84F6BB4623AEF4DC00911365 /* Generators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Generators.h; sourceTree = "<group>"; };
 		84FE3C7023A71E8100600F2A /* Color.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		84FE3C7123A71E8100600F2A /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +61,8 @@
 			children = (
 				84FE3C7123A71E8100600F2A /* Color.h */,
 				84FE3C7023A71E8100600F2A /* Color.cpp */,
+				84F6BB4623AEF4DC00911365 /* Generators.h */,
+				84F6BB4523AEF4DC00911365 /* Generators.cpp */,
 				849FF57623A70EC2008B4326 /* main.cpp */,
 				849FF57E23A70F93008B4326 /* Texture.h */,
 				849FF57D23A70F93008B4326 /* Texture.cpp */,
@@ -141,6 +146,7 @@
 				84FE3C7223A71E8100600F2A /* Color.cpp in Sources */,
 				84F6BB4423AC6AF800911365 /* Vec2.cpp in Sources */,
 				849FF57F23A70F93008B4326 /* Texture.cpp in Sources */,
+				84F6BB4723AEF4DC00911365 /* Generators.cpp in Sources */,
 				84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
