@@ -25,6 +25,12 @@ Vec2 Vec2::rotate(float angle) const
                 y() * cos - x() * sin);
 }
 
+// Is distance between vectors less than epsilon?
+bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
+{
+    return (a - b).length() < epsilon;
+}
+
 std::ostream& operator<<(std::ostream& os, const Vec2& v)
 {
     os << "(" << v.x() << ", " << v.y() << ")";

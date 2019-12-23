@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#include "Utilities.h"
 
 // TODO move elsewhere
 // Simple class to represent color as RGB float values on [0, 1]
@@ -51,6 +52,8 @@ public:
     Color operator+(Color v) const;
     Color operator-(Color v) const;
     Color operator*(float s) const;
+    // Length in linear unit RGB space.
+    float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }
@@ -65,3 +68,6 @@ private:
     float green_ = 0;
     float blue_ = 0;
 };
+
+// Is distance between RGB vectors less than epsilon?
+bool withinEpsilon(Color a, Color b, float epsilon);

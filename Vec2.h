@@ -39,4 +39,7 @@ private:
     float y_ = 0;
 };
 
+// Is distance between vectors less than epsilon?
+bool withinEpsilon(Vec2 a, Vec2 b, float epsilon);
+
 std::ostream& operator<<(std::ostream& os, const Vec2& v);

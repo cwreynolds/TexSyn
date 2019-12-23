@@ -10,6 +10,7 @@
 #include "Color.h"
 #include "UnitTests.h"
 #include "Utilities.h"
+#include "Generators.h"
 
 bool UnitTests::allTestsOK()
 {
@@ -29,6 +30,14 @@ bool UnitTests::allTestsOK()
                                             (ca2 == Color(1, 2, 3)) &&
                                             (ca2 == (ca2 = Color(1, 2, 3))));
                                 }();
+    bool color_basic_operators = []()
+    {
+        float e = 0.000001;
+        Color wec1(0.1, 0.2, 0.3);
+        Color wec2(0.1, 0.2, 0.3 + (e / 2));
+        return ((withinEpsilon(wec1, wec2, e)) &&
+                (withinEpsilon(wec2, wec1, e)));
+    }();
     bool color_luminance = []()
     {
         float e = 0.000001;
@@ -68,12 +77,6 @@ bool UnitTests::allTestsOK()
                 withinEpsilon(v0, 0, e) &&
                 withinEpsilon(s0, 0, e));
     }();
-    
-    
-//    debugPrint(h0);
-//    debugPrint(s0);
-//    debugPrint(v0);
-
     bool vec2_constructors = ((Vec2().x() == 0) &&
                               (Vec2().y() == 0) &&
                               (Vec2(1, -2).x() == 1) &&
@@ -124,22 +127,41 @@ bool UnitTests::allTestsOK()
         }
         return all_ok;
     }();
+    bool gradation_test = []()
+    {
+        Vec2 point1(0.2, 0.2);
+        Vec2 point2(0.8, 0.8);
+        Color color1(1, 0, 1);
+        Color color2(0, 1, 1);
+        Gradation graduation(point1, color1, point2, color2);
+        Vec2 midpoint = interpolate(0.5, point1, point2);
+        Color midcolor = interpolate(0.5, color1, color2);
+        float e = 0.000001;
+        return ((graduation.getColor(point1) == color1) &&
+                (graduation.getColor(point2) == color2) &&
+                withinEpsilon(graduation.getColor(midpoint), midcolor, e) &&
+                withinEpsilon(graduation.getColor(Vec2(0, 0)), color1, e) &&
+                withinEpsilon(graduation.getColor(Vec2(1, 1)), color2, e));
+    }();
     // Log sub-test results
-    debugPrint(color_constructors);
-    debugPrint(color_equality);
-    debugPrint(color_assignment);
-    debugPrint(color_luminance);
-    debugPrint(color_hsv);
-    debugPrint(vec2_constructors);
-    debugPrint(vec2_equality);
-    debugPrint(vec2_assignment);
-    debugPrint(vec2_vector_operations);
-    debugPrint(vec2_basic_operators);
-    debugPrint(vec2_random_point);
-    debugPrint(vec2_rotate);
-    bool all_tests_ok = (color_constructors &&
+    std::cout << "\t"; debugPrint(color_constructors);
+    std::cout << "\t"; debugPrint(color_equality);
+    std::cout << "\t"; debugPrint(color_assignment);
+    std::cout << "\t"; debugPrint(color_basic_operators);
+    std::cout << "\t"; debugPrint(color_luminance);
+    std::cout << "\t"; debugPrint(color_hsv);
+    std::cout << "\t"; debugPrint(vec2_constructors);
+    std::cout << "\t"; debugPrint(vec2_equality);
+    std::cout << "\t"; debugPrint(vec2_assignment);
+    std::cout << "\t"; debugPrint(vec2_vector_operations);
+    std::cout << "\t"; debugPrint(vec2_basic_operators);
+    std::cout << "\t"; debugPrint(vec2_random_point);
+    std::cout << "\t"; debugPrint(vec2_rotate);
+    std::cout << "\t"; debugPrint(gradation_test);
+    bool ALL_TESTS_OK = (color_constructors &&
                          color_equality &&
                          color_assignment &&
+                         color_basic_operators &&
                          color_luminance &&
                          color_hsv &&
                          vec2_constructors &&
@@ -148,7 +170,10 @@ bool UnitTests::allTestsOK()
                          vec2_vector_operations &&
                          vec2_basic_operators &&
                          vec2_random_point &&
-                         vec2_rotate);
-    debugPrint(all_tests_ok);
-    return all_tests_ok;
+                         vec2_rotate &&
+                         gradation_test);
+    std::cout << std::endl;
+    debugPrint(ALL_TESTS_OK);
+    std::cout << std::endl;
+    return ALL_TESTS_OK;
 }

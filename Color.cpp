@@ -230,3 +230,9 @@ void Color::convertHSVtoRGB(float h, float s, float v,
         }
     }
 }
+
+// Is distance between RGB vectors less than epsilon?
+bool withinEpsilon(Color a, Color b, float epsilon)
+{
+    return (a - b).length() < epsilon;
+}

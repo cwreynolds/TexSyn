@@ -9,6 +9,11 @@
 #pragma once
 #include "Texture.h"
 
+// Color gradation texture with two colors and arbitrary position, width, and
+// orientation. The arguments are two points, defining a line segment, and a
+// color for each end. The gradation occurs alone the line segment, a given
+// location on the texture is projected onto that line to determine its color.
+// (See discussion at http://www.red3d.com/cwr/texsyn/diary.html#20090329)
 class Gradation : public Texture
 {
 public:
