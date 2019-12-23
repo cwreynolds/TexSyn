@@ -137,11 +137,24 @@ bool UnitTests::allTestsOK()
         Vec2 midpoint = interpolate(0.5, point1, point2);
         Color midcolor = interpolate(0.5, color1, color2);
         float e = 0.000001;
+        auto off_axis_sample = [&](float f)
+        {
+            Vec2 on_axis = interpolate(f, point1, point2);
+            Vec2 off_axis = Vec2(-1, 1) * frandom2(-10, 10);
+            Color expected_color = interpolate(sinusoid(f), color1, color2);
+            Color sampled_color = graduation.getColor(on_axis + off_axis);
+            return withinEpsilon(sampled_color, expected_color, e);
+        };
         return ((graduation.getColor(point1) == color1) &&
                 (graduation.getColor(point2) == color2) &&
                 withinEpsilon(graduation.getColor(midpoint), midcolor, e) &&
                 withinEpsilon(graduation.getColor(Vec2(0, 0)), color1, e) &&
-                withinEpsilon(graduation.getColor(Vec2(1, 1)), color2, e));
+                withinEpsilon(graduation.getColor(Vec2(1, 1)), color2, e) &&
+                [&](){
+                    for (int i = 0; i < 10; i++)
+                        if (!off_axis_sample(i * 0.1)) return false;
+                    return true;
+                }());
     }();
     // Log sub-test results
     std::cout << "\t"; debugPrint(color_constructors);

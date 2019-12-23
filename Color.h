@@ -71,3 +71,6 @@ private:
 
 // Is distance between RGB vectors less than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon);
+
+// Serialize Color object to stream.
+std::ostream& operator<<(std::ostream& os, const Color& v);
