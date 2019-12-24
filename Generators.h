@@ -17,12 +17,12 @@
 class Gradation : public Texture
 {
 public:
-    Gradation(Vec2 p0, Color c0, Vec2 p1, Color c1) :
-        color0(c0),
-        color1(c1),
-        origin(p0),
-        distance((p1 - p0).length()),
-        basis((p1 - p0) / distance) {}
+    Gradation(Vec2 point_0, Color color_0, Vec2 point_1, Color color_1) :
+        color0(color_0),
+        color1(color_1),
+        origin(point_0),
+        distance((point_1 - point_0).length()),
+        basis((point_1 - point_0) / distance) {}
     Color getColor(Vec2 position) const override
     {
         if (distance == 0)
@@ -43,4 +43,42 @@ private:
     const Vec2 basis;
     const Color color0;
     const Color color1;
+};
+
+// A circular spot, centered at a given point, with two radii. Within an inner
+// radius it is uniformly one color. Beyond an outer radius it is uniformly
+// another color. Between the two radii, there is a sinusoid transition from one
+// color to the other.
+class Spot : public Texture
+{
+public:
+    Spot(Vec2 center_,
+         float inner_radius_, Color inner_color_,
+         float outer_radius_, Color outer_color_) :
+            center(center_),
+            inner_radius(inner_radius_),
+            inner_color(inner_color_),
+            outer_radius(outer_radius_),
+            outer_color(outer_color_)
+    {
+        assert(inner_radius >= 0);
+        assert(outer_radius >= 0);
+        assert(outer_radius >= inner_radius);
+    }
+    Color getColor(Vec2 position) const override
+    {
+        float d = (position - center).length();  // position to center distance
+        return ((d < inner_radius) ?
+                inner_color :
+                ((d > outer_radius) ?
+                 outer_color :
+                 interpolate(remapInterval(d, inner_radius, outer_radius, 0, 1),
+                             inner_color, outer_color)));
+    }
+private:
+    const Vec2 center;
+    const float inner_radius;
+    const float outer_radius;
+    const Color inner_color;
+    const Color outer_color;
 };

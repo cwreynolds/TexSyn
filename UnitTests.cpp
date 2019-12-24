@@ -156,6 +156,38 @@ bool UnitTests::allTestsOK()
                     return true;
                 }());
     }();
+    bool spot_test = []()
+    {
+        Vec2 center(-0.4, -0.4);
+        float inner_radius = 0.1;
+        float outer_radius = 0.3;
+        Color inner_color(1, 1, 0);
+        Color outer_color(0, 1, 0);
+        Spot spot(center, inner_radius, inner_color, outer_radius, outer_color);
+        Color midcolor = interpolate(0.5, inner_color, outer_color);
+        float midradius = (inner_radius + outer_radius) / 2;
+        Vec2 midpoint = center + (Vec2(1, 0) * midradius);
+        float e = 0.000001;
+        return ((spot.getColor(center) == inner_color) &&
+                (spot.getColor(midpoint * 2) == outer_color) &&
+                withinEpsilon(spot.getColor(midpoint), midcolor, e) &&
+                [&](){
+                    for (int i = 0; i < 100; i++) // try 100 times
+                    {
+                        // Two random vectors, with the same random radius in
+                        // transition zone, should have the same color.
+                        float r_radius = frandom2(inner_radius, outer_radius);
+                        Vec2 rv1 = Vec2::randomUnitVector() * r_radius;
+                        Vec2 rv2 = Vec2::randomUnitVector() * r_radius;
+                        Color color1 = spot.getColor(center + rv1);
+                        Color color2 = spot.getColor(center + rv2);
+                        if (!withinEpsilon(color1, color2, e)) return false;
+                    }
+                    return true;
+                }());
+    }();
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Log sub-test results
     std::cout << "\t"; debugPrint(color_constructors);
     std::cout << "\t"; debugPrint(color_equality);
@@ -171,6 +203,7 @@ bool UnitTests::allTestsOK()
     std::cout << "\t"; debugPrint(vec2_random_point);
     std::cout << "\t"; debugPrint(vec2_rotate);
     std::cout << "\t"; debugPrint(gradation_test);
+    std::cout << "\t"; debugPrint(spot_test);
     bool ALL_TESTS_OK = (color_constructors &&
                          color_equality &&
                          color_assignment &&
@@ -184,7 +217,8 @@ bool UnitTests::allTestsOK()
                          vec2_basic_operators &&
                          vec2_random_point &&
                          vec2_rotate &&
-                         gradation_test);
+                         gradation_test &&
+                         spot_test);
     std::cout << std::endl;
     debugPrint(ALL_TESTS_OK);
     std::cout << std::endl;

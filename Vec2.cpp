@@ -13,8 +13,16 @@ Vec2 Vec2::randomPointInUnitDiameterCircle()
 {
     Vec2 v;
     float h = 0.5;
-    do {v = {frandom01() - h, frandom01() - h}; } while (v.length() > h);
+    do { v = {frandom01() - h, frandom01() - h}; } while (v.length() > h);
     return v;
+}
+
+// Generate a random unit vector.
+Vec2 Vec2::randomUnitVector()
+{
+    Vec2 v;
+    do { v = randomPointInUnitDiameterCircle(); } while (v.length() == 0);
+    return v.normalize();
 }
 
 Vec2 Vec2::rotate(float angle) const
@@ -31,6 +39,7 @@ bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
     return (a - b).length() < epsilon;
 }
 
+// Serialize Vec2 object to stream.
 std::ostream& operator<<(std::ostream& os, const Vec2& v)
 {
     os << "(" << v.x() << ", " << v.y() << ")";

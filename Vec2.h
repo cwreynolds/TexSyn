@@ -34,6 +34,8 @@ public:
     Vec2 rotate(float angle) const;
     // Generate a random point inside a unit diameter disk centered on origin.
     static Vec2 randomPointInUnitDiameterCircle();
+    // Generate a random unit vector.
+    static Vec2 randomUnitVector();
 private:
     float x_ = 0;
     float y_ = 0;
@@ -42,4 +44,5 @@ private:
 // Is distance between vectors less than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon);
 
+// Serialize Vec2 object to stream.
 std::ostream& operator<<(std::ostream& os, const Vec2& v);
