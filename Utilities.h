@@ -56,19 +56,21 @@ inline float sinusoid (float x)
 // remap a value specified relative to a pair of bounding values
 // to the corresponding value relative to another pair of bounds.
 // Inspired by (dyna:remap-interval y y0 y1 z0 z1)
-//
-// note that these break (NAN) if the input interval is zero
-
-
 inline float remapInterval(float x,
                            float in0, float in1,
                            float out0, float out1)
 {
-    // uninterpolate: what is x relative to the interval in0:in1?
-    float relative = (x - in0) / (in1 - in0);
-    
-    // now interpolate between output interval based on relative x
-    return interpolate(relative, out0, out1);
+    float result = (out0 + out1) / 2;
+    float input_range = in1 - in0;
+    if (input_range > 0)
+    {
+        // uninterpolate: what is x relative to the interval in0:in1?
+        float relative = (x - in0) / input_range;
+        
+        // now interpolate between output interval based on relative x
+        result = interpolate(relative, out0, out1);
+    }
+    return result;
 }
 
 // Like remapInterval but the result is clipped to remain between out0 and out1
@@ -76,9 +78,15 @@ inline float remapIntervalClip(float x,
                                float in0, float in1,
                                float out0, float out1)
 {
-    // uninterpolate: what is x relative to the interval in0:in1?
-    float relative = (x - in0) / (in1 - in0);
-    
-    // now interpolate between output interval based on relative x
-    return interpolate(clip(relative, 0, 1), out0, out1);
+    float result = (out0 + out1) / 2;
+    float input_range = in1 - in0;
+    if (input_range > 0)
+    {
+        // uninterpolate: what is x relative to the interval in0:in1?
+        float relative = (x - in0) / input_range;
+        
+        // now interpolate between output interval based on relative x
+        result = interpolate(clip(relative, 0, 1), out0, out1);
+    }
+    return result;
 }

@@ -14,6 +14,11 @@
 
 bool UnitTests::allTestsOK()
 {
+    bool utilities = ((remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+                      (remapInterval(2, 1, 4, 10, 40) == 20) &&
+                      (remapIntervalClip(5, 1, 4, 10, 40)) == 40 &&
+                      !std::isnan(remapInterval(1, 1, 1, 2, 3)) &&
+                      !std::isnan(remapIntervalClip(1, 1, 1, 2, 3)));
     // Tests for Color class.
     bool color_constructors = ((Color().r() == 0) &&
                                (Color().g() == 0) &&
@@ -187,8 +192,8 @@ bool UnitTests::allTestsOK()
                 }());
     }();
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Log sub-test results
+    std::cout << "\t"; debugPrint(utilities);
     std::cout << "\t"; debugPrint(color_constructors);
     std::cout << "\t"; debugPrint(color_equality);
     std::cout << "\t"; debugPrint(color_assignment);
@@ -204,7 +209,8 @@ bool UnitTests::allTestsOK()
     std::cout << "\t"; debugPrint(vec2_rotate);
     std::cout << "\t"; debugPrint(gradation_test);
     std::cout << "\t"; debugPrint(spot_test);
-    bool ALL_TESTS_OK = (color_constructors &&
+    bool ALL_TESTS_OK = (utilities &&
+                         color_constructors &&
                          color_equality &&
                          color_assignment &&
                          color_basic_operators &&
