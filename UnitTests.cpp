@@ -16,8 +16,8 @@
 #define logAndTally(e)                       \
 {                                            \
     std::cout << "\t";                       \
-    std::cout << ((e) ? "pass " : "fail ");  \
-    std::cout << #e;                         \
+    std::cout << ((e) ? "pass" : "FAIL");    \
+    std::cout << " " << #e;                  \
     std::cout << std::endl << std::flush;    \
     if (!e) all_tests_passed = false;        \
 }
@@ -30,6 +30,7 @@ bool UnitTests::allTestsOK()
                       (sq(2) == 4) &&
                       (interpolate(0.1, 0, 10) == 1) &&
                       (interpolate(0.1, 0, -10) == -1) &&
+                      (clip(2, 1, 3) == 2) &&
                       (clip(0, 1, 2) == 1) &&
                       (clip(3, 1, 2) == 2) &&
                       (clip(0, 1, 1) == 1) &&

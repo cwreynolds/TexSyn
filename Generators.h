@@ -48,7 +48,7 @@ private:
 // A circular spot, centered at a given point, with two radii. Within an inner
 // radius it is uniformly one color. Beyond an outer radius it is uniformly
 // another color. Between the two radii, there is a sinusoid transition from one
-// color to the other.
+// color to the other. (Reverses radii if they are out of order.)
 class Spot : public Texture
 {
 public:
@@ -56,9 +56,9 @@ public:
          float inner_radius_, Color inner_color_,
          float outer_radius_, Color outer_color_) :
             center(center_),
-            inner_radius(inner_radius_),
+            inner_radius(std::min(inner_radius_, outer_radius_)),
             inner_color(inner_color_),
-            outer_radius(outer_radius_),
+            outer_radius(std::max(inner_radius_, outer_radius_)),
             outer_color(outer_color_)
     {
         assert(inner_radius >= 0);
@@ -67,13 +67,12 @@ public:
     }
     Color getColor(Vec2 position) const override
     {
-        float d = (position - center).length();  // position to center distance
-        return ((d < inner_radius) ?
-                inner_color :
-                ((d > outer_radius) ?
-                 outer_color :
-                 interpolate(remapInterval(d, inner_radius, outer_radius, 0, 1),
-                             inner_color, outer_color)));
+        // Distance from sample position to spot center.
+        float d = (position - center).length();
+        // Fraction for interpolation: 0 inside, 1 outside, ramp between.
+        float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
+        // Sinusoidal interpolation between inner and outer colors.
+        return interpolate(sinusoid(f), inner_color, outer_color);
     }
 private:
     const Vec2 center;
