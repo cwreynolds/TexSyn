@@ -12,9 +12,34 @@
 #include "Utilities.h"
 #include "Generators.h"
 
+// Used only in allTestsOK()
+#define logAndTally(e)                       \
+{                                            \
+    std::cout << "\t";                       \
+    std::cout << ((e) ? "pass " : "fail ");  \
+    std::cout << #e;                         \
+    std::cout << std::endl << std::flush;    \
+    if (!e) all_tests_passed = false;        \
+}
+
 bool UnitTests::allTestsOK()
 {
-    bool utilities = ((remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+    bool utilities = (withinEpsilon(1.1, 1.2, 0.2) &&
+                      withinEpsilon(-1.1, -1.2, 0.2) &&
+                      !withinEpsilon(1.1, 1.2, 0.01) &&
+                      (sq(2) == 4) &&
+                      (interpolate(0.1, 0, 10) == 1) &&
+                      (interpolate(0.1, 0, -10) == -1) &&
+                      (clip(0, 1, 2) == 1) &&
+                      (clip(3, 1, 2) == 2) &&
+                      (clip(0, 1, 1) == 1) &&
+                      (clip(3, 1, 1) == 1) &&
+                      (sinusoid(0) == 0) &&
+                      (sinusoid(0.25) < 0.25) &&
+                      (sinusoid(0.5) == 0.5) &&
+                      (sinusoid(0.75) > 0.75) &&
+                      (sinusoid(1) == 1) &&
+                      (remapInterval(1.5, 1, 2, 20, 30) == 25) &&
                       (remapInterval(2, 1, 4, 10, 40) == 20) &&
                       (remapIntervalClip(5, 1, 4, 10, 40)) == 40 &&
                       !std::isnan(remapInterval(1, 1, 1, 2, 3)) &&
@@ -191,42 +216,25 @@ bool UnitTests::allTestsOK()
                     return true;
                 }());
     }();
-
-    // Log sub-test results
-    std::cout << "\t"; debugPrint(utilities);
-    std::cout << "\t"; debugPrint(color_constructors);
-    std::cout << "\t"; debugPrint(color_equality);
-    std::cout << "\t"; debugPrint(color_assignment);
-    std::cout << "\t"; debugPrint(color_basic_operators);
-    std::cout << "\t"; debugPrint(color_luminance);
-    std::cout << "\t"; debugPrint(color_hsv);
-    std::cout << "\t"; debugPrint(vec2_constructors);
-    std::cout << "\t"; debugPrint(vec2_equality);
-    std::cout << "\t"; debugPrint(vec2_assignment);
-    std::cout << "\t"; debugPrint(vec2_vector_operations);
-    std::cout << "\t"; debugPrint(vec2_basic_operators);
-    std::cout << "\t"; debugPrint(vec2_random_point);
-    std::cout << "\t"; debugPrint(vec2_rotate);
-    std::cout << "\t"; debugPrint(gradation_test);
-    std::cout << "\t"; debugPrint(spot_test);
-    bool ALL_TESTS_OK = (utilities &&
-                         color_constructors &&
-                         color_equality &&
-                         color_assignment &&
-                         color_basic_operators &&
-                         color_luminance &&
-                         color_hsv &&
-                         vec2_constructors &&
-                         vec2_equality &&
-                         vec2_assignment &&
-                         vec2_vector_operations &&
-                         vec2_basic_operators &&
-                         vec2_random_point &&
-                         vec2_rotate &&
-                         gradation_test &&
-                         spot_test);
+    bool all_tests_passed = true;
+    logAndTally(utilities);
+    logAndTally(color_constructors);
+    logAndTally(color_equality);
+    logAndTally(color_assignment);
+    logAndTally(color_basic_operators);
+    logAndTally(color_luminance);
+    logAndTally(color_hsv);
+    logAndTally(vec2_constructors);
+    logAndTally(vec2_equality);
+    logAndTally(vec2_assignment);
+    logAndTally(vec2_vector_operations);
+    logAndTally(vec2_basic_operators);
+    logAndTally(vec2_random_point);
+    logAndTally(vec2_rotate);
+    logAndTally(gradation_test);
+    logAndTally(spot_test);
     std::cout << std::endl;
-    debugPrint(ALL_TESTS_OK);
-    std::cout << std::endl;
-    return ALL_TESTS_OK;
+    std::cout << (all_tests_passed ? "All tests passed." : "Some tests failed.");
+    std::cout << std::endl << std::endl;
+    return all_tests_passed;
 }
