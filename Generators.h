@@ -81,3 +81,58 @@ private:
     const Color inner_color;
     const Color outer_color;
 };
+
+// A grating of two alternating colored stripes. The spacing and orientation is
+// defined by two points. The segment between them is perpendicular to the
+// stripes, the length of the segment is the width (wavelength) of the stripes.
+// The softness parameter varies from a square wave at 0 and a sinusoid at 1.
+class Grating : public Texture
+{
+public:
+    Grating(Vec2 point_0, Color color_0,
+            Vec2 point_1, Color color_1,
+            float softness_) :
+        color0(color_0),
+        color1(color_1),
+        origin(point_0),
+        distance((point_1 - point_0).length()),
+        basis((point_1 - point_0) / distance),
+        softness(softness_) {}
+    Color getColor(Vec2 position) const override
+    {
+        if (distance == 0)
+        {
+            return interpolate(0.5, color0, color1);
+        }
+        else
+        {
+            Vec2 offset = position - origin;
+            float projection = basis.dot(offset);
+            float unit_modulo = std::fmod(projection, distance) / distance;
+            return interpolate(softSquareWave(unit_modulo), color0, color1);
+        }
+    }
+    // Defines a "square wave with soft edges". When softness is 0 it is a
+    // square wave. When softness is 1 it is a sinusoid.
+    float softSquareWave(float fraction) const
+    {
+        // Clip fraction to [0, 1].
+        fraction = clip(fraction, 0, 1);
+        // Fold second half of range back over first. f ranges over [0, 0.5].
+        float f = (fraction < 0.5) ? fraction : (1 - fraction);
+        // Start/end of transition region, adjusted for softness.
+        float s = remapInterval(softness, 0, 1, 0.25, 0);
+        float e = remapInterval(softness, 0, 1, 0.25, 0.5);
+        // Piecewise linear transition (flat, ramp, flat).
+        float adjust_for_softness = remapIntervalClip(f, s, e, 0, 1);
+        // Apply sinusoid to adjusted value.
+        return sinusoid(adjust_for_softness);
+    }
+private:
+    const Vec2 origin;
+    const float distance;
+    const Vec2 basis;
+    const Color color0;
+    const Color color1;
+    const float softness;
+};
