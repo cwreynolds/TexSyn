@@ -217,6 +217,40 @@ bool UnitTests::allTestsOK()
                     return true;
                 }());
     }();
+    bool grating_test = []()
+    {
+        float e = 0.0001;
+        return ([&]()
+                {
+                    for (int i = 0; i < 100; i++) // try 100 times
+                    {
+                        // Define a random Grating
+                        Vec2 p1 = Vec2::randomPointInUnitDiameterCircle();
+                        Vec2 p2 = Vec2::randomPointInUnitDiameterCircle();
+                        Color c1 = Color::randomUnitRGB();
+                        Color c2 = Color::randomUnitRGB();
+                        Grating grating(p1, c1, p2, c2, frandom01());
+                        // Pick a random point between p1 and p2.
+                        Vec2 between = interpolate(frandom01(), p1, p2);
+                        // Pick another point along the line p1,p2 which is
+                        // some random integer multiple of offset away.
+                        Vec2 offset = p2 - p1;
+                        Vec2 other = between + (offset * int(frandom2(-5, 5)));
+                        // Read back colors from midpoint, between, and other.
+                        Color gc_midpoint = grating.getColor((p1 + p2) / 2);
+                        Color gc_between = grating.getColor(between);
+                        Color gc_other = grating.getColor(other);
+                        // Check if everything is as expected
+                        bool ok = ((grating.getColor(p1) == c1) &&
+                                   (grating.getColor(p2) == c1) &&
+                                   withinEpsilon(gc_midpoint, c2, e) &&
+                                   withinEpsilon(gc_between, gc_other, e));
+                        if (!ok) return false;
+                    }
+                    return true;
+                }());
+    }();
+
     bool all_tests_passed = true;
     logAndTally(utilities);
     logAndTally(color_constructors);
@@ -234,6 +268,7 @@ bool UnitTests::allTestsOK()
     logAndTally(vec2_rotate);
     logAndTally(gradation_test);
     logAndTally(spot_test);
+    logAndTally(grating_test);
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests passed." : "Some tests failed.");
     std::cout << std::endl << std::endl;

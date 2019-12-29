@@ -81,3 +81,10 @@ inline float remapIntervalClip(float x,
 {
     return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
 }
+
+// This variation on fmod() is analogous to the difference between "rounding
+// down" (as in floor()) and "rounding toward zero" (as in std::round())
+inline float fmod_floor(float x, float y)
+{
+    return std::fmod(x, y) + ((x < 0) ? y : 0);
+}

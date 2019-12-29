@@ -54,6 +54,8 @@ public:
     Color operator*(float s) const;
     // Length in linear unit RGB space.
     float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
+    // Random color uniformly distributed across the unit RGB cube.
+    static Color randomUnitRGB();
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }

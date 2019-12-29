@@ -231,6 +231,12 @@ void Color::convertHSVtoRGB(float h, float s, float v,
     }
 }
 
+// Random color uniformly distributed across the unit RGB cube.
+Color Color::randomUnitRGB()
+{
+    return Color(frandom01(), frandom01(), frandom01());
+}
+
 // Is distance between RGB vectors less than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon)
 {

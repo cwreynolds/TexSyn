@@ -108,7 +108,7 @@ public:
         {
             Vec2 offset = position - origin;
             float projection = basis.dot(offset);
-            float unit_modulo = std::fmod(projection, distance) / distance;
+            float unit_modulo = fmod_floor(projection, distance) / distance;
             return interpolate(softSquareWave(unit_modulo), color0, color1);
         }
     }
