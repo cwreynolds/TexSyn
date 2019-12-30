@@ -7,8 +7,12 @@
 //
 
 #include "Texture.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#pragma clang diagnostic pop
 
 // TODO temporary function to test image display.
 void Texture::testImageDisplay()
