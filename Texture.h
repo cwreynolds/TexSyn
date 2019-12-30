@@ -31,8 +31,8 @@ public:
 class Texture : public AbstractTexture
 {
 public:
+    // Default constructor.
     Texture(){}
-    
-    // TODO temporary function to test image display.
-    static void testImageDisplay();
+    // Display this Texture in a pop-up OpenCV window.
+    void displayInWindow(int size = 512) const;
 };
