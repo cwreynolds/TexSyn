@@ -32,4 +32,7 @@ class Texture : public AbstractTexture
 {
 public:
     Texture(){}
+    
+    // TODO temporary function to test image display.
+    static void testImageDisplay();
 };

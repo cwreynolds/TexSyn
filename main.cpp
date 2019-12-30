@@ -6,13 +6,17 @@
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
 
-#include "Utilities.h"
+#include "Texture.h"
 #include "UnitTests.h"
+#include "Utilities.h"
 
 int main(int argc, const char * argv[])
 {
     // TODO TEMP run unit tests
     UnitTests::allTestsOK();
     
+    // TODO temporary function to test image display.
+    Texture::testImageDisplay();
+
     return EXIT_SUCCESS;
 }
