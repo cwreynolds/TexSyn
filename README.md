@@ -1,37 +1,6 @@
-## Welcome to GitHub Pages
+# TexSyn
+## Library for evolutionary texture synthesis.
 
-You can use the [editor on GitHub](https://github.com/cwreynolds/TexSyn/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+`TexSyn` is a library for procedural texture synthesis. It is intended for use by a _genetic programming_ (“GP”) system, a type of _genetic algorithm_. The GP system _evolves_ a _population_ of programs according to a _fitness function_ (aka _fitness metric_ analogous to a _loss function_ in machine learning.) In this texture synthesis application, the programs are compositions of functions from this `TexSyn` library. When executed they create a _color texture_, which is to say, an _image_.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/cwreynolds/TexSyn/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+This is a re-implementation and update to the TextureSynthesisTest library as described in [Texture Synthesis Diary](http://www.red3d.com/cwr/texsyn/diary.html) and used as the basis of the 2011 paper [Interactive Evolution of Camouflage](https://www.red3d.com/cwr/iec/).
