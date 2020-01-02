@@ -108,6 +108,23 @@ bool UnitTests::allTestsOK()
                 withinEpsilon(v0, 0, e) &&
                 withinEpsilon(s0, 0, e));
     }();
+    bool color_clip = []()
+    {
+        float e = 0.000001;
+        bool all_ok = true;
+        for (int i = 0; i < 1000; i ++)
+        {
+            Color a(frandom2(-1, +10), frandom2(-1, +10), frandom2(-1, +10));
+            Color b = a.clipToUnitRGB();
+            bool in_range = ((b.r() >= 0) && (b.g() >= 0) && (b.b() >= 0) &&
+                             (b.r() <= 1) && (b.g() <= 1) && (b.b() <= 1));
+            bool skip = ((a.length() == 0) ||
+                         (a.r() <= 0) || (a.g() <= 0) || (a.b() <= 0));
+            bool direction_ok = withinEpsilon(a.normalize(), b.normalize(), e);
+            if (!in_range || !(skip || direction_ok)) all_ok = false;
+        }
+        return all_ok;
+    }();
     bool vec2_constructors = ((Vec2().x() == 0) &&
                               (Vec2().y() == 0) &&
                               (Vec2(1, -2).x() == 1) &&
@@ -167,11 +184,14 @@ bool UnitTests::allTestsOK()
         Gradation graduation(point1, color1, point2, color2);
         Vec2 midpoint = interpolate(0.5, point1, point2);
         Color midcolor = interpolate(0.5, color1, color2);
-        float e = 0.000001;
+        float e = 0.00001;
         auto off_axis_sample = [&](float f)
         {
             Vec2 on_axis = interpolate(f, point1, point2);
             Vec2 off_axis = Vec2(-1, 1) * frandom2(-10, 10);
+            // TODO maybe instead of predicting what color we expect to find
+            // (which requires internal knowledge of the texure) maybe compare
+            // two samples, say from plus and minus off_axis.
             Color expected_color = interpolate(sinusoid(f), color1, color2);
             Color sampled_color = graduation.getColor(on_axis + off_axis);
             return withinEpsilon(sampled_color, expected_color, e);
@@ -259,6 +279,7 @@ bool UnitTests::allTestsOK()
     logAndTally(color_basic_operators);
     logAndTally(color_luminance);
     logAndTally(color_hsv);
+    logAndTally(color_clip);
     logAndTally(vec2_constructors);
     logAndTally(vec2_equality);
     logAndTally(vec2_assignment);

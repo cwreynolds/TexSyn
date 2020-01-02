@@ -22,17 +22,13 @@ public:
     virtual Color getColor(Vec2 position) const = 0;
 };
 
-//    // TODO not sure if I want to use this (may not be worth the effort) so
-//    // make it a stub for now:
-//    class ColorSampleCache
-//    {
-//    };
-
 class Texture : public AbstractTexture
 {
 public:
     // Default constructor.
     Texture(){}
+    // Get color at position, clipping to unit RGB color cube.
+    Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
     // Display this Texture in a pop-up OpenCV window.
     void displayInWindow(int size = 512) const;
 };

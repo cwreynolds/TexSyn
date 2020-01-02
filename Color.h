@@ -52,8 +52,12 @@ public:
     Color operator+(Color v) const;
     Color operator-(Color v) const;
     Color operator*(float s) const;
-    // Length in linear unit RGB space.
+    Color operator/(float s) const { return *this * (1 / s); };
+    // Length and normalize in linear RGB space.
     float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
+    Color normalize() const { return *this / length(); }
+    // Get corresponding color value clipped to unit RGB cube.
+    Color clipToUnitRGB() const;
     // Random color uniformly distributed across the unit RGB cube.
     static Color randomUnitRGB();
     // Accessors:

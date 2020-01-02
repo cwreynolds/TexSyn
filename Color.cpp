@@ -231,6 +231,23 @@ void Color::convertHSVtoRGB(float h, float s, float v,
     }
 }
 
+// Get corresponding color value clipped to unit RGB cube.
+Color Color::clipToUnitRGB() const
+{
+    Color result = *this;
+    if (length() > 0)
+    {
+        // Individually clip each component to be greater than zero.
+        auto nn = [](float x){ return std::max(0.0f, x); };
+        result = Color(nn(r()), nn(g()), nn(b()));
+        // Clip to red=1 plane, then green and blue.
+        if (result.r() > 1) result = result / result.r();
+        if (result.g() > 1) result = result / result.g();
+        if (result.b() > 1) result = result / result.b();
+    }
+    return result;
+}
+
 // Random color uniformly distributed across the unit RGB cube.
 Color Color::randomUnitRGB()
 {
