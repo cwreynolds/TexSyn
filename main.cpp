@@ -29,12 +29,18 @@ int main(int argc, const char * argv[])
 //                        Vec2(-0.4, 0.2), Color(1, 1, 1));
 //    gradation.displayInWindow();
     
-    SoftMatte sm(Spot(Vec2(0, 0), 0.2, Color(1, 1, 1), 0.8, Color(0, 0, 0)),
-                 Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-                         Vec2( 0.2, 0), Color(1, 1, 1), 1),
-                 Grating(Vec2(0, -0.1), Color(1, 0, 1),
-                         Vec2(0,  0.1), Color(0, 0, 1), 0.2));
-    sm.displayInWindow();
+//    SoftMatte sm(Spot(Vec2(0, 0), 0.2, Color(1, 1, 1), 0.8, Color(0, 0, 0)),
+//                 Grating(Vec2(-0.2, 0), Color(0, 0, 0),
+//                         Vec2( 0.2, 0), Color(1, 1, 1), 1),
+//                 Grating(Vec2(0, -0.1), Color(1, 0, 1),
+//                         Vec2(0,  0.1), Color(0, 0, 1), 0.2));
+//    sm.displayInWindow();
+
+    Max mx(Grating(Vec2(-0.2, 0), Color(0, 0, 0),
+                   Vec2( 0.2, 0), Color(1, 1, 1), 1),
+           Grating(Vec2(0, -0.1), Color(1, 0, 1),
+                   Vec2(0,  0.1), Color(0, 0, 1), 0.2));
+    mx.displayInWindow();
 
     return EXIT_SUCCESS;
 }
