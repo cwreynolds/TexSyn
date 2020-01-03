@@ -6,11 +6,12 @@
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
 
-#include "Vec2.h"
 #include "Color.h"
+#include "Generators.h"
+#include "Operators.h"
 #include "UnitTests.h"
 #include "Utilities.h"
-#include "Generators.h"
+#include "Vec2.h"
 
 // Used only in allTestsOK()
 #define logAndTally(e)                       \
@@ -270,6 +271,42 @@ bool UnitTests::allTestsOK()
                     return true;
                 }());
     }();
+    bool operators_minimal_test = []()
+    {
+        float e = 0.000001;
+        Color black(0, 0, 0);
+        Color white(1, 1, 1);
+        Color gray(0.5, 0.5, 0.5);
+        Gradation bt(Vec2(0, 0), black, Vec2(0, 0), black);  // black texture
+        Gradation gt(Vec2(0, 0), gray,  Vec2(0, 0), gray);   // gray texture
+        Gradation wt(Vec2(0, 0), white, Vec2(0, 0), white);  // white texture
+        Max mx(bt, wt);
+        Min mn(bt, wt);
+        Add ad(wt, gt);
+        Subtract s1(wt, gt);
+        Subtract s2(bt, gt);
+        SoftMatte sm(Spot(Vec2(0, 0), 0.5, white, 0.5, black), bt, wt);
+        return ([&]()
+                {
+                    bool all_ok = true;
+                    for (int i = 0; i < 1000; i++) // try 1000 times
+                    {
+                        Vec2 r_pos = Vec2::randomPointInUnitDiameterCircle();
+                        Color sm_color = r_pos.length() < 0.5 ? white : black;
+                        bool ok =
+                        (withinEpsilon(bt.getColor(r_pos), black, e) &&
+                         withinEpsilon(wt.getColor(r_pos), white, e) &&
+                         withinEpsilon(mx.getColor(r_pos), white, e) &&
+                         withinEpsilon(mn.getColor(r_pos), black, e) &&
+                         withinEpsilon(ad.getColor(r_pos), white + gray, e) &&
+                         withinEpsilon(s1.getColor(r_pos), white - gray, e) &&
+                         withinEpsilon(s2.getColor(r_pos), black - gray, e) &&
+                         withinEpsilon(sm.getColor(r_pos), sm_color, e));
+                        if (!ok) all_ok = false;
+                    }
+                    return all_ok;
+                }());
+    }();
 
     bool all_tests_passed = true;
     logAndTally(utilities);
@@ -290,6 +327,7 @@ bool UnitTests::allTestsOK()
     logAndTally(gradation_test);
     logAndTally(spot_test);
     logAndTally(grating_test);
+    logAndTally(operators_minimal_test);
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests passed." : "Some tests failed.");
     std::cout << std::endl << std::endl;

@@ -33,6 +33,36 @@ private:
     const Texture& texture1;
 };
 
+// Add two textures.
+class Add : public Operator
+{
+public:
+    Add(const Texture& _texture0, const Texture& _texture1)
+        : texture0(_texture0), texture1(_texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture0.getColor(position) + texture1.getColor(position);
+    }
+private:
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
+// Subtract two textures. (texture0 - texture1)
+class Subtract : public Operator
+{
+public:
+    Subtract(const Texture& _texture0, const Texture& _texture1)
+        : texture0(_texture0), texture1(_texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture0.getColor(position) - texture1.getColor(position);
+    }
+private:
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
 // Select between two textures, sample by sample, by taking the one whose
 // luminance is greater.
 class Max : public Operator
