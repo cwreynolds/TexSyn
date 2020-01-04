@@ -8,9 +8,11 @@
 
 #pragma once
 
-#include <iostream>
 #include <cassert>
 #include <cmath>
+#include <iostream>
+#include <vector>
+class Vec2;
 
 // for debugging: prints one line with a given C expression, an equals sign,
 // and the value of the expression.  For example "angle = 35.6"
@@ -88,3 +90,13 @@ inline float fmod_floor(float x, float y)
 {
     return std::fmod(x, y) + ((x < 0) ? y : 0);
 }
+
+// Perlin Noise
+// Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+// This code based on a transliteration by Malcolm Kesson from Java to c:
+// http://www.fundza.com/c4serious/noise/perlin/perlin.html
+namespace PerlinNoise
+{
+    float unit2d(Vec2 position);
+    float raw2d(Vec2 position);
+};

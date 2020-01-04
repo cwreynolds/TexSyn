@@ -9,12 +9,14 @@
 #pragma once
 #include "Texture.h"
 
+class Generator : public Texture {};
+
 // Color gradation texture with two colors and arbitrary position, width, and
 // orientation. The arguments are two points, defining a line segment, and a
 // color for each end. The gradation occurs alone the line segment, a given
 // location on the texture is projected onto that line to determine its color.
 // (See discussion at http://www.red3d.com/cwr/texsyn/diary.html#20090329)
-class Gradation : public Texture
+class Gradation : public Generator
 {
 public:
     Gradation(Vec2 point_0, Color color_0, Vec2 point_1, Color color_1) :
@@ -49,7 +51,7 @@ private:
 // radius it is uniformly one color. Beyond an outer radius it is uniformly
 // another color. Between the two radii, there is a sinusoid transition from one
 // color to the other. (Reverses radii if they are out of order.)
-class Spot : public Texture
+class Spot : public Generator
 {
 public:
     Spot(Vec2 center_,
@@ -86,7 +88,7 @@ private:
 // defined by two points. The segment between them is perpendicular to the
 // stripes, the length of the segment is the width (wavelength) of the stripes.
 // The softness parameter varies from a square wave at 0 and a sinusoid at 1.
-class Grating : public Texture
+class Grating : public Generator
 {
 public:
     Grating(Vec2 point_0, Color color_0,
@@ -135,4 +137,25 @@ private:
     const Color color0;
     const Color color1;
     const float softness;
+};
+
+// Perlin Noise
+// Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+// This code based on a transliteration by Malcolm Kesson from Java to c:
+// http://www.fundza.com/c4serious/noise/perlin/perlin.html
+class Noise : public Generator
+{
+public:
+    Noise (float _scale, Vec2 _center, Color _color0, Color _color1) :
+        scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Color getColor(Vec2 position) const override
+    {
+        float noise = PerlinNoise::unit2d((position - center) / scale);
+        return interpolate(noise, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
 };
