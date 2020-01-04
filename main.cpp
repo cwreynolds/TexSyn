@@ -42,8 +42,11 @@ int main(int argc, const char * argv[])
 //                   Vec2(0,  0.1), Color(0, 0, 1), 0.2));
 //    mx.displayInWindow();
 
-    Noise no(0.10, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0));
-    no.displayInWindow();
+//    Noise no(0.10, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0));
+//    no.displayInWindow();
     
+    Brownian br(0.10, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
+    br.displayInWindow();
+
     return EXIT_SUCCESS;
 }

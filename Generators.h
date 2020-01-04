@@ -159,3 +159,29 @@ private:
     const Color color0;
     const Color color1;
 };
+
+// Brownian Noise -- fractal 1/f Perlin Noise
+class Brownian : public Generator
+{
+public:
+    Brownian(float _scale, Vec2 _center, Color _color0, Color _color1)
+        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 v = (position - center) / scale;
+        float value = 0.0f;
+        float octave = 1.0f;
+        for (int i = 0; i < 10; i++)
+        {
+            value += PerlinNoise::raw2d(v * octave) / octave;
+            octave *= 2;
+        }
+        value = remapInterval(value, -0.75, 0.75, 0, 1);
+        return interpolate(value, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
+};

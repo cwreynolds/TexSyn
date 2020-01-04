@@ -97,4 +97,30 @@ namespace PerlinNoise
         // Remap raw noise from approximately [-0.75, 0.75] to [0, 1].
         return remapInterval(raw2d(position), -0.75, 0.75, 0, 1);
     }
+
+// Copying 3d code from 2010 TextureSynthesisTest in case I need it later.
+//float improvedPerlinNoise (float x, float y, float z)
+//{
+//    int   X = (int)floor(x) & 255,                     // FIND UNIT CUBE THAT
+//          Y = (int)floor(y) & 255,                     // CONTAINS POINT.
+//          Z = (int)floor(z) & 255;
+//    x -= floor(x);                                     // FIND RELATIVE X,Y,Z
+//    y -= floor(y);                                     // OF POINT IN CUBE.
+//    z -= floor(z);
+//    float  u = fade(x),                                // COMPUTE FADE CURVES
+//           v = fade(y),                                // FOR EACH OF X,Y,Z.
+//           w = fade(z);
+//    int  A = p[X  ]+Y, AA = p[A]+Z, AB = p[A+1]+Z,     // HASH COORDINATES OF
+//         B = p[X+1]+Y, BA = p[B]+Z, BB = p[B+1]+Z;     // THE 8 CUBE CORNERS,
+//
+//    return lerp(w, lerp(v, lerp(u, grad(p[AA  ], x  , y  , z   ),  // AND ADD
+//                                   grad(p[BA  ], x-1, y  , z   )), // BLENDED
+//                           lerp(u, grad(p[AB  ], x  , y-1, z   ),  // RESULTS
+//                                   grad(p[BB  ], x-1, y-1, z   ))),// FROM  8
+//                   lerp(v, lerp(u, grad(p[AA+1], x  , y  , z-1 ),  // CORNERS
+//                                   grad(p[BA+1], x-1, y  , z-1 )), // OF CUBE
+//                           lerp(u, grad(p[AB+1], x  , y-1, z-1 ),
+//                                   grad(p[BB+1], x-1, y-1, z-1 ))));
+//}
+
 }
