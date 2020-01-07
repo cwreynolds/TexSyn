@@ -30,8 +30,10 @@ public:
     Vec2 operator/(float s) const { return { x() / s, y() / s}; }
     bool operator==(const Vec2 v) const { return x() == v.x() && y() == v.y(); }
     bool operator<(const Vec2 v) const {return length() < v.length();}
-    // Return vec rotated about origin by given angle in radians.
-    Vec2 rotate(float angle) const;
+    // Rotation about origin by angle in radians (or by precomputed sin/cos).
+    inline Vec2 rotate(float sin, float cos) const
+        { return Vec2(x() * cos + y() * sin, y() * cos - x() * sin); }
+    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
     // Generate a random point inside a unit diameter disk centered on origin.
     static Vec2 randomPointInUnitDiameterCircle();
     // Generate a random unit vector.

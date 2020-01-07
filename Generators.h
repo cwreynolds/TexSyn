@@ -150,7 +150,7 @@ public:
         scale (_scale), center (_center), color0(_color0), color1(_color1) {};
     Color getColor(Vec2 position) const override
     {
-        float noise = PerlinNoise::unit2d((position - center) / scale);
+        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
         return interpolate(noise, color0, color1);
     }
 private:
@@ -173,11 +173,29 @@ public:
         float octave = 1.0f;
         for (int i = 0; i < 10; i++)
         {
-            value += PerlinNoise::raw2d(v * octave) / octave;
+            value += PerlinNoise::noise2d(v * octave) / octave;
             octave *= 2;
         }
         value = remapInterval(value, -0.75, 0.75, 0, 1);
         return interpolate(value, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
+};
+
+// Classic Perlin turbulence.
+class Turbulance : public Generator
+{
+public:
+    Turbulance(float _scale, Vec2 _center, Color _color0, Color _color1)
+        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Color getColor(Vec2 position) const override
+    {
+        float t = PerlinNoise::turbulence((position - center) / scale);
+        return interpolate(t, color0, color1);
     }
 private:
     const float scale;

@@ -97,6 +97,10 @@ inline float fmod_floor(float x, float y)
 // http://www.fundza.com/c4serious/noise/perlin/perlin.html
 namespace PerlinNoise
 {
-    float unit2d(Vec2 position);
-    float raw2d(Vec2 position);
+    // Classic Perlin noise, in 2d, output range approximately on [-0.75, 0.75].
+    float noise2d(Vec2 position);
+    // Classic Perlin noise, in 2d, output range on [0, 1].
+    float unitNoise2d(Vec2 position);
+    // Classic Perlin turbulence, in 2d, output range on [0, 1].
+    float turbulence(Vec2 position);
 };

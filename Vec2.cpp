@@ -25,14 +25,6 @@ Vec2 Vec2::randomUnitVector()
     return v.normalize();
 }
 
-Vec2 Vec2::rotate(float angle) const
-{
-    float cos = std::cos(angle);
-    float sin = std::sin(angle);
-    return Vec2(x() * cos + y() * sin,
-                y() * cos - x() * sin);
-}
-
 // Is distance between vectors less than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {

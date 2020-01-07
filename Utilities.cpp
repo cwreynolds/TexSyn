@@ -67,8 +67,9 @@ namespace PerlinNoise
         float v = h < 4 ? y : h==12||h==14 ? x : z;
         return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
     }
-    // Raw 2d "Improved Noise" (Ken Perlin, 2002)
-    float raw2d(Vec2 position)
+    // Classic Perlin noise, in 2d, output range approximately on [-0.75, 0.75].
+    // Based on "Improved Noise" (Ken Perlin, 2002)
+    float noise2d(Vec2 position)
     {
         init();
         float x = position.x();
@@ -91,11 +92,31 @@ namespace PerlinNoise
                        lerp(u, grad(p[AB], x  , y-1, 0),
                                grad(p[BB], x-1, y-1, 0)));
     }
-    // 2d noise with output range on [0, 1].
-    float unit2d(Vec2 position)
+    // Classic Perlin noise, in 2d, output range on [0, 1].
+    float unitNoise2d(Vec2 position)
     {
         // Remap raw noise from approximately [-0.75, 0.75] to [0, 1].
-        return remapInterval(raw2d(position), -0.75, 0.75, 0, 1);
+        return remapInterval(noise2d(position), -0.75, 0.75, 0, 1);
+    }
+    // For 1/f subdivision recursion from "image scale" to "pixel scale"
+    // TODO this recursion criteria should be pixel-aware like Perlin's
+    int recursion_levels = 10;
+    // For disalignment rotation of two radians at each recursion level.
+    float dis_sin = std::sin(2);
+    float dis_cos = std::cos(2);
+    Vec2 disalignment_rotation(Vec2 v) { return v.rotate(dis_sin, dis_cos); }
+    // Classic Perlin turbulence. 2d noise with output range on [0, 1].
+    float turbulence(Vec2 position)
+    {
+        float value = 0.0f;
+        float octave = 1.0f;
+        for (int i = 0; i < recursion_levels; i++)
+        {
+            value += fabs(noise2d(position * octave) / octave);
+            octave *= 2;
+            position = disalignment_rotation(position);
+        }
+        return value;
     }
 
 // Copying 3d code from 2010 TextureSynthesisTest in case I need it later.
