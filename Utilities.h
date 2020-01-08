@@ -97,10 +97,14 @@ inline float fmod_floor(float x, float y)
 // http://www.fundza.com/c4serious/noise/perlin/perlin.html
 namespace PerlinNoise
 {
-    // Classic Perlin noise, in 2d, output range approximately on [-0.75, 0.75].
+    // Classic Perlin noise, in 2d, output range approximately on [-1, 1].
     float noise2d(Vec2 position);
     // Classic Perlin noise, in 2d, output range on [0, 1].
     float unitNoise2d(Vec2 position);
     // Classic Perlin turbulence, in 2d, output range on [0, 1].
-    float turbulence(Vec2 position);
+    float turbulence2d(Vec2 position);
+    // Brownian Noise, fractal 1/f Perlin noise, output range on [0, 1].
+    float brownian2d(Vec2 position);
+    // Tool to measure typical range of raw Perlin noise
+    void measure_range();
 };

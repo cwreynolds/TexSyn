@@ -168,16 +168,8 @@ public:
         : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
     Color getColor(Vec2 position) const override
     {
-        Vec2 v = (position - center) / scale;
-        float value = 0.0f;
-        float octave = 1.0f;
-        for (int i = 0; i < 10; i++)
-        {
-            value += PerlinNoise::noise2d(v * octave) / octave;
-            octave *= 2;
-        }
-        value = remapInterval(value, -0.75, 0.75, 0, 1);
-        return interpolate(value, color0, color1);
+        float noise = PerlinNoise::brownian2d((position - center) / scale);
+        return interpolate(noise, color0, color1);
     }
 private:
     const float scale;
@@ -194,7 +186,7 @@ public:
         : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
     Color getColor(Vec2 position) const override
     {
-        float t = PerlinNoise::turbulence((position - center) / scale);
+        float t = PerlinNoise::turbulence2d((position - center) / scale);
         return interpolate(t, color0, color1);
     }
 private:

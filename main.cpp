@@ -45,7 +45,7 @@ int main(int argc, const char * argv[])
 //    Noise no(0.10, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0));
 //    no.displayInWindow();
     
-//    Brownian br(0.10, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
+//    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
 //    br.displayInWindow();
     
     Turbulance tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
