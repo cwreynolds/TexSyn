@@ -141,20 +141,24 @@ namespace PerlinNoise
         return remapInterval(value, -max, max, 0, 1);
     }
 
-    // Tool to measure typical range of raw Perlin noise
-    void measure_range()
+    // Tool to measure typical range of a noise function. Returns min and max
+    // range from calling given noise function 100000 times for random points
+    // in a circle at origin with diameter of 100.
+    std::pair<float, float> measure_range(std::function<float(Vec2)> noise_func)
     {
-        float max_range = -1000;
-        float min_range = +1000;
-        for (int i = 0; i < 1000000; i++)
+        float max_range = -std::numeric_limits<float>::infinity();
+        float min_range = +std::numeric_limits<float>::infinity();
+        for (int i = 0; i < 100000; i++)
         {
-            Vec2 v = Vec2::randomPointInUnitDiameterCircle() * 1000;
-            float noise = PerlinNoise::noise2d(v);
+            Vec2 v = Vec2::randomPointInUnitDiameterCircle() * 100;
+            float noise = noise_func(v);
             if (max_range < noise) max_range = noise;
             if (min_range > noise) min_range = noise;
         }
-        debugPrint(max_range);
         debugPrint(min_range);
+        debugPrint(max_range);
+        std::cout << std::endl;
+        return std::pair<float, float>(min_range, max_range);
     }
 
 // Copying 3d code from 2010 TextureSynthesisTest in case I need it later.

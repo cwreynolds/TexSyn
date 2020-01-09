@@ -30,5 +30,17 @@ public:
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
     // Display this Texture in a pop-up OpenCV window.
-    void displayInWindow(int size = 512) const;
+    void displayInWindow(int size = 511) const;
+    // Reset statistics for debugging.
+    void resetStatistics() const;
+    // Collect statistics for debugging.
+    void collectStatistics(Vec2 position, Color color) const;
+private:
+    // TODO maybe we need a OOBB Bounds2d class?
+    // TODO maybe should be stored in external std::map keyed on Texture pointer
+    // Store bounds of sampled positions.
+    static float min_x;
+    static float max_x;
+    static float min_y;
+    static float max_y;
 };

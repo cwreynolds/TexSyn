@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <vector>
 class Vec2;
 
@@ -105,6 +106,8 @@ namespace PerlinNoise
     float turbulence2d(Vec2 position);
     // Brownian Noise, fractal 1/f Perlin noise, output range on [0, 1].
     float brownian2d(Vec2 position);
-    // Tool to measure typical range of raw Perlin noise
-    void measure_range();
+    // Tool to measure typical range of a noise function. Returns min and max
+    // range from calling given noise function 100000 times for random points
+    // in a circle at origin with diameter of 100.
+    std::pair<float, float> measure_range(std::function<float(Vec2)> noise_func);
 };
