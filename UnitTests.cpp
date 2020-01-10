@@ -314,15 +314,13 @@ bool UnitTests::allTestsOK()
         {
             std::pair<float, float> min_max =
                 PerlinNoise::measure_range(noise_function);
-            return ((min_max.first < min_threshold) &&
-                    (min_max.second > max_threshold));
+            return ((min_max.first <= min_threshold) &&
+                    (min_max.second >= max_threshold));
         };
-        // TODO these bounds are not as tight as I would like. I need to debug
-        // the range adjustment in the various noise functions.
-        return (test_range(PerlinNoise::noise2d,     -0.80, 0.80) &&
-                test_range(PerlinNoise::unitNoise2d,  0.06, 0.94) &&
-                test_range(PerlinNoise::turbulence2d, 0.06, 0.94) &&
-                test_range(PerlinNoise::brownian2d,   0.06, 0.94));
+        return (test_range(PerlinNoise::noise2d,     -1, 1) &&
+                test_range(PerlinNoise::unitNoise2d,  0, 1) &&
+                test_range(PerlinNoise::turbulence2d, 0, 1) &&
+                test_range(PerlinNoise::brownian2d,   0, 1));
     }();
 
     bool all_tests_passed = true;

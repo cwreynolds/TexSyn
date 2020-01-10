@@ -88,17 +88,20 @@ namespace PerlinNoise
         int  A = p[X  ]+Y, AA = p[A], AB = p[A+1];
         int  B = p[X+1]+Y, BA = p[B], BB = p[B+1];
         // And add blended results from 4 corners of the square.
-        return lerp(v, lerp(u, grad(p[AA], x  , y  , 0),
-                               grad(p[BA], x-1, y  , 0)),
-                       lerp(u, grad(p[AB], x  , y-1, 0),
-                               grad(p[BB], x-1, y-1, 0)));
+        float raw = lerp(v, lerp(u, grad(p[AA], x  , y  , 0),
+                                    grad(p[BA], x-1, y  , 0)),
+                            lerp(u, grad(p[AB], x  , y-1, 0),
+                                    grad(p[BB], x-1, y-1, 0)));
+        // Experimentally "raw" ranges on [-0.88, 0.88], very occasionally up to
+        // [-0.88, 1]. For predictable output, clip smaller range to [-1, 1].
+        return remapIntervalClip(raw, -0.88, 0.88, -1, 1);
     }
 
     // Classic Perlin noise, in 2d, output range on [0, 1].
     float unitNoise2d(Vec2 position)
     {
         // Remap raw noise from approximately [-1, 1] to [0, 1].
-        return remapInterval(noise2d(position), -1, 1, 0, 1);
+        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
     }
 
     // For 1/f subdivision recursion from "image scale" to "pixel scale"
@@ -120,7 +123,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        return value;
+        return remapIntervalClip(value, 0, 1.5, 0, 1);
     }
 
     // Brownian Noise, fractal 1/f Perlin noise, output range on [0, 1].
@@ -128,17 +131,13 @@ namespace PerlinNoise
     {
         float value = 0.0f;
         float octave = 1.0f;
-        float raw_max = 1;
-        float max = 0;
         for (int i = 0; i < recursion_levels; i++)
         {
             value += noise2d(position * octave) / octave;
             octave *= 2;
             position = disalignment_rotation(position);
-            raw_max /= 2;
-            max += raw_max;
         }
-        return remapInterval(value, -max, max, 0, 1);
+        return remapIntervalClip(value, -1.4, 1.4, 0, 1);
     }
 
     // Tool to measure typical range of a noise function. Returns min and max
@@ -148,12 +147,18 @@ namespace PerlinNoise
     {
         float max_range = -std::numeric_limits<float>::infinity();
         float min_range = +std::numeric_limits<float>::infinity();
-        for (int i = 0; i < 100000; i++)
+        float steps = 1000;
+        float magnify = 50;
+        for (int i = -steps / 2; i < steps / 2; i++)
         {
-            Vec2 v = Vec2::randomPointInUnitDiameterCircle() * 100;
-            float noise = noise_func(v);
-            if (max_range < noise) max_range = noise;
-            if (min_range > noise) min_range = noise;
+            for (int j = -steps / 2; j < steps / 2; j++)
+            {
+                Vec2 v((i * magnify) / (steps / 2),
+                       (j * magnify) / (steps / 2));
+                float noise = noise_func(v);
+                if (max_range < noise) max_range = noise;
+                if (min_range > noise) min_range = noise;
+            }
         }
         debugPrint(min_range);
         debugPrint(max_range);
