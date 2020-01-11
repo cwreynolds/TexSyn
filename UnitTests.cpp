@@ -320,7 +320,8 @@ bool UnitTests::allTestsOK()
         return (test_range(PerlinNoise::noise2d,     -1, 1) &&
                 test_range(PerlinNoise::unitNoise2d,  0, 1) &&
                 test_range(PerlinNoise::turbulence2d, 0, 1) &&
-                test_range(PerlinNoise::brownian2d,   0, 1));
+                test_range(PerlinNoise::brownian2d,   0, 1) &&
+                test_range(PerlinNoise::furbulence2d, 0, 1));
     }();
 
     bool all_tests_passed = true;

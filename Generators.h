@@ -184,14 +184,33 @@ private:
 };
 
 // Classic Perlin turbulence.
-class Turbulance : public Generator
+class Turbulence : public Generator
 {
 public:
-    Turbulance(float _scale, Vec2 _center, Color _color0, Color _color1)
+    Turbulence(float _scale, Vec2 _center, Color _color0, Color _color1)
         : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
     Color getColor(Vec2 position) const override
     {
         float t = PerlinNoise::turbulence2d((position - center) / scale);
+        return interpolate(t, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
+};
+
+// Furbulence: two "fold" version of Turbulence producing sharp features at
+// both low and high ends of the output range.
+class Furbulence : public Generator
+{
+public:
+    Furbulence(float _scale, Vec2 _center, Color _color0, Color _color1)
+        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Color getColor(Vec2 position) const override
+    {
+        float t = PerlinNoise::furbulence2d((position - center) / scale);
         return interpolate(t, color0, color1);
     }
 private:

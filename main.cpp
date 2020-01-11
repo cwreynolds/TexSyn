@@ -48,8 +48,11 @@ int main(int argc, const char * argv[])
 //    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
 //    br.displayInWindow();
     
-    Turbulance tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
-    tu.displayInWindow();
+//    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
+//    tu.displayInWindow();
+
+    Furbulence fu(0.25, Vec2(-1, 2), Color(1, .1, .3), Color(.3, .1, 1));
+    fu.displayInWindow();
 
     return EXIT_SUCCESS;
 }
