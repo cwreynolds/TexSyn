@@ -12,6 +12,7 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 #include "Vec2.h"
+#include <chrono>  // for high_resolution_clock
 
 // Used only in allTestsOK()
 #define logAndTally(e)                       \
@@ -25,6 +26,7 @@
 
 bool UnitTests::allTestsOK()
 {
+    auto start_time = std::chrono::high_resolution_clock::now();
     bool utilities = (withinEpsilon(1.1, 1.2, 0.2) &&
                       withinEpsilon(-1.1, -1.2, 0.2) &&
                       !withinEpsilon(1.1, 1.2, 0.01) &&
@@ -285,7 +287,8 @@ bool UnitTests::allTestsOK()
         Add ad(wt, gt);
         Subtract s1(wt, gt);
         Subtract s2(bt, gt);
-        SoftMatte sm(Spot(Vec2(0, 0), 0.5, white, 0.5, black), bt, wt);
+        Spot sp(Vec2(0, 0), 0.5, white, 0.5, black);
+        SoftMatte sm(sp, bt, wt);
         return ([&]()
                 {
                     bool all_ok = true;
@@ -346,7 +349,10 @@ bool UnitTests::allTestsOK()
     logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
     std::cout << std::endl;
-    std::cout << (all_tests_passed ? "All tests passed." : "Some tests failed.");
+    std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = end_time - start_time;
+    std::cout << "  (Elapsed time: " << elapsed_time.count() << " seconds)";
     std::cout << std::endl << std::endl;
     return all_tests_passed;
 }
