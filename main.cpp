@@ -54,8 +54,16 @@ int main(int argc, const char * argv[])
 //    Furbulence fu(0.25, Vec2(-1, 2), Color(1, .1, .3), Color(.3, .1, 1));
 //    fu.displayInWindow();
 
-    Wrapulence wr(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0));
-    wr.displayInWindow();
+//    Wrapulence wr(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0));
+//    wr.displayInWindow();
+    
+    SoftMatte(Spot(Vec2(0, 0),
+                   0.1, Color(0, 0, 0),
+                   0.9, Color(1, 1, 1)),
+              Furbulence(0.1, Vec2(1, 2),
+                         Color(1, 1, 1), Color(.3, .3, 0)),
+              Turbulence(0.2, Vec2(-5, 7),
+                         Color(0, 0, 1), Color(0, 0, 0))).displayInWindow();
 
     return EXIT_SUCCESS;
 }

@@ -35,7 +35,7 @@ void Texture::displayInWindow(int size) const
                 // Make OpenCV color, with reversed component order.
                 cv::Vec3f opencv_color(color.b(), color.g(), color.r());
                 // Make OpenCV location for pixel.
-                cv::Point opencv_position(i + half, j + half);
+                cv::Point opencv_position(half + i, half - j);
                 // Write corresponding OpenCV color to pixel:
                 opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
                 // Collect statistics
