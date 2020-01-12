@@ -210,8 +210,28 @@ public:
         : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
     Color getColor(Vec2 position) const override
     {
-        float t = PerlinNoise::furbulence2d((position - center) / scale);
-        return interpolate(t, color0, color1);
+        float f = PerlinNoise::furbulence2d((position - center) / scale);
+        return interpolate(f, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
+};
+
+// Wrapulence: another variation on turbulence(). noise() is scaled up in
+// value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
+// all scales.
+class Wrapulence : public Generator
+{
+public:
+    Wrapulence(float _scale, Vec2 _center, Color _color0, Color _color1)
+        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Color getColor(Vec2 position) const override
+    {
+        float w = PerlinNoise::wrapulence2d((position - center) / scale);
+        return interpolate(w, color0, color1);
     }
 private:
     const float scale;

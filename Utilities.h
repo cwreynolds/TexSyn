@@ -109,6 +109,10 @@ namespace PerlinNoise
     // Furbulence: two "fold" version of Turbulence producing sharp features at
     // both low and high ends of the output range.
     float furbulence2d(Vec2 position);
+    // Wrapulence: another variation on turbulence(). noise() is scaled up in
+    // value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
+    // all scales.
+    float wrapulence2d(Vec2 position);
     // Tool to measure typical range of a noise function. Returns min and max
     // range from calling given noise function 100000 times for random points
     // in a circle at origin with diameter of 100.

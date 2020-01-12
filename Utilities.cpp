@@ -157,6 +157,25 @@ namespace PerlinNoise
         return remapIntervalClip(value, 0.07, 1.9, 0, 1);
     }
 
+    // Wrapulence: another variation on turbulence(). noise() is scaled up in
+    // value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
+    // all scales.
+    float wrapulence2d(Vec2 position)
+    {
+        float value = 0.0f;
+        float octave = 1.0f;
+        for (int i = 0; i < recursion_levels; i++)
+        {
+            float pn = noise2d(position * octave);
+            float sn = pn * 3;
+            value += (sn - floor (sn)) / octave;
+            octave *= 2;
+            position = disalignment_rotation(position);
+        }
+        // TODO revisit Wrapulence clip bounds after running Release build.
+        return remapIntervalClip(value, 0, 1.9, 0, 1);
+    }
+
     // Tool to measure typical range of a noise function. Returns min and max
     // range from calling given noise function 100000 times for random points
     // in a circle at origin with diameter of 100.
