@@ -63,6 +63,25 @@ private:
     const Texture& texture1;
 };
 
+// Multiply two textures: for each color sample, multiply component-wise the
+// corresponding color samples of the two textures.
+class Multiply : public Operator
+{
+public:
+    Multiply(const Texture& _texture0, const Texture& _texture1)
+        : texture0(_texture0), texture1(_texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        // TODO should * be defined between two Colors?
+        Color c0 = texture0.getColor(position);
+        Color c1 = texture1.getColor(position);
+        return Color(c0.r() * c1.r(), c0.g() * c1.g(), c0.b() * c1.b());
+    }
+private:
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
 // Select between two textures, sample by sample, by taking the one whose
 // luminance is greater.
 class Max : public Operator
@@ -97,4 +116,24 @@ public:
 private:
     const Texture& texture0;
     const Texture& texture1;
+};
+
+// Maps the brightness of a sample of the given Texture to a pure hue (full
+// brightness, full saturation). The hue transform is offset by a given phase.
+class BrightnessToHue : public Operator
+{
+public:
+    BrightnessToHue (float _huePhase, const Texture& _texture)
+        : huePhase (_huePhase), texture (_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        float luminance = texture.getColor(position).luminance();
+        float red, green, blue;
+        Color::convertHSVtoRGB(luminance + huePhase, 1.0f, 1.0f,
+                               red, green, blue);
+        return Color(red, green, blue);
+    }
+private:
+    const float huePhase;
+    const Texture& texture;
 };
