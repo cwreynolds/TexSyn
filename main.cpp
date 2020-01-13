@@ -57,13 +57,47 @@ int main(int argc, const char * argv[])
 //    Wrapulence wr(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0));
 //    wr.displayInWindow();
     
-    SoftMatte(Spot(Vec2(0, 0),
-                   0.1, Color(0, 0, 0),
-                   0.9, Color(1, 1, 1)),
-              Furbulence(0.1, Vec2(1, 2),
-                         Color(1, 1, 1), Color(.3, .3, 0)),
-              Turbulence(0.2, Vec2(-5, 7),
-                         Color(0, 0, 1), Color(0, 0, 0))).displayInWindow();
+//    SoftMatte(Spot(Vec2(0, 0),
+//                   0.1, Color(0, 0, 0),
+//                   0.9, Color(1, 1, 1)),
+//              Furbulence(0.1, Vec2(1, 2),
+//                         Color(1, 1, 1), Color(.3, .3, 0)),
+//              Turbulence(0.2, Vec2(-5, 7),
+//                         Color(0, 0, 1), Color(0, 0, 0))).displayInWindow();
+
+    // Comparison of 5 noise varieties, test for MultiNoise.
+    {
+        float scale = 0.3;
+        Vec2 center(0, 0);
+        Color white(1, 1, 1);
+        Color black(0, 0, 0);
+        Color magenta(1, 0.3, 1);
+        Color red(1, 0.3, 0.3);
+        Color yellow(1, 1, 0.3);
+        Color green(0.3, 1, 0.3);
+        Color cyan(0.3, 1, 1);
+//        Noise noise(scale, center, black, magenta);
+//        Brownian brownian(scale, center, black, red);
+//        Turbulence turbulence(scale, center, black, yellow);
+//        Furbulence furbulence(scale, center, black, green);
+//        Wrapulence wrapulence(scale, center, black, cyan);
+        MultiNoise noise(scale, center, black, magenta, 0.0);
+        MultiNoise brownian(scale, center, black, red, 0.2);
+        MultiNoise turbulence(scale, center, black, yellow, 0.4);
+        MultiNoise furbulence(scale, center, black, green, 0.6);
+        MultiNoise wrapulence(scale, center, black, cyan, 0.8);
+//        auto spot = [&](float r){return Spot(center,r - 0.05,black,r,white);};
+        auto spot = [&](float r) { return Spot(center,r,black,r+0.05,white); };
+        SoftMatte(spot(0.2),
+                  wrapulence,
+                  SoftMatte(spot(0.4),
+                            furbulence,
+                            SoftMatte(spot(0.6),
+                                      turbulence,
+                                      SoftMatte(spot(0.8),
+                                                brownian,
+                                                noise)))).displayInWindow();
+    }
 
     return EXIT_SUCCESS;
 }

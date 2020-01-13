@@ -239,3 +239,43 @@ private:
     const Color color0;
     const Color color1;
 };
+
+// MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
+// Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
+// that selects between them. (This is to allow all the variations without
+// "overwhelming" the space of generators when randomly selecting for GP. An
+// alternative would be to specify a "likeliness" weighting in the GP defs for
+// making the random selections.)
+class MultiNoise : public Generator
+{
+public:
+    MultiNoise(float _scale, Vec2 _center,
+               Color _color0, Color _color1,
+               float _which)
+      : scale (_scale),
+        center(_center),
+        color0(_color0),
+        color1(_color1),
+        which(_which) {};
+    Color getColor(Vec2 position) const override
+    {
+        float f = 0;
+        Vec2 adjusted = (position - center) / scale;
+        int w = fmod_floor(which, 1) * 5;
+        switch(w)
+        {
+            case 0:  f = PerlinNoise::unitNoise2d(adjusted);  break;
+            case 1:  f = PerlinNoise::brownian2d(adjusted);   break;
+            case 2:  f = PerlinNoise::turbulence2d(adjusted); break;
+            case 3:  f = PerlinNoise::furbulence2d(adjusted); break;
+            default: f = PerlinNoise::wrapulence2d(adjusted);
+        }
+        return interpolate(f, color0, color1);
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Color color0;
+    const Color color1;
+    const float which;
+};
