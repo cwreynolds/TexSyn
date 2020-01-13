@@ -19,6 +19,9 @@ class Vec2;
 // and the value of the expression.  For example "angle = 35.6"
 #define debugPrint(e) (std::cout << #e" = " << (e) << std::endl << std::flush)
 
+// Just for convenience in hand-written prototypes and tests:
+const float pi = M_PI;
+
 // True when a and b differ by no more than epsilon.
 bool withinEpsilon(float a, float b, float epsilon);
 
