@@ -13,6 +13,7 @@
 #include <iostream>
 #include <limits>
 #include <vector>
+#include <cassert>
 class Vec2;
 
 // for debugging: prints one line with a given C expression, an equals sign,

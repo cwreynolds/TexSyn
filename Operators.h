@@ -137,3 +137,49 @@ private:
     const float huePhase;
     const Texture& texture;
 };
+
+// Wrap a given portion of a half-plane radially around a given center point,
+// keeping the texture along a given ray unchanged.
+//
+// The parameters are the "width" of a vertical slice of the half-plane which
+// will be wrapped, the "center" of rotation, a "fixed_axis" vector indicating
+// the orientation of the fixed point ray extending from the center, and the
+// source "texture".
+//
+// Consider the "fixed_axis" to be the +Y axis of a space with "center" at its
+// origin. For any point on the X axis from [-width, width] consider the ray
+// parallel to +Y. The X coordinate is mapped to an angle of rotation from +Y.
+//
+class Wrap : public Operator
+{
+public:
+    Wrap(float _width, Vec2 _center, Vec2 _fixed_axis, const Texture& _texture)
+      : width(_width),
+        center(_center),
+        fixed_axis(_fixed_axis),
+        texture(_texture) {}
+
+
+    Color getColor(Vec2 position) const override
+    {
+        // TODO currently assume that center is at the origin, and that
+        // fixed_axis is the +y direction.
+        assert(center == Vec2(0, 0));
+        assert(fixed_axis == Vec2(0, 1));
+
+        Vec2 o = position - center;
+        // TODO need to map into space where fixed_axis is +y axis
+        Vec2 p = o;
+
+        // measure angle (0 parallel to +y axis, pi parallel to -y axis).
+        float angle = atan2 (p.x(), p.y());
+        float radius = p.length();
+        Vec2 new_point(remapInterval(angle, -pi, pi, -width, width), radius);
+        return texture.getColor(new_point);
+    }
+private:
+    const float width;
+    const Vec2 center;
+    const Vec2 fixed_axis;
+    const Texture& texture;
+};

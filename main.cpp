@@ -151,8 +151,8 @@ int main(int argc, const char * argv[])
     Grating blue_stripes(Vec2(), Color(), Vec2(0.1, 0.2), Color(0, 0, 1), 0.8);
     Gradation red_grad(Vec2(), Color(1, 0, 0), Vec2(0, 1), Color());
     Add both(blue_stripes, red_grad);
-
-    Texture::displayInWindow({&blue_stripes, &red_grad, &both});
+    Wrap wrap(5, Vec2(), Vec2(0, 1), both);
+    Texture::displayInWindow({&blue_stripes, &red_grad, &both, &wrap});
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
