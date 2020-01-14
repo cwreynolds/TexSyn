@@ -124,27 +124,35 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
-    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
-    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
-        
-    // Following graygratings and BrightnessToHue examples from 2009
-    float angle = pi *  0.6;
-    float frequency = 25;
-    Vec2 basis(0, 2 * pi / frequency);
-    Vec2 basis1 = basis.rotate(+angle);
-    Vec2 basis2 = basis.rotate(-angle);
-    Vec2 origin(0, 0);
-    Color black(0, 0, 0);
-    Color white(1, 1, 1);
-    Color gray25(0.25, 0.25, 0.25);
-    Grating g1(origin, black, basis1, gray25, 1);
-    Grating g2(origin, black, basis2, gray25, 1);
-    Grating g0(origin, black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
-    Add s0(g1, g2);
-    Add graygratings(g0, s0);
-    //graygratings.displayInWindow();
-    BrightnessToHue(0, graygratings).displayInWindow();
+//    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
+//    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
+//    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
+//
+//    // Following graygratings and BrightnessToHue examples from 2009
+//    float angle = pi *  0.6;
+//    float frequency = 25;
+//    Vec2 basis(0, 2 * pi / frequency);
+//    Vec2 basis1 = basis.rotate(+angle);
+//    Vec2 basis2 = basis.rotate(-angle);
+//    Vec2 origin(0, 0);
+//    Color black(0, 0, 0);
+//    Color white(1, 1, 1);
+//    Color gray25(0.25, 0.25, 0.25);
+//    Grating g1(origin, black, basis1, gray25, 1);
+//    Grating g2(origin, black, basis2, gray25, 1);
+//    Grating g0(origin, black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
+//    Add s0(g1, g2);
+//    Add graygratings(g0, s0);
+//    //graygratings.displayInWindow();
+//    BrightnessToHue(0, graygratings).displayInWindow();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    Grating blue_stripes(Vec2(), Color(), Vec2(0.1, 0.2), Color(0, 0, 1), 0.8);
+    Gradation red_grad(Vec2(), Color(1, 0, 0), Vec2(0, 1), Color());
+    Add both(blue_stripes, red_grad);
+
+    Texture::displayInWindow({&blue_stripes, &red_grad, &both});
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

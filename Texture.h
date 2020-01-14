@@ -10,6 +10,7 @@
 #include "Vec2.h"
 #include "Color.h"
 #include "Utilities.h"
+#include <vector>
 
 // TODO does it make sense to call it a “pixel” since they need not be arranged
 // in a regular rectangular grid? Possibly a ColorSample or ColorPoint (or
@@ -29,8 +30,11 @@ public:
     Texture(){}
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
-    // Display this Texture in a pop-up OpenCV window.
-    void displayInWindow(int size = 511) const;
+    // Display this Texture in a pop-up OpenCV window, wait for key, then close.
+    void displayInWindow(int size = 511, bool wait = true) const;
+    // Display a collection of Textures, each in a window, then wait for a char.
+    static void displayInWindow(std::vector<Texture*> textures,
+                                int size = 511, bool wait = true);
     // Reset statistics for debugging.
     void resetStatistics() const;
     // Collect statistics for debugging.

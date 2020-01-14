@@ -14,8 +14,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
-// Display this Texture in a pop-up OpenCV window.
-void Texture::displayInWindow(int size) const
+// Display this Texture in a pop-up OpenCV window, wait for key, then close.
+void Texture::displayInWindow(int size, bool wait) const
 {
     // Make a 3-float OpenCV Mat instance
     cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
@@ -48,9 +48,24 @@ void Texture::displayInWindow(int size) const
     debugPrint(max_x);
     debugPrint(min_y);
     debugPrint(max_y);
-    cv::namedWindow("TexSyn");       // Create a window for display.
-    imshow("TexSyn", opencv_image);  // Show our image inside it.
-    cv::waitKey(0);                  // Wait for a keystroke in the window.
+    static int window_counter = 0;
+    static int window_position = 0;
+    std::string window_name = "TexSyn" + std::to_string(window_counter++);
+    cv::namedWindow(window_name);       // Create a window for display.
+    cv::moveWindow(window_name, window_position, window_position);
+    window_position += 30;
+    cv::imshow(window_name, opencv_image);  // Show our image inside it.
+    if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
+}
+
+// Display a collection of Textures, each in a window, then wait for a char.
+void Texture::displayInWindow(std::vector<Texture*> textures,
+                              int size,
+                              bool wait)
+{
+    for (auto& t : textures) t->displayInWindow(size, false);
+    // Wait for keystroke, close windows, exit function.
+    if (wait) cv::waitKey(0);
 }
 
 // Reset statistics for debugging.
