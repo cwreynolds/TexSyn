@@ -124,26 +124,26 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
-    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
-    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
-
-    // Following graygratings and BrightnessToHue examples from 2009
-    float angle = pi *  0.6;
-    float frequency = 25;
-    Vec2 basis(0, pi / frequency);
-    Vec2 basis1 = basis.rotate(+angle);
-    Vec2 basis2 = basis.rotate(-angle);
-    Color black(0, 0, 0);
-    Color white(1, 1, 1);
-    Color gray25(0.25, 0.25, 0.25);
-    Grating g1(-basis1, black, basis1, gray25, 1);
-    Grating g2(-basis2, black, basis2, gray25, 1);
-    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
-    Add s0(g1, g2);
-    Add graygratings(g0, s0);
-    BrightnessToHue bth(0, graygratings);
-    Texture::displayInWindow({&g0, &g1, &g2, &s0, &graygratings, &bth});
+//    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
+//    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
+//    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
+//
+//    // Following graygratings and BrightnessToHue examples from 2009
+//    float angle = pi *  0.6;
+//    float frequency = 25;
+//    Vec2 basis(0, pi / frequency);
+//    Vec2 basis1 = basis.rotate(+angle);
+//    Vec2 basis2 = basis.rotate(-angle);
+//    Color black(0, 0, 0);
+//    Color white(1, 1, 1);
+//    Color gray25(0.25, 0.25, 0.25);
+//    Grating g1(-basis1, black, basis1, gray25, 1);
+//    Grating g2(-basis2, black, basis2, gray25, 1);
+//    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
+//    Add s0(g1, g2);
+//    Add graygratings(g0, s0);
+//    BrightnessToHue bth(0, graygratings);
+//    Texture::displayInWindow({&g0, &g1, &g2, &s0, &graygratings, &bth});
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
@@ -153,6 +153,27 @@ int main(int argc, const char * argv[])
 //    Wrap wrap(5, Vec2(), Vec2(0, 1), both);
 //    Texture::displayInWindow({&blue_stripes, &red_grad, &both, &wrap});
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    
+    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
+    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+    Add plaid(red_stripes, green_stripes);
+    // With identity transform.
+    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
+    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
+    // (-1, -1). Also noticable aliasing near "center".
+    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
+    Texture::displayInWindow({
+        &red_stripes,
+        &green_stripes,
+        &plaid,
+        &wrap1,
+        &wrap2});
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

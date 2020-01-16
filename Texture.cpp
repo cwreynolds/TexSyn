@@ -44,10 +44,10 @@ void Texture::displayInWindow(int size, bool wait) const
         }
     }
     // TODO temporary for debugging/testing reconsider a more permanent version.
-    debugPrint(min_x);
-    debugPrint(max_x);
-    debugPrint(min_y);
-    debugPrint(max_y);
+//    debugPrint(min_x);
+//    debugPrint(max_x);
+//    debugPrint(min_y);
+//    debugPrint(max_y);
     static int window_counter = 0;
     static int window_position = 0;
     std::string window_name = "TexSyn" + std::to_string(window_counter++);

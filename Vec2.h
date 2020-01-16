@@ -31,9 +31,12 @@ public:
     bool operator==(const Vec2 v) const { return x() == v.x() && y() == v.y(); }
     bool operator<(const Vec2 v) const {return length() < v.length();}
     // Rotation about origin by angle in radians (or by precomputed sin/cos).
+    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
     inline Vec2 rotate(float sin, float cos) const
         { return Vec2(x() * cos + y() * sin, y() * cos - x() * sin); }
-    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
+    // 90° (π/2) rotation
+    Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
+    Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
     // Generate a random point inside a unit diameter disk centered on origin.
     static Vec2 randomPointInUnitDiameterCircle();
     // Generate a random unit vector.
