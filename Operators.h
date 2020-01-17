@@ -182,13 +182,6 @@ private:
     const Texture& texture;
 };
 
-// TODO VERY TEMP!
-// TODO old api just to allow compiling StretchSpot.
-// TODO originally this was defined in the old Texture.h
-// TODO replace with something better.
-// TODO this corresponds to a constant in new Texture.h
-static int maxPixelDiameter() { return 511; }
-
 // Modifies the given texture within a disk of "radius" around "center", doing a
 // "fisheye" expansion of the center of the disk (when center_magnification > 1)
 // or a contraction (when center_magnification < 1).
@@ -202,16 +195,9 @@ public:
         center_magnification(_center_magnification),
         outer_radius(radius),
         center(_center),
-        texture(_texture),
-        inverse_lut(std::make_shared<std::vector<float>>(maxPixelDiameter()))
+        texture(_texture)
     {
-        initializeInverseLUT();
-    }
-    ~StretchSpot()
-    {
-        // TODO is this even necessary? Won't the vector be destroyed as the
-        // pointer goes out of scope as the instance is destroyed?
-        inverse_lut = nullptr;
+        ifNeededInitializeInverseLUT();
     }
     Color getColor(Vec2 position) const override
     {
@@ -236,17 +222,18 @@ public:
     }
     float inverseRemapper(float rr) const
     {
-        int i = int(std::round(rr * (maxPixelDiameter() - 1)));
+        int i = int(std::round(rr * (lutSize() - 1)));
         return inverse_lut->at(i) / rr;
     }
-    void initializeInverseLUT()
+    void ifNeededInitializeInverseLUT()
     {
         if (center_magnification < 1)
         {
+            inverse_lut = std::make_shared<std::vector<float>>(lutSize());
             float lastQ = 0;
             int i = 0;
             inverse_lut->at(0) = 0;
-            float inverseRes = 1.0 / maxPixelDiameter();
+            float inverseRes = 1.0 / lutSize();
             for (float r = 0; r <= 1; r = r + (inverseRes * 0.01))
             {
                 float q = r * remapper (r);
@@ -254,13 +241,13 @@ public:
                 if (d > inverseRes)
                 {
                     i++;
-                    if (i == maxPixelDiameter()) break;
+                    if (i == lutSize()) break;
                     inverse_lut->at(i) = r;
                     lastQ = q;
                 }
             }
             // Fill out LUT in case of numerical error.
-            for (; i<maxPixelDiameter() - 1; ) { inverse_lut->at(++i) = 1; }
+            for (; i<lutSize() - 1; ) { inverse_lut->at(++i) = 1; }
         }
     }
 private:
@@ -269,4 +256,14 @@ private:
     const Vec2 center;
     const Texture& texture;
     std::shared_ptr<std::vector<float>> inverse_lut;
+    
+    // Note that this is massive overkill. The current design looks up a single
+    // value in the inverse LUT. This could be much smaller if it interpolated
+    // between adjacent values in the LUT. Perhaps it make sense to trade memory
+    // for code simplicity. This value was chosen by drawing 511 pixel diameter
+    // test textures using this code and visually inspecting for "smooth" edges.
+    //     Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
+    //                          Vec2(0.1, 0), Color(0, 0, 0), 0.2);
+    //     StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
+    int lutSize() const { return 10000; }
 };
