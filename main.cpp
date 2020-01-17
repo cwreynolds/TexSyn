@@ -155,24 +155,42 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
+//    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+//                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+//    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+//                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+//    Add plaid(red_stripes, green_stripes);
+//    // With identity transform.
+//    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
+//    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
+//    // (-1, -1). Also noticable aliasing near "center".
+//    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
+//    Texture::displayInWindow({
+//        &red_stripes,
+//        &green_stripes,
+//        &plaid,
+//        &wrap1,
+//        &wrap2});
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
+    // Demo for StretchSpot, Jan 16
     Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
                         Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
     Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
                           Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
     Add plaid(red_stripes, green_stripes);
-    // With identity transform.
-    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
-    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
-    // (-1, -1). Also noticable aliasing near "center".
-    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
-    Texture::displayInWindow({
-        &red_stripes,
-        &green_stripes,
-        &plaid,
-        &wrap1,
-        &wrap2});
+    
+    float radius = 0.8;
+    float dist = 0.65;
+    StretchSpot ss1(4.0, radius, Vec2(+dist, +dist), plaid);
+    StretchSpot ss2(0.2, radius, Vec2(-dist, +dist), ss1);
+    StretchSpot ss3(0.2, radius, Vec2(-dist, -dist), ss2);
+    StretchSpot ss4(4.0, radius, Vec2(+dist, -dist), ss3);
+    StretchSpot ss5(4.0, radius, Vec2(-dist, -dist), ss2);
+    StretchSpot ss6(0.2, radius, Vec2(+dist, -dist), ss5);
+    Texture::displayInWindow({ &plaid, &ss4, &ss6 });
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -181,3 +181,92 @@ private:
     const Vec2 fixed_ray;
     const Texture& texture;
 };
+
+// TODO VERY TEMP!
+// TODO old api just to allow compiling StretchSpot.
+// TODO originally this was defined in the old Texture.h
+// TODO replace with something better.
+// TODO this corresponds to a constant in new Texture.h
+static int maxPixelDiameter() { return 511; }
+
+// Modifies the given texture within a disk of "radius" around "center", doing a
+// "fisheye" expansion of the center of the disk (when center_magnification > 1)
+// or a contraction (when center_magnification < 1).
+class StretchSpot : public Operator
+{
+public:
+    StretchSpot(float _center_magnification,
+                float radius,
+                Vec2 _center,
+                const Texture& _texture) :
+        center_magnification(_center_magnification),
+        outer_radius(radius),
+        center(_center),
+        texture(_texture),
+        inverse_lut(std::make_shared<std::vector<float>>(maxPixelDiameter()))
+    {
+        initializeInverseLUT();
+    }
+    ~StretchSpot()
+    {
+        // TODO is this even necessary? Won't the vector be destroyed as the
+        // pointer goes out of scope as the instance is destroyed?
+        inverse_lut = nullptr;
+    }
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float radius = offset.length();
+        float relative_radius = radius / outer_radius;
+        float s = (relative_radius == 0 ? 0 :
+                   ((relative_radius > 1) ? 1 :
+                    ((center_magnification < 1) ?
+                     inverseRemapper (relative_radius) :
+                     remapper (relative_radius))));
+        return texture.getColor((offset * s) + center);
+    }
+    // maps from relative radius to magnification multiplier between 0 and 1
+    float remapper(float rr) const
+    {
+        return interpolate(interpolate (rr, rr, sinusoid (rr)),
+                           ((center_magnification > 1) ?
+                            (1 / center_magnification) :
+                            center_magnification),
+                           1.0f);
+    }
+    float inverseRemapper(float rr) const
+    {
+        int i = int(std::round(rr * (maxPixelDiameter() - 1)));
+        return inverse_lut->at(i) / rr;
+    }
+    void initializeInverseLUT()
+    {
+        if (center_magnification < 1)
+        {
+            float lastQ = 0;
+            int i = 0;
+            inverse_lut->at(0) = 0;
+            float inverseRes = 1.0 / maxPixelDiameter();
+            for (float r = 0; r <= 1; r = r + (inverseRes * 0.01))
+            {
+                float q = r * remapper (r);
+                float d = q - lastQ;
+                if (d > inverseRes)
+                {
+                    i++;
+                    if (i == maxPixelDiameter()) break;
+                    inverse_lut->at(i) = r;
+                    lastQ = q;
+                }
+            }
+            // Fill out LUT in case of numerical error.
+            for (; i<maxPixelDiameter() - 1; ) { inverse_lut->at(++i) = 1; }
+        }
+    }
+private:
+    const float center_magnification;
+    const float outer_radius;
+    const Vec2 center;
+    const Texture& texture;
+    std::shared_ptr<std::vector<float>> inverse_lut;
+};
