@@ -122,3 +122,24 @@ namespace PerlinNoise
     // in a circle at origin with diameter of 100.
     std::pair<float, float> measure_range(std::function<float(Vec2)> noise_func);
 };
+
+// Generic look up table. Currently only used in Texture Operator StretchSpot,
+// so current design is skewed toward that. Could be generalized and made into a
+// type agnostic template, but for now (2020-01-18) my goal is just to move some
+// code from StretchSpot to here.
+//
+// A table of N "output" (y) values correspoding to "input" (x) values between.
+// TODO interpolation
+//
+class LookupTable
+{
+public:
+    LookupTable(int size) { table_.resize(size, 0); }
+    LookupTable(int size, float value) { table_.resize(size, value); }
+    size_t size() const { return table_.size(); }
+    float lookup(float input) const { return table_.at(std::floor(input)); }
+private:
+    std::vector<float> table_;
+    float minimum_input_value_ = 0;
+    float maximum_input_value_ = 1;
+};

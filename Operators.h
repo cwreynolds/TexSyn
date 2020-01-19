@@ -222,8 +222,18 @@ public:
     }
     float inverseRemapper(float rr) const
     {
-        int i = int(std::round(rr * (lutSize() - 1)));
-        return inverse_lut->at(i) / rr;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+//        int i = int(std::round(rr * (lutSize() - 1)));
+//        return inverse_lut->at(i) / rr;
+                
+        // TODO maybe this?
+        float factor = 10;
+        float curve = 1 / ((rr + (1 / factor)) * factor);
+        float extra = 1 / ((1  + (1 / factor)) * factor);
+        return ((curve - extra) / center_magnification)  + 1;
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     void ifNeededInitializeInverseLUT()
     {
@@ -250,6 +260,22 @@ public:
             for (; i<lutSize() - 1; ) { inverse_lut->at(++i) = 1; }
         }
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO TEMP TEST for plotting normal/inverse mapping factor
+    void printData()
+    {
+        std::cout << "rel_radius,scale" << std::endl;
+        for (float relative_radius = 0;
+             relative_radius < 1;
+             relative_radius += 0.01)
+        {
+            float scale = ((center_magnification < 1) ?
+                           inverseRemapper (relative_radius) :
+                           remapper (relative_radius));
+            std::cout << relative_radius << "," << scale << std::endl;
+        }
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     const float center_magnification;
     const float outer_radius;

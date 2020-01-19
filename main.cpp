@@ -196,6 +196,7 @@ int main(int argc, const char * argv[])
 //                         Vec2(0.1, 0), Color(0, 0, 0), 0.2);
 //    StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
 
+//    // TODO TEMP TEST for test for memory leaks
 //    Color c(0, 0, 0);
 //    int count = 10000;
 //    for (int i = 0; i < count; i++)
@@ -205,6 +206,23 @@ int main(int argc, const char * argv[])
 //        if (((i + 1) % (count / 100)) == 0) debugPrint(c);
 //    }
 //    debugPrint(c);
+    
+//    // TODO TEMP TEST for refactoring inverse side to replace LUT
+//    Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
+//                         Vec2(0.1, 0), Color(0, 0, 0), 0.2);
+//    std::cout << std::endl << "0.1" << std::endl << std::endl;
+//    StretchSpot(0.1, 10, Vec2(-5, 0), vert_stripes).printData();
+//    std::cout << std::endl << "0.5" << std::endl << std::endl;
+//    StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).printData();
+//    std::cout << std::endl << "2.0" << std::endl << std::endl;
+//    StretchSpot(2.0, 10, Vec2(-5, 0), vert_stripes).printData();
+    
+//    //super temp
+//    Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
+//                         Vec2(0.1, 0), Color(0, 0, 0), 0.3);
+//    StretchSpot(0.1, 1.5, Vec2(-0.5, 0), vert_stripes).displayInWindow();
+
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
