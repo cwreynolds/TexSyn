@@ -59,7 +59,7 @@ void Texture::displayInWindow(int size, bool wait) const
 }
 
 // Display a collection of Textures, each in a window, then wait for a char.
-void Texture::displayInWindow(std::vector<Texture*> textures,
+void Texture::displayInWindow(std::vector<const Texture*> textures,
                               int size,
                               bool wait)
 {

@@ -33,7 +33,7 @@ public:
     // Display this Texture in a pop-up OpenCV window, wait for key, then close.
     void displayInWindow(int size = 511, bool wait = true) const;
     // Display a collection of Textures, each in a window, then wait for a char.
-    static void displayInWindow(std::vector<Texture*> textures,
+    static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = 511, bool wait = true);
     // Reset statistics for debugging.
     void resetStatistics() const;

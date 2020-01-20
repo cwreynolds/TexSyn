@@ -53,6 +53,7 @@ public:
     Color operator-(Color v) const;
     Color operator*(float s) const;
     Color operator/(float s) const { return *this * (1 / s); };
+    Color operator+=(const Color& rhs) { return *this = *this + rhs; }
     // Length and normalize in linear RGB space.
     float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
     Color normalize() const { return *this / length(); }

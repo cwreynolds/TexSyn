@@ -12,6 +12,55 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO needs to go somewhere else
+// TODO originally had it in Texture but it wants to use Operators derived from that.
+
+// Compare two Textures: compute average per-pixel color difference, display
+// the two textures and the "distance" between them (abs diff?).
+void texture_diff(const Texture& t0, const Texture& t1)
+{
+    AbsDiff abs_diff(t0, t1);
+    int pixel_count = 0;
+    Color total_color(0, 0, 0);
+    
+    // TODO copied this rasterizer wrapper from Texture::displayInWindow()
+    // TODO should be made into a reusable utility
+    int size = 511;
+    int half = size / 2;
+    for (int i = -half; i <= half; i++)
+    {
+        for (int j = -half; j <= half; j++)
+        {
+            float radius = std::sqrt(sq(i) + sq(j));
+            if (radius <= half)
+            {
+//                // Read TexSyn Color from Texture.
+//                Vec2 position(i / float(half), j / float(half));
+//                Color color = getColorClipped(position);
+//                // Make OpenCV color, with reversed component order.
+//                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                // Make OpenCV location for pixel.
+//                cv::Point opencv_position(half + i, half - j);
+//                // Write corresponding OpenCV color to pixel:
+//                opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                // Collect statistics
+//                // collectStatistics(position, color);
+                
+                Vec2 position(i / float(half), j / float(half));
+                Color diff = abs_diff.getColor(position);
+                total_color += diff;
+                pixel_count++;
+            }
+        }
+    }
+    debugPrint(pixel_count);
+    debugPrint(total_color);
+    debugPrint(total_color / pixel_count);
+    Texture::displayInWindow({ &t0, &t1, &abs_diff }, 451);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 int main(int argc, const char * argv[])
 {
     // TODO TEMP run unit tests
@@ -222,6 +271,54 @@ int main(int argc, const char * argv[])
 //                         Vec2(0.1, 0), Color(0, 0, 0), 0.3);
 //    StretchSpot(0.1, 1.5, Vec2(-0.5, 0), vert_stripes).displayInWindow();
 
+
+//    // Using texture_diff to try to tune the closed form expression (used in
+//    // StretchSpot2) to match the results from the inverse LUT. Short answer:
+//    // I could get a given pair of center_magnification and radius to match
+//    // closely but could not find a way to make it match closely to arbitrary
+//    // parameters.
+//    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+//                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+//    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+//                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+//    Add plaid(red_stripes, green_stripes);
+
+//    // First Sunday test
+//    StretchSpot ss1(0.2, 0.6, Vec2(0, 0), plaid);
+//    StretchSpot2 ss2(0.2, 0.6, Vec2(0, 0), plaid);
+//    texture_diff(ss1, ss2);
+
+//    // Second Sunday test (ignore)
+//    StretchSpot ss1(5, 0.6, Vec2(0, 0), plaid);
+//    StretchSpot2 ss2(5, 0.6, Vec2(0, 0), plaid);
+//    texture_diff(ss1, ss2);
+
+//    // Third Sunday test
+//    StretchSpot ss1(0.5, 0.6, Vec2(0, 0), plaid);
+//    StretchSpot2 ss2(0.5, 0.6, Vec2(0, 0), plaid);
+//    texture_diff(ss1, ss2);
+
+//    // fourth Sunday test
+//    StretchSpot  ss1(0.25, 1, Vec2(0, 0), plaid);
+//    StretchSpot2 ss2(0.25, 1, Vec2(0, 0), plaid);
+//    texture_diff(ss1, ss2);
+
+//    // fifth Sunday test
+//    StretchSpot  ss1(0.1, 1, Vec2(0, 0), plaid);
+//    StretchSpot2 ss2(0.1, 1, Vec2(0, 0), plaid);
+//    texture_diff(ss1, ss2);
+
+    
+    
+//        // TODO TEMP TEST related to size of inverse LUT
+//        Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
+//                             Vec2(0.1, 0), Color(0, 0, 0), 0.2);
+//    //    StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
+//    //    StretchSpot2(0.5, 5, Vec2(-5, 0), vert_stripes).displayInWindow();
+//    //    StretchSpot2(0.5, 2, Vec2(-1, 0), plaid).displayInWindow();
+//    //    StretchSpot2(0.5, 2, Vec2(-1, 0), plaid).displayInWindow();
+//    //    StretchSpot2(0.5, 1.75, Vec2(-1, 0), plaid).displayInWindow();
+//        StretchSpot2(0.5, 1.75, Vec2(-1, 0), vert_stripes).displayInWindow();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
