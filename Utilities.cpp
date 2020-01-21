@@ -176,6 +176,21 @@ namespace PerlinNoise
         return remapIntervalClip(value, 0, 1.9, 0, 1);
     }
 
+    // Returns result of one of the noise functions (unitNoise2d, turbulence2d,
+    // brownian2d, furbulence2d, wrapulence2d -- selected according to "which")
+    // applied to "position".
+    float multiNoise2d(Vec2 position, float which)
+    {
+        switch(int(fmod_floor(which, 1) * 5))
+        {
+            case  0: return PerlinNoise::unitNoise2d(position);
+            case  1: return PerlinNoise::brownian2d(position);
+            case  2: return PerlinNoise::turbulence2d(position);
+            case  3: return PerlinNoise::furbulence2d(position);
+            default: return PerlinNoise::wrapulence2d(position);
+        }
+    }
+
     // Tool to measure typical range of a noise function. Returns min and max
     // range from calling given noise function 100000 times for random points
     // in a circle at origin with diameter of 100.

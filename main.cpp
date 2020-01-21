@@ -138,7 +138,7 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    // Comparison of 5 noise varieties, test for MultiNoise.
+//    // Comparison of 5 noise varieties, test for MultiNoise. (Jan 12, 2020)
 //    {
 //        float scale = 0.3;
 //        Vec2 center(0, 0);
@@ -224,21 +224,21 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for StretchSpot, Jan 16
-    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
-                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
-    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
-                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
-    Add plaid(red_stripes, green_stripes);
-    float radius = 0.8;
-    float dist = 0.65;
-    StretchSpot ss1(4.0, radius, Vec2(+dist, +dist), plaid);
-    StretchSpot ss2(0.2, radius, Vec2(-dist, +dist), ss1);
-    StretchSpot ss3(0.2, radius, Vec2(-dist, -dist), ss2);
-    StretchSpot ss4(4.0, radius, Vec2(+dist, -dist), ss3);
-    StretchSpot ss5(4.0, radius, Vec2(-dist, -dist), ss2);
-    StretchSpot ss6(0.2, radius, Vec2(+dist, -dist), ss5);
-    Texture::displayInWindow({ &plaid, &ss4, &ss6 });
+//    // Demo for StretchSpot, Jan 16
+//    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+//                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+//    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+//                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+//    Add plaid(red_stripes, green_stripes);
+//    float radius = 0.8;
+//    float dist = 0.65;
+//    StretchSpot ss1(4.0, radius, Vec2(+dist, +dist), plaid);
+//    StretchSpot ss2(0.2, radius, Vec2(-dist, +dist), ss1);
+//    StretchSpot ss3(0.2, radius, Vec2(-dist, -dist), ss2);
+//    StretchSpot ss4(4.0, radius, Vec2(+dist, -dist), ss3);
+//    StretchSpot ss5(4.0, radius, Vec2(-dist, -dist), ss2);
+//    StretchSpot ss6(0.2, radius, Vec2(+dist, -dist), ss5);
+//    Texture::displayInWindow({ &plaid, &ss4, &ss6 });
 
 //    // TODO TEMP TEST related to size of inverse LUT
 //    Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
@@ -256,6 +256,14 @@ int main(int argc, const char * argv[])
 //    }
 //    debugPrint(c);
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Demo for ColorNoise, Jan 20
+    ColorNoise cn1(1, Vec2(-7, 4), 0.1);
+    ColorNoise cn2(0.5, Vec2(-18, -20), 0.8);
+    ColorNoise cn3(0.08, Vec2(15, -12), 0.6);
+    Texture::displayInWindow({ &cn1, &cn2, &cn3 });
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

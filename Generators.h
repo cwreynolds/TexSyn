@@ -252,25 +252,16 @@ public:
     MultiNoise(float _scale, Vec2 _center,
                Color _color0, Color _color1,
                float _which)
-      : scale (_scale),
+      : scale(_scale),
         center(_center),
         color0(_color0),
         color1(_color1),
         which(_which) {};
     Color getColor(Vec2 position) const override
     {
-        float f = 0;
         Vec2 adjusted = (position - center) / scale;
-        int w = fmod_floor(which, 1) * 5;
-        switch(w)
-        {
-            case 0:  f = PerlinNoise::unitNoise2d(adjusted);  break;
-            case 1:  f = PerlinNoise::brownian2d(adjusted);   break;
-            case 2:  f = PerlinNoise::turbulence2d(adjusted); break;
-            case 3:  f = PerlinNoise::furbulence2d(adjusted); break;
-            default: f = PerlinNoise::wrapulence2d(adjusted);
-        }
-        return interpolate(f, color0, color1);
+        float noise = PerlinNoise::multiNoise2d(adjusted, which);
+        return interpolate(noise, color0, color1);
     }
 private:
     const float scale;
@@ -278,4 +269,35 @@ private:
     const Color color0;
     const Color color1;
     const float which;
+};
+
+// Color Noise -- RGB Perlin Noise
+// (TODO should this have a "which" parameter like MultiNoise? Maybe there
+// should be a PerlinNoise::multiNoise2d() helper function?)
+class ColorNoise : public Generator
+{
+public:
+    ColorNoise(float _scale, Vec2 _center, float _which)
+      : scale(_scale),
+        center(_center),
+        which(_which),
+        offset1(Vec2(1, 0)),
+        offset2(offset1.rotate(pi * 2 / 3)),
+        offset3(offset2.rotate(pi * 2 / 3)) {};
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 p1 = ((position + offset1 - center) / scale).rotate(0.3);
+        Vec2 p2 = ((position + offset2 - center) / scale).rotate(0.6);
+        Vec2 p3 = ((position + offset3 - center) / scale).rotate(0.9);
+        return Color(PerlinNoise::multiNoise2d(p1, which),
+                     PerlinNoise::multiNoise2d(p2, which),
+                     PerlinNoise::multiNoise2d(p3, which));
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const float which;
+    const Vec2 offset1;
+    const Vec2 offset2;
+    const Vec2 offset3;
 };

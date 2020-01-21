@@ -117,6 +117,10 @@ namespace PerlinNoise
     // value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
     // all scales.
     float wrapulence2d(Vec2 position);
+    // Returns result of one of the noise functions (unitNoise2d, turbulence2d,
+    // brownian2d, furbulence2d, wrapulence2d -- selected according to "which")
+    // applied to "position".
+    float multiNoise2d(Vec2 position, float which);
     // Tool to measure typical range of a noise function. Returns min and max
     // range from calling given noise function 100000 times for random points
     // in a circle at origin with diameter of 100.
