@@ -23,42 +23,23 @@ void texture_diff(const Texture& t0, const Texture& t1)
     AbsDiff abs_diff(t0, t1);
     int pixel_count = 0;
     Color total_color(0, 0, 0);
-    
-    // TODO copied this rasterizer wrapper from Texture::displayInWindow()
-    // TODO should be made into a reusable utility
     int size = 511;
-    int half = size / 2;
-    for (int i = -half; i <= half; i++)
+    auto f = [&](int i, int j, Vec2 position, bool inside_radius)
     {
-        for (int j = -half; j <= half; j++)
+        if (inside_radius)
         {
-            float radius = std::sqrt(sq(i) + sq(j));
-            if (radius <= half)
-            {
-//                // Read TexSyn Color from Texture.
-//                Vec2 position(i / float(half), j / float(half));
-//                Color color = getColorClipped(position);
-//                // Make OpenCV color, with reversed component order.
-//                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-//                // Make OpenCV location for pixel.
-//                cv::Point opencv_position(half + i, half - j);
-//                // Write corresponding OpenCV color to pixel:
-//                opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
-//                // Collect statistics
-//                // collectStatistics(position, color);
-                
-                Vec2 position(i / float(half), j / float(half));
-                Color diff = abs_diff.getColor(position);
-                total_color += diff;
-                pixel_count++;
-            }
+            Color diff = abs_diff.getColor(position);
+            total_color += diff;
+            pixel_count++;
         }
-    }
+    };
+    Texture::rasterizer(size, f);
     debugPrint(pixel_count);
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);
     Texture::displayInWindow({ &t0, &t1, &abs_diff }, 451);
 }
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 int main(int argc, const char * argv[])
@@ -258,11 +239,18 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Demo for ColorNoise, Jan 20
-    ColorNoise cn1(1, Vec2(-7, 4), 0.1);
-    ColorNoise cn2(0.5, Vec2(-18, -20), 0.8);
-    ColorNoise cn3(0.08, Vec2(15, -12), 0.6);
-    Texture::displayInWindow({ &cn1, &cn2, &cn3 });
+//    // Demo for ColorNoise, Jan 20
+//    ColorNoise cn1(1, Vec2(-7, 4), 0.1);
+//    ColorNoise cn2(0.5, Vec2(-18, -20), 0.8);
+//    ColorNoise cn3(0.08, Vec2(15, -12), 0.6);
+//    Texture::displayInWindow({ &cn1, &cn2, &cn3 });
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Testing Texture::rasterizer() Jan 20, 2020
+    Noise n(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
+    Grating g(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
+    texture_diff(n, g);
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

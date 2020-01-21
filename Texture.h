@@ -39,6 +39,12 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
+    // Utility for the wrapper used for rasterizing Textures. Given resolution/
+    // size of raster: do nested loops over rows and columns, applying the
+    // given function at each pixel.
+    static void rasterizer(int size, std::function<void(int i, int j,
+                                                        Vec2 position,
+                                                        bool inside_radius)> f);
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
