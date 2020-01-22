@@ -21,24 +21,21 @@ void Texture::displayInWindow(int size, bool wait) const
     cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
     // Reset statistics for debugging.
     resetStatistics();
-    // Function to be applied to each pixel in the rasterizer.
-    auto f = [&](int i, int j, Vec2 position, bool inside_radius)
-    {
-        if (inside_radius)
-        {
-            // Read TexSyn Color from Texture.
-            Color color = getColorClipped(position);
-            // Make OpenCV color, with reversed component order.
-            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-            // Make OpenCV location for pixel.
-            cv::Point opencv_position((size / 2) + i, (size / 2) - j);
-            // Write corresponding OpenCV color to pixel:
-            opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
-            // Collect statistics
-            // collectStatistics(position, color);
-        }
-    };
-    rasterizer(size, f);
+    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+    rasterizeDisk(size,
+                  [&](int i, int j, Vec2 position)
+                  {
+                      // Read TexSyn Color from Texture.
+                      Color color = getColorClipped(position);
+                      // Make OpenCV color, with reversed component order.
+                      cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+                      // Make OpenCV location for pixel.
+                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+                      // Write corresponding OpenCV color to pixel:
+                      opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+                      // Collect statistics
+                      // collectStatistics(position, color);
+                  });
     // TODO temporary for debugging/testing reconsider a more permanent version.
 //    debugPrint(min_x);
 //    debugPrint(max_x);
@@ -90,13 +87,23 @@ float Texture::max_x = -std::numeric_limits<float>::infinity();
 float Texture::min_y = std::numeric_limits<float>::infinity();
 float Texture::max_y = -std::numeric_limits<float>::infinity();
 
-// Utility for the wrapper used for rasterizing Textures. Given resolution/
-// size of raster: do nested loops over rows and columns, applying the
-// given function at each pixel.
-void Texture::rasterizer(int size,
-                         std::function<void(int i, int j,
-                                            Vec2 position,
-                                            bool inside_radius)> pixel_function)
+// Utilities for rasterizing a Texture to tiling of pixels, with versions
+// for a square and a disk of pixels. Each require a "size" (width of the
+// square or diameter of the disk) and a function to be applied at each
+// pixel. The function's parameters are i/j (column/row) indexes of the
+// pixel raster, and the corresponding Vec2 in Texture space.
+void Texture::rasterizeSquare(int size, PixelFunction pixel_function)
+{
+    int half = size / 2;
+    for (int i = -half; i <= half; i++)
+    {
+        for (int j = -half; j <= half; j++)
+        {
+            pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+        }
+    }
+}
+void Texture::rasterizeDisk(int size, PixelFunction pixel_function)
 {
     int half = size / 2;
     for (int i = -half; i <= half; i++)
@@ -104,9 +111,10 @@ void Texture::rasterizer(int size,
         for (int j = -half; j <= half; j++)
         {
             float radius = std::sqrt(sq(i) + sq(j));
-            bool inside_radius = radius <= half;
-            Vec2 position(i / float(half), j / float(half));
-            pixel_function(i, j, position, inside_radius);
+            if (radius <= half)
+            {
+                pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+            }
         }
     }
 }

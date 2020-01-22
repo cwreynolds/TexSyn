@@ -24,16 +24,13 @@ void texture_diff(const Texture& t0, const Texture& t1)
     int pixel_count = 0;
     Color total_color(0, 0, 0);
     int size = 511;
-    auto f = [&](int i, int j, Vec2 position, bool inside_radius)
-    {
-        if (inside_radius)
-        {
-            Color diff = abs_diff.getColor(position);
-            total_color += diff;
-            pixel_count++;
-        }
-    };
-    Texture::rasterizer(size, f);
+    Texture::rasterizeDisk(size,
+                           [&](int i, int j, Vec2 position)
+                           {
+                               Color diff = abs_diff.getColor(position);
+                               total_color += diff;
+                               pixel_count++;
+                           });
     debugPrint(pixel_count);
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);

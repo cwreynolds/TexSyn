@@ -12,9 +12,8 @@
 #include "Utilities.h"
 #include <vector>
 
-// TODO does it make sense to call it a “pixel” since they need not be arranged
-// in a regular rectangular grid? Possibly a ColorSample or ColorPoint (or
-// Sample or Point)?
+// Nickname for the type of PixelFunction used for rasterization.
+typedef std::function<void(int i, int j, Vec2 position)> PixelFunction;
 
 class AbstractTexture
 {
@@ -39,12 +38,13 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
-    // Utility for the wrapper used for rasterizing Textures. Given resolution/
-    // size of raster: do nested loops over rows and columns, applying the
-    // given function at each pixel.
-    static void rasterizer(int size, std::function<void(int i, int j,
-                                                        Vec2 position,
-                                                        bool inside_radius)> f);
+    // Utilities for rasterizing a Texture to tiling of pixels, with versions
+    // for a square and a disk of pixels. Each require a "size" (width of the
+    // square or diameter of the disk) and a function to be applied at each
+    // pixel. The function's parameters are i/j (column/row) indexes of the
+    // pixel raster, and the corresponding Vec2 in Texture space.
+    static void rasterizeSquare(int size, PixelFunction pixel_function);
+    static void rasterizeDisk(int size, PixelFunction pixel_function);
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
