@@ -207,12 +207,15 @@ private:
     const Texture& texture;
 };
 
+// TODO updated 2009 version
+// TODO remember to remove this after the blog post.
+//
 // scale a Texture along the X axis leaving the Y axis unchanged
 // parameters: scale factor, rotation angle, translation vector
-class Stretch : public Operator
+class Stretch2009 : public Operator
 {
 public:
-    Stretch (float _scale, float _angle, Vec2 _center, const Texture& _texture)
+    Stretch2009(float _scale, float _angle, Vec2 _center, const Texture& _texture)
       : scale(_scale),
         angle(_angle),
         center(_center),
@@ -230,6 +233,38 @@ public:
 private:
     const float scale;
     const float angle;
+    const Vec2 center;
+    const Texture& texture;
+};
+
+// Stretch (scale in one dimension) the given input Texture. The stretching is
+// defined by the first Vec2 argument "stretch". Its magnitude is the scale
+// factor, and its direction is the axis scaling. The "center" argument is the
+// origin of the scaling. It is unchanged by the transform, as is the line
+// through it perpendicular to the "stretch" vector.
+class Stretch : public Operator
+{
+public:
+    Stretch(Vec2 _stretch, Vec2 _center, const Texture& _texture)
+      : scale(_stretch.length()),
+        main_basis(_stretch / scale),
+        perp_basis(main_basis.rotate90degCW()),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float main_distance = offset.dot(main_basis);
+        float perp_distance = offset.dot(perp_basis);
+        float stretched = main_distance / scale;
+        return texture.getColor(center +
+                                main_basis * stretched +
+                                perp_basis * perp_distance);
+    }
+private:
+    const float scale;
+    const Vec2 main_basis;
+    const Vec2 perp_basis;
     const Vec2 center;
     const Texture& texture;
 };
