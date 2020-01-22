@@ -244,10 +244,31 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Testing Texture::rasterizer() Jan 20, 2020
-    Noise n(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
-    Grating g(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
-    texture_diff(n, g);
+//    // Testing Texture::rasterizer() Jan 20, 2020
+//    Noise n(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
+//    Grating g(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
+//    texture_diff(n, g);
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Demo for Stretch texture operator, Jan 21, 2020
+    
+    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+    Stretch st1(0.2, pi / 4, Vec2(0.5, 0.5), cn);
+    
+    float r_in = 0.33;
+    float r_out = 0.35;
+    Vec2 p1(0, 0.4);
+    Vec2 p2 = p1.rotate(2 * pi / 3);
+    Vec2 p3 = p2.rotate(2 * pi / 3);
+    Spot spot1(p1, r_in, Color(1, 1, 0), r_out, Color(0, 0, 0));
+    Spot spot2(p2, r_in, Color(0, 1, 1), r_out, Color(0, 0, 0));
+    Spot spot3(p3, r_in, Color(1, 0, 1), r_out, Color(0, 0, 0));
+    Add a1(spot1, spot2);
+    Add a2(spot3, a1);
+    Stretch st2(2, (-2 * pi / 6) + (pi / 2), p2, a2);
+
+    Texture::displayInWindow({ &cn, &st1, &a2, &st2 });
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

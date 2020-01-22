@@ -207,6 +207,33 @@ private:
     const Texture& texture;
 };
 
+// scale a Texture along the X axis leaving the Y axis unchanged
+// parameters: scale factor, rotation angle, translation vector
+class Stretch : public Operator
+{
+public:
+    Stretch (float _scale, float _angle, Vec2 _center, const Texture& _texture)
+      : scale(_scale),
+        angle(_angle),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 p = position;
+        p = p - center;
+        p = p.rotate(-angle);
+        p = Vec2(p.x() / scale, p.y());
+        p = p.rotate(angle);
+        p = p + center;
+        return texture.getColor(p);
+    }
+private:
+    const float scale;
+    const float angle;
+    const Vec2 center;
+    const Texture& texture;
+};
+
 // Modifies the given texture within a disk of "radius" around "center", doing a
 // "fisheye" expansion of the center of the disk (when center_magnification > 1)
 // or a contraction (when center_magnification < 1).
