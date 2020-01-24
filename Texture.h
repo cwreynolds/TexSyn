@@ -34,6 +34,11 @@ public:
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = 511, bool wait = true);
+    // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
+    // codec, but pathname's extension names the format to be used. Converts to
+    // "24 bit" image (8 bit unsigned values for each of red, green and blue
+    // channels) because most codecs do not support 3xfloat format.
+    void writeToFile(int size, const std::string& pathname) const;
     // Reset statistics for debugging.
     void resetStatistics() const;
     // Collect statistics for debugging.

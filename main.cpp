@@ -12,6 +12,8 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
+bool run_unit_tests = true;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO needs to go somewhere else
 // TODO originally had it in Texture but it wants to use Operators derived from that.
@@ -42,7 +44,7 @@ void texture_diff(const Texture& t0, const Texture& t1)
 int main(int argc, const char * argv[])
 {
     // TODO TEMP run unit tests
-    UnitTests::allTestsOK();
+    if (run_unit_tests) UnitTests::allTestsOK();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -288,6 +290,9 @@ int main(int argc, const char * argv[])
     SliceGrating sg3(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);
     SliceGrating sg4(Vec2(2, 1) * 0.5, Vec2(0.5, 0.5), cn);
     Texture::displayInWindow({ &cn, &sg1, &sg2, &sg3, &sg4 });
+    
+    //sg4.writeToFile(511, "/Users/cwr/Desktop/TexSyn_test.jpg");
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

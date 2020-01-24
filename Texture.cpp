@@ -61,6 +61,32 @@ void Texture::displayInWindow(std::vector<const Texture*> textures,
     if (wait) cv::waitKey(0);
 }
 
+// Writes Texture to a file using cv::imwrite(). Generally used with JPEG
+// codec, but pathname's extension names the format to be used. Converts to
+// "24 bit" image (8 bit unsigned values for each of red, green and blue
+// channels) because most codecs do not support 3xfloat format.
+void Texture::writeToFile(int size, const std::string& pathname) const
+{
+    // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
+    cv::Mat opencv_image(size, size, CV_8UC3, cv::Scalar(127, 127, 127));
+    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+    rasterizeDisk(size,
+                  [&](int i, int j, Vec2 position)
+                  {
+                      // Read TexSyn Color from Texture.
+                      Color color = getColorClipped(position);
+                      // Make 3x8b OpenCV color, with reversed component order.
+                      cv::Vec3b opencv_color(std::round(255 * color.b()),
+                                             std::round(255 * color.g()),
+                                             std::round(255 * color.r()));
+                      // Make OpenCV location for pixel.
+                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+                      // Write corresponding OpenCV color to pixel:
+                      opencv_image.at<cv::Vec3b>(opencv_position) = opencv_color;
+                  });
+    debugPrint(cv::imwrite(pathname, opencv_image));
+}
+
 // Reset statistics for debugging.
 void Texture::resetStatistics() const
 {
