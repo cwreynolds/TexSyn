@@ -354,3 +354,27 @@ private:
     //     StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
     int lutSize() const { return 10000; }
 };
+
+// Creates a Color grating by taking a slice(/transit/1d texture/waveform) from
+// a given Texture, then sweeping that pattern in a perpendicular direction. The
+// slice is defined by a tangent vector and a center. The tangent basis vector
+// give the direction of the slice and its length is a scaling factor along the
+// slice. (Nearly identical to a very large first arg to Stretch.)
+class SliceGrating : public Operator
+{
+public:
+    SliceGrating(Vec2 _slice_tangent, Vec2 _center, const Texture& _texture)
+      : slice_tangent(_slice_tangent),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float projection = offset.dot(slice_tangent);
+        return texture.getColor(center + (slice_tangent * projection));
+    }
+private:
+    const Vec2 slice_tangent;
+    const Vec2 center;
+    const Texture& texture;
+};

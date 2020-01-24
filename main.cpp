@@ -251,35 +251,43 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Demo for Stretch texture operator, Jan 21, 2020
+//    // Demo for Stretch texture operator, Jan 21, 2020
+//
+//    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+//    Stretch2009 st1(0.2, pi / 4, Vec2(0.5, 0.5), cn);
+//
+//    Stretch test0(Vec2(0.2, 0).rotate(pi / 4), Vec2(0.5, 0.5), cn);
+//    // texture_diff(st1, test0);
+//
+//    float r_in = 0.33;
+//    float r_out = 0.35;
+//    Vec2 p1(0, 0.4);
+//    Vec2 p2 = p1.rotate(2 * pi / 3);
+//    Vec2 p3 = p2.rotate(2 * pi / 3);
+//    Spot spot1(p1, r_in, Color(1, 1, 0), r_out, Color(0, 0, 0));
+//    Spot spot2(p2, r_in, Color(0, 1, 1), r_out, Color(0, 0, 0));
+//    Spot spot3(p3, r_in, Color(1, 0, 1), r_out, Color(0, 0, 0));
+//    Add two_spots(spot1, spot2);
+//    Add three_spots(spot3, two_spots);
+//    Stretch2009 st2(2, (-2 * pi / 6) + (pi / 2), p2, three_spots);
+//
+//    Stretch test1((-p2).normalize() * 2, p2, three_spots);
+//
+//    // shows the effect of "center" argument
+//    // Stretch2 test3((-p2).normalize() * 0.5, p2, three_spots);
+//    // texture_diff(st2, test3);
+//
+//    Texture::displayInWindow({ &cn, &st1, &test0,
+//                               &three_spots, &st2, &test1 });
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Demo for SliceGrating, Jan 23, 2020
     ColorNoise cn(0.6, Vec2(5, -2), 0.6);
-    Stretch2009 st1(0.2, pi / 4, Vec2(0.5, 0.5), cn);
-    
-    Stretch test0(Vec2(0.2, 0).rotate(pi / 4), Vec2(0.5, 0.5), cn);
-    // texture_diff(st1, test0);
-    
-    float r_in = 0.33;
-    float r_out = 0.35;
-    Vec2 p1(0, 0.4);
-    Vec2 p2 = p1.rotate(2 * pi / 3);
-    Vec2 p3 = p2.rotate(2 * pi / 3);
-    Spot spot1(p1, r_in, Color(1, 1, 0), r_out, Color(0, 0, 0));
-    Spot spot2(p2, r_in, Color(0, 1, 1), r_out, Color(0, 0, 0));
-    Spot spot3(p3, r_in, Color(1, 0, 1), r_out, Color(0, 0, 0));
-    Add two_spots(spot1, spot2);
-    Add three_spots(spot3, two_spots);
-    Stretch2009 st2(2, (-2 * pi / 6) + (pi / 2), p2, three_spots);
-    
-    Stretch test1((-p2).normalize() * 2, p2, three_spots);
-
-    // shows the effect of "center" argument
-    // Stretch2 test3((-p2).normalize() * 0.5, p2, three_spots);
-    // texture_diff(st2, test3);
-
-    Texture::displayInWindow({ &cn, &st1, &test0,
-                               &three_spots, &st2, &test1 });
-    
+    SliceGrating sg1(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);
+    SliceGrating sg2(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);
+    SliceGrating sg3(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);
+    SliceGrating sg4(Vec2(2, 1) * 0.5, Vec2(0.5, 0.5), cn);
+    Texture::displayInWindow({ &cn, &sg1, &sg2, &sg3, &sg4 });
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
