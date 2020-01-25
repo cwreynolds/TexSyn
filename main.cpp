@@ -283,15 +283,38 @@ int main(int argc, const char * argv[])
 //                               &three_spots, &st2, &test1 });
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Demo for SliceGrating, Jan 23, 2020
-    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
-    SliceGrating sg1(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);
-    SliceGrating sg2(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);
-    SliceGrating sg3(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);
-    SliceGrating sg4(Vec2(2, 1) * 0.5, Vec2(0.5, 0.5), cn);
-    Texture::displayInWindow({ &cn, &sg1, &sg2, &sg3, &sg4 });
     
-    //sg4.writeToFile(511, "/Users/cwr/Desktop/TexSyn_test.jpg");
+//    // Demo for SliceToRadial, Jan 24, 2020
+//    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+//    SliceGrating sg1(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);
+//    SliceGrating sg2(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);
+//    SliceGrating sg3(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);
+//    SliceGrating sg4(Vec2(2, 1) * 0.5, Vec2(0.5, 0.5), cn);
+//    Texture::displayInWindow({ &cn, &sg1, &sg2, &sg3, &sg4 });
+//
+//    // std::string path = "/Users/cwr/Desktop/TexSyn_temp/";
+//    // cn.writeToFile(511, path + "20200123_color_noise.jpg");
+//    // sg1.writeToFile(511, path + "20200123_SliceGrating1.jpg");
+//    // sg2.writeToFile(511, path + "20200123_SliceGrating2.jpg");
+//    // sg3.writeToFile(511, path + "20200123_SliceGrating3.jpg");
+//    // sg4.writeToFile(511, path + "20200123_SliceGrating4.jpg");
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for SliceToRadial, Jan 23, 2020
+    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+    SliceToRadial sr1(Vec2(1, 1), Vec2(0, 0), cn);
+    SliceToRadial sr2(Vec2(1, 1), Vec2(0.5, 0.5), cn);
+    SliceToRadial sr3(Vec2(1, 0), Vec2(0.5, 0.5), cn);
+    SliceToRadial sr4(Vec2(2, 0), Vec2(0.5, 0.5), cn);
+    Texture::displayInWindow({ &cn, &sr1, &sr2, &sr3, &sr4 });
+    
+    // std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200124_";
+    // cn.writeToFile(511, path + "ColorNoise.jpg");
+    // sr1.writeToFile(511, path + "SliceToRadial1.jpg");
+    // sr2.writeToFile(511, path + "SliceToRadial2.jpg");
+    // sr3.writeToFile(511, path + "SliceToRadial3.jpg");
+    // sr4.writeToFile(511, path + "SliceToRadial4.jpg");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -378,3 +378,31 @@ private:
     const Vec2 center;
     const Texture& texture;
 };
+
+// Creates a radial color pattern based on a slice(/transit/1d texture/waveform)
+// from another Texture. The slice is defined by a "center" point on it and a
+// tangent vector indicating its orientation and scaling. The radial pattern
+// consists of rays of colors read from a portion of the slice, addressed by
+// angle relative to the tangent direction.
+class SliceToRadial : public Operator
+{
+public:
+    SliceToRadial(Vec2 _slice_tangent, Vec2 _center, const Texture& _texture)
+      : slice_tangent(_slice_tangent),
+        perpendicular(slice_tangent.rotate90degCW()),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float local_y = offset.dot(slice_tangent);
+        float local_x = offset.dot(perpendicular);
+        float angle = atan2(local_x, local_y);
+        return texture.getColor(center + (slice_tangent * angle));
+    }
+private:
+    const Vec2 slice_tangent;
+    const Vec2 perpendicular;
+    const Vec2 center;
+    const Texture& texture;
+};
