@@ -406,3 +406,44 @@ private:
     const Vec2 center;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class SliceShear : public Operator
+{
+public:
+    SliceShear(Vec2 _slice_tangent,
+               Vec2 _center,
+               float _shear_scale,
+               const Texture& _texture_for_slice,
+               const Texture& _texture_to_shear)
+      : slice_tangent(_slice_tangent),
+        perpendicular(slice_tangent.rotate90degCW()),
+        center(_center),
+        shear_scale(_shear_scale),
+        texture_for_slice(_texture_for_slice),
+        texture_to_shear(_texture_to_shear) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float projection = offset.dot(slice_tangent);
+        Vec2 point_on_slice = center + (slice_tangent * projection);
+        Color slice_color = texture_for_slice.getColor(point_on_slice);
+        float slice_luminance = slice_color.luminance();
+        float shear = shear_scale * slice_luminance;
+        
+//        debugPrint(shear);
+        
+        Vec2 sheared_point = center + (slice_tangent * shear);
+        return texture_to_shear.getColor(sheared_point);
+    }
+private:
+    const Vec2 slice_tangent;
+    const Vec2 perpendicular;
+    const Vec2 center;
+    const float shear_scale;
+    const Texture& texture_for_slice;
+    const Texture& texture_to_shear;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

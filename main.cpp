@@ -12,7 +12,7 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
-bool run_unit_tests = true;
+bool run_unit_tests = false;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO needs to go somewhere else
@@ -301,21 +301,33 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for SliceToRadial, Jan 23, 2020
-    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
-    SliceToRadial sr1(Vec2(1, 1), Vec2(0, 0), cn);
-    SliceToRadial sr2(Vec2(1, 1), Vec2(0.5, 0.5), cn);
-    SliceToRadial sr3(Vec2(1, 0), Vec2(0.5, 0.5), cn);
-    SliceToRadial sr4(Vec2(2, 0), Vec2(0.5, 0.5), cn);
-    Texture::displayInWindow({ &cn, &sr1, &sr2, &sr3, &sr4 });
-    
-    // std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200124_";
-    // cn.writeToFile(511, path + "ColorNoise.jpg");
-    // sr1.writeToFile(511, path + "SliceToRadial1.jpg");
-    // sr2.writeToFile(511, path + "SliceToRadial2.jpg");
-    // sr3.writeToFile(511, path + "SliceToRadial3.jpg");
-    // sr4.writeToFile(511, path + "SliceToRadial4.jpg");
+//    // Demo for SliceToRadial, Jan 23, 2020
+//    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+//    SliceToRadial sr1(Vec2(1, 1), Vec2(0, 0), cn);
+//    SliceToRadial sr2(Vec2(1, 1), Vec2(0.5, 0.5), cn);
+//    SliceToRadial sr3(Vec2(1, 0), Vec2(0.5, 0.5), cn);
+//    SliceToRadial sr4(Vec2(2, 0), Vec2(0.5, 0.5), cn);
+//    Texture::displayInWindow({ &cn, &sr1, &sr2, &sr3, &sr4 });
+//
+//    // std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200124_";
+//    // cn.writeToFile(511, path + "ColorNoise.jpg");
+//    // sr1.writeToFile(511, path + "SliceToRadial1.jpg");
+//    // sr2.writeToFile(511, path + "SliceToRadial2.jpg");
+//    // sr3.writeToFile(511, path + "SliceToRadial3.jpg");
+//    // sr4.writeToFile(511, path + "SliceToRadial4.jpg");
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Demo for SliceShear, Jan 25, 2020
+//    ColorNoise cn(0.6, Vec2(5, -2), 0.6);
+    ColorNoise cn(0.6, Vec2(5, -2), 0.0);
+    Grating gr(Vec2(0, 0), Color(1, 0, 1), Vec2(0, 0.1), Color(1, 1, 0), 0.2);
+    
+//    SliceShear ss(Vec2(1, 1), Vec2(0.1, 0.1), 1, cn, gr);
+//    SliceShear ss(Vec2(0, 1), Vec2(), 1, cn, gr);
+    SliceShear ss(Vec2(1, 0), Vec2(), 1, cn, gr);
+
+    
+    Texture::displayInWindow({ &cn, &gr, &ss });
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
