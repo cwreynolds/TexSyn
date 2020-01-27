@@ -409,41 +409,50 @@ private:
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// Shear one Texture, along a given axis, by an amount based on luminance values
+// from a slice of another Texture. Parameters are the two Textures, along with
+// an axis for each, defined as a center point and tangent vector.
 class SliceShear : public Operator
 {
 public:
     SliceShear(Vec2 _slice_tangent,
-               Vec2 _center,
-               float _shear_scale,
+               Vec2 _slice_center,
                const Texture& _texture_for_slice,
+               Vec2 _shear_tangent,
+               Vec2 _shear_center,
                const Texture& _texture_to_shear)
       : slice_tangent(_slice_tangent),
-        perpendicular(slice_tangent.rotate90degCW()),
-        center(_center),
-        shear_scale(_shear_scale),
+        slice_center(_slice_center),
         texture_for_slice(_texture_for_slice),
-        texture_to_shear(_texture_to_shear) {}
+        shear_tangent(_shear_tangent),
+        shear_center(_shear_center),
+        texture_to_shear(_texture_to_shear),
+        perpendicular(_shear_tangent.rotate90degCCW()) {}
     Color getColor(Vec2 position) const override
     {
-        Vec2 offset = position - center;
-        float projection = offset.dot(slice_tangent);
-        Vec2 point_on_slice = center + (slice_tangent * projection);
+        // Look up position on slice, measure its color's luminance.
+        Vec2 slice_offset = position - slice_center;
+        float slice_projection = slice_offset.dot(slice_tangent);
+        Vec2 point_on_slice = slice_center + (slice_tangent * slice_projection);
         Color slice_color = texture_for_slice.getColor(point_on_slice);
-        float slice_luminance = slice_color.luminance();
-        float shear = shear_scale * slice_luminance;
-        
-//        debugPrint(shear);
-        
-        Vec2 sheared_point = center + (slice_tangent * shear);
-        return texture_to_shear.getColor(sheared_point);
+        float luminance = slice_color.luminance();
+        // Find point on texture_to_shear: decompose into x,y in shear space,
+        // offset x by luminince from slice sample, recombine to new position.
+        Vec2 shear_offset = position - shear_center;
+        float local_x = shear_offset.dot(shear_tangent);
+        float local_y = shear_offset.dot(perpendicular);
+        return texture_to_shear.getColor(shear_center +
+                                         shear_tangent * (local_x + luminance) +
+                                         perpendicular * local_y);
     }
 private:
     const Vec2 slice_tangent;
-    const Vec2 perpendicular;
-    const Vec2 center;
-    const float shear_scale;
+    const Vec2 slice_center;
     const Texture& texture_for_slice;
+    const Vec2 shear_tangent;
+    const Vec2 shear_center;
     const Texture& texture_to_shear;
+    const Vec2 perpendicular;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
