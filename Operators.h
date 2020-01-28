@@ -427,7 +427,7 @@ public:
         shear_tangent(_shear_tangent),
         shear_center(_shear_center),
         texture_to_shear(_texture_to_shear),
-        perpendicular(_shear_tangent.rotate90degCCW()) {}
+        perpendicular(shear_tangent.rotate90degCCW()) {}
     Color getColor(Vec2 position) const override
     {
         // Look up position on slice, measure its color's luminance.
@@ -436,6 +436,11 @@ public:
         Vec2 point_on_slice = slice_center + (slice_tangent * slice_projection);
         Color slice_color = texture_for_slice.getColor(point_on_slice);
         float luminance = slice_color.luminance();
+        
+//        // TODO TEMP
+//        luminance = fmod_floor(slice_projection, 0.1);
+        
+        
         // Find point on texture_to_shear: decompose into x,y in shear space,
         // offset x by luminince from slice sample, recombine to new position.
         Vec2 shear_offset = position - shear_center;
@@ -444,6 +449,9 @@ public:
         return texture_to_shear.getColor(shear_center +
                                          shear_tangent * (local_x + luminance) +
                                          perpendicular * local_y);
+
+//        return slice_color;
+
     }
 private:
     const Vec2 slice_tangent;
