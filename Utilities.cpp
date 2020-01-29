@@ -243,3 +243,17 @@ namespace PerlinNoise
 //}
 
 }
+
+// Compute the inverse Möbius transformation of the complex plane. It is
+// parameterized by four "points" (aka complex numbers). The Wikipedia
+// article (https://en.wikipedia.org/wiki/Möbius_transformation) says the four
+// points should satisfy: ad − bc ≠ 0.
+// See Tim Hutton cool app: http://timhutton.github.io/mobius-transforms/
+Complex inverse_mobius_transform(Complex z,
+                                 Complex a, Complex b, Complex c, Complex d)
+{
+    Complex numerator = (d * z) - b;
+    Complex denominator = a - (c * z);
+    if (denominator == Complex(0, 0)) debugPrint(denominator);
+    return numerator / denominator;
+}

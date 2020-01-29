@@ -38,7 +38,10 @@ public:
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
     // channels) because most codecs do not support 3xfloat format.
-    void writeToFile(int size, const std::string& pathname) const;
+    void writeToFile(int size,
+                     const std::string& pathname,
+                     Color bg_color = Color(0.5, 0.5, 0.5),
+                     int margin = 0) const;
     // Reset statistics for debugging.
     void resetStatistics() const;
     // Collect statistics for debugging.

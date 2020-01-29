@@ -65,10 +65,16 @@ void Texture::displayInWindow(std::vector<const Texture*> textures,
 // codec, but pathname's extension names the format to be used. Converts to
 // "24 bit" image (8 bit unsigned values for each of red, green and blue
 // channels) because most codecs do not support 3xfloat format.
-void Texture::writeToFile(int size, const std::string& pathname) const
+void Texture::writeToFile(int size, const std::string& pathname,
+                          Color bg_color, int margin) const
 {
     // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
-    cv::Mat opencv_image(size, size, CV_8UC3, cv::Scalar(127, 127, 127));
+    cv::Mat opencv_image(size + margin * 2,
+                         size + margin * 2,
+                         CV_8UC3,
+                         cv::Scalar(255 * bg_color.b(),
+                                    255 * bg_color.g(),
+                                    255 * bg_color.r()));
     // For each pixel within the disk, get Texture's color, insert into cv::Mat.
     rasterizeDisk(size,
                   [&](int i, int j, Vec2 position)
@@ -80,11 +86,14 @@ void Texture::writeToFile(int size, const std::string& pathname) const
                                              std::round(255 * color.g()),
                                              std::round(255 * color.r()));
                       // Make OpenCV location for pixel.
-                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+                      cv::Point opencv_position((size / 2) + margin + i,
+                                                (size / 2) + margin - j);
                       // Write corresponding OpenCV color to pixel:
                       opencv_image.at<cv::Vec3b>(opencv_position) = opencv_color;
                   });
-    debugPrint(cv::imwrite(pathname, opencv_image));
+    bool ok = cv::imwrite(pathname, opencv_image);
+    std::cout << "Texture::writeToFile(" << size;
+    std::cout << ", \"" << pathname << "\")  ok=" << ok << std::endl;
 }
 
 // Reset statistics for debugging.

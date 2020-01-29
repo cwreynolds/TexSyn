@@ -464,3 +464,34 @@ private:
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Use the Möbius transformation of the complex plane as a Texture Operator by
+// considering it isomorphic to the Cartesian Texture plane. The transformation
+// is parameterized by four "points" (aka complex numbers). The Wikipedia
+// article (https://en.wikipedia.org/wiki/Möbius_transformation) says the four
+// points should satisfy: ad − bc ≠ 0.
+// See Tim Hutton cool app: http://timhutton.github.io/mobius-transforms/
+class MobiusTransform : public Operator
+{
+public:
+    MobiusTransform(Vec2 _a, Vec2 _b, Vec2 _c, Vec2 _d, const Texture& _texture)
+      : a(Vec2ToComplex(_a)),
+        b(Vec2ToComplex(_b)),
+        c(Vec2ToComplex(_c)),
+        d(Vec2ToComplex(_d)),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Complex z = Vec2ToComplex(position);
+        Complex imt = inverse_mobius_transform(z, a, b, c, d);
+        return texture.getColor(ComplexToVec2(imt));
+    }
+    static Vec2 ComplexToVec2(Complex z) { return {z.real(), z.imag()}; }
+    static Complex Vec2ToComplex(Vec2 v) { return {v.x(), v.y()}; }
+private:
+    const Complex a;
+    const Complex b;
+    const Complex c;
+    const Complex d;
+    const Texture& texture;
+};

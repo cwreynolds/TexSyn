@@ -10,10 +10,10 @@
 
 #include <cassert>
 #include <cmath>
+#include <complex>
 #include <iostream>
 #include <limits>
 #include <vector>
-#include <cassert>
 class Vec2;
 
 // for debugging: prints one line with a given C expression, an equals sign,
@@ -147,3 +147,13 @@ private:
     float minimum_input_value_ = 0;
     float maximum_input_value_ = 1;
 };
+
+
+// Compute the inverse Möbius transformation of the complex plane. It is
+// parameterized by four "points" (aka complex numbers). The Wikipedia
+// article (https://en.wikipedia.org/wiki/Möbius_transformation) says the four
+// points should satisfy: ad − bc ≠ 0.
+// See Tim Hutton cool app: http://timhutton.github.io/mobius-transforms/
+typedef std::complex<float> Complex;
+Complex inverse_mobius_transform(Complex z,
+                                 Complex a, Complex b, Complex c, Complex d);
