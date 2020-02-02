@@ -24,18 +24,26 @@
 			a.date:visited {text-decoration: none; color: white;}
 			a.date:hover   {text-decoration: underline; color: white;}
 			a.date:active  {text-decoration: none; color: white;}
+      
+      
+      
+      .post {
+              border-top: 0.3em solid rgb(25%,25%,25%);
+              margin-top: 1em;
+              padding-left: 2em;
+              padding-right: 2em;
+              padding-top: 1em;
+              clear: left ;
+            }
+
 		</style>
   </head>
   <body>
-    <div style="font-size:75%;">
-      <a href="file:///Users/cwr/Documents/code/TexSyn/docs/index.html">This
-        page on my laptop</a><br>
-      <a href="https://cwreynolds.github.io/TexSyn/">This page on GitHub</a>
-    </div>
+    <div style="font-size:75%;"> <a href="file:///Users/cwr/Documents/code/TexSyn/docs/index.html">This page on my laptop</a><br>
+      <a href="https://cwreynolds.github.io/TexSyn/">This page on GitHub</a> </div>
     <h1>... introduction ...</h1>
-    <a id="20191229"></a>
-    <hr>
-    <a href="#20191229" ;="" class="date">December 29, 2019</a>
+    <a name="20191229"></a>
+    <hr> <a href="#20191229" class="date">December 29, 2019</a>
     <h1>“First light” and the <em>Spot</em> operator</h1>
     <p>These are the first textures displayed by <strong>TexSyn</strong>
       captured as screen shots. They are the Spot texture generator. The first
@@ -64,21 +72,34 @@
     <img src="images/20191229_first_light_crop.png" alt="“first light” image" height="560"
       width="514">
     <br>
-    <!--
-    <img src="images/20191229_Spot_bug_crop.png" alt="“first light” image" height="536"      width="515">
-    <br>    --> <img src="images/20191229_Spot_crop.png" alt="texture generator Spot"
-      height="536"
+    <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" height="536"
       width="515">
     <br>
     <p>click for <a href="#20191229">December 29, 2019</a></p>
     <br>
-    <div style="background-color:rgb(30%,70%,30%);" id="foo">
-      <p>foo</p>
-    </div>
-    <br>
+    <div id="zap" style="background-color:rgb(30%,70%,30%);"><p style="background-color:rgb(30%,60%,60%);">foo</p></div>
     <script>
-      document.getElementById("foo").firstChild.innerHTML += "<br>bar";
+      document.getElementById("zap").firstChild.innerHTML += "<br>bar";
+      document.getElementById("zap").innerHTML += "after";
+      document.getElementById("zap").innerHTML = "before<br>" + document.getElementById("zap").innerHTML;
     </script>
-    
+    <div id="posts"></div>
+    <script>
+      function start_post(post_title, post_date, post_id)
+      {
+        var posts = document.getElementById("posts");
+        posts.innerHTML += "<div class='post' id='" + post_id + "'>";
+        posts.innerHTML += "<a href='#" + post_id + "' class='date'>" + post_date + "</a>";
+        posts.innerHTML += "<h1>" + post_title + "</h1>";
+        posts.innerHTML += "<p>Body text 1.</p>";
+        posts.innerHTML += "<p>Body text 2.</p>";
+        posts.innerHTML += "</div>";
+      }
+    </script>
+
+    <script>
+      start_post("Thing 1", "February 1, 2020", "20200201");
+      start_post("Thing 2", "February 2, 2020", "20200202");
+    </script>
   </body>
 </html>
