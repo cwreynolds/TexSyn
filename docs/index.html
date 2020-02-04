@@ -1,96 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>TexSyn</title>
-    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->
-    <style>
-			body {
-             background-color: gray;
-             font-family: Arial, Helvetica, sans-serif;
-           }
-      h1 { background-color: rgb(55%,55%,55%);
-           margin: 0;
-           padding: 0;
-           border: 0;
-         }
-      p { color: black; }
-      code { font-size: 120%; }
-      pre {
-            color: white;
-	          border: 1px dashed rgb(65%,65%,65%);
-	          padding: 10px;
-           	margin-bottom: 1em;
-          }
-      <!-- for in-page date anchors -->
-      a.date         {color: white; }
-			a.date:link    {text-decoration: none; color: white;}
-			a.date:visited {text-decoration: none; color: white;}
-			a.date:hover   {text-decoration: underline; color: white;}
-			a.date:active  {text-decoration: none; color: white;}
-      
-      
-      .post {
-              border-top: 0.3em solid rgb(25%,25%,25%);
-              margin-top: 1em;
-              padding-left: 2em;
-              padding-right: 2em;
-              padding-top: 1em;
-              clear: left ;
-            }
-
-		</style>
-  </head>
-  <body>
-    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
-        page on GitHub</a> </div>
-    <h1>Introduction</h1>
-    <p>...</p>
-    <div class="post" id="20191229"> <a href="#20191229" class="date">December
-        29, 2019</a>
-      <h1>“First light” and the <em>Spot</em> operator</h1>
-      <p>These are the first textures displayed by <strong>TexSyn</strong>
-        captured as screen shots. They are the Spot texture generator. The first
-        one was tiny and was missing its center constant-color region. The <strong>OpenCV</strong>
-        utility <code>cv::imshow()</code> is used to rasterize and display the
-        procedural texture. The first image used a 24 bit (three 8 bit unsigned
-        integers) RGB representation, called <code>CV_8UC3</code> in <strong>OpenCV</strong>.
-        A bug caused “full brightness” colors to wrap around to zero, causing
-        the black center. I fixed the bug and switched to <code></code> an
-        image format with three 32 bit floating point number per stored pixel (<code>CV_32FC3</code>).
-        Later I may switch to four channel images to accommodate alpha matting.
-      </p>
-      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports
-        arbitrary resolution—so there is no static storage of pixels—all color
-        values are computed procedurally “on the fly” represented as three
-        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>
-        class) are used only at the output end, before displaying a texture on
-        the screen, or writing it to an image file.</p>
-      <p>The <em>Spot</em> Texture is defined as being centered at the origin,
-        having an inner radius of 0.2 and an inner color of white. It outer
-        radius is 0.6 and outer color is black. Between 0.2 and 0.6 there is a
-        soft sinusoidal transition between the inner and outer colors: </p>
-      <pre>    Spot(Vec2(0, 0),
-           0.2, Color(1, 1, 1),
-           0.6, Color(0, 0, 0));</pre>
-      <br>
-      <img src="images/20191229_first_light_crop.png" alt="“first light” image"
-        height="560"
-        width="514">
-      <br>
-      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" height="536"
-        width="515">
-    </div>
-    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">December
-        15, 2019</a>
-      <h1>A new library</h1>
-      <p>Today I created a new repository on <strong>GitHub</strong> called <a
-          href="https://github.com/cwreynolds/TexSyn">Texsyn</a>.</p>
-    </div>
-    <div class="post" id="0">
-      <p>click for <a href="#20191229">December 29, 2019</a></p>
-    </div>
-    <!--
-    <div class="post" id="20200101">      <a href="#20200101" class="date">January, 1, 2020</a>      <h1>Happy New Year!</h1>      ...    </div>    -->
-  </body>
-</html>
+<!DOCTYPE html><html>  <head>    <meta http-equiv="content-type" content="text/html; charset=UTF-8">    <title>TexSyn</title>    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->    <style>			body {             background-color: gray;             font-family: Arial, Helvetica, sans-serif;           }      h1 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }      p { color: black; }      code { font-size: 120%; }      pre {            color: white;	          border: 1px dashed rgb(65%,65%,65%);	          padding: 10px;           	margin-bottom: 1em;          }      <!-- for in-page date anchors -->      a.date         {color: white; }			a.date:link    {text-decoration: none; color: white;}			a.date:visited {text-decoration: none; color: white;}			a.date:hover   {text-decoration: underline; color: white;}			a.date:active  {text-decoration: none; color: white;}                  .post {              border-top: 0.3em solid rgb(25%,25%,25%);              margin-top: 1em;              padding-left: 2em;              padding-right: 2em;              padding-top: 1em;              clear: left ;            }		</style>  </head>  <body>    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
+        page on GitHub</a> </div>    <h1>Introduction</h1>    <p>...</p>    <div class="post" id="20191230"> <a href="#20191230" class="date">December        30, 2019</a>      <h1>“First light” and the <em>Spot</em> operator</h1>      <p>These are the first textures displayed by <strong>TexSyn</strong>        captured as screen shots. They are the Spot texture generator. The first        one was tiny and was missing its center constant-color region. The <strong>OpenCV</strong>        utility <code>cv::imshow()</code> is used to rasterize and display the        procedural texture. The first image used a 24 bit (three 8 bit unsigned        integers) RGB representation, called <code>CV_8UC3</code> in <strong>OpenCV</strong>.        A bug caused “full brightness” colors to wrap around to zero, causing        the black center. I fixed the bug and switched to <code></code> an        image format with three 32 bit floating point number per stored pixel (<code>CV_32FC3</code>).
+        Later I may switch to four channel images to accommodate alpha matting.      </p>      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports        arbitrary resolution—so there is no static storage of pixels—all color        values are computed procedurally “on the fly” represented as three        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>        class) are used only at the output end, before displaying a texture on        the screen, or writing it to an image file.</p>      <p>The <em>Spot</em> Texture is defined as being centered at the origin,        having an inner radius of 0.2 and an inner color of white. It outer        radius is 0.6 and outer color is black. Between 0.2 and 0.6 there is a        soft sinusoidal transition between the inner and outer colors: </p>      <pre>    Spot(Vec2(0, 0),           0.2, Color(1, 1, 1),           0.6, Color(0, 0, 0));</pre>      <br>      <img src="images/20191229_first_light_crop.png" alt="“first light” image"        height="560"        width="514">      <br>      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" height="536"        width="515">    </div>    <div class="post" id="20191229"><a href="#20191229" class="date">December        29, 2019</a>      <h1>Infrastructure</h1>      <p>From December 15 through December 28 the basic infrastructure was        constructed. This included:</p>      <ul>        <li>Basic <code>c++</code> classes for <strong>Texsyn</strong>:</li>        <ul>          <li><code>Texture</code> (base class for all types of textures)</li>          <ul>            <li><code>Generator</code> (creates a texture from primitive values)</li>            <li><code>Operator</code> (combines one or more input textures (and              primitive values) to produce a new texture)</li>          </ul>          <li>Primitive values to parameter textures:</li>          <ul>            <li><code>Vec2</code> (a position on the infinite 2D texture plane)</li>            <li><code>Color</code> (very generalized representation of a point              in color space, defined as RGB values over the entire floating              point range. During texture composition, these values range over              [-∞, +∞] but are clipped to [0, 1] for display. Includes              conversion to hue/saturation/value color space and luminance.)</li>          </ul>        </ul>        <li>A <strong>Utilities</strong> package to support interpolation,          clipping, remapping, randomization, and noise.</li>        <li>A suite of <strong>unit tests</strong> to verify the correct          operation of primitives, texture generators, and operators.</li>        <li>An interface to the <strong>OpenCV</strong> library to provide:</li>        <ul>          <li>Basic utilities such as displaying rasterized textures in windows            on the screen, and writing them to standard image file formats.</li>          <li>Eventually help with implementing some operators, and particularly            to provide access to acceleration on GPU or other hardware.</li>        </ul>        <li><br>        </li>      </ul>      <p>For more details, see the <a href="https://github.com/cwreynolds/TexSyn/">code</a>        and the <a href="https://github.com/cwreynolds/TexSyn/commits/master"><code>git</code>          commit history</a>.</p>    </div>    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">December        15, 2019</a>      <h1>A new library</h1>      <p>Today I created a new repository on <strong>GitHub</strong> called <a          href="https://github.com/cwreynolds/TexSyn">Texsyn</a>,        part of a project about adversarial evolutionary texture synthesis.</p>      <p><strong>TexSyn</strong> is a library for procedural texture synthesis.        It is intended for use by a <em>genetic programming</em> (“GP”) system,        a type of <em>genetic algorithm</em>. The GP system performs <em>simulated
+          evolution</em> on a <em>population</em> of individual programs,        according to a <em>fitness function</em> (also known as a <em>fitness          metric</em>, <em>utility function</em>, or a <em>loss function</em>        in machine learning.) In this application to texture synthesis, the        programs are compositions of functions from the <strong>TexSyn</strong>        library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>      <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
+          Synthesis Diary</a> and used as the basis of the 2011 paper <a href="https://www.red3d.com/cwr/iec/">Interactive
+          Evolution of Camouflage</a>.</p>    </div>    <div class="post" id="0">      <p>Page and the software it describes by <a href="https://www.red3d.com/cwr">Craig
+          Reynolds</a></p>    </div>    <!-- <div class="post" id="yyyymmdd"><a href="#yyyymmdd" class="date">Month 0, 0000</a><h1>Title</h1><p>...</p></div> -->  </body></html>
