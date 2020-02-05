@@ -54,10 +54,12 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
-//                    Vec2(0.5, 0.3), Color(1, 1, 0), 0.3);
-//    grating.displayInWindow();
-    
+    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
+                    Vec2(0.5, 0.3), Color(1, 1, 0), 0.3);
+    grating.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+    grating.writeToFile(511, path + "grating.jpg");
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    Gradation gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
@@ -355,36 +357,36 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for MobiusTransform, Jan 28, 2020
-    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
-                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
-    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
-                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
-    Add plaid(red_stripes, green_stripes);
-    srand(123456789);
-    auto rv = [](){ return Vec2::randomPointInUnitDiameterCircle() * 4; };
-    MobiusTransform mt0(Vec2(1,2), Vec2(0,.1), Vec2(.1,0), Vec2(1,-2), plaid);
-    MobiusTransform mt1(Vec2(-0.958788, 1.64993),
-                        Vec2(-1.54534, -0.593485),
-                        Vec2(1.29155, -0.931471),
-                        Vec2(0.768266, 0.24665),
-                        plaid);
-    rand();
-    MobiusTransform mt2(rv(), rv(), rv(), rv(), plaid);
-    rand();
-    MobiusTransform mt3(rv(), rv(), rv(), rv(), plaid);
-    MobiusTransform mt4(rv(), rv(), rv(), rv(), plaid);
-    MobiusTransform mt5(rv(), rv(), rv(), rv(), plaid);
-    Texture::displayInWindow({ &plaid, &mt0, &mt1, &mt2, &mt3, &mt4, &mt5 });
-
-//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200128_";
-//    plaid.writeToFile(511, path + "plaid.jpg");
-//    mt0.writeToFile(511, path + "MobiusTransform0.jpg");
-//    mt1.writeToFile(511, path + "MobiusTransform1.jpg");
-//    mt2.writeToFile(511, path + "MobiusTransform2.jpg");
-//    mt3.writeToFile(511, path + "MobiusTransform3.jpg");
-//    mt4.writeToFile(511, path + "MobiusTransform4.jpg");
-//    mt5.writeToFile(511, path + "MobiusTransform5.jpg");
+//        // Demo for MobiusTransform, Jan 28, 2020
+//        Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+//                            Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+//        Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+//                              Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+//        Add plaid(red_stripes, green_stripes);
+//        srand(123456789);
+//        auto rv = [](){ return Vec2::randomPointInUnitDiameterCircle() * 4; };
+//        MobiusTransform mt0(Vec2(1,2), Vec2(0,.1), Vec2(.1,0), Vec2(1,-2), plaid);
+//        MobiusTransform mt1(Vec2(-0.958788, 1.64993),
+//                            Vec2(-1.54534, -0.593485),
+//                            Vec2(1.29155, -0.931471),
+//                            Vec2(0.768266, 0.24665),
+//                            plaid);
+//        rand();
+//        MobiusTransform mt2(rv(), rv(), rv(), rv(), plaid);
+//        rand();
+//        MobiusTransform mt3(rv(), rv(), rv(), rv(), plaid);
+//        MobiusTransform mt4(rv(), rv(), rv(), rv(), plaid);
+//        MobiusTransform mt5(rv(), rv(), rv(), rv(), plaid);
+//        Texture::displayInWindow({ &plaid, &mt0, &mt1, &mt2, &mt3, &mt4, &mt5 });
+//
+//    //    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200128_";
+//    //    plaid.writeToFile(511, path + "plaid.jpg");
+//    //    mt0.writeToFile(511, path + "MobiusTransform0.jpg");
+//    //    mt1.writeToFile(511, path + "MobiusTransform1.jpg");
+//    //    mt2.writeToFile(511, path + "MobiusTransform2.jpg");
+//    //    mt3.writeToFile(511, path + "MobiusTransform3.jpg");
+//    //    mt4.writeToFile(511, path + "MobiusTransform4.jpg");
+//    //    mt5.writeToFile(511, path + "MobiusTransform5.jpg");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
