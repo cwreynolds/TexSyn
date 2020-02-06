@@ -1,6 +1,227 @@
-<!DOCTYPE html><html>  <head>    <meta http-equiv="content-type" content="text/html; charset=UTF-8">    <title>TexSyn</title>    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->    <style>			body {             background-color: gray;             font-family: Arial, Helvetica, sans-serif;           }      h1 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }      p { color: black; }      code { font-size: 120%; }      pre {            color: white;	          border: 1px dashed rgb(65%,65%,65%);	          padding: 10px;           	margin-bottom: 1em;          }      <!-- for in-page date anchors -->      a.date         {color: white; }			a.date:link    {text-decoration: none; color: white;}			a.date:visited {text-decoration: none; color: white;}			a.date:hover   {text-decoration: underline; color: white;}			a.date:active  {text-decoration: none; color: white;}                  .post {              border-top: 0.3em solid rgb(25%,25%,25%);              margin-top: 1em;              padding-left: 2em;              padding-right: 2em;              padding-top: 1em;              clear: left ;            }		</style>  </head>  <body>    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
-        page on GitHub</a> </div>    <h1>Introduction</h1>    <p> ... </p>    <div class="post" id="20200101"> <a href="#20200101" class="date">January        1, 2020</a>      <h1>Grating</h1>      <p> The <em>Grating</em> generator creates a swept stripe pattern whose        cross-sectional “slice” is a periodic waveform selectable between a sine        wave and a square wave. The parameters to <em>Grating</em> include: two        positions, endpoints of a segment defining the orientation and spacing        (wavelength) of the stripe pattern — two Colors for the striped pattern        — and a softness parameter were 0 means square wave and 1 means sine        wave.</p>      <pre>Grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),        Vec2(0.5, 0.3), Color(1, 1, 0),        0.3);</pre>      <img src="images/20200101_grating.jpg" alt="Grating texture generator (geen and yellow stripes)"        title="Grating">    </div>    <div class="post" id="20191230"> <a href="#20191230" class="date">December        30, 2019</a>      <h1>“First light” and the <em>Spot</em> operator</h1>      <p>These are the first textures displayed by <strong>TexSyn</strong>        captured as screen shots. They show the result of the <em>Spot</em>        texture generator. The first one was tiny and was missing its center        constant-color region. The <strong>OpenCV</strong> utility <code>cv::imshow()</code>        is used to rasterize and display the procedural texture. The first image        used a 24 bit (three 8 bit unsigned integers) RGB representation, called        <code>CV_8UC3</code> in <strong>OpenCV</strong>. A bug caused “full        brightness” colors to wrap around to zero, causing the black center. I        fixed the bug and switched to an image format with three 32 bit floating        point number per stored pixel (<code>CV_32FC3</code>). Later I may        switch to four channel images to accommodate alpha matting. </p>      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports        arbitrary resolution—so there is no static storage of pixels—all color        values are computed procedurally “on the fly” represented as three        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>        class) are used only at the output end, before displaying a texture on        the screen, or writing it to an image file.</p>      <p>The <em>Spot</em> Texture is defined as being centered at the origin,        having an inner radius of 0.2 and an inner color of white. It outer        radius is 0.6 and outer color is black. Between 0.2 and 0.6 there is a        soft sinusoidal transition between the inner and outer colors: </p>      <pre>    Spot(Vec2(0, 0),           0.2, Color(1, 1, 1),           0.6, Color(0, 0, 0));</pre>      <br>      <img src="images/20191229_first_light_crop.png" alt="“first light” image"        height="560"        width="514">      <br>      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" height="536"        width="515">    </div>    <div class="post" id="20191229"><a href="#20191229" class="date">December        29, 2019</a>      <h1>Infrastructure</h1>      <p>From December 15 through December 28 the basic infrastructure was        constructed. This included:</p>      <ul>        <li>Basic <code>c++</code> classes for <strong>Texsyn</strong>:</li>        <ul>          <li><code>Texture</code> (base class for all types of textures)</li>          <ul>            <li><code>Generator</code> (creates a texture from primitive values)</li>            <li><code>Operator</code> (combines one or more input textures (and              primitive values) to produce a new texture)</li>          </ul>          <li>Primitive values to parameter textures:</li>          <ul>            <li><code>Vec2</code> (a position on the infinite 2D texture plane)</li>            <li><code>Color</code> (very generalized representation of a point              in color space, defined as RGB values over the entire floating              point range. During texture composition, these values range over              [-∞, +∞] but are clipped to [0, 1] for display. Includes              conversion to hue/saturation/value color space and luminance.)</li>          </ul>        </ul>        <li>A <strong>Utilities</strong> package to support interpolation,          clipping, remapping, randomization, and noise.</li>        <li>A suite of <strong>unit tests</strong> to verify the correct          operation of primitives, texture generators, and operators.</li>        <li>An interface to the <strong>OpenCV</strong> library to provide:</li>        <ul>          <li>Basic utilities such as displaying rasterized textures in windows            on the screen, and writing them to standard image file formats.</li>          <li>Eventually help with implementing some operators, and particularly            to provide access to acceleration on GPU or other hardware.</li>        </ul>        <li><br>        </li>      </ul>      <p>For more details, see the <a href="https://github.com/cwreynolds/TexSyn/">code</a>        and the <a href="https://github.com/cwreynolds/TexSyn/commits/master"><code>git</code>          commit history</a>.</p>    </div>    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">December        15, 2019</a>      <h1>A new library</h1>      <p>Today I created a new repository on <strong>GitHub</strong> called <a          href="https://github.com/cwreynolds/TexSyn">Texsyn</a>,        part of a project about adversarial evolutionary texture synthesis.</p>      <p><strong>TexSyn</strong> is a library for procedural texture synthesis.        It is intended for use by a <em>genetic programming</em> (“GP”) system,        a type of <em>genetic algorithm</em>. The GP system performs <em>simulated
-          evolution</em> on a <em>population</em> of individual programs,        according to a <em>fitness function</em> (also known as a <em>fitness          metric</em>, <em>utility function</em>, or a <em>loss function</em>        in machine learning.) In this application to texture synthesis, the        programs are compositions of functions from the <strong>TexSyn</strong>        library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>      <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>TexSyn</title>
+    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->
+    <style>
+			body {
+             background-color: gray;
+             font-family: Arial, Helvetica, sans-serif;
+           }
+      h1 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }
+      p { color: black; }
+      code { font-size: 120%; }
+      pre {
+            color: white;
+	          border: 1px dashed rgb(65%,65%,65%);
+	          padding: 10px;
+           	margin-bottom: 1em;
+          }
+      <!-- for in-page date anchors -->
+      a.date         {color: white; }
+			a.date:link    {text-decoration: none; color: white;}
+			a.date:visited {text-decoration: none; color: white;}
+			a.date:hover   {text-decoration: underline; color: white;}
+			a.date:active  {text-decoration: none; color: white;}
+      
+      
+      .post {
+              border-top: 0.3em solid rgb(25%,25%,25%);
+              margin-top: 1em;
+              padding-left: 2em;
+              padding-right: 2em;
+              padding-top: 1em;
+              clear: left ;
+            }
+
+		</style>
+  </head>
+  <body>
+    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
+        page on GitHub</a> </div>
+    <h1>Introduction</h1>
+    <p> ... </p>
+    <div class="post" id="20200101"> <a href="#20200101" class="date">January
+        1, 2020</a>
+      <h1>Grating</h1>
+      <p> The <em>Grating</em> generator creates a swept stripe pattern whose
+        cross-sectional “slice” is a periodic waveform. The parameters to <em>Grating</em>
+        include: </p>
+      <ul>
+        <li>two <em>Vec2</em> positions, the endpoints of a line segment, which
+          define the orientation and spacing (wavelength) of the stripe pattern</li>
+        <li>two <em>Colors</em> for the striped pattern</li>
+        <li>a “softness” parameter were 0 means square wave and 1 means sine
+          wave (so in this example, 30% of the way from square to sinusoid).<br>
+        </li>
+      </ul>
+      <pre>Grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
+        Vec2(0.5, 0.3), Color(0.85, 0.85, 0),
+        0.3)</pre>
+      <img src="images/20200101_grating.jpg" alt="Grating texture generator (green and yellow stripes)"
+        title="Grating"
+        height="511"
+        width="511">
+      <br>
+      <h1>Gradation</h1>
+      <p> The <em>Gradation</em> generator defines two colored “half planes”
+        with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>
+        are two “colored positions.” The line segment between the two points
+        defines the orientation and width of the transition region. Outside the
+        transition region the texture is uniformly the nearest of
+        the two colors.</p>
+      <pre>Gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
+          Vec2(-0.4, 0.2), Color(1, 1, 1))</pre>
+      <img src="images/20200101_Gradation.jpg" alt="Gradation texture generator (green to white)"
+        title="Grating"
+        height="511"
+        width="511">
+    </div>
+    <div class="post" id="20191230"> <a href="#20191230" class="date">December
+        30, 2019</a>
+      <h1>“First light” and the <em>Spot</em> operator</h1>
+      <p>These are the first textures displayed by <strong>TexSyn</strong>
+        captured as screen shots. They show the result of the <em>Spot</em>
+        texture generator. The first one was tiny and was missing its center
+        constant-color region. The <strong>OpenCV</strong> utility <code>cv::imshow()</code>
+        is used to rasterize and display the procedural texture. The first image
+        used a 24 bit (three 8 bit unsigned integers) RGB representation, called
+        <code>CV_8UC3</code> in <strong>OpenCV</strong>. A bug caused “full
+        brightness” colors to wrap around to zero, causing the black center. I
+        fixed the bug and switched to an image format with three 32 bit floating
+        point number per stored pixel (<code>CV_32FC3</code>). Later I may
+        switch to four channel images to accommodate alpha matting. </p>
+      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports
+        arbitrary resolution—so there is no static storage of pixels—all color
+        values are computed procedurally “on the fly” represented as three
+        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>
+        class) are used only at the output end, before displaying a texture on
+        the screen, or writing it to an image file.</p>
+      <p>This <em>Spot</em> Texture has been specified to be centered at the
+        origin, with an inner radius of 0.2 and an inner color of white. Its
+        outer radius is 0.6 and outer color is black. Between 0.2 and 0.6 there
+        is a soft sinusoidal transition between the inner and outer colors: </p>
+      <pre>    Spot(Vec2(0, 0),
+         0.2, Color(1, 1, 1),
+         0.6, Color(0, 0, 0));</pre>
+      <br>
+      <img src="images/20191229_first_light_crop.png" alt="“first light” image"
+        height="560"
+        width="514">
+      <br>
+      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" height="536"
+        width="515">
+    </div>
+    <div class="post" id="20191229"><a href="#20191229" class="date">December
+        29, 2019</a>
+      <h1>Infrastructure</h1>
+      <p>From December 15 through December 28 the basic infrastructure was
+        constructed. This included:</p>
+      <ul>
+        <li>Basic <code>c++</code> classes for <strong>Texsyn</strong>:</li>
+        <ul>
+          <li><code>Texture</code> (base class for all types of textures)</li>
+          <ul>
+            <li><code>Generator</code> (creates a texture from primitive values)</li>
+            <li><code>Operator</code> (combines one or more input textures (and
+              primitive values) to produce a new texture)</li>
+          </ul>
+          <li>Primitive values to parameter textures:</li>
+          <ul>
+            <li><code>Vec2</code> (a position on the infinite 2D texture plane)</li>
+            <li><code>Color</code> (very generalized representation of a point
+              in color space, defined as RGB values over the entire floating
+              point range. During texture composition, these values range over
+              [-∞, +∞] but are clipped to [0, 1] for display. Includes
+              conversion to hue/saturation/value color space and luminance.)</li>
+          </ul>
+        </ul>
+        <li>A <strong>Utilities</strong> package to support interpolation,
+          clipping, remapping, randomization, and noise.</li>
+        <li>A suite of <strong>unit tests</strong> to verify the correct
+          operation of primitives, texture generators, and operators.</li>
+        <li>An interface to the <strong>OpenCV</strong> library to provide:</li>
+        <ul>
+          <li>Basic utilities such as displaying rasterized textures in windows
+            on the screen, and writing them to standard image file formats.</li>
+          <li>Eventually help with implementing some operators, and particularly
+            to provide access to acceleration on GPU or other hardware.</li>
+        </ul>
+        <li><br>
+        </li>
+      </ul>
+      <p>For more details, see the <a href="https://github.com/cwreynolds/TexSyn/">code</a>
+        and the <a href="https://github.com/cwreynolds/TexSyn/commits/master"><code>git</code>
+          commit history</a>.</p>
+    </div>
+    <div class="post" id="20191219"> <a href="#20191219" class="date">December
+        19, 2019</a>
+      <h1>Designing for genetic programming</h1>
+      <p>Most software libraries, of course, are intended for use by human
+        programmers.There is a design aesthetic (“design pattern”?) that leans
+        toward minimal functionality (where a function should “do just one
+        thing”) and conversely duplication should be avoided. More complicated
+        patterns arise from composing the units of a library.</p>
+      <p>In contrast, <strong>TexSyn</strong> is intended primarily for use by
+        a genetic programming system, a type of automatic programming technique,
+        driven by evolutionary optimization. My experience has been that this
+        suggests different “best practices” for library design. This will be
+        revisited in the future, but here is an example to give a sense of this
+        issue.</p>
+      <p>Imagine a texture generator called <em>Spot</em>, a disk of one color
+        on a field of another color. A minimalist design might define a spot
+        with a default diameter (say 1) at a default location (say the origin),
+        and a default coloring (a white spot on a black background). As such,
+        this minimalist <em>Spot</em> could have zero parameters. That was the
+        approach initially taken in the previous version of this library begun
+        in 2008. Using standard techniques of composition of software operators,
+        a programmer might use a <em>Scale</em> operator to adjust the spot's
+        diameter, a <em>Translation</em> operator to change its position, and a
+        <em>Tint</em> or <em>Matte</em> operation to use the basic
+        black-and-white pattern to modulate other colors and textures. </p>
+      <p>This suggests a requirement for context in the composition of
+        functions. If we are going to call <em>Spot</em> we will, in general,
+        need to surround it with calls to <em>Scale</em>, <em>Translate</em>,
+        etc. A human programmer would understand how to handle this. An
+        automated programming system would not, or at least would need to be
+        augmented to supply the required context. In the absence of context, we
+        would expect to see <em>Spot</em> often exhibiting that default radius
+        and position. An alternative to describing and maintaining this context
+        is to make these transformations part of the basic <em>Spot</em>
+        definition. So for example <em>Spot</em> could have several parameters,
+        such as a center position, a radius, and two colors to use.</p>
+      <p><strong>TexSyn</strong> will this this approach, often giving texture
+        generators and operators additional parameters to establish context.
+        This makes it explicit to the genetic programming system that, for
+        example, a <em>Spot</em> always needs a position to be specified
+        because it is a required parameter to <em>Spot</em>. This removes the
+        need to add extra complexity related to required context. </p>
+    </div>
+    <div class="post" id="20191215"> <a href="#20191215" class="date">December
+        15, 2019</a>
+      <h1>A new library</h1>
+      <p>Today I created <strong><a href="https://github.com/cwreynolds/TexSyn">Texsyn</a></strong>,
+        a new repository on <strong>GitHub</strong>, part of a project about
+        adversarial evolutionary texture synthesis.</p>
+      <p><strong>TexSyn</strong> is a library for procedural texture synthesis.
+        It is intended for use by a <em>genetic programming</em> (“GP”) system,
+        a type of <em>genetic algorithm</em>. The GP system performs <em>simulated
+          evolution</em> on a <em>population</em> of individual programs,
+        according to a <em>fitness function</em> (also known as a <em>fitness
+          metric</em>, <em>utility function</em>, or a <em>loss function</em>
+        in machine learning.) In this application to texture synthesis, the
+        programs are compositions of functions from the <strong>TexSyn</strong>
+        library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>
+      <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>
+        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
           Synthesis Diary</a> and used as the basis of the 2011 paper <a href="https://www.red3d.com/cwr/iec/">Interactive
-          Evolution of Camouflage</a>.</p>    </div>    <div class="post" id="0">      <p>Page and the software it describes by <a href="https://www.red3d.com/cwr">Craig
-          Reynolds</a></p>    </div>    <!-- <div class="post" id="yyyymmdd"><a href="#yyyymmdd" class="date">Month 0, 0000</a><h1>Title</h1><p>...</p></div> -->  </body></html>
+          Evolution of Camouflage</a>.</p>
+    </div>
+    <div class="post" id="0">
+      <p>Page and the software it describes by <a href="https://www.red3d.com/cwr">Craig
+          Reynolds</a></p>
+    </div>
+    <!-- <div class="post" id="yyyymmdd"><a href="#yyyymmdd" class="date">Month 0, 0000</a><h1>Title</h1><p>...</p></div> -->
+  </body>
+</html>
