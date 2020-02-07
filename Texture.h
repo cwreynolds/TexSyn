@@ -41,7 +41,8 @@ public:
     void writeToFile(int size,
                      const std::string& pathname,
                      Color bg_color = Color(0.5, 0.5, 0.5),
-                     int margin = 0) const;
+                     int margin = 0,
+                     const std::string& file_type = ".png") const;
     // Reset statistics for debugging.
     void resetStatistics() const;
     // Collect statistics for debugging.

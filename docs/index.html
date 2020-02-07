@@ -59,7 +59,7 @@
       <pre>Grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
         Vec2(0.5, 0.3), Color(0.85, 0.85, 0),
         0.3)</pre>
-      <img src="images/20200101_grating.jpg" alt="Grating texture generator (green and yellow stripes)"
+      <img src="images/20200101_Grating.png" alt="Grating texture generator (green and yellow stripes)"
         title="Grating"
         height="511"
         width="511">
@@ -69,11 +69,11 @@
         with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>
         are two “colored positions.” The line segment between the two points
         defines the orientation and width of the transition region. Outside the
-        transition region the texture is uniformly the nearest of
-        the two colors.</p>
+        transition region the texture is uniformly the nearest of the two
+        colors.</p>
       <pre>Gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
           Vec2(-0.4, 0.2), Color(1, 1, 1))</pre>
-      <img src="images/20200101_Gradation.jpg" alt="Gradation texture generator (green to white)"
+      <img src="images/20200101_Gradation.png" alt="Gradation texture generator (green to white)"
         title="Grating"
         height="511"
         width="511">
@@ -158,39 +158,41 @@
     <div class="post" id="20191219"> <a href="#20191219" class="date">December
         19, 2019</a>
       <h1>Designing for genetic programming</h1>
-      <p>Most software libraries, of course, are intended for use by human
+      <p>Most software libraries are, of course, intended for use by human
         programmers.There is a design aesthetic (“design pattern”?) that leans
         toward minimal functionality (where a function should “do just one
         thing”) and conversely duplication should be avoided. More complicated
-        patterns arise from composing the units of a library.</p>
+        patterns arise from composing the minimal units of a library.</p>
       <p>In contrast, <strong>TexSyn</strong> is intended primarily for use by
-        a genetic programming system, a type of automatic programming technique,
-        driven by evolutionary optimization. My experience has been that this
-        suggests different “best practices” for library design. This will be
-        revisited in the future, but here is an example to give a sense of this
-        issue.</p>
+        a genetic programming system. GP is a type of automatic programming
+        technique, driven by evolutionary optimization. My experience has been
+        that this suggests different “best practices” for library design. This
+        will be revisited in future posts, but here is an example to give a
+        sense of this issue.</p>
       <p>Imagine a texture generator called <em>Spot</em>, a disk of one color
         on a field of another color. A minimalist design might define a spot
         with a default diameter (say 1) at a default location (say the origin),
         and a default coloring (a white spot on a black background). As such,
         this minimalist <em>Spot</em> could have zero parameters. That was the
-        approach initially taken in the previous version of this library begun
-        in 2008. Using standard techniques of composition of software operators,
-        a programmer might use a <em>Scale</em> operator to adjust the spot's
-        diameter, a <em>Translation</em> operator to change its position, and a
-        <em>Tint</em> or <em>Matte</em> operation to use the basic
-        black-and-white pattern to modulate other colors and textures. </p>
-      <p>This suggests a requirement for context in the composition of
-        functions. If we are going to call <em>Spot</em> we will, in general,
-        need to surround it with calls to <em>Scale</em>, <em>Translate</em>,
-        etc. A human programmer would understand how to handle this. An
-        automated programming system would not, or at least would need to be
-        augmented to supply the required context. In the absence of context, we
-        would expect to see <em>Spot</em> often exhibiting that default radius
-        and position. An alternative to describing and maintaining this context
-        is to make these transformations part of the basic <em>Spot</em>
-        definition. So for example <em>Spot</em> could have several parameters,
-        such as a center position, a radius, and two colors to use.</p>
+        initial approach taken in 2008 for the previous version of this library.
+        Using standard techniques of composition of software operators, a
+        programmer might use a <em>Scale</em> operator to adjust the spot's
+        diameter, a <em>Translation</em> operator to change its position, and
+        perhaps a <em>Soft</em><em>Matte</em> operation to use the basic
+        black-and-white pattern to modulate other colors or textures. </p>
+      <p>This suggests a requirement for context in the composition of functions
+        when writing programs with this library. If we are going to call <em>Spot</em>,
+        we will, in general, need to surround it with calls to <em>Scale</em>,
+        <em>Translate</em>, etc. A human programmer would understand how to
+        handle this. An automated programming system would not, or at least
+        would need to be augmented to supply the required context. In random
+        programs constructed by GP, without that context, we would expect to see
+        <em>Spot</em> often exhibiting its default radius and position, because
+        it did not happen to be modified by <em>Scale</em>, <em>Translate</em>,
+        etc. An alternative to declaring and maintaining this context, is to
+        make these transformations part of the basic <em>Spot</em> definition.
+        So for example <em>Spot</em> could have several parameters, such as a
+        center position, a radius, and two colors to use.</p>
       <p><strong>TexSyn</strong> will this this approach, often giving texture
         generators and operators additional parameters to establish context.
         This makes it explicit to the genetic programming system that, for

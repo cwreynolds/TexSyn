@@ -54,19 +54,19 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
-//                    Vec2(0.5, 0.3), Color(0.85, 0.85, 0), 0.3);
-//    grating.displayInWindow();
-//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
-//    grating.writeToFile(511, path + "grating.jpg");
+    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
+                    Vec2(0.5, 0.3), Color(0.85, 0.85, 0), 0.3);
+    grating.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+    grating.writeToFile(511, path + "Grating");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    Gradation gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
-                        Vec2(-0.4, 0.2), Color(1, 1, 1));
-    gradation.displayInWindow();
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
-    gradation.writeToFile(511, path + "Gradation.jpg");
+//    Gradation gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
+//                        Vec2(-0.4, 0.2), Color(1, 1, 1));
+//    gradation.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+//    gradation.writeToFile(511, path + "Gradation");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

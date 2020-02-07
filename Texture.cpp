@@ -65,8 +65,11 @@ void Texture::displayInWindow(std::vector<const Texture*> textures,
 // codec, but pathname's extension names the format to be used. Converts to
 // "24 bit" image (8 bit unsigned values for each of red, green and blue
 // channels) because most codecs do not support 3xfloat format.
-void Texture::writeToFile(int size, const std::string& pathname,
-                          Color bg_color, int margin) const
+void Texture::writeToFile(int size,
+                          const std::string& pathname,
+                          Color bg_color,
+                          int margin,
+                          const std::string& file_type) const
 {
     // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
     cv::Mat opencv_image(size + margin * 2,
@@ -91,9 +94,10 @@ void Texture::writeToFile(int size, const std::string& pathname,
                       // Write corresponding OpenCV color to pixel:
                       opencv_image.at<cv::Vec3b>(opencv_position) = opencv_color;
                   });
-    bool ok = cv::imwrite(pathname, opencv_image);
-    std::cout << "Texture::writeToFile(" << size;
-    std::cout << ", \"" << pathname << "\")  ok=" << ok << std::endl;
+    bool ok = cv::imwrite(pathname + file_type, opencv_image);
+    std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
+    std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
+    std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
 }
 
 // Reset statistics for debugging.
