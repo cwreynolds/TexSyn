@@ -54,11 +54,11 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
-                    Vec2(0.5, 0.3), Color(0.85, 0.85, 0), 0.3);
-    grating.displayInWindow();
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
-    grating.writeToFile(511, path + "Grating");
+//    Grating grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
+//                    Vec2(0.5, 0.3), Color(0.85, 0.85, 0), 0.3);
+//    grating.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+//    grating.writeToFile(511, path + "Grating");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -70,20 +70,28 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    SoftMatte sm(Spot(Vec2(0, 0), 0.2, Color(1, 1, 1), 0.8, Color(0, 0, 0)),
-//                 Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-//                         Vec2( 0.2, 0), Color(1, 1, 1), 1),
-//                 Grating(Vec2(0, -0.1), Color(1, 0, 1),
-//                         Vec2(0,  0.1), Color(0, 0, 1), 0.2));
+//    Spot sp(Vec2(0, 0), 0.2, Color(1, 1, 1), 0.8, Color(0, 0, 0));
+//    Grating g1(Vec2(-0.2, 0), Color(0, 0, 0),
+//               Vec2( 0.2, 0), Color(1, 1, 1), 1);
+//    Grating g2(Vec2(0, -0.1), Color(1, 0, 1),
+//               Vec2(0,  0.1), Color(0, 0, 1), 0.2);
+//    SoftMatte sm(sp, g1, g2);
 //    sm.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+//    sm.writeToFile(511, path + "SoftMatte");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Max mx(Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-//                   Vec2( 0.2, 0), Color(1, 1, 1), 1),
-//           Grating(Vec2(0, -0.1), Color(1, 0, 1),
-//                   Vec2(0,  0.1), Color(0, 0, 1), 0.2));
-//    mx.displayInWindow();
+    Grating g1(Vec2(-0.2, 0), Color(0, 0, 0),
+               Vec2( 0.2, 0), Color(1, 1, 1), 1);
+    Grating g2(Vec2(0, -0.1), Color(1, 0, 1),
+               Vec2(0,  0.1), Color(0, 0, 1), 0.2);
+    Max mx(g1, g2);
+    Min mn(g1, g2);
+    Texture::displayInWindow({&mx, &mn});
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+    mx.writeToFile(511, path + "Max");
+    mn.writeToFile(511, path + "Min");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
