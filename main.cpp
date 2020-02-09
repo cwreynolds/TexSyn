@@ -62,19 +62,11 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Gradation gradation(Vec2(0.4, -0.2), Color(0, 0.8, 0),
-//                        Vec2(-0.4, 0.2), Color(1, 1, 1));
+//    Gradation gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
+//                        Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));
 //    gradation.displayInWindow();
 //    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
 //    gradation.writeToFile(511, path + "Gradation");
-
-    Gradation gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
-                        Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));
-    gradation.displayInWindow();
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
-    gradation.writeToFile(511, path + "Gradation");
-
-
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -117,8 +109,10 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
-//    tu.displayInWindow();
+    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
+    tu.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200106_";
+    tu.writeToFile(511, path + "Turbulence");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
