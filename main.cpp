@@ -82,27 +82,31 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    Grating g1(Vec2(-0.2, 0), Color(0, 0, 0),
-               Vec2( 0.2, 0), Color(1, 1, 1), 1);
-    Grating g2(Vec2(0, -0.1), Color(1, 0, 1),
-               Vec2(0,  0.1), Color(0, 0, 1), 0.2);
-    Max mx(g1, g2);
-    Min mn(g1, g2);
-    Texture::displayInWindow({&mx, &mn});
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
-    mx.writeToFile(511, path + "Max");
-    mn.writeToFile(511, path + "Min");
+//    Grating g1(Vec2(-0.2, 0), Color(0, 0, 0),
+//               Vec2( 0.2, 0), Color(1, 1, 1), 1);
+//    Grating g2(Vec2(0, -0.1), Color(1, 0, 1),
+//               Vec2(0,  0.1), Color(0, 0, 1), 0.2);
+//    Max mx(g1, g2);
+//    Min mn(g1, g2);
+//    Texture::displayInWindow({&mx, &mn});
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+//    mx.writeToFile(511, path + "Max");
+//    mn.writeToFile(511, path + "Min");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    Noise no(0.10, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0));
 //    no.displayInWindow();
-    
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200103_";
+//    no.writeToFile(511, path + "Noise");
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
-//    br.displayInWindow();
-    
+    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
+    br.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200104_";
+    br.writeToFile(511, path + "Brownian");
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
