@@ -68,6 +68,14 @@ int main(int argc, const char * argv[])
 //    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
 //    gradation.writeToFile(511, path + "Gradation");
 
+    Gradation gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
+                        Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));
+    gradation.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200101_";
+    gradation.writeToFile(511, path + "Gradation");
+
+
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    Spot sp(Vec2(0, 0), 0.2, Color(1, 1, 1), 0.8, Color(0, 0, 0));
@@ -102,10 +110,10 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
-    br.displayInWindow();
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200104_";
-    br.writeToFile(511, path + "Brownian");
+//    Brownian br(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3));
+//    br.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200104_";
+//    br.writeToFile(511, path + "Brownian");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
