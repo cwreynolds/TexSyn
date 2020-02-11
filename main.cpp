@@ -109,20 +109,24 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
-    tu.displayInWindow();
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200106_";
-    tu.writeToFile(511, path + "Turbulence");
+//    Turbulence tu(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0));
+//    tu.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200106_";
+//    tu.writeToFile(511, path + "Turbulence");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    Furbulence fu(0.25, Vec2(-1, 2), Color(1, .1, .3), Color(.3, .1, 1));
 //    fu.displayInWindow();
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200110_";
+//    fu.writeToFile(511, path + "Furbulence");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    Wrapulence wr(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0));
-//    wr.displayInWindow();
+    Wrapulence wr(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0));
+    wr.displayInWindow();
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200111_";
+    wr.writeToFile(511, path + "Wrapulence");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
