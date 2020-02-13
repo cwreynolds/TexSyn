@@ -151,73 +151,85 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Comparison of 5 noise varieties, test for MultiNoise. (Jan 12, 2020)
-    {
-        float scale = 0.3;
-        Vec2 center(0, 0);
-        Color white(1, 1, 1);
-        Color black(0, 0, 0);
-        Color magenta(1, 0.3, 1);
-        Color red(1, 0.3, 0.3);
-        Color yellow(1, 1, 0.3);
-        Color green(0.3, 1, 0.3);
-        Color cyan(0.3, 1, 1);
-        // Noise noise(scale, center, black, magenta);
-        // Brownian brownian(scale, center, black, red);
-        // Turbulence turbulence(scale, center, black, yellow);
-        // Furbulence furbulence(scale, center, black, green);
-        // Wrapulence wrapulence(scale, center, black, cyan);
-        MultiNoise noise(scale, center, black, magenta, 0.0);
-        MultiNoise brownian(scale, center, black, red, 0.2);
-        MultiNoise turbulence(scale, center, black, yellow, 0.4);
-        MultiNoise furbulence(scale, center, black, green, 0.6);
-        MultiNoise wrapulence(scale, center, black, cyan, 0.8);
-        auto spot = [&](float r) { return Spot(center,r,black,r+0.05,white); };
-        SoftMatte(spot(0.2),
-                  wrapulence,
-                  SoftMatte(spot(0.4),
-                            furbulence,
-                            SoftMatte(spot(0.6),
-                                      turbulence,
-                                      SoftMatte(spot(0.8),
-                                                brownian,
-                                                noise)))).displayInWindow();
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200112_";
-        SoftMatte(spot(0.2),
-                  wrapulence,
-                  SoftMatte(spot(0.4),
-                            furbulence,
-                            SoftMatte(spot(0.6),
-                                      turbulence,
-                                      SoftMatte(spot(0.8),
-                                                brownian,
-                                                noise))))
-            .writeToFile(511, path + "MultiNoise");
-
-    }
+//    // Comparison of 5 noise varieties, test for MultiNoise. (Jan 12, 2020)
+//    {
+//        float scale = 0.3;
+//        Vec2 center(0, 0);
+//        Color white(1, 1, 1);
+//        Color black(0, 0, 0);
+//        Color magenta(1, 0.3, 1);
+//        Color red(1, 0.3, 0.3);
+//        Color yellow(1, 1, 0.3);
+//        Color green(0.3, 1, 0.3);
+//        Color cyan(0.3, 1, 1);
+//        // Noise noise(scale, center, black, magenta);
+//        // Brownian brownian(scale, center, black, red);
+//        // Turbulence turbulence(scale, center, black, yellow);
+//        // Furbulence furbulence(scale, center, black, green);
+//        // Wrapulence wrapulence(scale, center, black, cyan);
+//        MultiNoise noise(scale, center, black, magenta, 0.0);
+//        MultiNoise brownian(scale, center, black, red, 0.2);
+//        MultiNoise turbulence(scale, center, black, yellow, 0.4);
+//        MultiNoise furbulence(scale, center, black, green, 0.6);
+//        MultiNoise wrapulence(scale, center, black, cyan, 0.8);
+//        auto spot = [&](float r) { return Spot(center,r,black,r+0.05,white); };
+//        SoftMatte(spot(0.2),
+//                  wrapulence,
+//                  SoftMatte(spot(0.4),
+//                            furbulence,
+//                            SoftMatte(spot(0.6),
+//                                      turbulence,
+//                                      SoftMatte(spot(0.8),
+//                                                brownian,
+//                                                noise)))).displayInWindow();
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200112_";
+//        SoftMatte(spot(0.2),
+//                  wrapulence,
+//                  SoftMatte(spot(0.4),
+//                            furbulence,
+//                            SoftMatte(spot(0.6),
+//                                      turbulence,
+//                                      SoftMatte(spot(0.8),
+//                                                brownian,
+//                                                noise))))
+//            .writeToFile(511, path + "MultiNoise");
+//
+//    }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
-//    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
-//    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
-//
-//    // Following graygratings and BrightnessToHue examples from 2009
-//    float angle = pi *  0.6;
-//    float frequency = 25;
-//    Vec2 basis(0, pi / frequency);
-//    Vec2 basis1 = basis.rotate(+angle);
-//    Vec2 basis2 = basis.rotate(-angle);
-//    Color black(0, 0, 0);
-//    Color white(1, 1, 1);
-//    Color gray25(0.25, 0.25, 0.25);
-//    Grating g1(-basis1, black, basis1, gray25, 1);
-//    Grating g2(-basis2, black, basis2, gray25, 1);
-//    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
-//    Add s0(g1, g2);
-//    Add graygratings(g0, s0);
-//    BrightnessToHue bth(0, graygratings);
-//    Texture::displayInWindow({&g0, &g1, &g2, &s0, &graygratings, &bth});
+    //Grating g1(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, 0.2), Color(1, 1, 1), 1);
+    //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
+    //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
+
+    // Following graygratings and BrightnessToHue examples from 2009
+    float angle = pi *  0.6;
+    float frequency = 25;
+    Vec2 basis(0, pi / frequency);
+    Vec2 basis1 = basis.rotate(+angle);
+    Vec2 basis2 = basis.rotate(-angle);
+    Color black(0, 0, 0);
+    Color white(1, 1, 1);
+    Color gray25(0.25, 0.25, 0.25);
+    Grating g1(-basis1, black, basis1, gray25, 1);
+    Grating g2(-basis2, black, basis2, gray25, 1);
+    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
+    Add s0(g1, g2);
+    Add gray_gratings(g0, s0);
+    BrightnessToHue bth(0.5, gray_gratings);
+    
+//    Add gray_gratings(Grating(Vec2(), black,
+//                              Vec2(0, 2), Color(0.5, 0.5, 0.5), 1),
+//                      Add(Grating(-basis1, black, basis1, gray25, 1),
+//                          Grating(-basis2, black, basis2, gray25, 1)));
+//    BrightnessToHue(0, gray_gratings).displayInWindow();
+    
+    Texture::displayInWindow({&g0, &g1, &g2, &s0, &gray_gratings, &bth});
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200113_";
+    gray_gratings.writeToFile(511, path + "gray_gratings");
+    bth.writeToFile(511, path + "BrightnessToHue");
+
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
