@@ -202,35 +202,27 @@ int main(int argc, const char * argv[])
     //Grating g2(Vec2(0, 0), Color(0, 0, 0), Vec2(0.05, -0.2), Color(1, 1, 1), 1);
     //BrightnessToHue(0.1, Multiply(g1, g2)).displayInWindow();
 
-    // Following graygratings and BrightnessToHue examples from 2009
-    float angle = pi *  0.6;
-    float frequency = 25;
-    Vec2 basis(0, pi / frequency);
-    Vec2 basis1 = basis.rotate(+angle);
-    Vec2 basis2 = basis.rotate(-angle);
-    Color black(0, 0, 0);
-    Color white(1, 1, 1);
-    Color gray25(0.25, 0.25, 0.25);
-    Grating g1(-basis1, black, basis1, gray25, 1);
-    Grating g2(-basis2, black, basis2, gray25, 1);
-    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
-    Add s0(g1, g2);
-    Add gray_gratings(g0, s0);
-    BrightnessToHue bth(0.5, gray_gratings);
-    
-//    Add gray_gratings(Grating(Vec2(), black,
-//                              Vec2(0, 2), Color(0.5, 0.5, 0.5), 1),
-//                      Add(Grating(-basis1, black, basis1, gray25, 1),
-//                          Grating(-basis2, black, basis2, gray25, 1)));
-//    BrightnessToHue(0, gray_gratings).displayInWindow();
-    
-    Texture::displayInWindow({&g0, &g1, &g2, &s0, &gray_gratings, &bth});
+//    // Following graygratings and BrightnessToHue examples from 2009
+//    float angle = pi *  0.6;
+//    float frequency = 25;
+//    Vec2 basis(0, pi / frequency);
+//    Vec2 basis1 = basis.rotate(+angle);
+//    Vec2 basis2 = basis.rotate(-angle);
+//    Color black(0, 0, 0);
+//    Color white(1, 1, 1);
+//    Color gray25(0.25, 0.25, 0.25);
+//    Grating g1(-basis1, black, basis1, gray25, 1);
+//    Grating g2(-basis2, black, basis2, gray25, 1);
+//    Grating g0(Vec2(), black, Vec2(0, 2), Color(0.5, 0.5, 0.5), 1);
+//    Add s0(g1, g2);
+//    Add gray_gratings(g0, s0);
+//    BrightnessToHue bth(0.5, gray_gratings);
+//    Texture::displayInWindow({&g0, &g1, &g2, &s0, &gray_gratings, &bth});
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200113_";
+//    gray_gratings.writeToFile(511, path + "gray_gratings");
+//    bth.writeToFile(511, path + "BrightnessToHue");
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200113_";
-    gray_gratings.writeToFile(511, path + "gray_gratings");
-    bth.writeToFile(511, path + "BrightnessToHue");
-
-    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
 //    Grating blue_stripes(Vec2(), Color(), Vec2(0.1, 0.2), Color(0, 0, 1), 0.8);
@@ -241,23 +233,28 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
-//    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
-//                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
-//    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
-//                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
-//    Add plaid(red_stripes, green_stripes);
-//    // With identity transform.
-//    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
-//    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
-//    // (-1, -1). Also noticable aliasing near "center".
-//    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
-//    Texture::displayInWindow({
-//        &red_stripes,
-//        &green_stripes,
-//        &plaid,
-//        &wrap1,
-//        &wrap2});
+    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
+    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+    Add plaid(red_stripes, green_stripes);
+    // With identity transform.
+    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
+    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
+    // (-1, -1). Also noticable aliasing near "center".
+    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
+    Texture::displayInWindow({
+        &red_stripes,
+        &green_stripes,
+        &plaid,
+        &wrap1,
+        &wrap2});
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200115_";
+    plaid.writeToFile(511, path + "plaid");
+    wrap1.writeToFile(511, path + "Wrap_1");
+    wrap2.writeToFile(511, path + "Wrap_2");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
