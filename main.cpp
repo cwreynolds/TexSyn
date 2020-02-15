@@ -233,62 +233,67 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
-    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
-                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
-    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
-                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
-    Add plaid(red_stripes, green_stripes);
-    // With identity transform.
-    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
-    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
-    // (-1, -1). Also noticable aliasing near "center".
-    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
-    Texture::displayInWindow({
-        &red_stripes,
-        &green_stripes,
-        &plaid,
-        &wrap1,
-        &wrap2});
-
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200115_";
-    plaid.writeToFile(511, path + "plaid");
-    wrap1.writeToFile(511, path + "Wrap_1");
-    wrap2.writeToFile(511, path + "Wrap_2");
-
-    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
-//    // Demo for StretchSpot, Jan 16
+//    // Demo for Wrap with arbitrary center and fixed_ray. Jan 15
 //    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
 //                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
 //    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
 //                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
 //    Add plaid(red_stripes, green_stripes);
-//    float radius = 0.8;
-//    float dist = 0.65;
-//    StretchSpot ss1(4.0, radius, Vec2(+dist, +dist), plaid);
-//    StretchSpot ss2(0.2, radius, Vec2(-dist, +dist), ss1);
-//    StretchSpot ss3(0.2, radius, Vec2(-dist, -dist), ss2);
-//    StretchSpot ss4(4.0, radius, Vec2(+dist, -dist), ss3);
-//    StretchSpot ss5(4.0, radius, Vec2(-dist, -dist), ss2);
-//    StretchSpot ss6(0.2, radius, Vec2(+dist, -dist), ss5);
-//    Texture::displayInWindow({ &plaid, &ss4, &ss6 });
+//    // With identity transform.
+//    Wrap wrap1(5, Vec2(), Vec2(0, 1), plaid);
+//    // In this version, the discontinuity (-y,  opposite "fixed_ray") is along
+//    // (-1, -1). Also noticable aliasing near "center".
+//    Wrap wrap2(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid);
+//    Texture::displayInWindow({
+//        &red_stripes,
+//        &green_stripes,
+//        &plaid,
+//        &wrap1,
+//        &wrap2});
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200115_";
+//    plaid.writeToFile(511, path + "plaid");
+//    wrap1.writeToFile(511, path + "Wrap_1");
+//    wrap2.writeToFile(511, path + "Wrap_2");
 
-//    // TODO TEMP TEST related to size of inverse LUT
-//    Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
-//                         Vec2(0.1, 0), Color(0, 0, 0), 0.2);
-//    StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for StretchSpot, Jan 16
+    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+    Add plaid(red_stripes, green_stripes);
+    float radius = 0.8;
+    float dist = 0.65;
+    StretchSpot ss1(4.0, radius, Vec2(+dist, +dist), plaid);
+    StretchSpot ss2(0.2, radius, Vec2(-dist, +dist), ss1);
+    StretchSpot ss3(0.2, radius, Vec2(-dist, -dist), ss2);
+    StretchSpot ss4(4.0, radius, Vec2(+dist, -dist), ss3);
+    StretchSpot ss5(4.0, radius, Vec2(-dist, -dist), ss2);
+    StretchSpot ss6(0.2, radius, Vec2(+dist, -dist), ss5);
+    Texture::displayInWindow({ &plaid, &ss4, &ss6 });
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200116_";
+    ss4.writeToFile(511, path + "StretchSpot_1");
+    ss6.writeToFile(511, path + "StretchSpot_2");
 
-//    // TODO TEMP TEST for test for memory leaks
-//    Color c(0, 0, 0);
-//    int count = 10000;
-//    for (int i = 0; i < count; i++)
-//    {
-//        StretchSpot ss(0.5, 10, Vec2(-5, 0), vert_stripes);
-//        c = c + ss.getColor(Vec2());
-//        if (((i + 1) % (count / 100)) == 0) debugPrint(c);
-//    }
-//    debugPrint(c);
+
+    //    // TODO TEMP TEST related to size of inverse LUT
+    //    Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
+    //                         Vec2(0.1, 0), Color(0, 0, 0), 0.2);
+    //    StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
+
+    //    // TODO TEMP TEST for test for memory leaks
+    //    Color c(0, 0, 0);
+    //    int count = 10000;
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        StretchSpot ss(0.5, 10, Vec2(-5, 0), vert_stripes);
+    //        c = c + ss.getColor(Vec2());
+    //        if (((i + 1) % (count / 100)) == 0) debugPrint(c);
+    //    }
+    //    debugPrint(c);
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
