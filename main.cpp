@@ -14,33 +14,6 @@
 
 bool run_unit_tests = false;
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO needs to go somewhere else
-// TODO originally had it in Texture but it wants to use Operators derived from that.
-
-// Compare two Textures: compute average per-pixel color difference, display
-// the two textures and the "distance" between them (abs diff?).
-void texture_diff(const Texture& t0, const Texture& t1)
-{
-    AbsDiff abs_diff(t0, t1);
-    int pixel_count = 0;
-    Color total_color(0, 0, 0);
-    int size = 511;
-    Texture::rasterizeDisk(size,
-                           [&](int i, int j, Vec2 position)
-                           {
-                               Color diff = abs_diff.getColor(position);
-                               total_color += diff;
-                               pixel_count++;
-                           });
-    debugPrint(pixel_count);
-    debugPrint(total_color);
-    debugPrint(total_color / pixel_count);
-    Texture::displayInWindow({ &t0, &t1, &abs_diff }, 451);
-}
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 int main(int argc, const char * argv[])
 {
     // TODO TEMP run unit tests
@@ -297,25 +270,24 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Demo for ColorNoise, Jan 20
-//    ColorNoise cn1(1, Vec2(-7, 4), 0.1);
-    ColorNoise cn1(1, Vec2(-7, 4), 0.0);
-    ColorNoise cn2(0.5, Vec2(-18, -20), 0.8);
-    ColorNoise cn3(0.08, Vec2(15, -12), 0.6);
-    Texture::displayInWindow({ &cn1, &cn2, &cn3 });
-    
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200120_";
-    cn1.writeToFile(511, path + "ColorNoise_1");
-    cn2.writeToFile(511, path + "ColorNoise_2");
-    cn3.writeToFile(511, path + "ColorNoise_3");
+//    // Demo for ColorNoise, Jan 20
+//    ColorNoise cn1(1, Vec2(-7, 4), 0.0);
+//    ColorNoise cn2(0.5, Vec2(-18, -20), 0.8);
+//    ColorNoise cn3(0.08, Vec2(15, -12), 0.6);
+//    Texture::displayInWindow({ &cn1, &cn2, &cn3 });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200120_";
+//    cn1.writeToFile(511, path + "ColorNoise_1");
+//    cn2.writeToFile(511, path + "ColorNoise_2");
+//    cn3.writeToFile(511, path + "ColorNoise_3");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-//    // Testing Texture::rasterizer() Jan 20, 2020
-//    Noise n(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
-//    Grating g(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
-//    texture_diff(n, g);
-    
+    // Testing Texture::rasterizer() Jan 20, 2020
+    Noise n(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
+    Grating g(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
+    Texture::diff(n, g);
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    // Demo for Stretch texture operator, Jan 21, 2020

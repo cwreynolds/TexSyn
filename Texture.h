@@ -54,6 +54,8 @@ public:
     // pixel raster, and the corresponding Vec2 in Texture space.
     static void rasterizeSquare(int size, PixelFunction pixel_function);
     static void rasterizeDisk(int size, PixelFunction pixel_function);
+    // Compare two textures, print stats, display inputs and AbsDiff of them
+    static void diff(const Texture& t0, const Texture& t1);
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
