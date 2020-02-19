@@ -65,6 +65,30 @@
       laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu,
       feugiat in, orci. In hac habitasse platea dictumst.
       ----------------------------------------------------------------------</p>
+    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">January
+        24, 2020</a>
+      <h1><em>SliceToRadial</em></h1>
+      <p><em>SliceToRadial</em> maps a “slice” of its input texture—specified by
+        a <code>tangent</code> vector and <code>center</code> point—to rays
+        emanating from the <code>center</code> point. The three examples below
+        use the same color noise texture defined in the <a href="#20200123">January
+          23</a> entry. This operator introduces a discontinuity along the <code>-tangent</code>
+        direction. In the first two examples that can be seen diagonally from
+        the center to the lower left, and in the third example from the center
+        to the left.</p>
+      <pre>SliceToRadial(Vec2(1, 1), Vec2(0, 0), cn);
+SliceToRadial(Vec2(1, 1), Vec2(0.5, 0.5), cn);
+SliceToRadial(Vec2(1, 0), Vec2(0.5, 0.5), cn);
+</pre> <img src="images/20200124_SliceToRadial1.png" alt="SliceToRadial 1" title="SliceToRadial 1"
+        height="511"
+        width="511">
+      <img src="images/20200124_SliceToRadial2.png" alt="SliceToRadial 2" title="SliceToRadial 2"
+        height="511"
+        width="511">
+      <img src="images/20200124_SliceToRadial3.png" alt="SliceToRadial 3" title="SliceToRadial 3"
+        height="511"
+        width="511">
+    </div>
     <div class="post" id="20200123"> <a href="#20200123" class="date">January
         23, 2020</a>
       <h1>Texture “slices” and <em>SliceGrating</em></h1>
@@ -77,11 +101,11 @@
       <p>So for example, <em>SliceGrating</em> takes a slice and “sweeps” it
         perpendicular to the tangent. The slice is specified by two <em>Vec2</em>
         parameters: <code>slice_tangent</code> and <code>center</code>. The
-        length of <code>slice_tangent</code> becomes a scale factor
-        along the slice, relative to the <code>center</code>. Here we see the
-        input texture, then three <em>SliceGrating</em>s made from it, each
-        with a different scale. In all three examples, the <code>center</code>
-        of the transform is in the upper right at (0.5, 0.5).</p>
+        length of <code>slice_tangent</code> becomes a scale factor along the
+        slice, relative to the <code>center</code>. Here we see the input
+        texture, then three <em>SliceGrating</em>s made from it, each with a
+        different scale. In all three examples, the <code>center</code> of the
+        transform is in the upper right at (0.5, 0.5).</p>
       <pre>cn = ColorNoise(0.6, Vec2(5, -2), 0.6);
 SliceGrating(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);
 SliceGrating(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);
