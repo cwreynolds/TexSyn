@@ -1,689 +1,12 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>TexSyn</title>
-    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->
-    <style>
-			body {
-             background-color: gray;
-             font-family: Arial, Helvetica, sans-serif;
-           }
-      h1 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }
-      h2 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }
-      p { color: black; }
-      code { font-size: 120%; }
-      pre {
-            color: white;
-	          border: 1px dashed rgb(65%,65%,65%);
-	          padding: 10px;
-           	margin-bottom: 1em;
-          }
-      <!-- for in-page date anchors -->
-      a.date         {color: white; }
-			a.date:link    {text-decoration: none; color: white;}
-			a.date:visited {text-decoration: none; color: white;}
-			a.date:hover   {text-decoration: underline; color: white;}
-			a.date:active  {text-decoration: none; color: white;}
-      .post {
-              border-top: 0.3em solid rgb(25%,25%,25%);
-              margin-top: 1em;
-              padding-left: 2em;
-              padding-right: 2em;
-              padding-top: 1em;
-              clear: left ;
-            }
-      .designnote { color: rgb(25%,25%,25%) }
-      <!-- --------------------------------------------------------------------------- -->
-      <div class="post" id="yyyymmdd">
-      <a href="#yyyymmdd" class="date">Month 0, 0000</a><h1>Title</h1><p>...</p></div>
-      <!-- --------------------------------------------------------------------------- -->
-    </style>
-  </head>
-  <body>
-    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
-        page on GitHub</a> </div>
-    <h1>Introduction</h1>
-    <p class="designnote">Lorem ipsum dolor sit amet, consectetur adipiscing
-      elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-      aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-      voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-      sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-      mollit anim id est laborum.</p>
-    <p class="designnote">Curabitur pretium tincidunt lacus. Nulla gravida orci
-      a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit,
-      nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh
-      euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec
-      lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor
-      congue, eros est euismod turpis, id tincidunt sapien risus a quam.
-      Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada
-      nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis,
-      neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing
-      sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc.
-      Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis,
-      laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu,
-      feugiat in, orci. In hac habitasse platea dictumst.
-      ----------------------------------------------------------------------</p>
-    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">January
-        24, 2020</a>
-      <h1><em>SliceToRadial</em></h1>
-      <p><em>SliceToRadial</em> maps a “slice” of its input texture—specified by
-        a <code>tangent</code> vector and <code>center</code> point—to rays
-        emanating from the <code>center</code> point. The three examples below
-        use the same color noise texture defined in the <a href="#20200123">January
-          23</a> entry. This operator introduces a discontinuity along the <code>-tangent</code>
-        direction. In the first two examples that can be seen diagonally from
-        the center to the lower left, and in the third example from the center
-        to the left.</p>
-      <pre>SliceToRadial(Vec2(1, 1), Vec2(0, 0), cn);
-SliceToRadial(Vec2(1, 1), Vec2(0.5, 0.5), cn);
-SliceToRadial(Vec2(1, 0), Vec2(0.5, 0.5), cn);
-</pre> <img src="images/20200124_SliceToRadial1.png" alt="SliceToRadial 1" title="SliceToRadial 1"
-        height="511"
-        width="511">
-      <img src="images/20200124_SliceToRadial2.png" alt="SliceToRadial 2" title="SliceToRadial 2"
-        height="511"
-        width="511">
-      <img src="images/20200124_SliceToRadial3.png" alt="SliceToRadial 3" title="SliceToRadial 3"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200123"> <a href="#20200123" class="date">January
-        23, 2020</a>
-      <h1>Texture “slices” and <em>SliceGrating</em></h1>
-      <p>As in an earlier version of this library, the term “slice” of a texture
-        refers to the pattern of colors along a line in texture space. This
-        could also be called a “1d texture” or a “transit.” Several operators in
-        this library take a texture as an input, then ignore all but one slice
-        of it. The slice is normally specified by a tangent vector and a point.
-        The magnitude of the tangent serves as a parameter of the operator.</p>
-      <p>So for example, <em>SliceGrating</em> takes a slice and “sweeps” it
-        perpendicular to the tangent. The slice is specified by two <em>Vec2</em>
-        parameters: <code>slice_tangent</code> and <code>center</code>. The
-        length of <code>slice_tangent</code> becomes a scale factor along the
-        slice, relative to the <code>center</code>. Here we see the input
-        texture, then three <em>SliceGrating</em>s made from it, each with a
-        different scale. In all three examples, the <code>center</code> of the
-        transform is in the upper right at (0.5, 0.5).</p>
-      <pre>cn = ColorNoise(0.6, Vec2(5, -2), 0.6);
-SliceGrating(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);
-SliceGrating(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);
-SliceGrating(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);
-</pre> <img src="images/20200123_color_noise.png" alt="color_noise" title="color_noise"
-        height="511"
-        width="511">
-      <img src="images/20200123_SliceGrating1.png" alt="sg1" title="sg1" height="511"
-        width="511">
-      <img src="images/20200123_SliceGrating2.png" alt="sg2" title="sg2" height="511"
-        width="511">
-      <img src="images/20200123_SliceGrating3.png" alt="sg3" title="sg3" height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200121"> <a href="#20200121" class="date">January
-        21, 2020</a>
-      <h1><em>Stretch</em></h1>
-      <p>This <em>Stretch</em> operator scales its input texture along a given
-        direction by a given factor (“anisotropic scaling”). Two
-        before-and-after examples are shown below. </p>
-      <p>First, a texture called <code>color_noise</code>, and the result of
-        stretching it by a factor of 0.2 at a 45° angle, with the transformation
-        centered at the origin. If you trace along the diameter from lower left
-        to upper right you might be able to see the same color pattern.</p>
-      <pre>Stretch(Vec2(0.2, 0).rotate(pi / 4), Vec2(0, 0), color_noise)</pre>
-      <img src="images/20200121_ColorNoise.png" alt="ColorNoise" title="ColorNoise"
-        height="511"
-        width="511">
-      <img src="images/20200121_Stretch_1.png" alt="Stretch 1" title="Stretch 1"
-        height="511"
-        width="511">
-      <br>
-      <br>
-      <p>Second, a texture called <code>three_spots</code>, and the result of
-        stretching it by a factor of 2, with the transformation centered at the
-        cyan spot's center (called <code>p2</code>) along the direction from
-        there to the origin. As a result, the original cyan spot and the
-        stretched cyan ellipse share the same center. The center of the yellow
-        and magenta spots have been displaced by the stretch.</p>
-      <pre>Stretch((-p2).normalize() * 2, p2, three_spots)</pre>
-      <img src="images/20200121_three_spots.png" alt="three_spots" title="three_spots"
-        height="511"
-        width="511">
-      <img src="images/20200121_Stretch_2.png" alt="Stretch 2" title="Stretch 2"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200120"> <a href="#20200120" class="date">January
-        20, 2020</a>
-      <h1><em>ColorNoise</em></h1>
-      <p>Like <em>MultiNoise</em>, the <em>ColorNoise</em> generator takes
-        parameters <code>float scale</code>, <code>Vec2 center</code>, and a
-        float “<code>which</code>” to select among the types of noise
-        generators. It creates three “analogous” but uncorrelated noise textures
-        which are used as the red, green, and blue color components. The three <em>ColorNoise</em>
-        examples below are a low frequency basic Perlin <em>Noise</em>, a <em>Wrapulence</em>
-        at twice that frequency, and a higher frequency (12.5⨉) <em>Furbulence</em>.</p>
-      <pre>ColorNoise(1, Vec2(-7, 4), 0);
-ColorNoise(0.5, Vec2(-18, -20), 0.8);
-ColorNoise(0.08, Vec2(15, -12), 0.6);</pre>
-      <img src="images/20200120_ColorNoise_1.png" alt="ColorNoise 1" title="ColorNoise 1"
-        height="511"
-        width="511">
-      <br>
-      <img src="images/20200120_ColorNoise_2.png" alt="ColorNoise 2" title="ColorNoise 2"
-        height="511"
-        width="511">
-      <br>
-      <img src="images/20200120_ColorNoise_3.png" alt="ColorNoise 3" title="ColorNoise 3"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200119"> <a href="#20200119" class="date">January
-        19, 2020</a>
-      <h1>Texture diff tool</h1>
-      <p>I made a debugging tool—<code>Texture::diff()</code>—that does a “diff”
-        of two textures, prints some numerical metrics, then displays the two
-        inputs and diff textures for visual comparison. The tool uses a new
-        texture operator called <em>AbsDiff</em> that simply takes the absolute
-        value (norm) of the difference between corresponding points on the two
-        input textures. This “abs of diff” is applied to the three RGB
-        components independently. This is a test of the diff utility on two
-        completely different textures:</p>
-      <pre>n = Noise(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));
-g = Grating(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);
-Texture::diff(n, g);</pre>
-      <img src="images/20200119_Texture_diff.png" alt="Texture::diff()" title="Texture::diff()"
-        height="350"
-        width="1000">
-      <br>
-      <br>
-      <p>I used this diff tool to test a change to <code>Texture::rasterizeDisk()</code>
-        and while trying to come up with a closed form inverse mapping for
-        contraction in <em>StretchSpot</em>. A black third panel would indicate
-        the new code was equivalent to the old code. These colored fringes
-        indicate a mismatch:</p>
-      <img src="images/20200119_StretchSpot_diff.png" alt="Texture::diff()" title="Texture::diff()"
-        height="349"
-        width="1000">
-    </div>
-    <div class="post" id="20200116"> <a href="#20200116" class="date">January
-        16, 2020</a>
-      <h1><em>StretchSpot</em></h1>
-      <p><em>StretchSpot</em> makes a “fish eye” bulge of enlargement within a
-        given circular area of an input texture. Or, if the scale factor is less
-        than 1, makes a zone of contraction within the circular area. The code
-        below corresponds to the first image. The second is the same except for
-        the signs on the <code>dist</code> values specifying the centers of
-        stretch. Each is a series of four applications of <em>StretchSpot</em>
-        applied sequentially, two enlarging and two contracting. The input
-        texture is the same <code>plaid</code> example used below in the <a href="#20200115">January
-          15</a> entry.</p>
-      <pre>radius = 0.8
-dist = 0.65
-StretchSpot(4.0,
-            radius,
-            Vec2(+dist, -dist),
-            StretchSpot(0.2,
-                        radius,
-                        Vec2(-dist, -dist),
-                        StretchSpot(0.2,
-                                    radius,
-                                    Vec2(-dist, +dist),
-                                    StretchSpot(4.0,
-                                                radius,
-                                                Vec2(+dist, +dist),
-                                                plaid))))</pre>
-      <img src="images/20200116_StretchSpot_1.png" alt="StretchSpot 1" title="StretchSpot 1"
-        height="511"
-        width="511">
-      <img src="images/20200116_StretchSpot_2.png" alt="StretchSpot 2" title="StretchSpot 2"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200115"> <a href="#20200115" class="date">January
-        15, 2020</a>
-      <h1><em>Wrap</em></h1>
-      <p>Texture operator <em>Wrap</em> takes a half-plane of its input texture
-        and wraps it radially around a given point. The wrapping is defined by
-        three parameters: a float <code>width</code> that determines how much
-        of the half plane is used in the wrap, the <em>Vec2d</em> <code>center</code>
-        point of the wrap, and a <em>Vec2d</em> <code>fixed_ray</code> from
-        the center that will remain unchanged by the wrap. A “strip” of the half
-        plane (<code>width/2</code> on both sides of <code>fixed_ray</code>) is
-        transformed radially around <code>center</code>. (That is, a series of
-        rays parallel to <code>fixed_ray</code>, and displaced perpendicular to
-        it, become radial rays emanating from the <code>center</code> point.
-        This is related to a rectangular-(Cartesian)-to-polar transform.) <em>Wrap</em>
-        leads to a discontinuity in the direction of <code>-fixed_ray</code>
-        where the two edges of the “strip” become adjacent in the resulting
-        wrapped texture.</p>
-      <p>In the example below we see a test pattern called “plaid” and its image
-        under two applications of the <em>Wrap</em> operator. In <code>wrap1</code>,
-        the center is at the origin and <code>fixed_ray</code> points straight
-        up. In <code>wrap2</code>, the center is at (0.2, 0.2) and <code>fixed_ray</code>
-        points along the main diagonal (1, 1). There is a discontinuity in <code>wrap2</code>
-        along (-1, -1) while <code>wrap1</code> just happens to match up and
-        appear continuous. In both cases aliasing from point sampling is
-        apparent near the center of wrap.</p>
-      <pre>plaid = Add(Grating(Vec2(0, 0), Color(1, 0, 0),
-                    Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3),
-            Grating(Vec2(0, 0), Color(0, 1, 0),
-                    Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3))
-                    
-wrap1 = Wrap(5, Vec2(0, 0), Vec2(0, 1), plaid)
-wrap2 = Wrap(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid)</pre>
-      <img src="images/20200115_plaid.png" alt="“plaid” texture" title="“plaid” texture"
-        height="511"
-        width="511">
-      <br>
-      <img src="images/20200115_Wrap_1.png" alt="Wrap 1" title="Wrap 1" height="511"
-        width="511">
-      <img src="images/20200115_Wrap_2.png" alt="Wrap 2" title="Wrap 2" height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200113"> <a href="#20200113" class="date">January
-        13, 2020</a>
-      <h1><em>BrightnessToHue</em></h1>
-      <p>The <em>BrightnessToHue</em> operator takes a texture and a hue_phase.
-        It maps luminance values on [0, 1] to hue. Luminance values 0 and 1 both
-        map to hue_phase and pass through all other hues in between. Here we
-        define a gray scale pattern called “gray_gratings” and colorize it with
-        <em>BrightnessToHue</em>. We see two version, with hue_phase of 0.0 and
-        0.5, which are 180° out of phase. So for example, those 8 spots
-        horizontally across the middle are red in one and cyan (“anti-red”) in
-        the other.</p>
-      <pre>gray_gratings = Add(Grating(Vec2(), black, Vec2(0, 2), gray50, 1),
-                    Add(Grating(-basis1, black, basis1, gray25, 1),
-                        Grating(-basis2, black, basis2, gray25, 1)))
-                        
-BrightnessToHue(0.0, gray_gratings)
-BrightnessToHue(0.5, gray_gratings)</pre>
-      <img src="images/20200113_gray_gratings.png" alt="gray_gratings" title="gray_gratings"
-        height="511"
-        width="511">
-      <br>
-      <img src="images/20200113_BrightnessToHue.png" alt="BrightnessToHue, hue_phase=0"
-        title="BrightnessToHue, hue_phase=0"
-        height="511"
-        width="511">
-      <img src="images/20200113_BrightnessToHue_2.png" alt="BrightnessToHue, hue_phase=0.5"
-        title="BrightnessToHue, hue_phase=0.5"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200112"> <a href="#20200112" class="date">January
-        12, 2020</a>
-      <h1>GP considerations and <em>MultiNoise</em></h1>
-      <p>Thinking ahead to use with genetic programming, I added an alternate
-        version of the noise textures. <em>MultiNoise</em> has the same
-        parameters as the other noise texture generators, plus one additional
-        number between 0 and 1 which selects between the five noise generators.
-        This serves two purposes. (I think, although it remains to be seen.)
-        First, this selection parameter is subject to “jiggle” mutation,
-        allowing the type of noise (e.g. <em>Turbulence</em> versus <em>Furbulence</em>)
-        to vary under the control of evolutionary selection pressure. In
-        addition, I was concerned about letting noise textures “dominate” the
-        function set by having two many variations. This effects the choices
-        made during GP's initial construction of random programs, which in turn
-        influences the rest of the run. On the other hand, it may make more
-        sense to explicitly control this by giving each GP function a
-        “likelihood of being chosen for random program construction” parameter.
-        If so, that value could be set lower for the five varieties of noise
-        generators. The program for this demo texture is perhaps a little too
-        fiddly, but roughly: </p>
-      <pre>noise = MultiNoise(scale, center, black, magenta, 0.0);
-brownian = MultiNoise(scale, center, black, red, 0.2);
-turbulence = MultiNoise(scale, center, black, yellow, 0.4);
-furbulence = MultiNoise(scale, center, black, green, 0.6);
-wrapulence = MultiNoise(scale, center, black, cyan, 0.8);
-auto spot = [&amp;](float r){return Spot(center, r, black, r+0.05, white);};
-SoftMatte(spot(0.2),
-          wrapulence,
-          SoftMatte(spot(0.4),
-                    furbulence,
-                    SoftMatte(spot(0.6),
-                              turbulence,
-                              SoftMatte(spot(0.8),
-                                        brownian,
-                                        noise))))</pre>
-      <img src="images/20200112_MultiNoise.png" alt="MultiNoise texture generator"
-        title="MultiNoise texture generator"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200111"> <a href="#20200111" class="date">January
-        11, 2020</a>
-      <h1>“<em>Wrapulence</em>”</h1>
-      <p><em>Wrapulence</em> is my name for yet another variation on <em>Turbulence</em>.
-        Here, each octave of the basic noise signal is scaled up in brightness
-        then “wrapped” down into the range [0, 1] using something like an <code>floor()</code>
-        or <code>fmod()</code>. The result is that the sharp stepwise changes
-        in intensity, wrapping from bright to dark, happen “at all scales.” (Or
-        at least at several scales. Recall that these multi-octave, 1/f fractal
-        noise generators use 10 levels of recursion.)</p>
-      <pre>Wrapulence(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0))</pre>
-      <img src="images/20200111_Wrapulence.png" alt="Wrapulence noise texture generator"
-        title="Wrapulence noise texture generator"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200110"> <a href="#20200110" class="date">January
-        10, 2020</a>
-      <h1>“<em>Furbulence</em>”</h1>
-      <p><em>Furbulence</em> is my name for a variation on <em>Turbulence</em>.
-        Like <em>Brownian</em>, each are 1/f fractal noise. Perlin's <em>Turbulence</em>
-        introduces sharp features at the bottom (dark) end of the noise signal,
-        using an absolute value to fold the negative parts of the signal up into
-        the positive range. Similarly, <em>Furbulence</em> uses <u>two</u>
-        absolute values, one to fold the dark end up, and one to fold the bright
-        end down (with the scaling and shifting needed to make that work). The
-        result is that there are sharp discontinuities at the dark <u>and</u>
-        bright ends of the <em>Furbulence</em> signal. In this example there
-        are sharp hair-like features in the bright and dark regions of the
-        texture, here colored reddish blue and bluish red.</p>
-      <pre>Furbulence(0.25, Vec2(-1, 2), Color(1, .1, .3), Color(.3, .1, 1))</pre>
-      <img src="images/20200110_Furbulence.png" alt="Furbulence noise texture generator"
-        title="Furbulence noise texture generator"
-        height="511"
-        width="511">
-      <p>Just a comparison of <em>Furbulence</em> and <em>Turbulence</em>. The
-        inner <em>Furbulence</em> can be seen to have sharp features in both
-        white and yellow. The outer <em>Turbulence</em> has soft cloud-like
-        patches of blue broken by sharp black cracks.</p>
-      <pre>SoftMatte(Spot(Vec2(0, 0),
-               0.1, Color(0, 0, 0),
-               0.9, Color(1, 1, 1)),
-          Furbulence(0.1, Vec2(1, 2),
-                     Color(1, 1, 1), Color(.7, .7, 0)),
-          Turbulence(0.2, Vec2(-5, 7),
-                     Color(0, 0, 0), Color(.3, .3, 1)))</pre>
-      <img src="images/20200110_comparison.png" alt="Furbulence/Turbulence comparison"
-        title="Furbulence/Turbulence comparison"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200106"> <a href="#20200106" class="date">January
-        6, 2020</a>
-      <h1>Turbulence</h1>
-      <p><em>Turbulence</em> is a variation on noise presented in Ken Perlin's
-        groundbreaking original SIGGRAPH 1985 paper: <a href="http://www.heathershrewsbury.com/dreu2010/wp-content/uploads/2010/07/AnImageSynthesizer.pdf">An
-          Image Synthesizer</a>. Like <em>Brownian</em> noise, <em>Turbulence</em>
-        is composed of multiple octaves. At each level, the negative-going part
-        of the basic noise signal is “folded up” with an absolute value
-        operator. This produces soft/rounded features in the bright part of the
-        texture and sharp/discontinuous features in the dark parts of the
-        texture. In the example below, the sharp “valleys” are colored in dark
-        magenta, while the soft cloud-like highlights are colored orange.</p>
-      <pre>Turbulence(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0))</pre>
-      <img src="images/20200106_Turbulence.png" alt="Turbulence noise texture generator"
-        title="Turbulence noise texture generator"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200104"><a href="#20200104" class="date">January 4,
-        2020</a>
-      <h1><em>Brownian </em>— fractal 1/f Perlin noise</h1>
-      <p>This is 10 layers (octaves) of Perlin noise. The base layer is as shown
-        on <a href="#20200103">January 3</a>. Each subsequent octave is scaled
-        down by half in amplitude and size (doubling its frequency). Subsequent
-        octaves are also rotated by 2.0 radians to dis-align it with the other
-        layers.</p>
-      <pre>Brownian(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3))</pre>
-      <img src="images/20200104_Brownian.png" alt="Brownian noise texture generator (green clouds on gray)"
-        title="Brownian noise texture generator (green clouds on gray)"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200103"><a href="#20200103" class="date">January 3,
-        2020</a>
-      <h1>Perlin <em>Noise</em></h1>
-      <p>This is a <strong>TexSyn</strong> generator wrapped around the basic
-        Perlin <code>noise()</code> function as described in his <a href="https://mrl.nyu.edu/%7Eperlin/noise/">SIGGRAPH
-          2002 paper <em>Improving Noise</em></a>. The parameters are a scale
-        factor, a center/translation, and two colors.</p>
-      <p class="designnote">(Design note: I don't like that the noise pattern is
-        always “axis aligned” in this formulation. I could add a rotation angle.
-        But I am leaning toward changing to a specification with two points (<em>Vec2</em>s)—like
-        used in <em>Gradation</em>—or a point and a basis vector to specify a
-        whole transform: translation, rotation, and scale.)</p>
-      <pre>Noise(0.1, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0))</pre>
-      <img src="images/20200103_Noise.png" alt="Noise texture generator (blue and yellow blobs)"
-        title="Noise texture generator (blue and yellow blobs)"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20200101"> <a href="#20200101" class="date">January
-        1, 2020</a>
-      <h1>Catching up: <em>Gradation</em>, <em>Grating</em>, <em>SoftMatte</em>,
-        <em>Max</em>, and <em>Min</em></h1>
-      <p>Having installed a modern version of <strong>OpenCV</strong> and
-        integrated it into <strong>TexSyn</strong>, I could now see the
-        textures that I had only been able to verify with unit tests so far.</p>
-      <h2><em>Gradation</em></h2>
-      <p> The <em>Gradation</em> generator defines two colored “half planes”
-        with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>
-        are two “colored positions.” The line segment between the two points
-        defines the orientation and width of the transition region. Outside the
-        transition region the texture is uniformly the nearest of the two
-        colors.</p>
-      <pre>Gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
-          Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));</pre>
-      <img src="images/20200101_Gradation.png" alt="Gradation texture generator (red to white)"
-        title="Gradation texture generator (red to white)"
-        height="511"
-        width="511">
-      <br>
-      <h2><em>Grating</em></h2>
-      <p> The <em>Grating</em> generator creates a swept stripe pattern whose
-        cross-sectional “slice” is a periodic waveform. The parameters to <em>Grating</em>
-        include: </p>
-      <ul>
-        <li>two <em>Vec2</em> positions, the endpoints of a line segment, which
-          define the orientation and spacing (wavelength) of the stripe pattern</li>
-        <li>two <em>Colors</em> for the striped pattern</li>
-        <li>a “softness” parameter were 0 means square wave and 1 means sine
-          wave (so in this example, 30% of the way from square to sinusoid).<br>
-        </li>
-      </ul>
-      <pre>Grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),
-        Vec2(0.5, 0.3), Color(0.85, 0.85, 0),
-        0.3)</pre>
-      <img src="images/20200101_Grating.png" alt="Grating texture generator (green and yellow stripes)"
-        title="Grating texture generator (green and yellow stripes)"
-        height="511"
-        width="511">
-      <br>
-      <h2><em>SoftMatte</em></h2>
-      <p> The <em>SoftMatte</em> Operator take three Textures as parameters.
-        The first is interpreted as the “matte.” When it's luminance value is
-        zero, the result is taken from the second Texture. When the matte's
-        luminance value is one, the result is taken from the third Texture.
-        Matte values in between result in a linear interpolation between the
-        other Textures. In this example the matte Texture is a <em>Spot</em>.
-        The outer dark part of the <em>Spot</em> takes the second texture, a
-        sinusoid <em>Gradient</em> of vertical black and white bands. The inner
-        bright part of the spot takes the third texture, a “slightly soft square
-        wave” <em>Gradient</em> of horizontal magenta and blue stripes.</p>
-      <pre>SoftMatte(Spot(Vec2(0, 0),
-               0.2, Color(1, 1, 1),
-               0.8, Color(0, 0, 0)),
-          Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-                  Vec2( 0.2, 0), Color(1, 1, 1), 1),
-          Grating(Vec2(0, -0.1), Color(1, 0, 1),
-                  Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
-      <img src="images/20200101_SoftMatte.png" alt="SoftMatte texture operator"
-        title="SoftMatte texture operator"
-        height="511"
-        width="511">
-      <br>
-      <h2><em>Max</em> and <em>Min</em></h2>
-      <p> The <em>Max</em> and <em>Min</em> operators compose two textures.
-        Each point's color comes from whichever input texture has the <em>Max</em>
-        (or <em>Min</em>) luminance/brightness at the corresponding point.
-        These examples show the result with the same two <em>Grating</em>s used
-        in the <em>SoftMatte</em> example. In the first image, the white parts
-        of the vertical Grating push to the front and the black parts push to
-        the back. They are covered by the horizontal Grating. Note that magenta
-        is in front of blue. The second image is the same code with <em>Min</em>
-        instead.</p>
-      <pre>Max(Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-            Vec2( 0.2, 0), Color(1, 1, 1), 1),
-    Grating(Vec2(0, -0.1), Color(1, 0, 1),
-            Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
-      <img src="images/20200101_Max.png" alt="Max texture operator" title="Max texture operator"
-        height="511"
-        width="511">
-      <img src="images/20200101_Min.png" alt="Min texture operator" title="Min texture operator"
-        height="511"
-        width="511">
-    </div>
-    <div class="post" id="20191230"> <a href="#20191230" class="date">December
-        30, 2019</a>
-      <h1>“First light” and the <em>Spot</em> operator</h1>
-      <p>These are the first textures displayed by <strong>TexSyn</strong>
-        captured as screen shots. They show the result of the <em>Spot</em>
-        texture generator. The first one was tiny and was missing its center
-        constant-color region. The <strong>OpenCV</strong> utility <code>cv::imshow()</code>
-        is used to rasterize and display the procedural texture. The first image
-        used a 24 bit (three 8 bit unsigned integers) RGB representation, called
-        <code>CV_8UC3</code> in <strong>OpenCV</strong>. A bug caused “full
-        brightness” colors to wrap around to zero, causing the black center. I
-        fixed the bug and switched to an image format with three 32 bit floating
-        point number per stored pixel (<code>CV_32FC3</code>). Later I may
-        switch to four channel images to accommodate alpha matting. </p>
-      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports
-        arbitrary resolution—so there is no static storage of pixels—all color
-        values are computed procedurally “on the fly” represented as three
-        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>
-        class) are used only at the output end, before displaying a texture on
-        the screen, or writing it to an image file.</p>
-      <p>This <em>Spot</em> Texture has been specified to be centered at the
-        origin, with an inner radius of 0.2 and an inner color of white. Its
-        outer radius is 0.6 and outer color is black. Between 0.2 and 0.6 there
-        is a soft sinusoidal transition between the inner and outer colors: </p>
-      <pre>    Spot(Vec2(0, 0),
-         0.2, Color(1, 1, 1),
-         0.6, Color(0, 0, 0));</pre>
-      <br>
-      <img src="images/20191229_first_light_crop.png" alt="“first light” image"
-        title="“first light” image"
-        height="560"
-        width="514">
-      <br>
-      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" title="texture generator Spot"
-        height="536"
-        width="515">
-    </div>
-    <div class="post" id="20191229"><a href="#20191229" class="date">December
-        29, 2019</a>
-      <h1>Infrastructure</h1>
-      <p>From December 15 through December 28 the basic infrastructure was
-        constructed. This included:</p>
-      <ul>
-        <li>Basic <code>c++</code> classes for <strong>Texsyn</strong>:</li>
-        <ul>
-          <li><code>Texture</code> (base class for all types of textures)</li>
-          <ul>
-            <li><code>Generator</code> (creates a texture from primitive values)</li>
-            <li><code>Operator</code> (combines one or more input textures (and
-              primitive values) to produce a new texture)</li>
-          </ul>
-          <li>Primitive values to parameter textures:</li>
-          <ul>
-            <li><code>Vec2</code> (a position on the infinite 2D texture plane)</li>
-            <li><code>Color</code> (very generalized representation of a point
-              in color space, defined as RGB values over the entire floating
-              point range. During texture composition, these values range over
-              [-∞, +∞] but are clipped to [0, 1] for display. Includes
-              conversion to hue/saturation/value color space and luminance.)</li>
-          </ul>
-        </ul>
-        <li>A <strong>Utilities</strong> package to support interpolation,
-          clipping, remapping, randomization, and noise.</li>
-        <li>A suite of <strong>unit tests</strong> to verify the correct
-          operation of primitives, texture generators, and operators.</li>
-        <li>An interface to the <strong>OpenCV</strong> library to provide:</li>
-        <ul>
-          <li>Basic utilities such as displaying rasterized textures in windows
-            on the screen, and writing them to standard image file formats.</li>
-          <li>Eventually help with implementing some operators, and particularly
-            to provide access to acceleration on GPU or other hardware.</li>
-        </ul>
-        <li><br>
-        </li>
-      </ul>
-      <p>For more details, see the <a href="https://github.com/cwreynolds/TexSyn/">code</a>
-        and the <a href="https://github.com/cwreynolds/TexSyn/commits/master"><code>git</code>
-          commit history</a>.</p>
-    </div>
-    <div class="post" id="20191219"> <a href="#20191219" class="date">December
-        19, 2019</a>
-      <h1>Designing for genetic programming</h1>
-      <p>Most software libraries are, of course, intended for use by human
-        programmers.There is a design aesthetic (“design pattern”?) that leans
-        toward minimal functionality (where a function should “do just one
-        thing”) and conversely duplication should be avoided. More complicated
-        patterns arise from composing the minimal units of a library.</p>
-      <p>In contrast, <strong>TexSyn</strong> is intended primarily for use by
-        a genetic programming system. GP is a type of automatic programming
-        technique, driven by evolutionary optimization. My experience has been
-        that this suggests different “best practices” for library design. This
-        will be revisited in future posts, but here is an example to give a
-        sense of this issue.</p>
-      <p>Imagine a texture generator called <em>Spot</em>, a disk of one color
-        on a field of another color. A minimalist design might define a spot
-        with a default diameter (say 1) at a default location (say the origin),
-        and a default coloring (a white spot on a black background). As such,
-        this minimalist <em>Spot</em> could have zero parameters. That was the
-        initial approach taken in 2008 for the previous version of this library.
-        Using standard techniques of composition of software operators, a
-        programmer might use a <em>Scale</em> operator to adjust the spot's
-        diameter, a <em>Translation</em> operator to change its position, and
-        perhaps a <em>Soft</em><em>Matte</em> operation to use the basic
-        black-and-white pattern to modulate other colors or textures. </p>
-      <p>This suggests a requirement for context in the composition of functions
-        when writing programs with this library. If we are going to call <em>Spot</em>,
-        we will, in general, need to surround it with calls to <em>Scale</em>,
-        <em>Translate</em>, etc. A human programmer would understand how to
-        handle this. An automated programming system would not, or at least
-        would need to be augmented to supply the required context. In random
-        programs constructed by GP, without that context, we would expect to see
-        a bias toward <em>Spot</em> often exhibiting its default radius and
-        position, because it did not happen to be modified by <em>Scale</em>, <em>Translate</em>,
-        etc. An alternative to declaring and maintaining this context, is to
-        make these transformations part of the basic <em>Spot</em> definition.
-        So for example <em>Spot</em> could have several parameters, such as a
-        center position, a radius, and two colors to use.</p>
-      <p><strong>TexSyn</strong> will this this approach, often giving texture
-        generators and operators additional parameters to establish context.
-        This makes it explicit to the genetic programming system that, for
-        example, a <em>Spot</em> always needs a position to be specified
-        because it is a required parameter to <em>Spot</em>. This removes the
-        need to add extra complexity related to required context. </p>
-    </div>
-    <div class="post" id="20191215"> <a href="#20191215" class="date">December
-        15, 2019</a>
-      <h1>A new library</h1>
-      <p>Today I created <strong><a href="https://github.com/cwreynolds/TexSyn">Texsyn</a></strong>,
-        a new repository on <strong>GitHub</strong>, part of a project about
-        adversarial evolutionary texture synthesis.</p>
-      <p><strong>TexSyn</strong> is a library for procedural texture synthesis.
-        It is intended for use by a <em>genetic programming</em> (“GP”) system,
-        a type of <em>genetic algorithm</em>. The GP system performs <em>simulated
-          evolution</em> on a <em>population</em> of individual programs,
-        according to a <em>fitness function</em> (also known as a <em>fitness
-          metric</em>, <em>utility function</em>, or a <em>loss function</em>
-        in machine learning.) In this application to texture synthesis, the
-        programs are compositions of functions from the <strong>TexSyn</strong>
-        library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>
-      <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>
-        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
+<!DOCTYPE html><html>  <head>    <meta http-equiv="content-type" content="text/html; charset=UTF-8">    <title>TexSyn</title>    <!-- <style type="text/css"> #backbg { background-color: gray; }      </style>		-->    <style>			body {             background-color: gray;             font-family: Arial, Helvetica, sans-serif;           }      h1 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }      h2 { padding: 0; border: 0; margin: 0; margin-top: 0.2em; }      p { color: black; }      code { font-size: 120%; }      pre {            color: white;	          border: 1px dashed rgb(65%,65%,65%);	          padding: 10px;           	margin-bottom: 1em;          }      <!-- for in-page date anchors -->      a.date         {color: white; }			a.date:link    {text-decoration: none; color: white;}			a.date:visited {text-decoration: none; color: white;}			a.date:hover   {text-decoration: underline; color: white;}			a.date:active  {text-decoration: none; color: white;}      .post {              border-top: 0.3em solid rgb(25%,25%,25%);              margin-top: 1em;              padding-left: 2em;              padding-right: 2em;              padding-top: 1em;              clear: left ;            }      .designnote { color: rgb(25%,25%,25%) }      <!-- --------------------------------------------------------------------------- -->      <div class="post" id="yyyymmdd">      <a href="#yyyymmdd" class="date">Month 0, 0000</a><h1>Title</h1><p>...</p></div>      <!-- --------------------------------------------------------------------------- -->    </style>  </head>  <body>    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
+        page on GitHub</a> </div>    <h1>Introduction</h1>    <p class="designnote">Lorem ipsum dolor sit amet, consectetur adipiscing      elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut      aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in      voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur      sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt      mollit anim id est laborum.</p>    <p class="designnote">Curabitur pretium tincidunt lacus. Nulla gravida orci      a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit,      nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh      euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec      lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor      congue, eros est euismod turpis, id tincidunt sapien risus a quam.      Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada      nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis,      neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing      sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc.      Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis,      laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu,      feugiat in, orci. In hac habitasse platea dictumst.      ----------------------------------------------------------------------</p>    <div class="post" id="20200128"> <a href="#20200128" class="date">January        28, 2020</a>      <h1><em>MobiusTransform</em></h1>      <p>I was recently reminded of this very nice “explorable explanation” of        the <a href="http://timhutton.github.io/mobius-transforms/">Möbius          transformation</a> of the complex number plane, by Tim Hutton in 2016.        Substituting the texture plane for the complex plane, and with some        math-hand-holding by Robert Bridson to invert the transformation        (thanks!), I prototyped this <em>MobiusTransform</em> texture operator.        Its parameters are four points on the plane and an input texture. In        these examples the input is the <code>plaid</code> texture as defined        in the entry for <a href="#20200115">January 15, 2020</a>. Using        Hutton's interactive tool I defined the four points for the first        example, which is just “off” an identity transform. That is, the        perpendicular diagonal stripes of <code>plaid</code> have been rotated        and slightly curved by the Möbius transformation. The next two (whose        “control points” were randomly generated <em>Vec2</em> values within 4        units of the origin) show increasing amounts of warp. The fourth example        (also randomly generated) shows an area of significant contraction of        the input texture. Because the current texture operators use point        sampling so areas of strong contraction inevitably produce aliasing        “confetti” due to undersampling (violating the <a href="https://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist
+          criteria</a>). Eventually <strong>TexSyn</strong> may be extended to        detect these contractions and supersample them. Or perhaps it will just        depend upon genetic programming to “vote down” textures with these        artifacts.</p>      <pre>// first example:MobiusTransform(Vec2(1,2), Vec2(0,.1), Vec2(.1,0), Vec2(1,-2), plaid)// third example:MobiusTransform(Vec2(-0.958788, 1.64993), Vec2(-1.54534, -0.593485), Vec2(1.29155, -0.931471), Vec2(0.768266, 0.24665), plaid)</pre>      <img src="images/20200128_MobiusTransform_0.png" alt="MobiusTransform 1" title="MobiusTransform 1"        height="511"        width="511">      <img src="images/20200128_MobiusTransform_5.png" alt="MobiusTransform 2" title="MobiusTransform 2"        height="511"        width="511">      <img src="images/20200128_MobiusTransform_1.png" alt="MobiusTransform 3" title="MobiusTransform 3"        height="511"        width="511">      <img src="images/20200128_MobiusTransform_2.png" alt="MobiusTransform 4" title="MobiusTransform 4"        height="511"        width="511">    </div>    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">January        24, 2020</a>      <h1><em>SliceToRadial</em></h1>      <p><em>SliceToRadial</em> maps a “slice” of its input texture—specified by        a <code>tangent</code> vector and <code>center</code> point—to rays        emanating from the <code>center</code> point. The three examples below        use the same color noise texture defined in the <a href="#20200123">January
+          23</a> entry. This operator introduces a discontinuity along the <code>-tangent</code>        direction. In the first two examples that can be seen diagonally from        the center to the lower left, and in the third example from the center        to the left.</p>      <pre>SliceToRadial(Vec2(1, 1), Vec2(0, 0), cn);SliceToRadial(Vec2(1, 1), Vec2(0.5, 0.5), cn);SliceToRadial(Vec2(1, 0), Vec2(0.5, 0.5), cn);</pre> <img src="images/20200124_SliceToRadial1.png" alt="SliceToRadial 1" title="SliceToRadial 1"        height="511"        width="511">      <img src="images/20200124_SliceToRadial2.png" alt="SliceToRadial 2" title="SliceToRadial 2"        height="511"        width="511">      <img src="images/20200124_SliceToRadial3.png" alt="SliceToRadial 3" title="SliceToRadial 3"        height="511"        width="511">    </div>    <div class="post" id="20200123"> <a href="#20200123" class="date">January        23, 2020</a>      <h1>Texture “slices” and <em>SliceGrating</em></h1>      <p>As in an earlier version of this library, the term “slice” of a texture        refers to the pattern of colors along a line in texture space. This        could also be called a “1d texture” or a “transit.” Several operators in        this library take a texture as an input, then ignore all but one slice        of it. The slice is normally specified by a tangent vector and a point.        The magnitude of the tangent serves as a parameter of the operator.</p>      <p>So for example, <em>SliceGrating</em> takes a slice and “sweeps” it        perpendicular to the tangent. The slice is specified by two <em>Vec2</em>        parameters: <code>slice_tangent</code> and <code>center</code>. The        length of <code>slice_tangent</code> becomes a scale factor along the        slice, relative to the <code>center</code>. Here we see the input        texture, then three <em>SliceGrating</em>s made from it, each with a        different scale. In all three examples, the <code>center</code> of the        transform is in the upper right at (0.5, 0.5).</p>      <pre>cn = ColorNoise(0.6, Vec2(5, -2), 0.6);SliceGrating(Vec2(1, 2) * 2.0, Vec2(0.5, 0.5), cn);SliceGrating(Vec2(1, 2) * 1.0, Vec2(0.5, 0.5), cn);SliceGrating(Vec2(1, 2) * 0.5, Vec2(0.5, 0.5), cn);</pre> <img src="images/20200123_color_noise.png" alt="color_noise" title="color_noise"        height="511"        width="511">      <img src="images/20200123_SliceGrating1.png" alt="sg1" title="sg1" height="511"        width="511">      <img src="images/20200123_SliceGrating2.png" alt="sg2" title="sg2" height="511"        width="511">      <img src="images/20200123_SliceGrating3.png" alt="sg3" title="sg3" height="511"        width="511">    </div>    <div class="post" id="20200121"> <a href="#20200121" class="date">January        21, 2020</a>      <h1><em>Stretch</em></h1>      <p>This <em>Stretch</em> operator scales its input texture along a given        direction by a given factor (“anisotropic scaling”). Two        before-and-after examples are shown below. </p>      <p>First, a texture called <code>color_noise</code>, and the result of        stretching it by a factor of 0.2 at a 45° angle, with the transformation        centered at the origin. If you trace along the diameter from lower left        to upper right you might be able to see the same color pattern.</p>      <pre>Stretch(Vec2(0.2, 0).rotate(pi / 4), Vec2(0, 0), color_noise)</pre>      <img src="images/20200121_ColorNoise.png" alt="ColorNoise" title="ColorNoise"        height="511"        width="511">      <img src="images/20200121_Stretch_1.png" alt="Stretch 1" title="Stretch 1"        height="511"        width="511">      <br>      <br>      <p>Second, a texture called <code>three_spots</code>, and the result of        stretching it by a factor of 2, with the transformation centered at the        cyan spot's center (called <code>p2</code>) along the direction from        there to the origin. As a result, the original cyan spot and the        stretched cyan ellipse share the same center. The center of the yellow        and magenta spots have been displaced by the stretch.</p>      <pre>Stretch((-p2).normalize() * 2, p2, three_spots)</pre>      <img src="images/20200121_three_spots.png" alt="three_spots" title="three_spots"        height="511"        width="511">      <img src="images/20200121_Stretch_2.png" alt="Stretch 2" title="Stretch 2"        height="511"        width="511">    </div>    <div class="post" id="20200120"> <a href="#20200120" class="date">January        20, 2020</a>      <h1><em>ColorNoise</em></h1>      <p>Like <em>MultiNoise</em>, the <em>ColorNoise</em> generator takes        parameters <code>float scale</code>, <code>Vec2 center</code>, and a        float “<code>which</code>” to select among the types of noise        generators. It creates three “analogous” but uncorrelated noise textures        which are used as the red, green, and blue color components. The three <em>ColorNoise</em>        examples below are a low frequency basic Perlin <em>Noise</em>, a <em>Wrapulence</em>        at twice that frequency, and a higher frequency (12.5⨉) <em>Furbulence</em>.</p>      <pre>ColorNoise(1, Vec2(-7, 4), 0);ColorNoise(0.5, Vec2(-18, -20), 0.8);ColorNoise(0.08, Vec2(15, -12), 0.6);</pre>      <img src="images/20200120_ColorNoise_1.png" alt="ColorNoise 1" title="ColorNoise 1"        height="511"        width="511">      <br>      <img src="images/20200120_ColorNoise_2.png" alt="ColorNoise 2" title="ColorNoise 2"        height="511"        width="511">      <br>      <img src="images/20200120_ColorNoise_3.png" alt="ColorNoise 3" title="ColorNoise 3"        height="511"        width="511">    </div>    <div class="post" id="20200119"> <a href="#20200119" class="date">January        19, 2020</a>      <h1>Texture diff tool</h1>      <p>I made a debugging tool—<code>Texture::diff()</code>—that does a “diff”        of two textures, prints some numerical metrics, then displays the two        inputs and diff textures for visual comparison. The tool uses a new        texture operator called <em>AbsDiff</em> that simply takes the absolute        value (norm) of the difference between corresponding points on the two        input textures. This “abs of diff” is applied to the three RGB        components independently. This is a test of the diff utility on two        completely different textures:</p>      <pre>n = Noise(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0));g = Grating(Vec2(), Color(0, 1, 1), Vec2(0.1, 0.1), Color(0, 0, 1), 0.5);Texture::diff(n, g);</pre>      <img src="images/20200119_Texture_diff.png" alt="Texture::diff()" title="Texture::diff()"        height="350"        width="1000">      <br>      <br>      <p>I used this diff tool to test a change to <code>Texture::rasterizeDisk()</code>        and while trying to come up with a closed form inverse mapping for        contraction in <em>StretchSpot</em>. A black third panel would indicate        the new code was equivalent to the old code. These colored fringes        indicate a mismatch:</p>      <img src="images/20200119_StretchSpot_diff.png" alt="Texture::diff()" title="Texture::diff()"        height="349"        width="1000">    </div>    <div class="post" id="20200116"> <a href="#20200116" class="date">January        16, 2020</a>      <h1><em>StretchSpot</em></h1>      <p><em>StretchSpot</em> makes a “fish eye” bulge of enlargement within a        given circular area of an input texture. Or, if the scale factor is less        than 1, makes a zone of contraction within the circular area. The code        below corresponds to the first image. The second is the same except for        the signs on the <code>dist</code> values specifying the centers of        stretch. Each is a series of four applications of <em>StretchSpot</em>        applied sequentially, two enlarging and two contracting. The input        texture is the same <code>plaid</code> example used below in the <a href="#20200115">January
+          15</a> entry.</p>      <pre>radius = 0.8dist = 0.65StretchSpot(4.0,            radius,            Vec2(+dist, -dist),            StretchSpot(0.2,                        radius,                        Vec2(-dist, -dist),                        StretchSpot(0.2,                                    radius,                                    Vec2(-dist, +dist),                                    StretchSpot(4.0,                                                radius,                                                Vec2(+dist, +dist),                                                plaid))))</pre>      <img src="images/20200116_StretchSpot_1.png" alt="StretchSpot 1" title="StretchSpot 1"        height="511"        width="511">      <img src="images/20200116_StretchSpot_2.png" alt="StretchSpot 2" title="StretchSpot 2"        height="511"        width="511">    </div>    <div class="post" id="20200115"> <a href="#20200115" class="date">January        15, 2020</a>      <h1><em>Wrap</em></h1>      <p>Texture operator <em>Wrap</em> takes a half-plane of its input texture        and wraps it radially around a given point. The wrapping is defined by        three parameters: a float <code>width</code> that determines how much        of the half plane is used in the wrap, the <em>Vec2d</em> <code>center</code>        point of the wrap, and a <em>Vec2d</em> <code>fixed_ray</code> from        the center that will remain unchanged by the wrap. A “strip” of the half        plane (<code>width/2</code> on both sides of <code>fixed_ray</code>) is        transformed radially around <code>center</code>. (That is, a series of        rays parallel to <code>fixed_ray</code>, and displaced perpendicular to        it, become radial rays emanating from the <code>center</code> point.        This is related to a rectangular-(Cartesian)-to-polar transform.) <em>Wrap</em>        leads to a discontinuity in the direction of <code>-fixed_ray</code>        where the two edges of the “strip” become adjacent in the resulting        wrapped texture.</p>      <p>In the example below we see a test pattern called “plaid” and its image        under two applications of the <em>Wrap</em> operator. In <code>wrap1</code>,        the center is at the origin and <code>fixed_ray</code> points straight        up. In <code>wrap2</code>, the center is at (0.2, 0.2) and <code>fixed_ray</code>        points along the main diagonal (1, 1). There is a discontinuity in <code>wrap2</code>        along (-1, -1) while <code>wrap1</code> just happens to match up and        appear continuous. In both cases aliasing from point sampling is        apparent near the center of wrap.</p>      <pre>plaid = Add(Grating(Vec2(0, 0), Color(1, 0, 0),                    Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3),            Grating(Vec2(0, 0), Color(0, 1, 0),                    Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3))                    wrap1 = Wrap(5, Vec2(0, 0), Vec2(0, 1), plaid)wrap2 = Wrap(5, Vec2(0.2, 0.2), Vec2(1, 1), plaid)</pre>      <img src="images/20200115_plaid.png" alt="“plaid” texture" title="“plaid” texture"        height="511"        width="511">      <br>      <img src="images/20200115_Wrap_1.png" alt="Wrap 1" title="Wrap 1" height="511"        width="511">      <img src="images/20200115_Wrap_2.png" alt="Wrap 2" title="Wrap 2" height="511"        width="511">    </div>    <div class="post" id="20200113"> <a href="#20200113" class="date">January        13, 2020</a>      <h1><em>BrightnessToHue</em></h1>      <p>The <em>BrightnessToHue</em> operator takes a texture and a hue_phase.        It maps luminance values on [0, 1] to hue. Luminance values 0 and 1 both        map to hue_phase and pass through all other hues in between. Here we        define a gray scale pattern called “gray_gratings” and colorize it with        <em>BrightnessToHue</em>. We see two version, with hue_phase of 0.0 and        0.5, which are 180° out of phase. So for example, those 8 spots        horizontally across the middle are red in one and cyan (“anti-red”) in        the other.</p>      <pre>gray_gratings = Add(Grating(Vec2(), black, Vec2(0, 2), gray50, 1),                    Add(Grating(-basis1, black, basis1, gray25, 1),                        Grating(-basis2, black, basis2, gray25, 1)))                        BrightnessToHue(0.0, gray_gratings)BrightnessToHue(0.5, gray_gratings)</pre>      <img src="images/20200113_gray_gratings.png" alt="gray_gratings" title="gray_gratings"        height="511"        width="511">      <br>      <img src="images/20200113_BrightnessToHue.png" alt="BrightnessToHue, hue_phase=0"        title="BrightnessToHue, hue_phase=0"        height="511"        width="511">      <img src="images/20200113_BrightnessToHue_2.png" alt="BrightnessToHue, hue_phase=0.5"        title="BrightnessToHue, hue_phase=0.5"        height="511"        width="511">    </div>    <div class="post" id="20200112"> <a href="#20200112" class="date">January        12, 2020</a>      <h1>GP considerations and <em>MultiNoise</em></h1>      <p>Thinking ahead to use with genetic programming, I added an alternate        version of the noise textures. <em>MultiNoise</em> has the same        parameters as the other noise texture generators, plus one additional        number between 0 and 1 which selects between the five noise generators.        This serves two purposes. (I think, although it remains to be seen.)        First, this selection parameter is subject to “jiggle” mutation,        allowing the type of noise (e.g. <em>Turbulence</em> versus <em>Furbulence</em>)        to vary under the control of evolutionary selection pressure. In        addition, I was concerned about letting noise textures “dominate” the        function set by having two many variations. This effects the choices        made during GP's initial construction of random programs, which in turn        influences the rest of the run. On the other hand, it may make more        sense to explicitly control this by giving each GP function a        “likelihood of being chosen for random program construction” parameter.        If so, that value could be set lower for the five varieties of noise        generators. The program for this demo texture is perhaps a little too        fiddly, but roughly: </p>      <pre>noise = MultiNoise(scale, center, black, magenta, 0.0);brownian = MultiNoise(scale, center, black, red, 0.2);turbulence = MultiNoise(scale, center, black, yellow, 0.4);furbulence = MultiNoise(scale, center, black, green, 0.6);wrapulence = MultiNoise(scale, center, black, cyan, 0.8);auto spot = [&amp;](float r){return Spot(center, r, black, r+0.05, white);};SoftMatte(spot(0.2),          wrapulence,          SoftMatte(spot(0.4),                    furbulence,                    SoftMatte(spot(0.6),                              turbulence,                              SoftMatte(spot(0.8),                                        brownian,                                        noise))))</pre>      <img src="images/20200112_MultiNoise.png" alt="MultiNoise texture generator"        title="MultiNoise texture generator"        height="511"        width="511">    </div>    <div class="post" id="20200111"> <a href="#20200111" class="date">January        11, 2020</a>      <h1>“<em>Wrapulence</em>”</h1>      <p><em>Wrapulence</em> is my name for yet another variation on <em>Turbulence</em>.        Here, each octave of the basic noise signal is scaled up in brightness        then “wrapped” down into the range [0, 1] using something like an <code>floor()</code>        or <code>fmod()</code>. The result is that the sharp stepwise changes        in intensity, wrapping from bright to dark, happen “at all scales.” (Or        at least at several scales. Recall that these multi-octave, 1/f fractal        noise generators use 10 levels of recursion.)</p>      <pre>Wrapulence(0.9, Vec2(-2, -9), Color(0, 0, 0), Color(1, 0.6, 0))</pre>      <img src="images/20200111_Wrapulence.png" alt="Wrapulence noise texture generator"        title="Wrapulence noise texture generator"        height="511"        width="511">    </div>    <div class="post" id="20200110"> <a href="#20200110" class="date">January        10, 2020</a>      <h1>“<em>Furbulence</em>”</h1>      <p><em>Furbulence</em> is my name for a variation on <em>Turbulence</em>.        Like <em>Brownian</em>, each are 1/f fractal noise. Perlin's <em>Turbulence</em>        introduces sharp features at the bottom (dark) end of the noise signal,        using an absolute value to fold the negative parts of the signal up into        the positive range. Similarly, <em>Furbulence</em> uses <u>two</u>        absolute values, one to fold the dark end up, and one to fold the bright        end down (with the scaling and shifting needed to make that work). The        result is that there are sharp discontinuities at the dark <u>and</u>        bright ends of the <em>Furbulence</em> signal. In this example there        are sharp hair-like features in the bright and dark regions of the        texture, here colored reddish blue and bluish red.</p>      <pre>Furbulence(0.25, Vec2(-1, 2), Color(1, .1, .3), Color(.3, .1, 1))</pre>      <img src="images/20200110_Furbulence.png" alt="Furbulence noise texture generator"        title="Furbulence noise texture generator"        height="511"        width="511">      <p>Just a comparison of <em>Furbulence</em> and <em>Turbulence</em>. The        inner <em>Furbulence</em> can be seen to have sharp features in both        white and yellow. The outer <em>Turbulence</em> has soft cloud-like        patches of blue broken by sharp black cracks.</p>      <pre>SoftMatte(Spot(Vec2(0, 0),               0.1, Color(0, 0, 0),               0.9, Color(1, 1, 1)),          Furbulence(0.1, Vec2(1, 2),                     Color(1, 1, 1), Color(.7, .7, 0)),          Turbulence(0.2, Vec2(-5, 7),                     Color(0, 0, 0), Color(.3, .3, 1)))</pre>      <img src="images/20200110_comparison.png" alt="Furbulence/Turbulence comparison"        title="Furbulence/Turbulence comparison"        height="511"        width="511">    </div>    <div class="post" id="20200106"> <a href="#20200106" class="date">January        6, 2020</a>      <h1>Turbulence</h1>      <p><em>Turbulence</em> is a variation on noise presented in Ken Perlin's        groundbreaking original SIGGRAPH 1985 paper: <a href="http://www.heathershrewsbury.com/dreu2010/wp-content/uploads/2010/07/AnImageSynthesizer.pdf">An
+          Image Synthesizer</a>. Like <em>Brownian</em> noise, <em>Turbulence</em>        is composed of multiple octaves. At each level, the negative-going part        of the basic noise signal is “folded up” with an absolute value        operator. This produces soft/rounded features in the bright part of the        texture and sharp/discontinuous features in the dark parts of the        texture. In the example below, the sharp “valleys” are colored in dark        magenta, while the soft cloud-like highlights are colored orange.</p>      <pre>Turbulence(0.3, Vec2(2, -5), Color(0.3, 0, 0.3), Color(1, 0.6, 0))</pre>      <img src="images/20200106_Turbulence.png" alt="Turbulence noise texture generator"        title="Turbulence noise texture generator"        height="511"        width="511">    </div>    <div class="post" id="20200104"><a href="#20200104" class="date">January 4,        2020</a>      <h1><em>Brownian </em>— fractal 1/f Perlin noise</h1>      <p>This is 10 layers (octaves) of Perlin noise. The base layer is as shown        on <a href="#20200103">January 3</a>. Each subsequent octave is scaled        down by half in amplitude and size (doubling its frequency). Subsequent        octaves are also rotated by 2.0 radians to dis-align it with the other        layers.</p>      <pre>Brownian(0.20, Vec2(3, 5), Color(0, 1, 0), Color(0.3, 0.3, 0.3))</pre>      <img src="images/20200104_Brownian.png" alt="Brownian noise texture generator (green clouds on gray)"        title="Brownian noise texture generator (green clouds on gray)"        height="511"        width="511">    </div>    <div class="post" id="20200103"><a href="#20200103" class="date">January 3,        2020</a>      <h1>Perlin <em>Noise</em></h1>      <p>This is a <strong>TexSyn</strong> generator wrapped around the basic        Perlin <code>noise()</code> function as described in his <a href="https://mrl.nyu.edu/%7Eperlin/noise/">SIGGRAPH
+          2002 paper <em>Improving Noise</em></a>. The parameters are a scale        factor, a center/translation, and two colors.</p>      <p class="designnote">(Design note: I don't like that the noise pattern is        always “axis aligned” in this formulation. I could add a rotation angle.        But I am leaning toward changing to a specification with two points (<em>Vec2</em>s)—like
+        used in <em>Gradation</em>—or a point and a basis vector to specify a        whole transform: translation, rotation, and scale.)</p>      <pre>Noise(0.1, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0))</pre>      <img src="images/20200103_Noise.png" alt="Noise texture generator (blue and yellow blobs)"        title="Noise texture generator (blue and yellow blobs)"        height="511"        width="511">    </div>    <div class="post" id="20200101"> <a href="#20200101" class="date">January        1, 2020</a>      <h1>Catching up: <em>Gradation</em>, <em>Grating</em>, <em>SoftMatte</em>,        <em>Max</em>, and <em>Min</em></h1>      <p>Having installed a modern version of <strong>OpenCV</strong> and        integrated it into <strong>TexSyn</strong>, I could now see the        textures that I had only been able to verify with unit tests so far.</p>      <h2><em>Gradation</em></h2>      <p> The <em>Gradation</em> generator defines two colored “half planes”        with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>        are two “colored positions.” The line segment between the two points        defines the orientation and width of the transition region. Outside the        transition region the texture is uniformly the nearest of the two        colors.</p>      <pre>Gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),          Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));</pre>      <img src="images/20200101_Gradation.png" alt="Gradation texture generator (red to white)"        title="Gradation texture generator (red to white)"        height="511"        width="511">      <br>      <h2><em>Grating</em></h2>      <p> The <em>Grating</em> generator creates a swept stripe pattern whose        cross-sectional “slice” is a periodic waveform. The parameters to <em>Grating</em>        include: </p>      <ul>        <li>two <em>Vec2</em> positions, the endpoints of a line segment, which          define the orientation and spacing (wavelength) of the stripe pattern</li>        <li>two <em>Colors</em> for the striped pattern</li>        <li>a “softness” parameter were 0 means square wave and 1 means sine          wave (so in this example, 30% of the way from square to sinusoid).<br>        </li>      </ul>      <pre>Grating(Vec2(0.1, 0.1), Color(0, 0.8, 0),        Vec2(0.5, 0.3), Color(0.85, 0.85, 0),        0.3)</pre>      <img src="images/20200101_Grating.png" alt="Grating texture generator (green and yellow stripes)"        title="Grating texture generator (green and yellow stripes)"        height="511"        width="511">      <br>      <h2><em>SoftMatte</em></h2>      <p> The <em>SoftMatte</em> Operator take three Textures as parameters.        The first is interpreted as the “matte.” When it's luminance value is        zero, the result is taken from the second Texture. When the matte's        luminance value is one, the result is taken from the third Texture.        Matte values in between result in a linear interpolation between the        other Textures. In this example the matte Texture is a <em>Spot</em>.        The outer dark part of the <em>Spot</em> takes the second texture, a        sinusoid <em>Gradient</em> of vertical black and white bands. The inner        bright part of the spot takes the third texture, a “slightly soft square        wave” <em>Gradient</em> of horizontal magenta and blue stripes.</p>      <pre>SoftMatte(Spot(Vec2(0, 0),               0.2, Color(1, 1, 1),               0.8, Color(0, 0, 0)),          Grating(Vec2(-0.2, 0), Color(0, 0, 0),                  Vec2( 0.2, 0), Color(1, 1, 1), 1),          Grating(Vec2(0, -0.1), Color(1, 0, 1),                  Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>      <img src="images/20200101_SoftMatte.png" alt="SoftMatte texture operator"        title="SoftMatte texture operator"        height="511"        width="511">      <br>      <h2><em>Max</em> and <em>Min</em></h2>      <p> The <em>Max</em> and <em>Min</em> operators compose two textures.        Each point's color comes from whichever input texture has the <em>Max</em>        (or <em>Min</em>) luminance/brightness at the corresponding point.        These examples show the result with the same two <em>Grating</em>s used        in the <em>SoftMatte</em> example. In the first image, the white parts        of the vertical Grating push to the front and the black parts push to        the back. They are covered by the horizontal Grating. Note that magenta        is in front of blue. The second image is the same code with <em>Min</em>        instead.</p>      <pre>Max(Grating(Vec2(-0.2, 0), Color(0, 0, 0),            Vec2( 0.2, 0), Color(1, 1, 1), 1),    Grating(Vec2(0, -0.1), Color(1, 0, 1),            Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>      <img src="images/20200101_Max.png" alt="Max texture operator" title="Max texture operator"        height="511"        width="511">      <img src="images/20200101_Min.png" alt="Min texture operator" title="Min texture operator"        height="511"        width="511">    </div>    <div class="post" id="20191230"> <a href="#20191230" class="date">December        30, 2019</a>      <h1>“First light” and the <em>Spot</em> operator</h1>      <p>These are the first textures displayed by <strong>TexSyn</strong>        captured as screen shots. They show the result of the <em>Spot</em>        texture generator. The first one was tiny and was missing its center        constant-color region. The <strong>OpenCV</strong> utility <code>cv::imshow()</code>        is used to rasterize and display the procedural texture. The first image        used a 24 bit (three 8 bit unsigned integers) RGB representation, called        <code>CV_8UC3</code> in <strong>OpenCV</strong>. A bug caused “full        brightness” colors to wrap around to zero, causing the black center. I        fixed the bug and switched to an image format with three 32 bit floating        point number per stored pixel (<code>CV_32FC3</code>). Later I may        switch to four channel images to accommodate alpha matting. </p>      <p><strong>TexSyn</strong>'s <code>Texture</code> class supports        arbitrary resolution—so there is no static storage of pixels—all color        values are computed procedurally “on the fly” represented as three        32-bit floating point values. The <strong>OpenCV</strong> images (<code>cv::mat</code>        class) are used only at the output end, before displaying a texture on        the screen, or writing it to an image file.</p>      <p>This <em>Spot</em> Texture has been specified to be centered at the        origin, with an inner radius of 0.2 and an inner color of white. Its        outer radius is 0.6 and outer color is black. Between 0.2 and 0.6 there        is a soft sinusoidal transition between the inner and outer colors: </p>      <pre>    Spot(Vec2(0, 0),         0.2, Color(1, 1, 1),         0.6, Color(0, 0, 0));</pre>      <br>      <img src="images/20191229_first_light_crop.png" alt="“first light” image"        title="“first light” image"        height="560"        width="514">      <br>      <img src="images/20191229_Spot_crop.png" alt="texture generator Spot" title="texture generator Spot"        height="536"        width="515">    </div>    <div class="post" id="20191229"><a href="#20191229" class="date">December        29, 2019</a>      <h1>Infrastructure</h1>      <p>From December 15 through December 28 the basic infrastructure was        constructed. This included:</p>      <ul>        <li>Basic <code>c++</code> classes for <strong>Texsyn</strong>:</li>        <ul>          <li><code>Texture</code> (base class for all types of textures)</li>          <ul>            <li><code>Generator</code> (creates a texture from primitive values)</li>            <li><code>Operator</code> (combines one or more input textures (and              primitive values) to produce a new texture)</li>          </ul>          <li>Primitive values to parameter textures:</li>          <ul>            <li><code>Vec2</code> (a position on the infinite 2D texture plane)</li>            <li><code>Color</code> (very generalized representation of a point              in color space, defined as RGB values over the entire floating              point range. During texture composition, these values range over              [-∞, +∞] but are clipped to [0, 1] for display. Includes              conversion to hue/saturation/value color space and luminance.)</li>          </ul>        </ul>        <li>A <strong>Utilities</strong> package to support interpolation,          clipping, remapping, randomization, and noise.</li>        <li>A suite of <strong>unit tests</strong> to verify the correct          operation of primitives, texture generators, and operators.</li>        <li>An interface to the <strong>OpenCV</strong> library to provide:</li>        <ul>          <li>Basic utilities such as displaying rasterized textures in windows            on the screen, and writing them to standard image file formats.</li>          <li>Eventually help with implementing some operators, and particularly            to provide access to acceleration on GPU or other hardware.</li>        </ul>        <li><br>        </li>      </ul>      <p>For more details, see the <a href="https://github.com/cwreynolds/TexSyn/">code</a>        and the <a href="https://github.com/cwreynolds/TexSyn/commits/master"><code>git</code>          commit history</a>.</p>    </div>    <div class="post" id="20191219"> <a href="#20191219" class="date">December        19, 2019</a>      <h1>Designing for genetic programming</h1>      <p>Most software libraries are, of course, intended for use by human        programmers.There is a design aesthetic (“design pattern”?) that leans        toward minimal functionality (where a function should “do just one        thing”) and conversely duplication should be avoided. More complicated        patterns arise from composing the minimal units of a library.</p>      <p>In contrast, <strong>TexSyn</strong> is intended primarily for use by        a genetic programming system. GP is a type of automatic programming        technique, driven by evolutionary optimization. My experience has been        that this suggests different “best practices” for library design. This        will be revisited in future posts, but here is an example to give a        sense of this issue.</p>      <p>Imagine a texture generator called <em>Spot</em>, a disk of one color        on a field of another color. A minimalist design might define a spot        with a default diameter (say 1) at a default location (say the origin),        and a default coloring (a white spot on a black background). As such,        this minimalist <em>Spot</em> could have zero parameters. That was the        initial approach taken in 2008 for the previous version of this library.        Using standard techniques of composition of software operators, a        programmer might use a <em>Scale</em> operator to adjust the spot's        diameter, a <em>Translation</em> operator to change its position, and        perhaps a <em>Soft</em><em>Matte</em> operation to use the basic        black-and-white pattern to modulate other colors or textures. </p>      <p>This suggests a requirement for context in the composition of functions        when writing programs with this library. If we are going to call <em>Spot</em>,        we will, in general, need to surround it with calls to <em>Scale</em>,        <em>Translate</em>, etc. A human programmer would understand how to        handle this. An automated programming system would not, or at least        would need to be augmented to supply the required context. In random        programs constructed by GP, without that context, we would expect to see        a bias toward <em>Spot</em> often exhibiting its default radius and        position, because it did not happen to be modified by <em>Scale</em>, <em>Translate</em>,        etc. An alternative to declaring and maintaining this context, is to        make these transformations part of the basic <em>Spot</em> definition.        So for example <em>Spot</em> could have several parameters, such as a        center position, a radius, and two colors to use.</p>      <p><strong>TexSyn</strong> will this this approach, often giving texture        generators and operators additional parameters to establish context.        This makes it explicit to the genetic programming system that, for        example, a <em>Spot</em> always needs a position to be specified        because it is a required parameter to <em>Spot</em>. This removes the        need to add extra complexity related to required context. </p>    </div>    <div class="post" id="20191215"> <a href="#20191215" class="date">December        15, 2019</a>      <h1>A new library</h1>      <p>Today I created <strong><a href="https://github.com/cwreynolds/TexSyn">Texsyn</a></strong>,        a new repository on <strong>GitHub</strong>, part of a project about        adversarial evolutionary texture synthesis.</p>      <p><strong>TexSyn</strong> is a library for procedural texture synthesis.        It is intended for use by a <em>genetic programming</em> (“GP”) system,        a type of <em>genetic algorithm</em>. The GP system performs <em>simulated
+          evolution</em> on a <em>population</em> of individual programs,        according to a <em>fitness function</em> (also known as a <em>fitness          metric</em>, <em>utility function</em>, or a <em>loss function</em>        in machine learning.) In this application to texture synthesis, the        programs are compositions of functions from the <strong>TexSyn</strong>        library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>      <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
           Synthesis Diary</a> and used as the basis of the 2011 paper <a href="https://www.red3d.com/cwr/iec/">Interactive
-          Evolution of Camouflage</a>.</p>
-    </div>
-    <div class="post" id="0">
-      <p>Page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
-          Reynolds</a></p>
-    </div>
-  </body>
-</html>
+          Evolution of Camouflage</a>.</p>    </div>    <div class="post" id="0">      <p>Page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
+          Reynolds</a></p>    </div>  </body></html>
