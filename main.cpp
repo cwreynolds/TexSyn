@@ -391,36 +391,51 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for MobiusTransform, Jan 28, 2020
-    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
-                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
-    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
-                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
-    Add plaid(red_stripes, green_stripes);
-    srand(123456789);
-    auto rv = [](){ return Vec2::randomPointInUnitDiameterCircle() * 4; };
-    MobiusTransform mt0(Vec2(1,2), Vec2(0,.1), Vec2(.1,0), Vec2(1,-2), plaid);
-    MobiusTransform mt1(Vec2(-0.958788, 1.64993),
-                        Vec2(-1.54534, -0.593485),
-                        Vec2(1.29155, -0.931471),
-                        Vec2(0.768266, 0.24665),
-                        plaid);
-    rand();
-    MobiusTransform mt2(rv(), rv(), rv(), rv(), plaid);
-    rand();
-    MobiusTransform mt3(rv(), rv(), rv(), rv(), plaid);
-    MobiusTransform mt4(rv(), rv(), rv(), rv(), plaid);
-    MobiusTransform mt5(rv(), rv(), rv(), rv(), plaid);
-    //Texture::displayInWindow({ &plaid, &mt0, &mt1, &mt2, &mt3, &mt4, &mt5 });
-    Texture::displayInWindow({ &mt0, &mt5, &mt1, &mt2 });
+//    // Demo for MobiusTransform, Jan 28, 2020
+//    Grating red_stripes(Vec2(0, 0), Color(1, 0, 0),
+//                        Vec2(0.1, 0.1), Color(0.3, 0, 0), 0.3);
+//    Grating green_stripes(Vec2(0, 0), Color(0, 1, 0),
+//                          Vec2(-0.1, 0.1), Color(0, 0.3, 0), 0.3);
+//    Add plaid(red_stripes, green_stripes);
+//    srand(123456789);
+//    auto rv = [](){ return Vec2::randomPointInUnitDiameterCircle() * 4; };
+//    MobiusTransform mt0(Vec2(1,2), Vec2(0,.1), Vec2(.1,0), Vec2(1,-2), plaid);
+//    MobiusTransform mt1(Vec2(-0.958788, 1.64993),
+//                        Vec2(-1.54534, -0.593485),
+//                        Vec2(1.29155, -0.931471),
+//                        Vec2(0.768266, 0.24665),
+//                        plaid);
+//    rand();
+//    MobiusTransform mt2(rv(), rv(), rv(), rv(), plaid);
+//    rand();
+//    MobiusTransform mt3(rv(), rv(), rv(), rv(), plaid);
+//    MobiusTransform mt4(rv(), rv(), rv(), rv(), plaid);
+//    MobiusTransform mt5(rv(), rv(), rv(), rv(), plaid);
+//    //Texture::displayInWindow({ &plaid, &mt0, &mt1, &mt2, &mt3, &mt4, &mt5 });
+//    Texture::displayInWindow({ &mt0, &mt5, &mt1, &mt2 });
+//
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200128_";
+//    mt0.writeToFile(511, path + "MobiusTransform_0");
+//    mt1.writeToFile(511, path + "MobiusTransform_1");
+//    mt2.writeToFile(511, path + "MobiusTransform_2");
+//    mt5.writeToFile(511, path + "MobiusTransform_5");
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Demo for Scale, Feb 21, 2020
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200128_";
-    mt0.writeToFile(511, path + "MobiusTransform_0");
-    mt1.writeToFile(511, path + "MobiusTransform_1");
-    mt2.writeToFile(511, path + "MobiusTransform_2");
-    mt5.writeToFile(511, path + "MobiusTransform_5");
-
+//    Spot spot1(Vec2(+0.1, 0), 0.19, Color(0.7, 0, 0), 0.2, Color());
+//    Spot spot2(Vec2(-0.1, 0), 0.19, Color(0, 0, 0.7), 0.2, Color());
+    Spot spot1(Vec2(+0.2, 0), 0.38, Color(0.7, 0, 0), 0.4, Color());
+    Spot spot2(Vec2(-0.2, 0), 0.38, Color(0, 0, 0.7), 0.4, Color());
+    Add two_spots(spot1, spot2);
+    Scale scaled_spots(1.5, two_spots);
+    
+//    two_spots.displayInWindow();
+//    Scale(2, two_spots).displayInWindow();
+    
+    Texture::displayInWindow({ &two_spots, &scaled_spots});
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

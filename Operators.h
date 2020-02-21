@@ -143,6 +143,23 @@ private:
     const Texture& texture1;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Scale rigid geometric transformation. Mostly for hand-written code.
+class Scale : public Operator
+{
+public:
+    Scale(float _scale, const Texture& _texture)
+        : scale(_scale), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture.getColor(position / scale);
+    }
+private:
+    const float scale;
+    const Texture& texture;
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Maps the brightness of a sample of the given Texture to a pure hue (full
 // brightness, full saturation). The hue transform is offset by a given phase.
 class BrightnessToHue : public Operator
