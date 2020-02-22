@@ -145,6 +145,8 @@ private:
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Scale rigid geometric transformation. Mostly for hand-written code.
+// TODO should this have a "center" parameter? For GP it would make sense,
+// but if this is just for hand-written code it can be handled by ordering.
 class Scale : public Operator
 {
 public:
@@ -158,6 +160,24 @@ private:
     const float scale;
     const Texture& texture;
 };
+
+// Rotate rigid geometric transformation. Mostly for hand-written code.
+// TODO should this have a "center" parameter? For GP it would make sense,
+// but if this is just for hand-written code it can be handled by ordering.
+class Rotate : public Operator
+{
+public:
+    Rotate(float _angle, const Texture& _texture)
+        : angle(_angle), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture.getColor(position.rotate(-angle));
+    }
+private:
+    const float angle;
+    const Texture& texture;
+};
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Maps the brightness of a sample of the given Texture to a pure hue (full

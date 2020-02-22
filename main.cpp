@@ -424,17 +424,22 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Demo for Scale, Feb 21, 2020
 
-//    Spot spot1(Vec2(+0.1, 0), 0.19, Color(0.7, 0, 0), 0.2, Color());
-//    Spot spot2(Vec2(-0.1, 0), 0.19, Color(0, 0, 0.7), 0.2, Color());
     Spot spot1(Vec2(+0.2, 0), 0.38, Color(0.7, 0, 0), 0.4, Color());
     Spot spot2(Vec2(-0.2, 0), 0.38, Color(0, 0, 0.7), 0.4, Color());
     Add two_spots(spot1, spot2);
     Scale scaled_spots(1.5, two_spots);
+    Rotate rotated_spots(pi / 4, two_spots);
+    Rotate scale_then_rotate(pi / 4, scaled_spots);
     
-//    two_spots.displayInWindow();
-//    Scale(2, two_spots).displayInWindow();
-    
-    Texture::displayInWindow({ &two_spots, &scaled_spots});
+    Vec2 plus_x(1, 0);
+    debugPrint(plus_x.rotate(pi / 4));
+        
+    Texture::displayInWindow({
+        &two_spots,
+        &scaled_spots,
+        &rotated_spots,
+        &scale_then_rotate
+    });
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
