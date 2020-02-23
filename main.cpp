@@ -430,16 +430,24 @@ int main(int argc, const char * argv[])
     Scale scaled_spots(1.5, two_spots);
     Rotate rotated_spots(pi / 4, two_spots);
     Rotate scale_then_rotate(pi / 4, scaled_spots);
-    
-    Vec2 plus_x(1, 0);
-    debugPrint(plus_x.rotate(pi / 4));
+    Translate translated_spots(Vec2(0, 0.3), two_spots);
+    Translate scale_rotate_translate(Vec2(0, 0.3), scale_then_rotate);
         
     Texture::displayInWindow({
         &two_spots,
         &scaled_spots,
         &rotated_spots,
-        &scale_then_rotate
+        &scale_then_rotate,
+        &translated_spots,
+        &scale_rotate_translate
     });
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200223_";
+    two_spots.writeToFile(511, path + "two_spots");
+    scaled_spots.writeToFile(511, path + "scaled_spots");
+    scale_then_rotate.writeToFile(511, path + "scale_then_rotate");
+    scale_rotate_translate.writeToFile(511, path + "scale_rotate_translate");
+
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

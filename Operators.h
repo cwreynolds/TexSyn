@@ -143,7 +143,6 @@ private:
     const Texture& texture1;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Scale rigid geometric transformation. Mostly for hand-written code.
 // TODO should this have a "center" parameter? For GP it would make sense,
 // but if this is just for hand-written code it can be handled by ordering.
@@ -178,7 +177,23 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Translate rigid geometric transformation. Mostly for hand-written code.
+// TODO should this have a "center" parameter? For GP it would make sense,
+// but if this is just for hand-written code it can be handled by ordering.
+class Translate : public Operator
+{
+public:
+    Translate(Vec2 _translation, const Texture& _texture)
+        : translation(_translation), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture.getColor(position - translation);
+    }
+private:
+    const Vec2 translation;
+    const Texture& texture;
+};
+
 
 // Maps the brightness of a sample of the given Texture to a pure hue (full
 // brightness, full saturation). The hue transform is offset by a given phase.
