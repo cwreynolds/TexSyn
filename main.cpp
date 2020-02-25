@@ -422,33 +422,44 @@ int main(int argc, const char * argv[])
 //    mt5.writeToFile(511, path + "MobiusTransform_5");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Demo for Scale, Feb 21, 2020
-
-    Spot spot1(Vec2(+0.2, 0), 0.38, Color(0.7, 0, 0), 0.4, Color());
-    Spot spot2(Vec2(-0.2, 0), 0.38, Color(0, 0, 0.7), 0.4, Color());
-    Add two_spots(spot1, spot2);
-    Scale scaled_spots(1.5, two_spots);
-    Rotate rotated_spots(pi / 4, two_spots);
-    Rotate scale_then_rotate(pi / 4, scaled_spots);
-    Translate translated_spots(Vec2(0, 0.3), two_spots);
-    Translate scale_rotate_translate(Vec2(0, 0.3), scale_then_rotate);
-        
-    Texture::displayInWindow({
-        &two_spots,
-        &scaled_spots,
-        &rotated_spots,
-        &scale_then_rotate,
-        &translated_spots,
-        &scale_rotate_translate
-    });
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200223_";
-    two_spots.writeToFile(511, path + "two_spots");
-    scaled_spots.writeToFile(511, path + "scaled_spots");
-    scale_then_rotate.writeToFile(511, path + "scale_then_rotate");
-    scale_rotate_translate.writeToFile(511, path + "scale_rotate_translate");
+//    // Demo for Scale, Feb 21, 2020
+//    Spot spot1(Vec2(+0.2, 0), 0.38, Color(0.7, 0, 0), 0.4, Color());
+//    Spot spot2(Vec2(-0.2, 0), 0.38, Color(0, 0, 0.7), 0.4, Color());
+//    Add two_spots(spot1, spot2);
+//    Scale scaled_spots(1.5, two_spots);
+//    Rotate rotated_spots(pi / 4, two_spots);
+//    Rotate scale_then_rotate(pi / 4, scaled_spots);
+//    Translate translated_spots(Vec2(0, 0.3), two_spots);
+//    Translate scale_rotate_translate(Vec2(0, 0.3), scale_then_rotate);
+//    Texture::displayInWindow({
+//        &two_spots,
+//        &scaled_spots,
+//        &rotated_spots,
+//        &scale_then_rotate,
+//        &translated_spots,
+//        &scale_rotate_translate
+//    });
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200223_";
+//    two_spots.writeToFile(511, path + "two_spots");
+//    scaled_spots.writeToFile(511, path + "scaled_spots");
+//    scale_then_rotate.writeToFile(511, path + "scale_then_rotate");
+//    scale_rotate_translate.writeToFile(511, path + "scale_rotate_translate");
 
-    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Demo for Blur, Feb 23, 2020
+    Color b(0, 0, 0);
+    Color w(1, 1, 1);
+//    SoftMatte(Spot(Vec2(), 0.5, w, 0.6, b),
+//              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
+//              Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01)).displayInWindow();
+
+    SoftMatte(Spot(Vec2(), 0.5, w, 0.6, b),
+              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
+              Blur(0.01,
+                   Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01))).displayInWindow();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

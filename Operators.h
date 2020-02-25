@@ -547,3 +547,55 @@ private:
     const Complex d;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO trying "distributed sampling" approach. Takes some fixed number of
+// random samples within the convolution kernel, looks up input color, weights
+// it, and averages the result.
+//
+// TODO maybe try jiggled grid approach to get better sample coverage
+
+class Blur : public Operator
+{
+public:
+    Blur(const float _width, const Texture& _texture)
+        : width(_width), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        // TODO VERY PROTOTYPE
+        float radius = width / 2;
+//        int subsamples = 10;
+        int subsamples = 50;
+//        int subsamples = 100;
+//        int subsamples = 500;
+        Color weighted_sum(0, 0, 0);
+        for (int i = 0; i < subsamples; i++)
+        {
+//            Vec2 offset = Vec2::randomPointInUnitDiameterCircle() * radius;
+//            float length = offset.length();
+            
+            float length = frandom2(0, radius);
+            Vec2 offset = Vec2::randomUnitVector() * length;
+
+            
+            float weight = 1 - sinusoid(length / radius);
+            Color color_at_offset = texture.getColor(position + offset);
+            weighted_sum += color_at_offset * weight;
+            
+//            std::cout << "---------------------------------------" << std::endl;
+//            debugPrint(radius);
+//            debugPrint(offset);
+//            debugPrint(position + offset);
+//            debugPrint(length / radius);
+//            debugPrint(weight);
+//            debugPrint(color_at_offset);
+//            debugPrint(weighted_sum);
+        }
+        return weighted_sum / subsamples;
+    }
+private:
+    const float width;
+    const Texture& texture;
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
