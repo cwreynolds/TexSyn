@@ -455,10 +455,23 @@ int main(int argc, const char * argv[])
 //              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
 //              Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01)).displayInWindow();
 
-    SoftMatte(Spot(Vec2(), 0.5, w, 0.6, b),
-              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
-              Blur(0.01,
-                   Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01))).displayInWindow();
+//    SoftMatte(Spot(Vec2(), 0.6, w, 0.7, b),
+//              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
+//              Blur(0.2,
+//                   Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01))).displayInWindow();
+
+    Spot spot(Vec2(), 0.6, w, 0.7, b);
+    Grating grating1(Vec2(), w, Vec2(0.2, 0), b, 0.01);
+    Grating grating2(Vec2(), w, Vec2(0, 0.2), b, 0.01);
+    Blur blur(0.2, grating2);
+    SoftMatte no_blur(spot, grating1, grating2);
+    SoftMatte vs_blur(spot, grating1, blur);
+    Texture::displayInWindow({ &no_blur, &vs_blur});
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200225_";
+    no_blur.writeToFile(511, path + "no_blur");
+    vs_blur.writeToFile(511, path + "vs_blur_50_ss");
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

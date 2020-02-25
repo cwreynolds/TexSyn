@@ -556,6 +556,49 @@ private:
 //
 // TODO maybe try jiggled grid approach to get better sample coverage
 
+//    class Blur : public Operator
+//    {
+//    public:
+//        Blur(const float _width, const Texture& _texture)
+//            : width(_width), texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            // TODO VERY PROTOTYPE
+//            float radius = width / 2;
+//    //        int subsamples = 10;
+//            int subsamples = 50;
+//    //        int subsamples = 100;
+//    //        int subsamples = 500;
+//            Color weighted_sum(0, 0, 0);
+//            for (int i = 0; i < subsamples; i++)
+//            {
+//    //            Vec2 offset = Vec2::randomPointInUnitDiameterCircle() * radius;
+//    //            float length = offset.length();
+//
+//                float length = frandom2(0, radius);
+//                Vec2 offset = Vec2::randomUnitVector() * length;
+//
+//
+//                float weight = 1 - sinusoid(length / radius);
+//                Color color_at_offset = texture.getColor(position + offset);
+//                weighted_sum += color_at_offset * weight;
+//
+//    //            std::cout << "---------------------------------------" << std::endl;
+//    //            debugPrint(radius);
+//    //            debugPrint(offset);
+//    //            debugPrint(position + offset);
+//    //            debugPrint(length / radius);
+//    //            debugPrint(weight);
+//    //            debugPrint(color_at_offset);
+//    //            debugPrint(weighted_sum);
+//            }
+//            return weighted_sum / subsamples;
+//        }
+//    private:
+//        const float width;
+//        const Texture& texture;
+//    };
+
 class Blur : public Operator
 {
 public:
@@ -565,24 +608,27 @@ public:
     {
         // TODO VERY PROTOTYPE
         float radius = width / 2;
-//        int subsamples = 10;
-        int subsamples = 50;
+//        int subsamples = 50;
 //        int subsamples = 100;
-//        int subsamples = 500;
-        Color weighted_sum(0, 0, 0);
+        int subsamples = 1000;
+//        Color weighted_sum(0, 0, 0);
+        Color sum_of_weighted_colors(0, 0, 0);
+        float sum_of_weights = 0;
         for (int i = 0; i < subsamples; i++)
         {
-//            Vec2 offset = Vec2::randomPointInUnitDiameterCircle() * radius;
-//            float length = offset.length();
-            
-            float length = frandom2(0, radius);
-            Vec2 offset = Vec2::randomUnitVector() * length;
+//            float length = frandom2(0, radius);
+//            Vec2 offset = Vec2::randomUnitVector() * length;
+
+            Vec2 offset = Vec2::randomPointInUnitDiameterCircle() * radius;
+            float length = offset.length();
 
             
             float weight = 1 - sinusoid(length / radius);
             Color color_at_offset = texture.getColor(position + offset);
-            weighted_sum += color_at_offset * weight;
-            
+//            weighted_sum += color_at_offset * weight;
+            sum_of_weighted_colors += color_at_offset * weight;
+            sum_of_weights += weight;
+
 //            std::cout << "---------------------------------------" << std::endl;
 //            debugPrint(radius);
 //            debugPrint(offset);
@@ -592,10 +638,12 @@ public:
 //            debugPrint(color_at_offset);
 //            debugPrint(weighted_sum);
         }
-        return weighted_sum / subsamples;
+//        return weighted_sum / subsamples;
+        return sum_of_weighted_colors / sum_of_weights;
     }
 private:
     const float width;
     const Texture& texture;
 };
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
