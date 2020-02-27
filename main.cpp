@@ -11,6 +11,7 @@
 #include "Operators.h"
 #include "UnitTests.h"
 #include "Utilities.h"
+#include <chrono>  // for high_resolution_clock
 
 bool run_unit_tests = false;
 
@@ -466,12 +467,20 @@ int main(int argc, const char * argv[])
     Blur blur(0.2, grating2);
     SoftMatte no_blur(spot, grating1, grating2);
     SoftMatte vs_blur(spot, grating1, blur);
-    Texture::displayInWindow({ &no_blur, &vs_blur});
-    
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200225_";
-    no_blur.writeToFile(511, path + "no_blur");
-    vs_blur.writeToFile(511, path + "vs_blur_50_ss");
 
+//    auto start_time = std::chrono::high_resolution_clock::now();
+//    vs_blur.displayInWindow(511, false);
+//    auto finish_time = std::chrono::high_resolution_clock::now();
+//    std::chrono::duration<double> elapsed = finish_time - start_time;
+//    std::cout << "Elapsed time: " << elapsed.count() << " s\n";
+    
+//    Texture::displayInWindow({ &no_blur, &vs_blur});
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200225_";
+//    no_blur.writeToFile(511, path + "no_blur");
+//    vs_blur.writeToFile(511, path + "vs_blur_50_ss");
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200226_";
+    vs_blur.writeToFile(511, path + "vs_blur");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
