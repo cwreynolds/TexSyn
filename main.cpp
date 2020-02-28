@@ -479,8 +479,22 @@ int main(int argc, const char * argv[])
 //    no_blur.writeToFile(511, path + "no_blur");
 //    vs_blur.writeToFile(511, path + "vs_blur_50_ss");
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200226_";
-    vs_blur.writeToFile(511, path + "vs_blur");
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200226_";
+//    vs_blur.writeToFile(511, path + "vs_blur");
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for Colorize, February 27, 2020
+    ColorNoise for_slice(0.1, Vec2(2, 2), 0.6);
+    Brownian to_color(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+    Colorize colorized(Vec2(0, 1), Vec2(), for_slice, to_color);
+    
+    Texture::displayInWindow({ &for_slice, &to_color, &colorized });
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200227_";
+    for_slice.writeToFile(511, path + "for_slice");
+    to_color.writeToFile(511, path + "to_color");
+    colorized.writeToFile(511, path + "colorized");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -51,6 +51,7 @@ public:
     // Inline operators: + - *
     Color operator+(Color v) const;
     Color operator-(Color v) const;
+    Color operator*(Color c) const;  // color * color, aka "tint"
     Color operator*(float s) const;
     Color operator/(float s) const { return *this * (1 / s); };
     Color operator+=(const Color& rhs) { return *this = *this + rhs; }

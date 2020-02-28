@@ -97,10 +97,7 @@ public:
         : texture0(_texture0), texture1(_texture1) {}
     Color getColor(Vec2 position) const override
     {
-        // TODO should * be defined between two Colors?
-        Color c0 = texture0.getColor(position);
-        Color c1 = texture1.getColor(position);
-        return Color(c0.r() * c1.r(), c0.g() * c1.g(), c0.b() * c1.b());
+        return texture0.getColor(position) * texture1.getColor(position);
     }
 private:
     const Texture& texture0;
@@ -688,3 +685,32 @@ private:
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Colorize one texture by mapping its luminance to the sequence of colors
+// along a slice(/transit/1d texture/waveform) of another texture.
+class Colorize : public Operator
+{
+public:
+    Colorize(Vec2 _slice_tangent,
+             Vec2 _center,
+             const Texture& _texture_for_slice,
+             const Texture& _texture_to_color)
+      : slice_tangent(_slice_tangent),
+        center(_center),
+        texture_for_slice(_texture_for_slice),
+        texture_to_color(_texture_to_color) {}
+    Color getColor(Vec2 position) const override
+    {
+        // Look up color to be tinted/colorized an get its luminance.
+        Color original = texture_to_color.getColor(position);
+        float luminance = original.luminance();
+        // Look up color by luminance along slice in texture_for_slice.
+        Vec2 on_slice = center + (slice_tangent * luminance);
+        return texture_for_slice.getColor(on_slice);
+    }
+private:
+    const Vec2 slice_tangent;
+    const Vec2 center;
+    const Texture& texture_for_slice;
+    const Texture& texture_to_color;
+};

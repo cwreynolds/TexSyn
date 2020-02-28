@@ -54,6 +54,10 @@ Color Color::operator-(Color v) const
 {
     return Color(r() - v.r(), g() - v.g(), b() - v.b());
 }
+Color Color::operator*(Color c) const
+{
+    return Color(r() * c.r(), g() * c.g(), b() * c.b());
+}
 Color Color::operator*(float s) const
 {
     return Color(r() * s, g() * s, b() * s);
