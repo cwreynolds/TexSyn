@@ -714,3 +714,31 @@ private:
     const Texture& texture_for_slice;
     const Texture& texture_to_color;
 };
+
+// Given two intensity thresholds and an input texture, remap the texture colors
+// between those thresholds to "full intensity range". Converts the texture to
+// hue-saturation-value color space. Areas darker than the lower threshold get
+// value=0, areas brighter than the upper threshold get value=1, areas between
+// the two thresholds are mapped to values on [0, 1]. The hue and saturation
+// components remain unchanged.
+class SoftThreshold : public Operator
+{
+public:
+    SoftThreshold (float _intensity0, float _intensity1, const Texture& _texture)
+      : intensity0(std::min(_intensity0, _intensity1)),
+        intensity1(std::max(_intensity0, _intensity1)),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color color = texture.getColor(position);
+        float h, s, v;
+        Color::convertRGBtoHSV(color.r(), color.g(), color.b(), h, s, v);
+        color.setHSV(h, s, remapIntervalClip(v, intensity0, intensity1, 0, 1));
+        return color;
+    }
+private:
+    const float intensity0;
+    const float intensity1;
+    const Texture& texture;
+};
+

@@ -484,17 +484,32 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Colorize, February 27, 2020
-    ColorNoise for_slice(0.1, Vec2(2, 2), 0.6);
-    Brownian to_color(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
-    Colorize colorized(Vec2(0, 1), Vec2(), for_slice, to_color);
-    
-    Texture::displayInWindow({ &for_slice, &to_color, &colorized });
+//    // Demo for Colorize, February 27, 2020
+//    ColorNoise for_slice(0.1, Vec2(2, 2), 0.6);
+//    Brownian to_color(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+//    Colorize colorized(Vec2(0, 1), Vec2(), for_slice, to_color);
+//
+//    Texture::displayInWindow({ &for_slice, &to_color, &colorized });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200227_";
+//    for_slice.writeToFile(511, path + "for_slice");
+//    to_color.writeToFile(511, path + "to_color");
+//    colorized.writeToFile(511, path + "colorized");
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200227_";
-    for_slice.writeToFile(511, path + "for_slice");
-    to_color.writeToFile(511, path + "to_color");
-    colorized.writeToFile(511, path + "colorized");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for SoftThreshold, February 28, 2020
+    Noise grays(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+    ColorNoise colors(0.6, Vec2(), 0);
+    SoftThreshold threshold_grays(0.2, 0.7, grays);
+    SoftThreshold threshold_colors(0.4, 0.75, colors);
+    Texture::displayInWindow({ &grays, &threshold_grays,
+                               &colors, &threshold_colors });
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200228_";
+    grays.writeToFile(511, path + "grays");
+    threshold_grays.writeToFile(511, path + "threshold_grays");
+    colors.writeToFile(511, path + "colors");
+    threshold_colors.writeToFile(511, path + "threshold_colors");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
