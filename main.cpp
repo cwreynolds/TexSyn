@@ -503,13 +503,17 @@ int main(int argc, const char * argv[])
     ColorNoise colors(0.6, Vec2(), 0);
     SoftThreshold threshold_grays(0.2, 0.7, grays);
     SoftThreshold threshold_colors(0.4, 0.75, colors);
+    Brownian brownian(0.08, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+    SoftThreshold composition_book_cover(0.5, 0.55, brownian);
     Texture::displayInWindow({ &grays, &threshold_grays,
-                               &colors, &threshold_colors });
+                               &colors, &threshold_colors,
+                               &composition_book_cover });
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200228_";
     grays.writeToFile(511, path + "grays");
     threshold_grays.writeToFile(511, path + "threshold_grays");
     colors.writeToFile(511, path + "colors");
     threshold_colors.writeToFile(511, path + "threshold_colors");
+    composition_book_cover.writeToFile(511, path + "composition_book_cover");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
