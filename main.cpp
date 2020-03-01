@@ -498,26 +498,47 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Demo for SoftThreshold, February 28, 2020
+//    Noise grays(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+//    ColorNoise colors(0.6, Vec2(), 0);
+//    SoftThreshold threshold_grays(0.2, 0.7, grays);
+//    SoftThreshold threshold_colors(0.4, 0.75, colors);
+//    Brownian brownian(0.08, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
+//    SoftThreshold composition_book_cover(0.5, 0.55, brownian);
+//    ColorNoise cbc(0.15, Vec2(), 0);
+//    SoftThreshold color_book_cover(0.55, 0.6, cbc);
+//    Texture::displayInWindow({ &grays, &threshold_grays,
+//                               &colors, &threshold_colors,
+//                               &composition_book_cover,
+//                               &color_book_cover });
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200228_";
+//    grays.writeToFile(511, path + "grays");
+//    threshold_grays.writeToFile(511, path + "threshold_grays");
+//    colors.writeToFile(511, path + "colors");
+//    threshold_colors.writeToFile(511, path + "threshold_colors");
+//    composition_book_cover.writeToFile(511, path + "composition_book_cover");
+//    color_book_cover.writeToFile(511, path + "color_book_cover");
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     // Demo for SoftThreshold, February 28, 2020
-    Noise grays(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
-    ColorNoise colors(0.6, Vec2(), 0);
-    SoftThreshold threshold_grays(0.2, 0.7, grays);
-    SoftThreshold threshold_colors(0.4, 0.75, colors);
-    Brownian brownian(0.08, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
-    SoftThreshold composition_book_cover(0.5, 0.55, brownian);
-    ColorNoise cbc(0.15, Vec2(), 0);
-    SoftThreshold color_book_cover(0.55, 0.6, cbc);
-    Texture::displayInWindow({ &grays, &threshold_grays,
-                               &colors, &threshold_colors,
-                               &composition_book_cover,
-                               &color_book_cover });
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200228_";
-    grays.writeToFile(511, path + "grays");
-    threshold_grays.writeToFile(511, path + "threshold_grays");
-    colors.writeToFile(511, path + "colors");
-    threshold_colors.writeToFile(511, path + "threshold_colors");
-    composition_book_cover.writeToFile(511, path + "composition_book_cover");
-    color_book_cover.writeToFile(511, path + "color_book_cover");
+
+    Noise grays(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
+    SoftThreshold threshold_grays(0.5, 0.55, grays);
+    EdgeDetect edge_detect(0.2, threshold_grays);
+    
+    Spot spot1(Vec2(+0.4, 0), 0.39, Color(0.8, 0.8, 0), 0.41, Color());
+    Spot spot2(Vec2(-0.4, 0), 0.39, Color(0, 0.8, 0.8), 0.41, Color());
+    Add two_spots(spot1, spot2);
+    EdgeDetect edge_spots(0.5, two_spots);
+
+    Texture::displayInWindow({
+        &grays,
+        &threshold_grays,
+        &edge_detect,
+        &two_spots,
+        &edge_spots
+    });
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

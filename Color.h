@@ -62,6 +62,7 @@ public:
     Color clipToUnitRGB() const;
     // Random color uniformly distributed across the unit RGB cube.
     static Color randomUnitRGB();
+    static Color gray(float value) { return { value, value, value }; }
     // Accessors:
     float red() const { return red_; }
     float green() const { return green_; }

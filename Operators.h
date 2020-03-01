@@ -742,3 +742,24 @@ private:
     const Texture& texture;
 };
 
+// Finds (colored) edges based on Blur and "unsharp masking" -- subtracting the
+// blurred texture from the original.
+//
+// TODO this is a "modernized" version of the old August 2009 version. It finds
+// the edges, a signal which is symmetric around zero brightness, then biases
+// that up by adding middle gray. That last part seems questionable, but
+// definitely produces a result more likely to be visable.
+class EdgeDetect : public Operator
+{
+public:
+    EdgeDetect (const float width, const Texture& texture)
+      : blur(width, texture),
+        edges(texture, blur) {}
+    Color getColor(Vec2 position) const override
+    {
+        return edges.getColor(position) + Color::gray(0.5);
+    }
+private:
+    Blur blur;
+    Subtract edges;
+};
