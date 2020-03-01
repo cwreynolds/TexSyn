@@ -752,7 +752,7 @@ private:
 class EdgeDetect : public Operator
 {
 public:
-    EdgeDetect (const float width, const Texture& texture)
+    EdgeDetect(const float width, const Texture& texture)
       : blur(width, texture),
         edges(texture, blur) {}
     Color getColor(Vec2 position) const override
@@ -763,3 +763,65 @@ private:
     Blur blur;
     Subtract edges;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    class EdgeEnhance : public Operator
+//    {
+//    public:
+//        EdgeEnhance (const float width, const float strength, const Texture& texture)
+//        : blur  (*new Blur (width, texture)),
+//        edges  (*new Subtract (texture, blur)),
+//        scaled (*new Tint (Pixel::gray (strength), edges)),
+//        enhanced (*new Add (texture, scaled)) {}
+//        ~EdgeEnhance (void)
+//        {
+//            //        delete &blur; delete &edges; delete &enhanced;
+//            delete &blur; delete &edges; delete &scaled; delete &enhanced;
+//        }
+//        Pixel getPixel (float x, float y) const
+//        {
+//            return enhanced.getPixel (x, y);
+//        }
+//    private:
+//        Blur& blur;
+//        Subtract& edges;
+//        Tint& scaled;
+//        Add& enhanced;
+//    };
+
+class EdgeEnhance : public Operator
+{
+public:
+    EdgeEnhance(const float width,
+//                 const float strength,
+                const Texture& texture)
+    : blur(width, texture),
+    edges(texture, blur),
+//    scaled (*new Multiply (Pixel::gray (strength), edges)),
+    enhanced(texture, edges) {}
+//    ~EdgeEnhance (void)
+//    {
+//        //        delete &blur; delete &edges; delete &enhanced;
+//        delete &blur; delete &edges; delete &scaled; delete &enhanced;
+//    }
+//    Pixel getPixel (float x, float y) const
+//    {
+//        return enhanced.getPixel (x, y);
+//    }
+    Color getColor(Vec2 getColor) const override
+    {
+        return enhanced.getColor(getColor);
+    }
+private:
+//    Blur& blur;
+//    Subtract& edges;
+//    Tint& scaled;
+//    Add& enhanced;
+    Blur blur;
+    Subtract edges;
+//    Multiply scaled;
+    Add enhanced;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

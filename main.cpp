@@ -523,22 +523,55 @@ int main(int argc, const char * argv[])
     
     // Demo for SoftThreshold, February 28, 2020
 
-    Noise grays(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
-    SoftThreshold threshold_grays(0.5, 0.55, grays);
-    EdgeDetect edge_detect(0.2, threshold_grays);
+    Noise gray_noise(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
+    SoftThreshold gray_threshold(0.5, 0.55, gray_noise);
+    Uniform light_gray(Color::gray(0.8));
+    Uniform dark_gray(Color::gray(0.2));
+    SoftMatte grays(gray_threshold, dark_gray, light_gray);
+    EdgeDetect grays_edge_detect(0.2, grays);
+    EdgeEnhance grays_edge_enhance(0.2, grays);
+
+    //Spot spot1(Vec2(+0.4, 0), 0.39, Color(0.8, 0.8, 0), 0.41, Color());
+    //Spot spot2(Vec2(-0.4, 0), 0.39, Color(0, 0.8, 0.8), 0.41, Color());
+    //Add two_spots(spot1, spot2);
+    //EdgeDetect edge_spots(0.5, two_spots);
     
-    Spot spot1(Vec2(+0.4, 0), 0.39, Color(0.8, 0.8, 0), 0.41, Color());
-    Spot spot2(Vec2(-0.4, 0), 0.39, Color(0, 0.8, 0.8), 0.41, Color());
-    Add two_spots(spot1, spot2);
-    EdgeDetect edge_spots(0.5, two_spots);
+    Noise n0(0.2, Vec2(-2, +1), Color(), Color::gray(1));
+    Noise n1(0.2, Vec2(+1, +3), Color(), Color::gray(1));
+    Noise n2(0.2, Vec2(-1, -4), Color(), Color::gray(1));
+    Rotate r0(1, n0);
+    Rotate r1(3, n1);
+    Rotate r2(5, n2);
+    SoftThreshold st0(0.60, 0.64, r0);
+    SoftThreshold st1(0.60, 0.64, r1);
+    SoftThreshold st2(0.60, 0.64, r2);
+    Uniform gray50(Color::gray(0.5));
+    Uniform yellow(Color(0.8, 0.8, 0));
+    Uniform magenta(Color(0.8, 0, 0.8));
+    Uniform cyan(Color(0, 0.8, 0.8));
+    SoftMatte sm0(st0, gray50, yellow);
+    SoftMatte sm1(st1, sm0, magenta);
+    SoftMatte colors(st2, sm1, cyan);
+    EdgeDetect color_edge_detect(0.2, colors);
+    EdgeEnhance color_edge_enhance(0.2, colors);
 
     Texture::displayInWindow({
         &grays,
-        &threshold_grays,
-        &edge_detect,
-        &two_spots,
-        &edge_spots
+        &grays_edge_detect,
+        &grays_edge_enhance,
+        &colors,
+        &color_edge_detect,
+        &color_edge_enhance
     });
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200301_";
+    grays.writeToFile(511, path + "grays");
+    grays_edge_detect.writeToFile(511, path + "grays_edge_detect");
+    grays_edge_enhance.writeToFile(511, path + "grays_edge_enhance");
+    colors.writeToFile(511, path + "colors");
+    color_edge_detect.writeToFile(511, path + "color_edge_detect");
+    color_edge_enhance.writeToFile(511, path + "color_edge_enhance");
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

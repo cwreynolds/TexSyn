@@ -301,3 +301,15 @@ private:
     const Vec2 offset2;
     const Vec2 offset3;
 };
+
+// I had been resisting this as unncessary (not minimal) but now (March 1, 2020)
+// adding it in the same spirit as Scale/Rotate/Translate: convenient for hand
+// written code.
+class Uniform : public Generator
+{
+public:
+    Uniform(Color _color) : color(_color) {};
+    Color getColor(Vec2 position) const override { return color; }
+private:
+    const Color color;
+};
