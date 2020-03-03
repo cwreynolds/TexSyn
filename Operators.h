@@ -764,32 +764,6 @@ private:
     Subtract edges;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//    class EdgeEnhance : public Operator
-//    {
-//    public:
-//        EdgeEnhance (const float width, const float strength, const Texture& texture)
-//        : blur  (*new Blur (width, texture)),
-//        edges  (*new Subtract (texture, blur)),
-//        scaled (*new Tint (Pixel::gray (strength), edges)),
-//        enhanced (*new Add (texture, scaled)) {}
-//        ~EdgeEnhance (void)
-//        {
-//            //        delete &blur; delete &edges; delete &enhanced;
-//            delete &blur; delete &edges; delete &scaled; delete &enhanced;
-//        }
-//        Pixel getPixel (float x, float y) const
-//        {
-//            return enhanced.getPixel (x, y);
-//        }
-//    private:
-//        Blur& blur;
-//        Subtract& edges;
-//        Tint& scaled;
-//        Add& enhanced;
-//    };
-
 class EdgeEnhance : public Operator
 {
 public:
@@ -800,28 +774,35 @@ public:
     edges(texture, blur),
 //    scaled (*new Multiply (Pixel::gray (strength), edges)),
     enhanced(texture, edges) {}
-//    ~EdgeEnhance (void)
-//    {
-//        //        delete &blur; delete &edges; delete &enhanced;
-//        delete &blur; delete &edges; delete &scaled; delete &enhanced;
-//    }
-//    Pixel getPixel (float x, float y) const
-//    {
-//        return enhanced.getPixel (x, y);
-//    }
     Color getColor(Vec2 getColor) const override
     {
         return enhanced.getColor(getColor);
     }
 private:
-//    Blur& blur;
-//    Subtract& edges;
-//    Tint& scaled;
-//    Add& enhanced;
     Blur blur;
     Subtract edges;
 //    Multiply scaled;
     Add enhanced;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
+// H+offset is taken "f-modulo 1.0". Only the fractional part of offset is
+// meaningful.
+class AdjustHue : public Operator
+{
+public:
+    AdjustHue(float _offset, const Texture& _texture)
+      : offset(_offset),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color color = texture.getColor(position);
+        float h, s, v;
+        Color::convertRGBtoHSV(color.r(), color.g(), color.b(), h, s, v);
+        color.setHSV(std::fmod(h + offset, 1), s, v);
+        return color;
+    }
+private:
+    const float offset;
+    const Texture& texture;
+};

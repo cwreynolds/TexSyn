@@ -449,24 +449,24 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Demo for Blur, Feb 23, 2020
-    Color b(0, 0, 0);
-    Color w(1, 1, 1);
-//    SoftMatte(Spot(Vec2(), 0.5, w, 0.6, b),
-//              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
-//              Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01)).displayInWindow();
-
-//    SoftMatte(Spot(Vec2(), 0.6, w, 0.7, b),
-//              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
-//              Blur(0.2,
-//                   Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01))).displayInWindow();
-
-    Spot spot(Vec2(), 0.6, w, 0.7, b);
-    Grating grating1(Vec2(), w, Vec2(0.2, 0), b, 0.01);
-    Grating grating2(Vec2(), w, Vec2(0, 0.2), b, 0.01);
-    Blur blur(0.2, grating2);
-    SoftMatte no_blur(spot, grating1, grating2);
-    SoftMatte vs_blur(spot, grating1, blur);
+//    // Demo for Blur, Feb 23, 2020
+//    Color b(0, 0, 0);
+//    Color w(1, 1, 1);
+//    //    SoftMatte(Spot(Vec2(), 0.5, w, 0.6, b),
+//    //              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
+//    //              Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01)).displayInWindow();
+//
+//    //    SoftMatte(Spot(Vec2(), 0.6, w, 0.7, b),
+//    //              Grating(Vec2(), w, Vec2(0.2, 0), b, 0.01),
+//    //              Blur(0.2,
+//    //                   Grating(Vec2(), w, Vec2(0, 0.2), b, 0.01))).displayInWindow();
+//
+//    Spot spot(Vec2(), 0.6, w, 0.7, b);
+//    Grating grating1(Vec2(), w, Vec2(0.2, 0), b, 0.01);
+//    Grating grating2(Vec2(), w, Vec2(0, 0.2), b, 0.01);
+//    Blur blur(0.2, grating2);
+//    SoftMatte no_blur(spot, grating1, grating2);
+//    SoftMatte vs_blur(spot, grating1, blur);
 
 //    auto start_time = std::chrono::high_resolution_clock::now();
 //    vs_blur.displayInWindow(511, false);
@@ -521,57 +521,73 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for SoftThreshold, February 28, 2020
+//    // Demo for EdgeDetect and EdgeEnhance, February 29, 2020
+//
+//    Noise gray_noise(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
+//    SoftThreshold gray_threshold(0.5, 0.55, gray_noise);
+//    Uniform light_gray(Color::gray(0.8));
+//    Uniform dark_gray(Color::gray(0.2));
+//    SoftMatte grays(gray_threshold, dark_gray, light_gray);
+//    EdgeDetect grays_edge_detect(0.2, grays);
+//    EdgeEnhance grays_edge_enhance(0.2, grays);
+//
+//    //Spot spot1(Vec2(+0.4, 0), 0.39, Color(0.8, 0.8, 0), 0.41, Color());
+//    //Spot spot2(Vec2(-0.4, 0), 0.39, Color(0, 0.8, 0.8), 0.41, Color());
+//    //Add two_spots(spot1, spot2);
+//    //EdgeDetect edge_spots(0.5, two_spots);
+//
+//    Noise n0(0.2, Vec2(-2, +1), Color(), Color::gray(1));
+//    Noise n1(0.2, Vec2(+1, +3), Color(), Color::gray(1));
+//    Noise n2(0.2, Vec2(-1, -4), Color(), Color::gray(1));
+//    Rotate r0(1, n0);
+//    Rotate r1(3, n1);
+//    Rotate r2(5, n2);
+//    SoftThreshold st0(0.60, 0.64, r0);
+//    SoftThreshold st1(0.60, 0.64, r1);
+//    SoftThreshold st2(0.60, 0.64, r2);
+//    Uniform gray50(Color::gray(0.5));
+//    Uniform yellow(Color(0.8, 0.8, 0));
+//    Uniform magenta(Color(0.8, 0, 0.8));
+//    Uniform cyan(Color(0, 0.8, 0.8));
+//    SoftMatte sm0(st0, gray50, yellow);
+//    SoftMatte sm1(st1, sm0, magenta);
+//    SoftMatte colors(st2, sm1, cyan);
+//    EdgeDetect color_edge_detect(0.2, colors);
+//    EdgeEnhance color_edge_enhance(0.2, colors);
+//
+//    Texture::displayInWindow({
+//        &grays,
+//        &grays_edge_detect,
+//        &grays_edge_enhance,
+//        &colors,
+//        &color_edge_detect,
+//        &color_edge_enhance
+//    });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200301_";
+//    grays.writeToFile(511, path + "grays");
+//    grays_edge_detect.writeToFile(511, path + "grays_edge_detect");
+//    grays_edge_enhance.writeToFile(511, path + "grays_edge_enhance");
+//    colors.writeToFile(511, path + "colors");
+//    color_edge_detect.writeToFile(511, path + "color_edge_detect");
+//    color_edge_enhance.writeToFile(511, path + "color_edge_enhance");
 
-    Noise gray_noise(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
-    SoftThreshold gray_threshold(0.5, 0.55, gray_noise);
-    Uniform light_gray(Color::gray(0.8));
-    Uniform dark_gray(Color::gray(0.2));
-    SoftMatte grays(gray_threshold, dark_gray, light_gray);
-    EdgeDetect grays_edge_detect(0.2, grays);
-    EdgeEnhance grays_edge_enhance(0.2, grays);
-
-    //Spot spot1(Vec2(+0.4, 0), 0.39, Color(0.8, 0.8, 0), 0.41, Color());
-    //Spot spot2(Vec2(-0.4, 0), 0.39, Color(0, 0.8, 0.8), 0.41, Color());
-    //Add two_spots(spot1, spot2);
-    //EdgeDetect edge_spots(0.5, two_spots);
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Noise n0(0.2, Vec2(-2, +1), Color(), Color::gray(1));
-    Noise n1(0.2, Vec2(+1, +3), Color(), Color::gray(1));
-    Noise n2(0.2, Vec2(-1, -4), Color(), Color::gray(1));
-    Rotate r0(1, n0);
-    Rotate r1(3, n1);
-    Rotate r2(5, n2);
-    SoftThreshold st0(0.60, 0.64, r0);
-    SoftThreshold st1(0.60, 0.64, r1);
-    SoftThreshold st2(0.60, 0.64, r2);
-    Uniform gray50(Color::gray(0.5));
-    Uniform yellow(Color(0.8, 0.8, 0));
-    Uniform magenta(Color(0.8, 0, 0.8));
-    Uniform cyan(Color(0, 0.8, 0.8));
-    SoftMatte sm0(st0, gray50, yellow);
-    SoftMatte sm1(st1, sm0, magenta);
-    SoftMatte colors(st2, sm1, cyan);
-    EdgeDetect color_edge_detect(0.2, colors);
-    EdgeEnhance color_edge_enhance(0.2, colors);
-
-    Texture::displayInWindow({
-        &grays,
-        &grays_edge_detect,
-        &grays_edge_enhance,
-        &colors,
-        &color_edge_detect,
-        &color_edge_enhance
-    });
+    // Demo for AdjustHue, March 2, 2020
+    Gradation grad(Vec2(0, -1), Color(1, 1, 1), Vec2(0, 1), Color());
+    MobiusTransform warp(Vec2(0.24665, 1.44486),
+                         Vec2(-0.184825, 1.64791),
+                         Vec2(0.391668, -1.24418),
+                         Vec2(1.04597, -0.412046),
+                         grad);
+    BrightnessToHue color1(0.7, warp);
+    AdjustHue color2(0.5, color1);
+    Texture::displayInWindow({ &color1, &color2 });
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200301_";
-    grays.writeToFile(511, path + "grays");
-    grays_edge_detect.writeToFile(511, path + "grays_edge_detect");
-    grays_edge_enhance.writeToFile(511, path + "grays_edge_enhance");
-    colors.writeToFile(511, path + "colors");
-    color_edge_detect.writeToFile(511, path + "color_edge_detect");
-    color_edge_enhance.writeToFile(511, path + "color_edge_enhance");
-
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200302_";
+    color1.writeToFile(511, path + "color1");
+    color2.writeToFile(511, path + "color2");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
