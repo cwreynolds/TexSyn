@@ -574,20 +574,34 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for AdjustHue, March 2, 2020
-    Gradation grad(Vec2(0, -1), Color(1, 1, 1), Vec2(0, 1), Color());
-    MobiusTransform warp(Vec2(0.24665, 1.44486),
-                         Vec2(-0.184825, 1.64791),
-                         Vec2(0.391668, -1.24418),
-                         Vec2(1.04597, -0.412046),
-                         grad);
-    BrightnessToHue color1(0.7, warp);
-    AdjustHue color2(0.5, color1);
-    Texture::displayInWindow({ &color1, &color2 });
+//    // Demo for AdjustHue, March 2, 2020
+//    Gradation grad(Vec2(0, -1), Color(1, 1, 1), Vec2(0, 1), Color());
+//    MobiusTransform warp(Vec2(0.24665, 1.44486),
+//                         Vec2(-0.184825, 1.64791),
+//                         Vec2(0.391668, -1.24418),
+//                         Vec2(1.04597, -0.412046),
+//                         grad);
+//    BrightnessToHue color1(0.7, warp);
+//    AdjustHue color2(0.5, color1);
+//    Texture::displayInWindow({ &color1, &color2 });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200302_";
+//    color1.writeToFile(511, path + "color1");
+//    color2.writeToFile(511, path + "color2");
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200302_";
-    color1.writeToFile(511, path + "color1");
-    color2.writeToFile(511, path + "color2");
+    // Demo for AdjustSaturation, March 3, 2020
+
+    ColorNoise cn(1, Vec2(2, 3), 0.8);
+    AdjustSaturation as1(0.3, cn);
+    AdjustSaturation as2(3.0, cn);
+    Texture::displayInWindow({ &cn, &as1, &as2, });
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200303_";
+    cn.writeToFile(511, path + "ColorNoise");
+    as1.writeToFile(511, path + "AdjustSaturation_down");
+    as2.writeToFile(511, path + "AdjustSaturation_up");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

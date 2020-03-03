@@ -731,9 +731,10 @@ public:
     Color getColor(Vec2 position) const override
     {
         Color color = texture.getColor(position);
-        float h, s, v;
-        Color::convertRGBtoHSV(color.r(), color.g(), color.b(), h, s, v);
-        color.setHSV(h, s, remapIntervalClip(v, intensity0, intensity1, 0, 1));
+        float hue, saturation, value;
+        color.getHSV(hue, saturation, value);
+        float new_v = remapIntervalClip(value, intensity0, intensity1, 0, 1);
+        color.setHSV(hue, saturation, new_v);
         return color;
     }
 private:
@@ -797,12 +798,32 @@ public:
     Color getColor(Vec2 position) const override
     {
         Color color = texture.getColor(position);
-        float h, s, v;
-        Color::convertRGBtoHSV(color.r(), color.g(), color.b(), h, s, v);
-        color.setHSV(std::fmod(h + offset, 1), s, v);
+        float hue, saturation, value;
+        color.getHSV(hue, saturation, value);
+        color.setHSV(std::fmod(hue + offset, 1), saturation, value);
         return color;
     }
 private:
     const float offset;
+    const Texture& texture;
+};
+
+// Adjust saturation: in HSV space, scale (and clip) saturation.
+class AdjustSaturation : public Operator
+{
+public:
+    AdjustSaturation (float _factor, const Texture& _texture)
+      : factor(_factor),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color color = texture.getColor(position);
+        float hue, saturation, value;
+        color.getHSV(hue, saturation, value);
+        color.setHSV(hue, clip(saturation * factor, 0, 1), value);
+        return color;
+    }
+private:
+    const float factor;
     const Texture& texture;
 };

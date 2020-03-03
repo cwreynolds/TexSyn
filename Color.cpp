@@ -17,6 +17,12 @@ void Color::setHSV(float h, float s, float v)
     setRGB(r, g, b);
 }
 
+// Get the HSV values for this color. Returned by setting non-const refs.
+void Color::getHSV(float& h, float& s, float& v) const
+{
+    convertRGBtoHSV(r(), g(), b(), h, s, v);
+}
+
 // Return a Color made from the given HSV values
 Color Color::makeHSV(float h, float s, float v)
 {
@@ -29,19 +35,19 @@ Color Color::makeHSV(float h, float s, float v)
 float Color::getH() const
 {
     float h, s, v;
-    convertRGBtoHSV(r(), g(), b(), h, s, v);
+    getHSV(h, s, v);
     return h;
 }
 float Color::getS() const
 {
     float h, s, v;
-    convertRGBtoHSV(r(), g(), b(), h, s, v);
+    getHSV(h, s, v);
     return s;
 }
 float Color::getV() const
 {
     float h, s, v;
-    convertRGBtoHSV(r(), g(), b(), h, s, v);
+    getHSV(h, s, v);
     return v;
 }
 
@@ -96,8 +102,6 @@ inline float wellBehavedFractionalPart (float x)
 //
 // I made all six parameters (RGBHSV) range on [0 1] and cosmetic changes.
 //
-//    inline void convertRGBtoHSV (const float red, const float green, const float blue,
-//                                 float& H, float& S, float& V)
 void Color::convertRGBtoHSV (float red, float green, float blue,
                              float& H, float& S, float& V)
 {
@@ -179,10 +183,6 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
 //
 // I made all six parameters (RGBHSV) range on [0 1] and cosmetic changes.
 //
-// this is too big to be "inline" it should be defined in a .cpp file!
-//
-//    inline void convertHSVtoRGB (const float h, const float s, const float v,
-//                                 float& R, float& G, float& B)
 void Color::convertHSVtoRGB(float h, float s, float v,
                             float& R, float& G, float& B)
 {

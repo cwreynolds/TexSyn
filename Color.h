@@ -37,6 +37,8 @@ public:
     // TODO still thinking about this API and these names:
     // Set this color to the one described by the given HSV values.
     void setHSV(float h, float s, float v);
+    // Get the HSV values for this color. Returned by setting non-const refs.
+    void getHSV(float& h, float& s, float& v) const;
     // Return a Color made from the given HSV values
     static Color makeHSV(float h, float s, float v);
     // Get H, S, or V components of this Color.
