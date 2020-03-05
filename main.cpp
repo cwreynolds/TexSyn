@@ -591,17 +591,30 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for AdjustSaturation, March 3, 2020
+//    // Demo for AdjustSaturation, March 3, 2020
+//
+//    ColorNoise cn(1, Vec2(2, 3), 0.8);
+//    AdjustSaturation as1(0.3, cn);
+//    AdjustSaturation as2(3.0, cn);
+//    Texture::displayInWindow({ &cn, &as1, &as2, });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200303_";
+//    cn.writeToFile(511, path + "ColorNoise");
+//    as1.writeToFile(511, path + "AdjustSaturation_down");
+//    as2.writeToFile(511, path + "AdjustSaturation_up");
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for AdjustBrightness, March 4, 2020
 
     ColorNoise cn(1, Vec2(2, 3), 0.8);
-    AdjustSaturation as1(0.3, cn);
-    AdjustSaturation as2(3.0, cn);
-    Texture::displayInWindow({ &cn, &as1, &as2, });
+    AdjustBrightness ab_down(0.5, cn);
+    AdjustBrightness ab_up(2.0, cn);
+    Texture::displayInWindow({ &cn, &ab_down, &ab_up, });
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200303_";
-    cn.writeToFile(511, path + "ColorNoise");
-    as1.writeToFile(511, path + "AdjustSaturation_down");
-    as2.writeToFile(511, path + "AdjustSaturation_up");
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200304_";
+    ab_down.writeToFile(511, path + "AdjustBrightness_down");
+    ab_up.writeToFile(511, path + "AdjustBrightness_up");
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

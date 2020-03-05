@@ -827,3 +827,26 @@ private:
     const float factor;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Adjust brightness: scale all colors by a given factor. RGB components are
+// multiplied by the factor. See also Multiply which forms the product of two
+// textures. In the previous version of this library there was a Tint operator
+// that multiplied a Texture by a Color.
+class AdjustBrightness : public Operator
+{
+public:
+    AdjustBrightness (float _factor, const Texture& _texture)
+      : factor(_factor),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        return texture.getColor(position) * factor;
+    }
+private:
+    const float factor;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

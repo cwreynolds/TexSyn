@@ -70,6 +70,38 @@
       laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu,
       feugiat in, orci. In hac habitasse platea dictumst.
       ----------------------------------------------------------------------</p>
+    <div class="post" id="20200304"> <a href="#20200304" class="date">March 4,
+        2020</a>
+      <h1><em>AdjustBrightness</em></h1>
+      <p>The <em>AdjustBrightness</em> operator multiplies all colors of a
+        texture by a given scale factor. Here we see a <em>ColorNoise</em>
+        texture (as on <a href="#20200303">March 3</a>) in the center and the
+        result of adjusting it by factors of 0.5 and 2. </p>
+      <p>The scaling happens in RGB space. Note that for screen display, and for
+        writing to image files, colors are clipped to the faces of the unit RGB
+        color cube. So some of the colors will have been scaled up outside the
+        unit cube and then been clipped back in, leading to brightness
+        artifacts. See also <em>Multiply</em> which forms the
+        product of two textures. In the previous version of this library there
+        was a <em>Tint</em> operator which multiplied a <em>Texture</em> by a
+        <em>Color</em>.</p>
+      <pre>cn = ColorNoise(1, Vec2(2, 3), 0.8)
+AdjustBrightness(0.5, cn)
+AdjustBrightness(2.0, cn)</pre>
+      <img src="images/20200304_AdjustBrightness_down.png" alt="AdjustBrightness(0.5, cn)"
+        title="AdjustBrightness(0.5, cn)"
+        height="511"
+        width="511">
+      <br>
+      <img src="images/20200303_ColorNoise.png" alt="original cn" title="original cn"
+        height="511"
+        width="511">
+      <br>
+      <img src="images/20200304_AdjustBrightness_up.png" alt="AdjustBrightness(2.0, cn)"
+        title="AdjustBrightness(2.0, cn)"
+        height="511"
+        width="511">
+    </div>
     <div class="post" id="20200303"> <a href="#20200303" class="date">March 3,
         2020</a>
       <h1><em>AdjustSaturation</em></h1>
@@ -1034,6 +1066,5 @@ SoftMatte(spot(0.2),
       <p>Page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
-    
   </body>
 </html>
