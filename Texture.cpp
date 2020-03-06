@@ -100,6 +100,22 @@ void Texture::writeToFile(int size,
     std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
 }
 
+// Combines display on screen and writing file, but primary benefit is that
+// this allows writing an arbitrarily nested expression of TexSyn
+// constructors, whose lifetime extends across both operations.
+void Texture::displayAndFile(const Texture& texture,
+                             std::string pathname,
+                             int size)
+{
+    texture.displayInWindow(size, false);
+    if (pathname != "") texture.writeToFile(size, pathname);
+}
+
+void Texture::waitKey()
+{
+    cv::waitKey(0);
+}
+
 // Reset statistics for debugging.
 void Texture::resetStatistics() const
 {

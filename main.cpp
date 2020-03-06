@@ -605,16 +605,52 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for AdjustBrightness, March 4, 2020
+//    // Demo for AdjustBrightness, March 4, 2020
+//
+//    ColorNoise cn(1, Vec2(2, 3), 0.8);
+//    AdjustBrightness ab_down(0.5, cn);
+//    AdjustBrightness ab_up(2.0, cn);
+//    Texture::displayInWindow({ &cn, &ab_down, &ab_up, });
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200304_";
+//    ab_down.writeToFile(511, path + "AdjustBrightness_down");
+//    ab_up.writeToFile(511, path + "AdjustBrightness_up");
 
-    ColorNoise cn(1, Vec2(2, 3), 0.8);
-    AdjustBrightness ab_down(0.5, cn);
-    AdjustBrightness ab_up(2.0, cn);
-    Texture::displayInWindow({ &cn, &ab_down, &ab_up, });
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Experimenting with copying Texture arguments to Operators, March 5, 2020
+    
+    Color greenish(0.2, 0.8, 0.2);
+    Color bluish(0.2, 0.2, 0.8);
+    Color white(1, 1, 1);
+    Color gray10(0.1, 0.1, 0.1);
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200304_";
-    ab_down.writeToFile(511, path + "AdjustBrightness_down");
-    ab_up.writeToFile(511, path + "AdjustBrightness_up");
+    // The "no subobjects" approach:
+    Grating grate(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5);
+    Furbulence furb(0.2, Vec2(3, 4), gray10, white);
+    Multiply mult(grate, furb);
+    
+    // The problematic case: temp Generator objects are "destroyed" after the
+    // Operator is constructed, having saved references to the Generators.
+    Multiply trouble(Grating(Vec2(-0.1, -0.1), greenish,
+                             Vec2(+0.1, +0.1), bluish,
+                             0.5),
+                     Furbulence(0.2, Vec2(3, 4),
+                                gray10, white));
+    // The new way: allows writing an arbitrarily nested expression of TexSyn
+    // constructors, whose lifetime extends across display and file operations.
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200305_";
+    Texture::displayAndFile
+    (Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
+     path + "grating");
+    Texture::displayAndFile
+    (Furbulence(0.2, Vec2(3, 4), gray10, white),
+     path + "furbulence");
+    Texture::displayAndFile
+    (Multiply(Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
+              Furbulence(0.2, Vec2(3, 4), gray10, white)),
+     path + "fuzzy_blue_green_stripes");
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -27,6 +27,8 @@ class Texture : public AbstractTexture
 public:
     // Default constructor.
     Texture(){}
+    // Provide a default so Texture is a concrete (non-virtual) class.
+    Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
     // Display this Texture in a pop-up OpenCV window, wait for key, then close.
@@ -56,6 +58,14 @@ public:
     static void rasterizeDisk(int size, PixelFunction pixel_function);
     // Compare two textures, print stats, display inputs and AbsDiff of them
     static void diff(const Texture& t0, const Texture& t1);
+    // Combines display on screen and writing file, but primary benefit is that
+    // this allows writing an arbitrarily nested expression of TexSyn
+    // constructors, whose lifetime extends across both operations.
+    // See: https://cwreynolds.github.io/TexSyn/docs/index.html#20200305
+    static void displayAndFile(const Texture& texture,
+                               std::string pathname = "",
+                               int size = 511);
+    static void waitKey();
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

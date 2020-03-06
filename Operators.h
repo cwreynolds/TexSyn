@@ -828,8 +828,6 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Adjust brightness: scale all colors by a given factor. RGB components are
 // multiplied by the factor. See also Multiply which forms the product of two
 // textures. In the previous version of this library there was a Tint operator
@@ -848,5 +846,3 @@ private:
     const float factor;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
