@@ -846,3 +846,37 @@ private:
     const float factor;
     const Texture& texture;
 };
+
+// Twist an input texture around a given "center". The twist has infinite
+// extent but falls off as 1/r. This creates a spiral tightly curved near
+// "center" and asymptotically approaching zero curvature for increasing radius.
+// The Twist is parameterized by an "angle_scale" (bigger values mean more
+// twisting) and a "radius_scale" which adjusts the rate of falloff (bigger
+// values pull the twisting closed to "center"). The twist angle is:
+// angle = angle_scale / ((radius * radius_scale) + 1)
+class Twist : public Operator
+{
+public:
+    Twist (float _angle_scale,
+           float _radius_scale,
+           const Vec2 _center,
+           const Texture&
+           _texture)
+      : angle_scale(_angle_scale),
+        radius_scale(_radius_scale),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float radius = offset.length();
+        float angle = angle_scale / ((radius * radius_scale) + 1);
+        Vec2 rotated_offset = offset.rotate(angle);
+        return texture.getColor(center + rotated_offset);
+    }
+private:
+    const float angle_scale;
+    const float radius_scale;
+    const Vec2 center;
+    const Texture& texture;
+};

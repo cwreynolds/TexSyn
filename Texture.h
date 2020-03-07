@@ -61,7 +61,7 @@ public:
     // Combines display on screen and writing file, but primary benefit is that
     // this allows writing an arbitrarily nested expression of TexSyn
     // constructors, whose lifetime extends across both operations.
-    // See: https://cwreynolds.github.io/TexSyn/docs/index.html#20200305
+    // See: https://cwreynolds.github.io/TexSyn/#20200305
     static void displayAndFile(const Texture& texture,
                                std::string pathname = "",
                                int size = 511);

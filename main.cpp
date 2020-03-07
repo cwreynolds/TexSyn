@@ -618,38 +618,55 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Experimenting with copying Texture arguments to Operators, March 5, 2020
-    
-    Color greenish(0.2, 0.8, 0.2);
-    Color bluish(0.2, 0.2, 0.8);
-    Color white(1, 1, 1);
-    Color gray10(0.1, 0.1, 0.1);
+//    // Experimenting with copying Texture arguments to Operators, March 5, 2020
+//
+//    Color greenish(0.2, 0.8, 0.2);
+//    Color bluish(0.2, 0.2, 0.8);
+//    Color white(1, 1, 1);
+//    Color gray10(0.1, 0.1, 0.1);
+//
+//    // The "no subobjects" approach:
+//    Grating grate(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5);
+//    Furbulence furb(0.2, Vec2(3, 4), gray10, white);
+//    Multiply mult(grate, furb);
+//
+//    // The problematic case: temp Generator objects are "destroyed" after the
+//    // Operator is constructed, having saved references to the Generators.
+//    Multiply trouble(Grating(Vec2(-0.1, -0.1), greenish,
+//                             Vec2(+0.1, +0.1), bluish,
+//                             0.5),
+//                     Furbulence(0.2, Vec2(3, 4),
+//                                gray10, white));
+//    // The new way: allows writing an arbitrarily nested expression of TexSyn
+//    // constructors, whose lifetime extends across display and file operations.
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200305_";
+//    Texture::displayAndFile
+//    (Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
+//     path + "grating");
+//    Texture::displayAndFile
+//    (Furbulence(0.2, Vec2(3, 4), gray10, white),
+//     path + "furbulence");
+//    Texture::displayAndFile
+//    (Multiply(Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
+//              Furbulence(0.2, Vec2(3, 4), gray10, white)),
+//     path + "fuzzy_blue_green_stripes");
+//    Texture::waitKey();
 
-    // The "no subobjects" approach:
-    Grating grate(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5);
-    Furbulence furb(0.2, Vec2(3, 4), gray10, white);
-    Multiply mult(grate, furb);
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // The problematic case: temp Generator objects are "destroyed" after the
-    // Operator is constructed, having saved references to the Generators.
-    Multiply trouble(Grating(Vec2(-0.1, -0.1), greenish,
-                             Vec2(+0.1, +0.1), bluish,
-                             0.5),
-                     Furbulence(0.2, Vec2(3, 4),
-                                gray10, white));
-    // The new way: allows writing an arbitrarily nested expression of TexSyn
-    // constructors, whose lifetime extends across display and file operations.
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200305_";
-    Texture::displayAndFile
-    (Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
-     path + "grating");
-    Texture::displayAndFile
-    (Furbulence(0.2, Vec2(3, 4), gray10, white),
-     path + "furbulence");
-    Texture::displayAndFile
-    (Multiply(Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
-              Furbulence(0.2, Vec2(3, 4), gray10, white)),
-     path + "fuzzy_blue_green_stripes");
+    // Demo for Twist, March 6, 2020
+    
+    Vec2 center(0.9, 0);
+    Color yellow9(0.9, 0.9, 0);
+    Color orange3(0.3, 0.15, 0);
+    Grating grating(Vec2(0, -0.1), orange3, Vec2(0, +0.1), yellow9, 0.3);
+    SliceToRadial radial(Vec2(0, 0.318), center, grating);
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200306_";
+    Texture::displayAndFile(radial, path + "radial");
+    Texture::displayAndFile(Twist(1, 1, center, radial), path + "Twist_1_1");
+    Texture::displayAndFile(Twist(1, 9, center, radial), path + "Twist_1_9");
+    Texture::displayAndFile(Twist(7, 1, center, radial), path + "Twist_7_1");
+    Texture::displayAndFile(Twist(7, 9, center, radial), path + "Twist_7_9");
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
