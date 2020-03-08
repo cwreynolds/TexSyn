@@ -673,31 +673,18 @@ int main(int argc, const char * argv[])
     
     // Demo for BrightnessWrap, March 7, 2020
     
-    
-//    Noise noise(0.1, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
-//    Brownian noise(0.5, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
-//    Brownian noise(0.2, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
-//    Brownian noise(0.4, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
-//    ColorNoise noise(0.4, Vec2(-1, -3), 0.2);
-    ColorNoise noise(0.4, Vec2(-1, -3), 0.6);
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200306_";
-    Texture::displayAndFile(noise);
-//    Texture::displayAndFile(BrightnessWrap(0.33, 0.66, noise));
-//    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, noise));
-//    Texture::displayAndFile(BrightnessWrap(0.2, 0.8,
-//                                           AdjustBrightness(2, noise)));
-//    Texture::displayAndFile(AdjustBrightness(3, BrightnessWrap(0, 0.3, noise)));
-//    Texture::displayAndFile(AdjustBrightness(5, BrightnessWrap(0, 0.2, noise)));
-//    Texture::displayAndFile(AdjustBrightness(2,
-//                                             BrightnessWrap(0.1, 0.5, noise)));
-//    Texture::displayAndFile(BrightnessWrap(0.3, 0.5, noise));
-//    Texture::displayAndFile(BrightnessWrap(0.3, 0.7,
-//                                           AdjustBrightness(3, noise)));
-    Texture::displayAndFile(BrightnessWrap(0.2, 0.8,
-                                           AdjustBrightness(3, noise)));
-
+    Brownian gray_noise(0.3, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+    ColorNoise color_noise(0.5, Vec2(-1, -3), 0.6);
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200308_";
+    Texture::displayAndFile(gray_noise,
+                            path + "gray_noise");
+    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, gray_noise),
+                            path + "gray_BrightnessWrap");
+    Texture::displayAndFile(color_noise,
+                            path + "color_noise");
+    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, color_noise),
+                            path + "color_BrightnessWrap");
     Texture::waitKey();
-
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

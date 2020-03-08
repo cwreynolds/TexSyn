@@ -881,55 +881,41 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class BrightnessWrap: public Operator
+// BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
+// and an input texture. The brightness of the input texture is “wrapped around”
+// in the sense of modulus (fmod) the brightness interval between the two
+// thresholds. Then that brightness interval is adjusted to cover the interval
+// between black and white. (That adjustment to full range had not been done in
+// the previous version of this library. I now think it makes more sense. But I
+// need to think about it some more.) These operations on brightness happen in
+// hue-saturation-value color space, so only brightness (value) is changed. The
+// hue and saturation remain unchanged.
+class BrightnessWrap : public Operator
 {
 public:
-    BrightnessWrap(const float _intensity0,
-                   const float _intensity1,
-                   const Texture& _texture)
+    BrightnessWrap (float _intensity0, float _intensity1, const Texture& _texture)
       : intensity0(std::min(_intensity0, _intensity1)),
         intensity1(std::max(_intensity0, _intensity1)),
         texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
-        Color result;
-        if (intensity0 == intensity1)
+        Color color = texture.getColor(position);
+        float hue, saturation, value;
+        color.getHSV(hue, saturation, value);
+        float new_v = value;
+        float interval = intensity1 - intensity0;
+        if (interval > 0)
         {
-            result = Color::gray(intensity0);
+            float between = fmod_floor(value - intensity0, interval);
+            new_v = remapIntervalClip(between + intensity0,
+                                      intensity0, intensity1,
+                                      0, 1);
         }
-        else
-        {
-            Color input = texture.getColor(position);
-            float brightnessBefore = input.luminance();
-            float intensity_interval = intensity1 - intensity0;
-
-            // QQQ XXX really bad code, needs to be rewritten XXX QQQ
-            float foo = brightnessBefore;
-            foo -= intensity0;
-            foo /= intensity_interval;
-            foo = foo - floor (foo);
-            foo *= intensity_interval;
-            foo += intensity0;
-            const float brightnessAfter = foo;
-            
-            if (brightnessAfter == 0)
-            {
-                result = Color::gray(0);
-            }
-            else
-            {
-                float brightnessRatio = brightnessAfter / brightnessBefore;
-                result = input * brightnessRatio;
-            }
-        }
-        return result;
+        color.setHSV(hue, saturation, new_v);
+        return color;
     }
 private:
     const float intensity0;
     const float intensity1;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
