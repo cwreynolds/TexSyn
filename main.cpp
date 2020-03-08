@@ -654,20 +654,50 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Twist, March 6, 2020
+//    // Demo for Twist, March 6, 2020
+//
+//    Vec2 center(0.9, 0);
+//    Color yellow9(0.9, 0.9, 0);
+//    Color orange3(0.3, 0.15, 0);
+//    Grating grating(Vec2(0, -0.1), orange3, Vec2(0, +0.1), yellow9, 0.3);
+//    SliceToRadial radial(Vec2(0, 0.318), center, grating);
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200306_";
+//    Texture::displayAndFile(radial, path + "radial");
+//    Texture::displayAndFile(Twist(1, 1, center, radial), path + "Twist_1_1");
+//    Texture::displayAndFile(Twist(1, 9, center, radial), path + "Twist_1_9");
+//    Texture::displayAndFile(Twist(7, 1, center, radial), path + "Twist_7_1");
+//    Texture::displayAndFile(Twist(7, 9, center, radial), path + "Twist_7_9");
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Vec2 center(0.9, 0);
-    Color yellow9(0.9, 0.9, 0);
-    Color orange3(0.3, 0.15, 0);
-    Grating grating(Vec2(0, -0.1), orange3, Vec2(0, +0.1), yellow9, 0.3);
-    SliceToRadial radial(Vec2(0, 0.318), center, grating);
+    // Demo for BrightnessWrap, March 7, 2020
+    
+    
+//    Noise noise(0.1, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    Brownian noise(0.5, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    Brownian noise(0.2, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    Brownian noise(0.4, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    ColorNoise noise(0.4, Vec2(-1, -3), 0.2);
+    ColorNoise noise(0.4, Vec2(-1, -3), 0.6);
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200306_";
-    Texture::displayAndFile(radial, path + "radial");
-    Texture::displayAndFile(Twist(1, 1, center, radial), path + "Twist_1_1");
-    Texture::displayAndFile(Twist(1, 9, center, radial), path + "Twist_1_9");
-    Texture::displayAndFile(Twist(7, 1, center, radial), path + "Twist_7_1");
-    Texture::displayAndFile(Twist(7, 9, center, radial), path + "Twist_7_9");
+    Texture::displayAndFile(noise);
+//    Texture::displayAndFile(BrightnessWrap(0.33, 0.66, noise));
+//    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, noise));
+//    Texture::displayAndFile(BrightnessWrap(0.2, 0.8,
+//                                           AdjustBrightness(2, noise)));
+//    Texture::displayAndFile(AdjustBrightness(3, BrightnessWrap(0, 0.3, noise)));
+//    Texture::displayAndFile(AdjustBrightness(5, BrightnessWrap(0, 0.2, noise)));
+//    Texture::displayAndFile(AdjustBrightness(2,
+//                                             BrightnessWrap(0.1, 0.5, noise)));
+//    Texture::displayAndFile(BrightnessWrap(0.3, 0.5, noise));
+//    Texture::displayAndFile(BrightnessWrap(0.3, 0.7,
+//                                           AdjustBrightness(3, noise)));
+    Texture::displayAndFile(BrightnessWrap(0.2, 0.8,
+                                           AdjustBrightness(3, noise)));
+
     Texture::waitKey();
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

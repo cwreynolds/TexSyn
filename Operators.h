@@ -880,3 +880,56 @@ private:
     const Vec2 center;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BrightnessWrap: public Operator
+{
+public:
+    BrightnessWrap(const float _intensity0,
+                   const float _intensity1,
+                   const Texture& _texture)
+      : intensity0(std::min(_intensity0, _intensity1)),
+        intensity1(std::max(_intensity0, _intensity1)),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color result;
+        if (intensity0 == intensity1)
+        {
+            result = Color::gray(intensity0);
+        }
+        else
+        {
+            Color input = texture.getColor(position);
+            float brightnessBefore = input.luminance();
+            float intensity_interval = intensity1 - intensity0;
+
+            // QQQ XXX really bad code, needs to be rewritten XXX QQQ
+            float foo = brightnessBefore;
+            foo -= intensity0;
+            foo /= intensity_interval;
+            foo = foo - floor (foo);
+            foo *= intensity_interval;
+            foo += intensity0;
+            const float brightnessAfter = foo;
+            
+            if (brightnessAfter == 0)
+            {
+                result = Color::gray(0);
+            }
+            else
+            {
+                float brightnessRatio = brightnessAfter / brightnessBefore;
+                result = input * brightnessRatio;
+            }
+        }
+        return result;
+    }
+private:
+    const float intensity0;
+    const float intensity1;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
