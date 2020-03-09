@@ -919,3 +919,28 @@ private:
     const float intensity1;
     const Texture& texture;
 };
+
+// Mirror across a line in texture space, defined by a tangent and center point.
+class Mirror : public Operator
+{
+public:
+    Mirror(Vec2 _line_tangent, Vec2 _center, const Texture& _texture)
+      : line_tangent(_line_tangent),
+        perpendicular(line_tangent.rotate90degCW()),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float along = offset.dot(line_tangent);
+        float across = std::abs(offset.dot(perpendicular));
+        return texture.getColor(center +
+                                (line_tangent * along) +
+                                (perpendicular * across));
+    }
+private:
+    const Vec2 line_tangent;
+    const Vec2 perpendicular;
+    const Vec2 center;
+    const Texture& texture;
+};

@@ -671,19 +671,45 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for BrightnessWrap, March 7, 2020
+//    // Demo for BrightnessWrap, March 7, 2020
+//
+//    Brownian gray_noise(0.3, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    ColorNoise color_noise(0.5, Vec2(-1, -3), 0.6);
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200308_";
+//    Texture::displayAndFile(gray_noise,
+//                            path + "gray_noise");
+//    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, gray_noise),
+//                            path + "gray_BrightnessWrap");
+//    Texture::displayAndFile(color_noise,
+//                            path + "color_noise");
+//    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, color_noise),
+//                            path + "color_BrightnessWrap");
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // Demo for Mirror, March 9, 2020
+
+    Grating grating(Vec2(0.1, 0), Color(1, 1, 1),
+                    Vec2(0.3, 0), Color(0, 0, 0), 1);
+    Multiply grating_squared(grating, grating);
     Brownian gray_noise(0.3, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+    Colorize squiggles(Vec2(1, 0), Vec2(), grating_squared, gray_noise);
+
     ColorNoise color_noise(0.5, Vec2(-1, -3), 0.6);
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200308_";
-    Texture::displayAndFile(gray_noise,
-                            path + "gray_noise");
-    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, gray_noise),
-                            path + "gray_BrightnessWrap");
-    Texture::displayAndFile(color_noise,
-                            path + "color_noise");
-    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, color_noise),
-                            path + "color_BrightnessWrap");
+    Multiply color_squiggles(color_noise, squiggles);
+    Uniform white(Color(1, 1, 1));
+    Subtract test(white, color_squiggles);
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200309_";
+    Texture::displayAndFile(squiggles, path + "squiggles");
+    Texture::displayAndFile(test, path + "test");
+    Texture::displayAndFile(Mirror(Vec2(0, 1), Vec2(), test),
+                            path + "Mirror_y");
+    Texture::displayAndFile(Mirror(Vec2(1, 0),
+                                   Vec2(),
+                                   Mirror(Vec2(0, 1), Vec2(), test)),
+                            path + "Mirror_y_then_x");
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
