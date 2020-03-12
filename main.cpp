@@ -714,28 +714,62 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for using "lambda combination" to bind nested texture definitions
-    // for the duration of the demo code, March 10, 2020
-    Grating grating(Vec2(0.1, 0), Color(1, 1, 1),
-                    Vec2(0.3, 0), Color(0, 0, 0), 1);
-    []
-    (const Texture& test)
+//    // Demo for using "lambda combination" to bind nested texture definitions
+//    // for the duration of the demo code, March 10, 2020
+//    Grating grating(Vec2(0.1, 0), Color(1, 1, 1),
+//                    Vec2(0.3, 0), Color(0, 0, 0), 1);
+//    []
+//    (const Texture& test)
+//    {
+//        Texture::displayAndFile(test);
+//        Texture::displayAndFile(Mirror(Vec2(0, 1), Vec2(), test));
+//        Texture::displayAndFile(Mirror(Vec2(1, 0),
+//                                       Vec2(),
+//                                       Mirror(Vec2(0, 1), Vec2(), test)));
+//        Texture::waitKey();
+//    }
+//    (Subtract(Uniform(Color(1, 1, 1)),
+//              Multiply(ColorNoise(0.5, Vec2(-1, -3), 0.6),
+//                       Colorize(Vec2(1, 0),
+//                                Vec2(),
+//                                Multiply(grating, grating),
+//                                Brownian(0.3, Vec2(-1, -3),
+//                                         Color(1, 1, 1),
+//                                         Color(0, 0, 0))))));
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for Ring, March 10, 2020
+    Color white(1, 1, 1);
+    Color black(0, 0, 0);
+    Spot spot(Vec2(0, -0.05), 0.19, white, 0.20, black);
+    [&]
+    (const Texture& bg)
     {
-        Texture::displayAndFile(test);
-        Texture::displayAndFile(Mirror(Vec2(0, 1), Vec2(), test));
-        Texture::displayAndFile(Mirror(Vec2(1, 0),
-                                       Vec2(),
-                                       Mirror(Vec2(0, 1), Vec2(), test)));
-        Texture::waitKey();
+        [&]
+        (const Texture& spots_and_bg)
+        {
+            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200311_";
+            Texture::displayAndFile(spots_and_bg, path + "spots_and_bg");
+            Texture::displayAndFile(Ring(10.1,
+                                         Vec2(0, 1),
+                                         Vec2(0, -0.9),
+                                         spots_and_bg),
+                                    path + "Ring_1");
+            Texture::displayAndFile(Ring(-4.8,
+                                         Vec2(1, 1),
+                                         Vec2(-1, -1).normalize() / 2,
+                                         spots_and_bg),
+                                    path + "Ring_2");
+            Texture::waitKey();
+        }
+        (SoftMatte(Translate(Vec2(0, 0.1), spot),
+                   SoftMatte(spot, bg, AdjustBrightness(0.8, bg)),
+                   Uniform(Color::gray(0.8))));
     }
-    (Subtract(Uniform(Color(1, 1, 1)),
-              Multiply(ColorNoise(0.5, Vec2(-1, -3), 0.6),
-                       Colorize(Vec2(1, 0),
-                                Vec2(),
-                                Multiply(grating, grating),
-                                Brownian(0.3, Vec2(-1, -3),
-                                         Color(1, 1, 1),
-                                         Color(0, 0, 0))))));
+    (AdjustBrightness(0.7,
+                      AdjustSaturation(0.1,
+                                       ColorNoise(0.5, Vec2(-1, -3),  0.6))));
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

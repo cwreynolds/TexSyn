@@ -944,3 +944,38 @@ private:
     const Vec2 center;
     const Texture& texture;
 };
+
+// The Ring operator takes a pie-slice-shaped sector from an input texture,
+// copying and rotating around a center to create the whole “pie.” Parameters to
+// Ring are: copies (how many “pie pieces” there are), basis (the direction of
+// the bisector of the sector to be copied), center (around which the sectors
+// are rotated), and the input texture. The ray from center, along the direction
+// of basis, is a “fixed point” of the Ring operator: texture within the fixed
+// sector (centered on that ray) is identical to the input texture.
+class Ring : public Operator
+{
+public:
+    Ring(float _copies, Vec2 _basis, Vec2 _center, const Texture& _texture)
+      : copies(std::max(1.0f, std::round(std::abs(_copies)))),
+        basis(_basis),
+        basis_angle(std::atan2(basis.x(), basis.y())),
+        center(_center),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float angle = std::atan2(offset.x(), offset.y()) - basis_angle;
+        float segment_angle = 2 * pi / copies;
+        int segment_index = std::round(angle / segment_angle);
+        float lookup_angle = angle - (segment_angle * segment_index);
+        float radius = offset.length();
+        Vec2 spoke = basis.rotate(lookup_angle).normalize() * radius;
+        return texture.getColor(center + spoke);
+    }
+private:
+    const float copies;
+    const Vec2 basis;
+    const float basis_angle;
+    const Vec2 center;
+    const Texture& texture;
+};
