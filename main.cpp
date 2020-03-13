@@ -739,7 +739,41 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Ring, March 10, 2020
+//    // Demo for Ring, March 11, 2020
+//    Color white(1, 1, 1);
+//    Color black(0, 0, 0);
+//    Spot spot(Vec2(0, -0.05), 0.19, white, 0.20, black);
+//    [&]
+//    (const Texture& bg)
+//    {
+//        [&]
+//        (const Texture& spots_and_bg)
+//        {
+//            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200311_";
+//            Texture::displayAndFile(spots_and_bg, path + "spots_and_bg");
+//            Texture::displayAndFile(Ring(10.1,
+//                                         Vec2(0, 1),
+//                                         Vec2(0, -0.9),
+//                                         spots_and_bg),
+//                                    path + "Ring_1");
+//            Texture::displayAndFile(Ring(-4.8,
+//                                         Vec2(1, 1),
+//                                         Vec2(-1, -1).normalize() / 2,
+//                                         spots_and_bg),
+//                                    path + "Ring_2");
+//            Texture::waitKey();
+//        }
+//        (SoftMatte(Translate(Vec2(0, 0.1), spot),
+//                   SoftMatte(spot, bg, AdjustBrightness(0.8, bg)),
+//                   Uniform(Color::gray(0.8))));
+//    }
+//    (AdjustBrightness(0.7,
+//                      AdjustSaturation(0.1,
+//                                       ColorNoise(0.5, Vec2(-1, -3),  0.6))));
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for Row, March 12, 2020
     Color white(1, 1, 1);
     Color black(0, 0, 0);
     Spot spot(Vec2(0, -0.05), 0.19, white, 0.20, black);
@@ -749,18 +783,26 @@ int main(int argc, const char * argv[])
         [&]
         (const Texture& spots_and_bg)
         {
-            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200311_";
-            Texture::displayAndFile(spots_and_bg, path + "spots_and_bg");
-            Texture::displayAndFile(Ring(10.1,
-                                         Vec2(0, 1),
-                                         Vec2(0, -0.9),
-                                         spots_and_bg),
-                                    path + "Ring_1");
-            Texture::displayAndFile(Ring(-4.8,
-                                         Vec2(1, 1),
-                                         Vec2(-1, -1).normalize() / 2,
-                                         spots_and_bg),
-                                    path + "Ring_2");
+            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200312_";
+            Texture::displayAndFile(spots_and_bg);
+            Texture::displayAndFile(Row(Vec2(0.4, 0),
+                                        Vec2(),
+                                        spots_and_bg),
+                                    path + "row_1");
+            Texture::displayAndFile(Row(Vec2(0.35, 0.35),
+                                        Vec2(),
+                                        spots_and_bg),
+                                    path + "row_2");
+            Texture::displayAndFile(Row(Vec2(0, 0.6),
+                                        Vec2(),
+                                        spots_and_bg),
+                                    path + "row_3");
+            Texture::displayAndFile(Row(Vec2(0.17, 0.52),
+                                        Vec2(),
+                                        Row(Vec2(-0.52, 0.17),
+                                            Vec2(),
+                                            spots_and_bg)),
+                                    path + "row_4");
             Texture::waitKey();
         }
         (SoftMatte(Translate(Vec2(0, 0.1), spot),

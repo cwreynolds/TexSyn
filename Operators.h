@@ -979,3 +979,38 @@ private:
     const Vec2 center;
     const Texture& texture;
 };
+
+// The Row operator tiles the texture plane by copying and translating a portion
+// (a fixed width “stripe”) of an input texture. Its parameters are two Vec2
+// values: basis and center. The basis vector spans from one boundary of a
+// “stripe” to the other (the length of basis is the width of the stripe, and
+// its orientation is normal to the stripe's “axis”). The center position adjust
+// the “phase” of stripes, effectively sliding the input texture relative to the
+// stripe. The stripe that is centered on center is a “fixed point” of the Row
+// transform, it remains identical to the input texture.
+class Row : public Operator
+{
+public:
+    Row(Vec2 _basis, Vec2 _center, const Texture& _texture)
+      : width(_basis.length()),
+        basis(_basis / width),
+        perpendicular(basis.rotate90degCW()),
+        center(_center - basis * width / 2),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float basis_proj = basis.dot(offset);
+        float perp_proj = perpendicular.dot(offset);
+        float within_stripe = fmod_floor(basis_proj, width);
+        return texture.getColor(center +
+                                basis * within_stripe +
+                                perpendicular * perp_proj);
+    }
+private:
+    const float width;
+    const Vec2 basis;
+    const Vec2 perpendicular;
+    const Vec2 center;
+    const Texture& texture;
+};
