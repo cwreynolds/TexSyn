@@ -85,3 +85,60 @@ bool withinEpsilon(Color a, Color b, float epsilon);
 
 // Serialize Color object to stream.
 std::ostream& operator<<(std::ostream& os, const Color& v);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <map>
+#include <unordered_map>
+
+// TODO experimental cache for Blur at discrete subsample grid cell
+// make it spectic to int x,y keys and Color values. Maybe generalize later.
+
+// Try timing tests with std::unordered_map instead of std::map
+
+class ColorGridCache
+{
+public:
+    typedef std::pair<std::pair<int, int>, Color> ColorGrid;
+    ColorGridCache(){};
+    
+    // TODO for testing, keep?
+    bool cached(int x, int y)
+    {
+        auto find_result = cache_.find(std::make_pair(x, y));
+        return find_result != cache_.end();
+    }
+    
+    size_t size() { return cache_.size(); }
+    void insert(int x, int y, Color color)
+    {
+        cache_[std::make_pair(x, y)] = color;
+    }
+    Color lookup(int x, int y, bool& present_in_cache)
+    {
+        Color result(0, 0, 0);
+        present_in_cache = false;
+        auto find_result = cache_.find(std::make_pair(x, y));
+        if (find_result != cache_.end())
+        {
+            present_in_cache = true;
+            result = find_result->second;
+        }
+        return result;
+    }
+private:
+    // TODO map (red-black tree) version
+    // std::map<std::pair<int, int>, Color> cache_;
+    
+    // TODO hash table version
+    struct pair_hash
+    {
+        template <class T1, class T2>
+        std::size_t operator() (const std::pair<T1, T2> &pair) const
+        {
+            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
+        }
+    };
+    std::unordered_map<std::pair<int, int>, Color, pair_hash> cache_;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

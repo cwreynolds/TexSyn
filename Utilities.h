@@ -14,6 +14,9 @@
 #include <iostream>
 #include <limits>
 #include <vector>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <chrono>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Vec2;
 
 // for debugging: prints one line with a given C expression, an equals sign,
@@ -157,3 +160,38 @@ private:
 typedef std::complex<float> Complex;
 Complex inverse_mobius_transform(Complex z,
                                  Complex a, Complex b, Complex c, Complex d);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Simple tool for inline timing sections of code. For example:
+//
+//    void foo()
+//    {
+//        Timer foo_timer("foo");
+//        bar();
+//        zap();
+//    }
+//
+// After the block containing the Timer construction it prints:
+//
+//    foo elapsed time: 1.86984 seconds
+//
+class Timer
+{
+public:
+    Timer(const std::string& description)
+      : description_(description),
+        start_time_(std::chrono::high_resolution_clock::now())
+    {}
+    ~Timer()
+    {
+        auto finish_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = finish_time - start_time_;
+        std::cout << description_ << " elapsed time: " << elapsed.count();
+        std::cout << " seconds" << std::endl;
+    }
+private:
+    const std::string description_;
+    const std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

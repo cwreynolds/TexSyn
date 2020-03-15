@@ -66,6 +66,12 @@ public:
                                std::string pathname = "",
                                int size = 511);
     static void waitKey();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static int total_pixels_rendered;
+    static int total_pixels_cached;
+    static int total_cache_lookups;
+    static size_t cache_size;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

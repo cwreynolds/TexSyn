@@ -173,3 +173,10 @@ void Texture::rasterizeDisk(int size, PixelFunction pixel_function)
         }
     }
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+int Texture::total_pixels_rendered = 0;
+int Texture::total_pixels_cached = 0;
+int Texture::total_cache_lookups = 0;
+size_t Texture::cache_size = 0;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,7 +11,6 @@
 #include "Operators.h"
 #include "UnitTests.h"
 #include "Utilities.h"
-#include <chrono>  // for high_resolution_clock
 
 bool run_unit_tests = false;
 
@@ -773,46 +772,145 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for Row, March 12, 2020
+//    // Demo for Row, March 12, 2020
+//    Color white(1, 1, 1);
+//    Color black(0, 0, 0);
+//    Spot spot(Vec2(0, -0.05), 0.19, white, 0.20, black);
+//    [&]
+//    (const Texture& bg)
+//    {
+//        [&]
+//        (const Texture& spots_and_bg)
+//        {
+//            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200312_";
+//            Texture::displayAndFile(spots_and_bg);
+//            Texture::displayAndFile(Row(Vec2(0.4, 0),
+//                                        Vec2(),
+//                                        spots_and_bg),
+//                                    path + "row_1");
+//            Texture::displayAndFile(Row(Vec2(0.35, 0.35),
+//                                        Vec2(),
+//                                        spots_and_bg),
+//                                    path + "row_2");
+//            Texture::displayAndFile(Row(Vec2(0, 0.6),
+//                                        Vec2(),
+//                                        spots_and_bg),
+//                                    path + "row_3");
+//            Texture::displayAndFile(Row(Vec2(0.17, 0.52),
+//                                        Vec2(),
+//                                        Row(Vec2(-0.52, 0.17),
+//                                            Vec2(),
+//                                            spots_and_bg)),
+//                                    path + "row_4");
+//            Texture::waitKey();
+//        }
+//        (SoftMatte(Translate(Vec2(0, 0.1), spot),
+//                   SoftMatte(spot, bg, AdjustBrightness(0.8, bg)),
+//                   Uniform(Color::gray(0.8))));
+//    }
+//    (AdjustBrightness(0.7,
+//                      AdjustSaturation(0.1,
+//                                       ColorNoise(0.5, Vec2(-1, -3),  0.6))));
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//    // playing with spots, March 12, 2020
+//    Color white(1, 1, 1);
+//    Color black(0, 0, 0);
+//    Texture::displayAndFile
+//    (SoftThreshold(0.5, 0.6, Noise(0.05, Vec2(5, 2), white, black)));
+//    Texture::displayAndFile
+//    (SoftThreshold(0.5, 0.6, Brownian(0.05, Vec2(5, 2), white, black)));
+//    Texture::displayAndFile
+//    (SoftThreshold(0.50,
+//                   0.55,
+//                   Blur(0.1,
+//                        Brownian(0.05, Vec2(5, 2), white, black))));
+//    Texture::displayAndFile
+//    (SoftThreshold(0.7,
+//                   0.8,
+//                   Max(Rotate(2, Noise(0.1, Vec2(5, 2), white, black)),
+//                       Rotate(4, Noise(0.1, Vec2(2, 5), white, black)))));
+//    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // cache for Blur? -- March 13, 2020
+    // note: see "chrono" above for timing
+    //
     Color white(1, 1, 1);
     Color black(0, 0, 0);
-    Spot spot(Vec2(0, -0.05), 0.19, white, 0.20, black);
+    Color yellow(1, 1, 0);
+    Color blue(0, 0, 1);
     [&]
-    (const Texture& bg)
+    (const Texture& blur_vs_not)
     {
-        [&]
-        (const Texture& spots_and_bg)
-        {
-            std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200312_";
-            Texture::displayAndFile(spots_and_bg);
-            Texture::displayAndFile(Row(Vec2(0.4, 0),
-                                        Vec2(),
-                                        spots_and_bg),
-                                    path + "row_1");
-            Texture::displayAndFile(Row(Vec2(0.35, 0.35),
-                                        Vec2(),
-                                        spots_and_bg),
-                                    path + "row_2");
-            Texture::displayAndFile(Row(Vec2(0, 0.6),
-                                        Vec2(),
-                                        spots_and_bg),
-                                    path + "row_3");
-            Texture::displayAndFile(Row(Vec2(0.17, 0.52),
-                                        Vec2(),
-                                        Row(Vec2(-0.52, 0.17),
-                                            Vec2(),
-                                            spots_and_bg)),
-                                    path + "row_4");
-            Texture::waitKey();
-        }
-        (SoftMatte(Translate(Vec2(0, 0.1), spot),
-                   SoftMatte(spot, bg, AdjustBrightness(0.8, bg)),
-                   Uniform(Color::gray(0.8))));
-    }
-    (AdjustBrightness(0.7,
-                      AdjustSaturation(0.1,
-                                       ColorNoise(0.5, Vec2(-1, -3),  0.6))));
+        ColorGridCache cgc;
+        bool present_in_cache = false;
+        
+        debugPrint(cgc.cached(1, 1));
+        cgc.insert(1, 1, Color(1,2,3));
+//        debugPrint(cgc.insert(1, 1, Color(1,2,3)));
+        debugPrint(cgc.cached(1, 1));
+        debugPrint(present_in_cache);
+        debugPrint(cgc.lookup(1, 1, present_in_cache));
+        debugPrint(present_in_cache);
 
+        
+        
+        
+        
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200314_";
+        
+//        {
+//            Timer blur_timer("Running blur_vs_not");
+//            Texture::displayAndFile(blur_vs_not);
+//        }
+
+        
+//        Texture::displayAndFile(Grating(Vec2(), white,
+//                                        Vec2(0.2, 0.2), black,
+//                                        0.01)
+//                                // , path + "grating"
+//                                );
+        Texture::displayAndFile(Grating(Vec2(), yellow,
+                                        Vec2(0.2, 0.2), blue,
+                                        0.01)
+                                // , path + "grating_yb"
+                                );
+        {
+            Timer blur_timer("Running Blur(Grating(...))");
+            Texture::total_pixels_rendered = 0;
+            Texture::total_pixels_cached = 0;
+            Texture::total_cache_lookups = 0;
+            Texture::cache_size = 0;
+            
+//            Texture::displayAndFile(Blur(0.2,
+            Texture::displayAndFile(Blur(0.5,
+                                         Grating(Vec2(), yellow,
+                                                 Vec2(0.2, 0.2), blue,
+                                                 0.01))
+                                    // , path + "Blur_old_yb"
+                                    );
+            
+            debugPrint(Texture::total_pixels_rendered);
+            debugPrint(Texture::total_pixels_cached);
+            debugPrint(Texture::total_cache_lookups);
+            debugPrint(Texture::cache_size);
+            
+
+
+        }
+
+        
+        
+        Texture::waitKey();
+    }
+    (SoftMatte(Spot(Vec2(), 0.6, white, 0.7, black),
+               Grating(Vec2(), white, Vec2(0.2, 0), black, 0.01),
+               Blur(0.2,
+                    Grating(Vec2(), white, Vec2(0, 0.2), black, 0.01))));
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
