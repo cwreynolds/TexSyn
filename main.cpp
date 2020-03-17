@@ -860,7 +860,7 @@ int main(int argc, const char * argv[])
         
         
         
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200314_";
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200316_";
         
 //        {
 //            Timer blur_timer("Running blur_vs_not");
@@ -873,11 +873,13 @@ int main(int argc, const char * argv[])
 //                                        0.01)
 //                                // , path + "grating"
 //                                );
+/*
         Texture::displayAndFile(Grating(Vec2(), yellow,
                                         Vec2(0.2, 0.2), blue,
                                         0.01)
                                 // , path + "grating_yb"
                                 );
+ */
         {
             Timer blur_timer("Running Blur(Grating(...))");
             Texture::total_pixels_rendered = 0;
@@ -885,24 +887,33 @@ int main(int argc, const char * argv[])
             Texture::total_cache_lookups = 0;
             Texture::cache_size = 0;
             
-//            Texture::displayAndFile(Blur(0.2,
-            Texture::displayAndFile(Blur(0.5,
+            Texture::displayAndFile(Blur(0.2,
+//            Texture::displayAndFile(Blur(0.5,
                                          Grating(Vec2(), yellow,
                                                  Vec2(0.2, 0.2), blue,
                                                  0.01))
-                                    // , path + "Blur_old_yb"
+//                                     , path + "Blur_newer_yb_02"
+//                                    , path + "Blur_newer_yb_05"
+//                                    , path + "Blur_old_yb_05"
                                     );
             
             debugPrint(Texture::total_pixels_rendered);
             debugPrint(Texture::total_pixels_cached);
             debugPrint(Texture::total_cache_lookups);
             debugPrint(Texture::cache_size);
-            
-
-
         }
+/*
 
-        
+        Texture::displayAndFile(EdgeDetect(0.2,
+//        Texture::displayAndFile(EdgeDetect(0.5,
+                                           Grating(Vec2(), yellow,
+                                                   Vec2(0.2, 0.2), blue,
+                                                   0.01))
+//                                , path + "EdgeD_newer_yb_02"
+//                                , path + "EdgeD_newer_yb_05"
+//                                , path + "EdgeD_old_yb_02"
+                                );
+*/
         
         Texture::waitKey();
     }

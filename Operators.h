@@ -695,27 +695,23 @@ private:
 class Blur : public Operator
 {
 public:
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //    Blur(const float _width, const Texture& _texture)
 //        : width(_width), texture(_texture) {}
     Blur(const float _width, const Texture& _texture)
-        : width(_width),
+      : width(_width),
         texture(_texture),
-    
-        cgc(std::make_shared<ColorGridCache>())
-
-    {}
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        cgc(std::make_shared<ColorGridCache>()) {}
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     Color getColor(Vec2 position) const override
     {
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //        return NEWgetColor(position);
+        return NEWERgetColor(position);
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // TODO VERY PROTOTYPE
         float radius = width / 2;
         int n = 15;  // number of subsamples is n²
-//        int n = 7;  // number of subsamples is n²
-//        int n = 9;  // number of subsamples is n²
         float cell_width = width / n;
         std::vector<Vec2> offsets;
         for (int i = 0; i < n; i++)
@@ -741,6 +737,7 @@ public:
     }
     
     
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     Color NEWgetColor(Vec2 position) const // override
     {
         float radius = width / 2;
@@ -803,6 +800,86 @@ public:
         
         return sum_of_weighted_colors / sum_of_weights;
     }
+    
+    
+    Color NEWERgetColor(Vec2 position) const // override
+    {
+        float radius = width / 2;
+//        int n = 15;  // number of subsamples is n²
+        // TODO new March 16
+        int n = 30;  // number of subsamples is n²
+//        int n = 20;  // number of subsamples is n²
+//        int n = 40;  // number of subsamples is n²
+        float cell_width = width / n;
+        
+        auto position_to_cell = [&](float x){return std::floor(x/cell_width);};
+    
+        Color sum_of_weighted_colors(0, 0, 0);
+        float sum_of_weights = 0;
+  
+        
+        std::vector<int> is;
+        std::vector<int> js;
+        for (int k = 0; k < n; k++) if (frandom01() > 0.75) is.push_back(k);
+        for (int k = 0; k < n; k++) if (frandom01() > 0.75) js.push_back(k);
+
+        for (int i : is)
+        {
+            for (int j : js)
+            {
+            
+//        for (int i = 0; i < n; i++)
+//        {
+//            for (int j = 0; j < n; j++)
+//            {
+                
+//                // TODO new March 16 (rewrite if kept)
+//                if (frandom01() < 0.75) continue;
+
+                
+                // Position of cell corner in relative to "position".
+                Vec2 cell_corner_offset((i * cell_width) - radius,
+                                        (j * cell_width) - radius);
+                
+                float length = cell_corner_offset.length();
+                if (length <= radius)
+                {
+                    // Position of cell corner in global texture space.
+                    Vec2 cell_corner = cell_corner_offset + position;
+                    
+                    // Global +/- indices of cell.
+                    int global_i = position_to_cell(cell_corner.x());
+                    int global_j = position_to_cell(cell_corner.y());
+
+                    // Look up the cell, has a Color been cached for it?
+                    bool found = false;
+                    Color color = cgc->lookup(global_i, global_j, found);
+                    Texture::total_cache_lookups++;
+                    
+                    // Is this cell in the ColorGridCache?
+                    if (!found)
+                    {
+                        Vec2 jiggle(frandom01() * cell_width,
+                                    frandom01() * cell_width);
+                        Vec2 offset = cell_corner + jiggle;
+                        color = texture.getColor(offset);
+                        cgc->insert(global_i, global_j, color);
+                        Texture::total_pixels_cached++;
+                    }
+                    float weight = 1 - sinusoid(length / radius);
+                    sum_of_weighted_colors += color * weight;
+                    sum_of_weights += weight;
+                }
+            }
+        }
+        
+        Texture::total_pixels_rendered++;
+        Texture::cache_size = cgc->size();
+        
+        return sum_of_weighted_colors / sum_of_weights;
+    }
+
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
 private:
     const float width;

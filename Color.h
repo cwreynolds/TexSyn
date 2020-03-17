@@ -99,8 +99,10 @@ class ColorGridCache
 {
 public:
     typedef std::pair<std::pair<int, int>, Color> ColorGrid;
-    ColorGridCache(){};
-    
+//    ColorGridCache(){};
+    // TODO new March 16
+    ColorGridCache(){ cache_.reserve(511 * 511); };
+
     // TODO for testing, keep?
     bool cached(int x, int y)
     {
