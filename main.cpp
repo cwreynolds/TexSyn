@@ -860,7 +860,7 @@ int main(int argc, const char * argv[])
         
         
         
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200316_";
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200317_";
         
 //        {
 //            Timer blur_timer("Running blur_vs_not");
@@ -895,6 +895,9 @@ int main(int argc, const char * argv[])
 //                                     , path + "Blur_newer_yb_02"
 //                                    , path + "Blur_newer_yb_05"
 //                                    , path + "Blur_old_yb_05"
+//                                    , path + "Blur_old_yb_02_10x10"
+//                                    , path + "Blur_old_yb_02_11x11"
+//                                    , path + "Blur_old_yb_02_15x15"
                                     );
             
             debugPrint(Texture::total_pixels_rendered);
@@ -902,7 +905,6 @@ int main(int argc, const char * argv[])
             debugPrint(Texture::total_cache_lookups);
             debugPrint(Texture::cache_size);
         }
-/*
 
         Texture::displayAndFile(EdgeDetect(0.2,
 //        Texture::displayAndFile(EdgeDetect(0.5,
@@ -913,7 +915,6 @@ int main(int argc, const char * argv[])
 //                                , path + "EdgeD_newer_yb_05"
 //                                , path + "EdgeD_old_yb_02"
                                 );
-*/
         
         Texture::waitKey();
     }

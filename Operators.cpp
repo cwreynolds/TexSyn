@@ -26,3 +26,6 @@ void Texture::diff(const Texture& t0, const Texture& t1)
     debugPrint(total_color / pixel_count);
     Texture::displayInWindow({ &t0, &t1, &abs_diff }, 451);
 }
+
+// Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
+int Blur::sqrt_of_subsample_count = 11;
