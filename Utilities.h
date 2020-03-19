@@ -195,3 +195,12 @@ private:
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Hash a float to a 32 bit value.
+size_t hash_float(float x);
+
+// Combine two 32 bit hash values.
+size_t hash_mashup(size_t hash0, size_t hash1);
+
+// Takes a 32 bit value and shuffles it around to produce a new 32 bit value.
+uint32_t rehash32bits(uint64_t a);

@@ -835,6 +835,7 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+/*
     // cache for Blur? -- March 13, 2020
     // note: see "chrono" above for timing
     //
@@ -873,13 +874,6 @@ int main(int argc, const char * argv[])
 //                                        0.01)
 //                                // , path + "grating"
 //                                );
-/*
-        Texture::displayAndFile(Grating(Vec2(), yellow,
-                                        Vec2(0.2, 0.2), blue,
-                                        0.01)
-                                // , path + "grating_yb"
-                                );
- */
         {
             Timer blur_timer("Running Blur(Grating(...))");
             Texture::total_pixels_rendered = 0;
@@ -923,6 +917,21 @@ int main(int argc, const char * argv[])
                Blur(0.2,
                     Grating(Vec2(), white, Vec2(0, 0.2), black, 0.01))));
     
+*/
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    debugPrint(hash_float(0.000000));
+    debugPrint(hash_float(0.000001));
+    debugPrint(hash_float(100000.0));
+    debugPrint(hash_float(1123.456));
+    debugPrint(hash_float(123456.7));
+    
+    debugPrint(Vec2(0, 0).hash());
+    debugPrint(Vec2(5, 7).hash());
+    debugPrint(Vec2(7, 5).hash());
+    debugPrint(Vec2(-8, 3).hash());
+    debugPrint(Vec2(3, -8).hash());
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

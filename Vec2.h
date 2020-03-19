@@ -37,6 +37,8 @@ public:
     // 90° (π/2) rotation
     Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
     Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
+    // Compute a 32 bit hash value for a Vec2.
+    size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
     // Generate a random point inside a unit diameter disk centered on origin.
     static Vec2 randomPointInUnitDiameterCircle();
     // Generate a random unit vector.
