@@ -204,3 +204,29 @@ size_t hash_mashup(size_t hash0, size_t hash1);
 
 // Takes a 32 bit value and shuffles it around to produce a new 32 bit value.
 uint32_t rehash32bits(uint64_t a);
+
+// Simple self-contained generator for a sequence of psuedo-random 32 bit values
+class RandomSequence
+{
+public:
+    RandomSequence() : state_(defaultSeed()) {}
+    RandomSequence(uint64_t seed) : state_(uint32_t(seed)) {}
+    // Next random number in sequence as a 31 bit positive int.
+    uint32_t nextInt() { return bitMask() & nextUint32(); }
+    // Next random number in sequence as a 32 bit unsigned int.
+    uint32_t nextUint32() { return state_ = rehash32bits(state_); }
+    // A 32 bit word with zero sign bit and all other 31 bits on, max pos int.
+    uint32_t bitMask() { return 0x7fffffff; } // 31 bits
+    // The largest (31 bit) positive integer that can be returned.
+    int maxIntValue() { return bitMask(); }
+    // A "large" 32 bit "random" number.
+    static uint32_t defaultSeed() { return 688395321; }
+    
+    // TODO look at removing the old versions of these utilities.
+    // Returns a float randomly distributed between 0 and 1    
+    float frandom01() { return float(nextInt()) / float(maxIntValue()); }
+    // Returns a float randomly distributed between lowerBound and upperBound
+    float frandom2(float a, float b) { return interpolate(frandom01(), a, b); }
+private:
+    uint32_t state_;
+};

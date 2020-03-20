@@ -920,6 +920,8 @@ int main(int argc, const char * argv[])
 */
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // Demo for hashing and RandomSequence, March 19, 2020
+
     debugPrint(hash_float(0.000000));
     debugPrint(hash_float(0.000001));
     debugPrint(hash_float(100000.0));
@@ -931,6 +933,14 @@ int main(int argc, const char * argv[])
     debugPrint(Vec2(7, 5).hash());
     debugPrint(Vec2(-8, 3).hash());
     debugPrint(Vec2(3, -8).hash());
+    
+    RandomSequence rs; for (int i = 0; i < 20; i++) debugPrint(rs.nextInt());
+    
+    Color yellow(1, 1, 0);
+    Color blue(0, 0, 1);
+    Texture::diff(Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)),
+                  Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)));
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

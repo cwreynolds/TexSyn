@@ -71,6 +71,39 @@
       laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu,
       feugiat in, orci. In hac habitasse platea dictumst.
       ----------------------------------------------------------------------</p>
+    <div class="post" id="20200319"> <a href="#20200319" class="date">March
+        19, 2020</a>
+      <h1>Repeatable randomness</h1>
+      <p>The entry about the first version of <em>Blur</em> on <a href="#20200225">February
+          25</a> says: “...this prototype stochastic filter is not
+        repeatable/deterministic. The noise pattern could be different on a
+        subsequent run...” Today I fixed that issue. I used the <code>Texture::diff()</code>
+        utility to compare two “identical” textures made with <em>Blur</em>:<br>
+      </p>
+      <pre>Texture::diff(Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)),
+              Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)))</pre>
+      <p>This <code>Texture::diff</code> comparison is from before today's
+        change. The magnitude of the errors resulting from non-repeatable random
+        number was actually very small. Here I have scaled up by a factor of 10
+        the brightness of of the third image which is the <em>AbsDiff</em>
+        (absolute value of the difference of the two input textures):</p>
+      <img src="images/20200319_Blur_diff_before.png" alt="" title="" height="334"
+        width="1000">
+      <p>This <code>Texture::diff</code> comparison is after today's change.
+        The third texture is exactly zero/black according to the <code>Texture::diff</code>
+        logging:</p>
+      <img src="images/20200319_Blur_diff_after.png" alt="" title="" height="334"
+        width="1000">
+      <p>When looking up a color at a position in texture space <code>Blur::getColor()</code>
+        now hashes the <code>Vec2</code> position to generate a “seed” used to
+        initialize a local <code>RandomSequence</code> object which is used to
+        jiggle the subsamples. So any two calls to <code>Blur::getColor()</code>
+        with an identical position will use an identical set of subsamples.
+        Hashing utilities for <code>float</code> and <code>Vec2</code> were
+        added yesterday. <code>RandomSequence</code> was added today. Still
+        working on integrating it with existing utilities like <code>Vec2::randomUnitVector()</code>.
+      </p>
+    </div>
     <div class="post" id="20200317"> <a href="#20200317" class="date">March 17,
         2020</a>
       <h1>Blurry McBlurface</h1>
@@ -523,13 +556,13 @@ radial = SliceToRadial(Vec2(0, 0.318),
         expressions. This led me deep into the c++ rabbit hole, stackoverflow,
         and the “<a href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">curiously
           recurring template pattern</a>” (which reminds me of what we called
-        “mixins” in the Flavors OOPS in Lisp (Lisp Machine Lisp) back in the
-        1980s). I managed to “fix” the issue I was digging into, then decided
-        the solution seemed too intrusive/heavyweight, and not worth keeping. I
-        will describe it here, save the code in the graveyard, and move on. This
-        was the example I was testing with—furry blue and green stripes—which I
-        think of as being written like this, three nested constructors of <strong>TexSyn</strong>
-        classes: </p>
+        “mixins” in the Flavors OOPS in Lisp (specifically: Lisp Machine Lisp)
+        back in the 1980s). I managed to “fix” the issue I was digging into,
+        then decided the solution seemed too intrusive/heavyweight, and not
+        worth keeping. I will describe it here, save the code in the graveyard,
+        and move on. This was the example I was testing with—furry blue and
+        green stripes—which I think of as being written like this, three nested
+        constructors of <strong>TexSyn</strong> classes: </p>
       <pre>Multiply(Grating(Vec2(-0.1, -0.1), greenish, Vec2(0.1, 0.1), bluish, 0.5),
          Furbulence(0.2, Vec2(3, 4), gray10, white))</pre>
       <img src="images/20200305_fuzzy_blue_green_stripes.png" alt="furry blue and green stripes"
@@ -743,7 +776,7 @@ color2 = AdjustHue(0.5, color1)</pre>
         black and white. In this example, parts of the gray <em>Noise</em>
         texture below brightness 0.2 become black, above 0.7 become white. “Mach
         bands” can be seen around the bright parts of the image that have been
-        clipped to white:</p>
+        clipped to white (and less obviously in the blacks):</p>
       <pre>grays = Noise(0.4, Vec2(), Color(0, 0, 0), Color(1, 1, 1));
 threshold_grays = SoftThreshold(0.2, 0.7, grays);</pre>
       <img src="images/20200228_grays.png" alt="grays" title="grays" height="511"
@@ -1606,7 +1639,7 @@ SoftMatte(spot(0.2),
           Evolution of Camouflage</a>.</p>
     </div>
     <div class="post" id="0">
-      <p>Page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
+      <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
   </body>
