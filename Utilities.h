@@ -209,7 +209,9 @@ uint32_t rehash32bits(uint64_t a);
 class RandomSequence
 {
 public:
+    // Constructor with default seed.
     RandomSequence() : state_(defaultSeed()) {}
+    // Constructor with given seed.
     RandomSequence(uint64_t seed) : state_(uint32_t(seed)) {}
     // Next random number in sequence as a 31 bit positive int.
     uint32_t nextInt() { return bitMask() & nextUint32(); }
