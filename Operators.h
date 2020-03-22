@@ -456,8 +456,6 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Shear one Texture, along a given axis, by an amount based on luminance values
 // from a slice of another Texture. Parameters are the two Textures, along with
 // an axis for each, defined as a center point and tangent vector.
@@ -479,28 +477,20 @@ public:
         perpendicular(shear_tangent.rotate90degCCW()) {}
     Color getColor(Vec2 position) const override
     {
-        // Look up position on slice, measure its color's luminance.
-        Vec2 slice_offset = position - slice_center;
-        float slice_projection = slice_offset.dot(slice_tangent);
-        Vec2 point_on_slice = slice_center + (slice_tangent * slice_projection);
-        Color slice_color = texture_for_slice.getColor(point_on_slice);
-        float luminance = slice_color.luminance();
-        
-//        // TODO TEMP
-//        luminance = fmod_floor(slice_projection, 0.1);
-        
-        
         // Find point on texture_to_shear: decompose into x,y in shear space,
         // offset x by luminince from slice sample, recombine to new position.
         Vec2 shear_offset = position - shear_center;
         float local_x = shear_offset.dot(shear_tangent);
         float local_y = shear_offset.dot(perpendicular);
+        // Use "local_y" to select a color along the slice.
+        Vec2 slice_sample_position = slice_center + slice_tangent * local_y;
+        // Sample color from "texture_for_slice" then take its luminance.
+        Color slice_color = texture_for_slice.getColor(slice_sample_position);
+        float luminance = slice_color.luminance();
+        // Reconstruct sample location with its "x" coord offset by "luminance".
         return texture_to_shear.getColor(shear_center +
                                          shear_tangent * (local_x + luminance) +
                                          perpendicular * local_y);
-
-//        return slice_color;
-
     }
 private:
     const Vec2 slice_tangent;
@@ -511,8 +501,6 @@ private:
     const Texture& texture_to_shear;
     const Vec2 perpendicular;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Use the Möbius transformation of the complex plane as a Texture Operator by
 // considering it isomorphic to the Cartesian Texture plane. The transformation

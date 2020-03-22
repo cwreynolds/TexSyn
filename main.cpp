@@ -354,6 +354,8 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Demo for SliceShear, Jan 25, 2020
+    // Note: I returned to this on March 20. I left this unchanged but
+    // made a copy at the bottom of the file for further experiments.
 //        ColorNoise cn(0.6, Vec2(5, -2), 0.6);
 //    //    Grating gr(Vec2(0, 0), Color(1, 0, 1), Vec2(0, 0.1), Color(1, 1, 0), 0.2);
 //        Grating gr(Vec2(0, 0), Color(0.9, 0, 0.9),
@@ -922,24 +924,56 @@ int main(int argc, const char * argv[])
 
     // Demo for hashing and RandomSequence, March 19, 2020
 
-    debugPrint(hash_float(0.000000));
-    debugPrint(hash_float(0.000001));
-    debugPrint(hash_float(100000.0));
-    debugPrint(hash_float(1123.456));
-    debugPrint(hash_float(123456.7));
-    
-    debugPrint(Vec2(0, 0).hash());
-    debugPrint(Vec2(5, 7).hash());
-    debugPrint(Vec2(7, 5).hash());
-    debugPrint(Vec2(-8, 3).hash());
-    debugPrint(Vec2(3, -8).hash());
-    
-    RandomSequence rs; for (int i = 0; i < 20; i++) debugPrint(rs.nextInt());
-    
-    Color yellow(1, 1, 0);
-    Color blue(0, 0, 1);
-    Texture::diff(Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)),
-                  Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)));
+//    debugPrint(hash_float(0.000000));
+//    debugPrint(hash_float(0.000001));
+//    debugPrint(hash_float(100000.0));
+//    debugPrint(hash_float(1123.456));
+//    debugPrint(hash_float(123456.7));
+//
+//    debugPrint(Vec2(0, 0).hash());
+//    debugPrint(Vec2(5, 7).hash());
+//    debugPrint(Vec2(7, 5).hash());
+//    debugPrint(Vec2(-8, 3).hash());
+//    debugPrint(Vec2(3, -8).hash());
+//
+//    RandomSequence rs; for (int i = 0; i < 20; i++) debugPrint(rs.nextInt());
+//
+//    Color yellow(1, 1, 0);
+//    Color blue(0, 0, 1);
+//    Texture::diff(Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)),
+//                  Blur(0.2, Grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01)));
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Demo for SliceShear, started Jan 25, 2020, restarted March 20, 2020
+
+    Color white(1, 1, 1);
+    Color black(0, 0, 0);
+    Color magenta(0.9, 0, 0.9);
+    Color yellow(0.9, 0.9, 0);
+    Color gray = Color::gray(0.3);
+
+    // Horizontal stripes -- to be sheared.
+    Grating to_shear(Vec2(), magenta, Vec2(0, 0.25), yellow, 0.4);
+
+    // For slice: noise in one direction, square wave in other direction
+    Brownian b1(0.1, Vec2(), black, gray);
+    SliceGrating sg1(Vec2(1, 0), Vec2(), b1);
+    Grating g1(Vec2(), black, Vec2(0, 0.1), gray, 0.2);
+    Add for_slice(sg1, g1);
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200321_";
+    Texture::displayAndFile(for_slice, path + "for_slice");
+    Texture::displayAndFile(to_shear, path + "to_shear");
+    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
+                                       Vec2(0, 1), Vec2(), to_shear),
+                            path + "SliceShear_1");
+    Texture::displayAndFile(SliceShear(Vec2(0, 1), Vec2(), for_slice,
+                                       Vec2(0, 1), Vec2(), to_shear),
+                            path + "SliceShear_2");
+    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
+                                       Vec2(1, 1), Vec2(), to_shear),
+                            path + "SliceShear_3");
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
