@@ -949,12 +949,12 @@ int main(int argc, const char * argv[])
 
     Color white(1, 1, 1);
     Color black(0, 0, 0);
-    Color magenta(0.9, 0, 0.9);
-    Color yellow(0.9, 0.9, 0);
+    Color orange(1, 0.5, 0);
+    Color cyan_blue(0, 0.5, 1);
     Color gray = Color::gray(0.3);
 
     // Horizontal stripes -- to be sheared.
-    Grating to_shear(Vec2(), magenta, Vec2(0, 0.25), yellow, 0.4);
+    Grating to_shear(Vec2(), orange, Vec2(0, 0.25), cyan_blue, 0.4);
 
     // For slice: noise in one direction, square wave in other direction
     Brownian b1(0.1, Vec2(), black, gray);
