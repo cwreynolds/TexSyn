@@ -979,57 +979,95 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo for adding "strength" parameter to EdgeEnhance, March 23, 2020
-    // (starting from code dated February 29, 2020 above)
-    Color b(0, 0, 0);
-    Color w(1, 1, 1);
-    [&]
-    (const Texture& grays,
-     const Texture& colors)
-    {
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200323_";
-        
-        // Texture::displayAndFile(grays);
-        Texture::displayAndFile(colors,
-                                path + "colors");
-        // Texture::displayAndFile(EdgeDetect(0.2, grays));
-        // Texture::displayAndFile(EdgeEnhance(0.2, grays));
-        // Texture::displayAndFile(EdgeDetect(0.2, colors));
-        
-        // Filter width=0.2, for three strengths:
-        Texture::displayAndFile(EdgeEnhance(0.2, 0.66, colors),
-                                path + "EdgeEnhance_02_066");
-        Texture::displayAndFile(EdgeEnhance(0.2, 1.00, colors),
-                                path + "EdgeEnhance_02_100");
-        Texture::displayAndFile(EdgeEnhance(0.2, 1.33, colors),
-                                path + "EdgeEnhance_02_133");
-        
-        // Filter width=0.1, for three strengths:
-        Texture::displayAndFile(EdgeEnhance(0.1, 0.66, colors),
-                                path + "EdgeEnhance_01_066");
-        Texture::displayAndFile(EdgeEnhance(0.1, 1.00, colors),
-                                path + "EdgeEnhance_01_100");
-        Texture::displayAndFile(EdgeEnhance(0.1, 1.33, colors),
-                                path + "EdgeEnhance_01_133");
-    }
-    (// grays:
-     SoftMatte(SoftThreshold(0.5, 0.55, Noise(0.3, Vec2(-2, 1), b, w)),
-               Uniform(0.2),
-               Uniform(0.8)),
-     // colors:
-     SoftMatte(SoftThreshold(0.60, 0.64,
-                             Rotate(5, Noise(0.2, Vec2(-1, -4), b, w))),
-               SoftMatte(SoftThreshold(0.60, 0.64,
-                                       Rotate(3, Noise(0.2, Vec2(+1, +3), b, w))),
-                         SoftMatte(SoftThreshold
-                                      (0.60, 0.64,
-                                       Rotate(1, Noise(0.2, Vec2(-2, +1), b, w))),
-                                   Uniform(0.5),
-                                   Uniform(Color(0.8, 0.8, 0))),
-                         Uniform(Color(0.8, 0, 0.8))),
-               Uniform(Color(0, 0.8, 0.8))));
-    Texture::waitKey();
+//    // Demo for adding "strength" parameter to EdgeEnhance, March 23, 2020
+//    // (starting from code dated February 29, 2020 above)
+//    Color b(0, 0, 0);
+//    Color w(1, 1, 1);
+//    [&]
+//    (const Texture& grays,
+//     const Texture& colors)
+//    {
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200323_";
+//
+//        // Texture::displayAndFile(grays);
+//        Texture::displayAndFile(colors,
+//                                path + "colors");
+//        // Texture::displayAndFile(EdgeDetect(0.2, grays));
+//        // Texture::displayAndFile(EdgeEnhance(0.2, grays));
+//        // Texture::displayAndFile(EdgeDetect(0.2, colors));
+//
+//        // Filter width=0.2, for three strengths:
+//        Texture::displayAndFile(EdgeEnhance(0.2, 0.66, colors),
+//                                path + "EdgeEnhance_02_066");
+//        Texture::displayAndFile(EdgeEnhance(0.2, 1.00, colors),
+//                                path + "EdgeEnhance_02_100");
+//        Texture::displayAndFile(EdgeEnhance(0.2, 1.33, colors),
+//                                path + "EdgeEnhance_02_133");
+//
+//        // Filter width=0.1, for three strengths:
+//        Texture::displayAndFile(EdgeEnhance(0.1, 0.66, colors),
+//                                path + "EdgeEnhance_01_066");
+//        Texture::displayAndFile(EdgeEnhance(0.1, 1.00, colors),
+//                                path + "EdgeEnhance_01_100");
+//        Texture::displayAndFile(EdgeEnhance(0.1, 1.33, colors),
+//                                path + "EdgeEnhance_01_133");
+//    }
+//    (// grays:
+//     SoftMatte(SoftThreshold(0.5, 0.55, Noise(0.3, Vec2(-2, 1), b, w)),
+//               Uniform(0.2),
+//               Uniform(0.8)),
+//     // colors:
+//     SoftMatte(SoftThreshold(0.60, 0.64,
+//                             Rotate(5, Noise(0.2, Vec2(-1, -4), b, w))),
+//               SoftMatte(SoftThreshold(0.60, 0.64,
+//                                       Rotate(3, Noise(0.2, Vec2(+1, +3), b, w))),
+//                         SoftMatte(SoftThreshold
+//                                      (0.60, 0.64,
+//                                       Rotate(1, Noise(0.2, Vec2(-2, +1), b, w))),
+//                                   Uniform(0.5),
+//                                   Uniform(Color(0.8, 0.8, 0))),
+//                         Uniform(Color(0.8, 0, 0.8))),
+//               Uniform(Color(0, 0.8, 0.8))));
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+//    Texture::displayAndFile
+//    (ColorNoise(0.5, Vec2(5,7), 0.8));
+//    Texture::displayAndFile
+//    (AdjustSaturation(0.1,
+//                      ColorNoise(0.5, Vec2(5,7), 0.8)));
+//    Texture::displayAndFile
+//    (EdgeEnhance(0.1, 3,
+//                 AdjustSaturation(0.1,
+//                                  ColorNoise(0.5, Vec2(5,7), 0.8))));
+
+//        Texture::displayAndFile
+//        (ColorNoise(0.5, Vec2(5,7), 0.8));
+//        Texture::displayAndFile
+//        (AdjustBrightness(0.7,
+//                          AdjustSaturation(0.1,
+//                                           ColorNoise(0.5, Vec2(5,7), 0.8))));
+//        Texture::displayAndFile
+//        (EdgeEnhance(0.1, 5,
+//                     AdjustBrightness(0.7,
+//                                      AdjustSaturation(0.1,
+//                                                       ColorNoise(0.5, Vec2(5,7), 0.8)))));
+
+    []
+    (const Texture& grayish_color_noise)
+    {
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200324_";
+        Texture::displayAndFile(grayish_color_noise,
+                                path + "grayish_color_noise");
+        Texture::displayAndFile(EdgeEnhance(0.1, 5, grayish_color_noise),
+                                path + "EdgeEnhance_01_5");
+    }
+    (AdjustBrightness(0.7,
+                      AdjustSaturation(0.3,
+                                       ColorNoise(0.5, Vec2(5,7), 0.8))));
+    Texture::waitKey();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
