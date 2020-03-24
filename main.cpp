@@ -523,6 +523,7 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
 //    // Demo for EdgeDetect and EdgeEnhance, February 29, 2020
+//    // This was revisited/reimplemented, see March 23, 2020 below
 //
 //    Noise gray_noise(0.3, Vec2(-2, 1), Color(0, 0, 0), Color(1, 1, 1));
 //    SoftThreshold gray_threshold(0.5, 0.55, gray_noise);
@@ -945,35 +946,88 @@ int main(int argc, const char * argv[])
 //    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Demo for SliceShear, started Jan 25, 2020, restarted March 20, 2020
 
-    Color white(1, 1, 1);
-    Color black(0, 0, 0);
-    Color orange(1, 0.5, 0);
-    Color cyan_blue(0, 0.5, 1);
-    Color gray = Color::gray(0.3);
+//    // Demo for SliceShear, started Jan 25, 2020, restarted March 20, 2020
+//    Color white(1, 1, 1);
+//    Color black(0, 0, 0);
+//    Color orange(1, 0.5, 0);
+//    Color cyan_blue(0, 0.5, 1);
+//    Color gray = Color::gray(0.3);
+//
+//    // Horizontal stripes -- to be sheared.
+//    Grating to_shear(Vec2(), orange, Vec2(0, 0.25), cyan_blue, 0.4);
+//
+//    // For slice: noise in one direction, square wave in other direction
+//    Brownian b1(0.1, Vec2(), black, gray);
+//    SliceGrating sg1(Vec2(1, 0), Vec2(), b1);
+//    Grating g1(Vec2(), black, Vec2(0, 0.1), gray, 0.2);
+//    Add for_slice(sg1, g1);
+//
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200321_";
+//    Texture::displayAndFile(for_slice, path + "for_slice");
+//    Texture::displayAndFile(to_shear, path + "to_shear");
+//    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
+//                                       Vec2(0, 1), Vec2(), to_shear),
+//                            path + "SliceShear_1");
+//    Texture::displayAndFile(SliceShear(Vec2(0, 1), Vec2(), for_slice,
+//                                       Vec2(0, 1), Vec2(), to_shear),
+//                            path + "SliceShear_2");
+//    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
+//                                       Vec2(1, 1), Vec2(), to_shear),
+//                            path + "SliceShear_3");
+//    Texture::waitKey();
 
-    // Horizontal stripes -- to be sheared.
-    Grating to_shear(Vec2(), orange, Vec2(0, 0.25), cyan_blue, 0.4);
-
-    // For slice: noise in one direction, square wave in other direction
-    Brownian b1(0.1, Vec2(), black, gray);
-    SliceGrating sg1(Vec2(1, 0), Vec2(), b1);
-    Grating g1(Vec2(), black, Vec2(0, 0.1), gray, 0.2);
-    Add for_slice(sg1, g1);
-
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200321_";
-    Texture::displayAndFile(for_slice, path + "for_slice");
-    Texture::displayAndFile(to_shear, path + "to_shear");
-    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
-                                       Vec2(0, 1), Vec2(), to_shear),
-                            path + "SliceShear_1");
-    Texture::displayAndFile(SliceShear(Vec2(0, 1), Vec2(), for_slice,
-                                       Vec2(0, 1), Vec2(), to_shear),
-                            path + "SliceShear_2");
-    Texture::displayAndFile(SliceShear(Vec2(1, 0), Vec2(), for_slice,
-                                       Vec2(1, 1), Vec2(), to_shear),
-                            path + "SliceShear_3");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo for adding "strength" parameter to EdgeEnhance, March 23, 2020
+    // (starting from code dated February 29, 2020 above)
+    Color b(0, 0, 0);
+    Color w(1, 1, 1);
+    [&]
+    (const Texture& grays,
+     const Texture& colors)
+    {
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200323_";
+        
+        // Texture::displayAndFile(grays);
+        Texture::displayAndFile(colors,
+                                path + "colors");
+        // Texture::displayAndFile(EdgeDetect(0.2, grays));
+        // Texture::displayAndFile(EdgeEnhance(0.2, grays));
+        // Texture::displayAndFile(EdgeDetect(0.2, colors));
+        
+        // Filter width=0.2, for three strengths:
+        Texture::displayAndFile(EdgeEnhance(0.2, 0.66, colors),
+                                path + "EdgeEnhance_02_066");
+        Texture::displayAndFile(EdgeEnhance(0.2, 1.00, colors),
+                                path + "EdgeEnhance_02_100");
+        Texture::displayAndFile(EdgeEnhance(0.2, 1.33, colors),
+                                path + "EdgeEnhance_02_133");
+        
+        // Filter width=0.1, for three strengths:
+        Texture::displayAndFile(EdgeEnhance(0.1, 0.66, colors),
+                                path + "EdgeEnhance_01_066");
+        Texture::displayAndFile(EdgeEnhance(0.1, 1.00, colors),
+                                path + "EdgeEnhance_01_100");
+        Texture::displayAndFile(EdgeEnhance(0.1, 1.33, colors),
+                                path + "EdgeEnhance_01_133");
+    }
+    (// grays:
+     SoftMatte(SoftThreshold(0.5, 0.55, Noise(0.3, Vec2(-2, 1), b, w)),
+               Uniform(0.2),
+               Uniform(0.8)),
+     // colors:
+     SoftMatte(SoftThreshold(0.60, 0.64,
+                             Rotate(5, Noise(0.2, Vec2(-1, -4), b, w))),
+               SoftMatte(SoftThreshold(0.60, 0.64,
+                                       Rotate(3, Noise(0.2, Vec2(+1, +3), b, w))),
+                         SoftMatte(SoftThreshold
+                                      (0.60, 0.64,
+                                       Rotate(1, Noise(0.2, Vec2(-2, +1), b, w))),
+                                   Uniform(0.5),
+                                   Uniform(Color(0.8, 0.8, 0))),
+                         Uniform(Color(0.8, 0, 0.8))),
+               Uniform(Color(0, 0.8, 0.8))));
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -656,25 +656,29 @@ private:
     Subtract edges;
 };
 
+// Enhances the edges (emphasize the high frequencies) of a given texture. Based
+// on EdgeDetect, which is based on Blur via the technique of “unsharp masking”.
+// Parameters include a filter (kernel) width, and a scale factor controlling
+// the strength of the edge enhancement.class EdgeEnhance : public Operator
 class EdgeEnhance : public Operator
 {
 public:
-    EdgeEnhance(const float width,
-//                 const float strength,
-                const Texture& texture)
-    : blur(width, texture),
-    edges(texture, blur),
-//    scaled (*new Multiply (Pixel::gray (strength), edges)),
-    enhanced(texture, edges) {}
-    Color getColor(Vec2 getColor) const override
+    EdgeEnhance(const float _width,
+                const float _strength,
+                const Texture& _texture)
+      : texture(_texture),
+        strength(_strength),
+        blurred(_width, texture) {}
+    Color getColor(Vec2 position) const override
     {
-        return enhanced.getColor(getColor);
+        Color orig_color = texture.getColor(position);
+        Color blur_color = blurred.getColor(position);
+        return orig_color + ((orig_color - blur_color) * strength);
     }
 private:
-    Blur blur;
-    Subtract edges;
-//    Multiply scaled;
-    Add enhanced;
+    const float strength;
+    const Texture& texture;
+    const Blur blurred;
 };
 
 // In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
