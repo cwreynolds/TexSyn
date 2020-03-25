@@ -37,3 +37,16 @@ std::ostream& operator<<(std::ostream& os, const Vec2& v)
     os << "(" << v.x() << ", " << v.y() << ")";
     return os;
 }
+
+// Is distance between vectors less than epsilon?
+bool withinEpsilon(Vec3 a, Vec3 b, float epsilon)
+{
+    return (a - b).length() < epsilon;
+}
+
+// Serialize Vec2 object to stream.
+std::ostream& operator<<(std::ostream& os, const Vec3& v)
+{
+    os << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+    return os;
+}

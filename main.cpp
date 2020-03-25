@@ -1032,42 +1032,37 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    Texture::displayAndFile
-//    (ColorNoise(0.5, Vec2(5,7), 0.8));
-//    Texture::displayAndFile
-//    (AdjustSaturation(0.1,
-//                      ColorNoise(0.5, Vec2(5,7), 0.8)));
-//    Texture::displayAndFile
-//    (EdgeEnhance(0.1, 3,
-//                 AdjustSaturation(0.1,
-//                                  ColorNoise(0.5, Vec2(5,7), 0.8))));
+    // Demo of large "strength" parameter to EdgeEnhance, March 24, 2020
 
-//        Texture::displayAndFile
-//        (ColorNoise(0.5, Vec2(5,7), 0.8));
-//        Texture::displayAndFile
-//        (AdjustBrightness(0.7,
-//                          AdjustSaturation(0.1,
-//                                           ColorNoise(0.5, Vec2(5,7), 0.8))));
-//        Texture::displayAndFile
-//        (EdgeEnhance(0.1, 5,
-//                     AdjustBrightness(0.7,
-//                                      AdjustSaturation(0.1,
-//                                                       ColorNoise(0.5, Vec2(5,7), 0.8)))));
-
-    []
-    (const Texture& grayish_color_noise)
-    {
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200324_";
-        Texture::displayAndFile(grayish_color_noise,
-                                path + "grayish_color_noise");
-        Texture::displayAndFile(EdgeEnhance(0.1, 5, grayish_color_noise),
-                                path + "EdgeEnhance_01_5");
-    }
-    (AdjustBrightness(0.7,
-                      AdjustSaturation(0.3,
-                                       ColorNoise(0.5, Vec2(5,7), 0.8))));
-    Texture::waitKey();
+//    []
+//    (const Texture& grayish_color_noise)
+//    {
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200324_";
+//        Texture::displayAndFile(grayish_color_noise,
+//                                path + "grayish_color_noise");
+//        Texture::displayAndFile(EdgeEnhance(0.1, 5, grayish_color_noise),
+//                                path + "EdgeEnhance_01_5");
+//    }
+//    (AdjustBrightness(0.7,
+//                      AdjustSaturation(0.3,
+//                                       ColorNoise(0.5, Vec2(5,7), 0.8))));
+//    Texture::waitKey();
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Demo of large "strength" parameter to EdgeEnhance, March 24, 2020
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200324_";
+//    Texture::displayAndFile(ShadedSphereTest(Vec3(0, 0, -1)));
+//    Texture::displayAndFile(ShadedSphereTest(Vec3(0, 0, 1)));
+//    Texture::displayAndFile(ShadedSphereTest(Vec3(-1, 0.8, 0.5)));
+//    Texture::displayAndFile(ShadedSphereTest(Vec3(-1, 0, 0)));
+    Texture::displayAndFile(ShadedSphereTest(Vec3(-2, 2, 4)));
+    Texture::waitKey();
+
+//    debugPrint(Vec3(1, 2, 3));
+//    debugPrint(Vec3(1, 2, 3) == Vec3(1, 2, 3));
+//    debugPrint(Vec3(1, 2, 3) == Vec3(1, 1, 1));
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
