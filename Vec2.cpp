@@ -25,6 +25,27 @@ Vec2 Vec2::randomUnitVector()
     return v.normalize();
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO experimental versions inside RandomSequence instead of in Vec2
+
+// Generate a random point inside a unit diameter disk centered on origin.
+Vec2 RandomSequence::randomPointInUnitDiameterCircle()
+{
+    Vec2 v;
+    float h = 0.5;
+    do { v = {frandom01() - h, frandom01() - h}; } while (v.length() > h);
+    return v;
+}
+
+// Generate a random unit vector.
+Vec2 RandomSequence::randomUnitVector()
+{
+    Vec2 v;
+    do { v = randomPointInUnitDiameterCircle(); } while (v.length() == 0);
+    return v.normalize();
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Is distance between vectors less than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {
@@ -44,7 +65,7 @@ bool withinEpsilon(Vec3 a, Vec3 b, float epsilon)
     return (a - b).length() < epsilon;
 }
 
-// Serialize Vec2 object to stream.
+// Serialize Vec3 object to stream.
 std::ostream& operator<<(std::ostream& os, const Vec3& v)
 {
     os << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";

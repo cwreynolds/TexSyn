@@ -97,6 +97,14 @@ public:
 //    static Vec2 randomPointInUnitDiameterCircle();
 //    // Generate a random unit vector.
 //    static Vec2 randomUnitVector();
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO experimental
+    Vec3 cross(Vec3 o) const { return {y() * o.z() - z() * o.y(),
+                                       z() * o.x() - x() * o.z(),
+                                       x() * o.y() - y() * o.x() }; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 private:
     float x_ = 0;
     float y_ = 0;

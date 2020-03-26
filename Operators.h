@@ -931,9 +931,9 @@ public:
     Color getColor(Vec2 position) const override
     {
         Color shade(0, 0, 0);
-        position = position / 0.9;
+//        position = position / 0.9;
         float radius = position.length();
-        if (radius < 1)
+        if (radius <= 1)
         {
             // Unit surface normal vector:
             float h = std::sqrt(1 - sq(radius));
@@ -947,5 +947,69 @@ public:
 private:
     const Vec3 toward_light;
 };
+
+// TODO doc
+class Shader : public Operator
+{
+public:
+    Shader(Vec3 _toward_light,
+           float _ambient_level,
+           const Texture& _color_texture,
+           const Texture& _bump_texture)
+      : toward_light(_toward_light.normalize()),
+        ambient_level(_ambient_level),
+        color_texture(_color_texture),
+        bump_texture(_bump_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        // Local random number generator seeded by "position" parameter.
+        RandomSequence rs(position.hash());
+        // Make a small offset (from position) in a random direction.
+        float small = 0.004; // roughly a pixel (~2/511)
+        Vec2 sample_offset = rs.randomUnitVector() * small;
+        // Gets color at "sample_offset", rotates it by 1/3, returns 3d vertex.
+        auto getOneVertex = [&]()
+        {
+//            Color color = bump_texture.getColor(position + sample_offset);
+//            sample_offset = sample_offset.rotate(2 * pi / 3);
+//            return Vec3(position.x(), position.y(), color.luminance());
+            
+            Vec2 op = position + sample_offset;
+            Color color = bump_texture.getColor(op);
+            sample_offset = sample_offset.rotate(2 * pi / 3);
+            return Vec3(op.x(), op.y(), color.luminance());
+        };
+        // Three triangle vertices
+        Vec3 vertex_a = getOneVertex();
+        Vec3 vertex_b = getOneVertex();
+        Vec3 vertex_c = getOneVertex();
+        // Along edges:
+        Vec3 e1 = vertex_a - vertex_b;
+        Vec3 e2 = vertex_c - vertex_b;
+//        Vec3 surface_normal = e1.cross(e2).normalize();
+        Vec3 crossed = e1.cross(e2).normalize();
+        Vec3 surface_normal = crossed.normalize();
+
+//        std::cout << "--------------------------------------------" << std::endl;
+//        debugPrint(vertex_a);
+//        debugPrint(vertex_b);
+//        debugPrint(vertex_c);
+//        debugPrint(e1);
+//        debugPrint(e2);
+//        debugPrint(crossed);
+//        debugPrint(surface_normal);
+
+        
+        float value = lambertian_shading(surface_normal, toward_light);
+
+        return color_texture.getColor(position) * value;
+    }
+private:
+    const Vec3 toward_light;
+    const float ambient_level;
+    const Texture& color_texture;
+    const Texture& bump_texture;
+};
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

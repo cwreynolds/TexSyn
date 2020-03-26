@@ -229,6 +229,11 @@ public:
     float frandom01() { return float(nextInt()) / float(maxIntValue()); }
     // Returns a float randomly distributed between lowerBound and upperBound
     float frandom2(float a, float b) { return interpolate(frandom01(), a, b); }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Vec2 randomPointInUnitDiameterCircle();
+    Vec2 randomUnitVector();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     uint32_t state_;
 };
