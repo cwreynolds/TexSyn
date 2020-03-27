@@ -910,18 +910,16 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Returns Lambertian shading factor given a Vec3 unit surface normal and a Vec3
 // unit vector toward the light source.
+// TODO This is shared between ShadedSphereTest and Shade. Needs clean up.
 inline float lambertian_shading(const Vec3& surface_normal,
                                 const Vec3& toward_light)
 {
     return std::max(0.0f, surface_normal.dot(toward_light));
 }
 
-
-// TODO doc
+// TODO add doc
 // Unit vector toward (distant) light source.
 class ShadedSphereTest : public Operator
 {
@@ -931,9 +929,9 @@ public:
     Color getColor(Vec2 position) const override
     {
         Color shade(0, 0, 0);
-//        position = position / 0.9;
+        // position = position / 0.9;
         float radius = position.length();
-        if (radius <= 1)
+        if (radius < 1)
         {
             // Unit surface normal vector:
             float h = std::sqrt(1 - sq(radius));
@@ -948,7 +946,13 @@ private:
     const Vec3 toward_light;
 };
 
-// TODO doc
+// TODO experimental
+// This Shader operator takes two input textures, one for colors and one whose
+// luminance defines a height field. For each getColor() it samples a triangle
+// near the given position to determine a surface normal. A Lambertian shade is
+// determined according to a given illumination direction and a given ambient
+// illumination. The corresponding spot on the color texture is scaled by this
+// shade.
 class Shader : public Operator
 {
 public:
@@ -965,44 +969,28 @@ public:
         // Local random number generator seeded by "position" parameter.
         RandomSequence rs(position.hash());
         // Make a small offset (from position) in a random direction.
-        float small = 0.004; // roughly a pixel (~2/511)
-        Vec2 sample_offset = rs.randomUnitVector() * small;
-        // Gets color at "sample_offset", rotates it by 1/3, returns 3d vertex.
+        Vec2 offset = rs.randomUnitVector() * 0.004; // roughly a pixel (~2/511)
+        // Gets 3d vertex of triangle on bump map, centered on "position".
         auto getOneVertex = [&]()
         {
-//            Color color = bump_texture.getColor(position + sample_offset);
-//            sample_offset = sample_offset.rotate(2 * pi / 3);
-//            return Vec3(position.x(), position.y(), color.luminance());
-            
-            Vec2 op = position + sample_offset;
-            Color color = bump_texture.getColor(op);
-            sample_offset = sample_offset.rotate(2 * pi / 3);
-            return Vec3(op.x(), op.y(), color.luminance());
+            // Rotate offset by 1/3.
+            offset = offset.rotate(2 * pi / 3);
+            // 2d position of vertex on bump map.
+            Vec2 vertex2d = position + offset;
+            // Form 3d triangle vertex using Z from bump map luminance.
+            float height = bump_texture.getColor(vertex2d).luminance();
+            return Vec3(vertex2d.x(), vertex2d.y(), height);
         };
         // Three triangle vertices
-        Vec3 vertex_a = getOneVertex();
-        Vec3 vertex_b = getOneVertex();
-        Vec3 vertex_c = getOneVertex();
-        // Along edges:
-        Vec3 e1 = vertex_a - vertex_b;
-        Vec3 e2 = vertex_c - vertex_b;
-//        Vec3 surface_normal = e1.cross(e2).normalize();
-        Vec3 crossed = e1.cross(e2).normalize();
-        Vec3 surface_normal = crossed.normalize();
-
-//        std::cout << "--------------------------------------------" << std::endl;
-//        debugPrint(vertex_a);
-//        debugPrint(vertex_b);
-//        debugPrint(vertex_c);
-//        debugPrint(e1);
-//        debugPrint(e2);
-//        debugPrint(crossed);
-//        debugPrint(surface_normal);
-
-        
-        float value = lambertian_shading(surface_normal, toward_light);
-
-        return color_texture.getColor(position) * value;
+        Vec3 a = getOneVertex();
+        Vec3 b = getOneVertex();
+        Vec3 c = getOneVertex();
+        // Cross edge tangents to get surface normal.
+        Vec3 surface_normal = (a - b).cross(c - b).normalize();
+        // Get Lambertian reflectance factor.
+        float shade = lambertian_shading(surface_normal, toward_light);
+        // Shade input color.
+        return color_texture.getColor(position) * (shade + ambient_level);
     }
 private:
     const Vec3 toward_light;
@@ -1010,6 +998,3 @@ private:
     const Texture& color_texture;
     const Texture& bump_texture;
 };
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1050,9 +1050,9 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Demo of large "strength" parameter to EdgeEnhance, March 24, 2020
+    // Demo for Shade, March 25, 2020
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200325_";
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200325_";
 //    Texture::displayAndFile(ShadedSphereTest(Vec3(0, 0, -1)));
 //    Texture::displayAndFile(ShadedSphereTest(Vec3(0, 0, 1)));
 //    Texture::displayAndFile(ShadedSphereTest(Vec3(-1, 0.8, 0.5)));
@@ -1072,53 +1072,23 @@ int main(int argc, const char * argv[])
 //    }
 //    (Grating(Vec2(), Color(0, 1, 0), Vec2(0, 0.1), Color(1,1,1), 0.2),
 //     ShadedSphereTest(Vec3(0, 0, 1)));
-
-    [&]
-    (const Texture& color, const Texture& bump)
-    {
-        Texture::displayAndFile(color
-                                );  // , path + "green_stripes");
-        Texture::displayAndFile(bump
-                                );  // , path + "hemisphere");
-        Texture::displayAndFile(Shader(Vec3(-2, 2, 4), 0, color, bump)
-                                );  // , path + "sphere_stripes");
-    }
-    (ColorNoise(0.6, Vec2(), 0.2),
-//     Noise(0.2, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-//     Noise(0.1, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-     Brownian(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-//     Furbulence(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-//     Wrapulence(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-
-
     
-    /*
-        [&]
-    (const Texture& color, const Texture& bump)
+    // Demo for Shade, March 25, 2020
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200326_";
+    ColorNoise color_noise(0.6, Vec2(), 0.2);
+    Texture::displayAndFile(color_noise, path + "color_noise");
+    auto terrain = [&](std::string name, const Texture& bump)
     {
-        Texture::displayAndFile(color);
-        Texture::displayAndFile(bump);
-//        Texture::displayAndFile(Shader(Vec3(-2, 2, 4), 0, color, bump));
-        Texture::displayAndFile(Shader(Vec3(-2, 2, 6), 0, color, bump));
-//        Texture::displayAndFile(Shader(Vec3(-2, 2, 8), 0, color, bump));
-    }
-//    (ColorNoise(0.6, Vec2(), 0.2),
-//     Spot(Vec2(),
-//          0.5, Color(1, 1, 1),
-//          1.0, Color(0, 0, 0))
-     
-     (
-      Grating(Vec2(), Color(0, 1, 0), Vec2(0, 0.1), Color(1,1,1), 0.2),
-      ShadedSphereTest(Vec3(0, 0, 1))
-     );
-
-//    (
-//     Grating(Vec2(), Color(0, 1, 0), Vec2(0, 0.1), Color(1,1,1), 0.2),
-//     Grating(Vec2(), Color(0, 0, 0), Vec2(.3, -.3), Color(1,1,1), 1)
-//    );
-
-*/
-    
+        Texture::displayAndFile(bump, path + name);
+        Texture::displayAndFile(Shader(Vec3(1, 3, 6), 0.3, color_noise, bump),
+                                path + name + "_shaded");
+    };
+    terrain("Spot",
+            Spot(Vec2(), 0.3, Color(1, 1, 1), 0.95, Color(0, 0, 0)));
+    terrain("Noise",
+            Noise(0.1, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
+    terrain("Brownian",
+            Brownian(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
