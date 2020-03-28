@@ -14,6 +14,47 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO prototyping for multi-threaded rasterization. Initially try simplifying
+//      by removing rasterizeDisk() protocol, and going back to inline loops.
+
+//    // Display this Texture in a pop-up OpenCV window, wait for key, then close.
+//    void Texture::displayInWindow(int size, bool wait) const
+//    {
+//        // Make a 3-float OpenCV Mat instance
+//        cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+//        // Reset statistics for debugging.
+//        resetStatistics();
+//        // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+//        rasterizeDisk(size,
+//                      [&](int i, int j, Vec2 position)
+//                      {
+//                          // Read TexSyn Color from Texture.
+//                          Color color = getColorClipped(position);
+//                          // Make OpenCV color, with reversed component order.
+//                          cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                          // Make OpenCV location for pixel.
+//                          cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//                          // Write corresponding OpenCV color to pixel:
+//                          opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                          // Collect statistics
+//                          // collectStatistics(position, color);
+//                      });
+//        // TODO temporary for debugging/testing reconsider a more permanent version.
+//    //    debugPrint(min_x);
+//    //    debugPrint(max_x);
+//    //    debugPrint(min_y);
+//    //    debugPrint(max_y);
+//        static int window_counter = 0;
+//        static int window_position = 0;
+//        std::string window_name = "TexSyn" + std::to_string(window_counter++);
+//        cv::namedWindow(window_name);       // Create a window for display.
+//        cv::moveWindow(window_name, window_position, window_position);
+//        window_position += 30;
+//        cv::imshow(window_name, opencv_image);  // Show our image inside it.
+//        if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
+//    }
+
 // Display this Texture in a pop-up OpenCV window, wait for key, then close.
 void Texture::displayInWindow(int size, bool wait) const
 {
@@ -21,35 +62,73 @@ void Texture::displayInWindow(int size, bool wait) const
     cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
     // Reset statistics for debugging.
     resetStatistics();
+    
+//    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+//    rasterizeDisk(size,
+//                  [&](int i, int j, Vec2 position)
+//                  {
+//                      // Read TexSyn Color from Texture.
+//                      Color color = getColorClipped(position);
+//                      // Make OpenCV color, with reversed component order.
+//                      cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                      // Make OpenCV location for pixel.
+//                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//                      // Write corresponding OpenCV color to pixel:
+//                      opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                      // Collect statistics
+//                      // collectStatistics(position, color);
+//                  });
+    
     // For each pixel within the disk, get Texture's color, insert into cv::Mat.
-    rasterizeDisk(size,
-                  [&](int i, int j, Vec2 position)
-                  {
-                      // Read TexSyn Color from Texture.
-                      Color color = getColorClipped(position);
-                      // Make OpenCV color, with reversed component order.
-                      cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-                      // Make OpenCV location for pixel.
-                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
-                      // Write corresponding OpenCV color to pixel:
-                      opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
-                      // Collect statistics
-                      // collectStatistics(position, color);
-                  });
-    // TODO temporary for debugging/testing reconsider a more permanent version.
-//    debugPrint(min_x);
-//    debugPrint(max_x);
-//    debugPrint(min_y);
-//    debugPrint(max_y);
+    int half = size / 2;
+    for (int i = -half; i <= half; i++)
+    {
+        for (int j = -half; j <= half; j++)
+        {
+            float radius = std::sqrt(sq(i) + sq(j));
+            if (radius <= half)
+            {
+                Vec2 position(i / float(half), j / float(half));
+                
+                // Read TexSyn Color from Texture.
+                Color color = getColorClipped(position);
+                // Make OpenCV color, with reversed component order.
+                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+                // Make OpenCV location for pixel.
+                cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+                // Write corresponding OpenCV color to pixel:
+                opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+                // Collect statistics
+                // collectStatistics(position, color);
+            }
+        }
+    }
+    
+
     static int window_counter = 0;
     static int window_position = 0;
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
-    cv::moveWindow(window_name, window_position, window_position);
-    window_position += 30;
+    //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
+//    cv::moveWindow(window_name, window_position, window_position);
+//    window_position += 30;
+    
+    int tm = 23;  // TODO approximate top margin height
+    cv::moveWindow(window_name, window_position, window_position + size + tm);
+    window_position += tm;
+    //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
     cv::imshow(window_name, opencv_image);  // Show our image inside it.
     if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
 }
+
+//void Texture::rasterizeLineOfDisk()
+void rasterizeLineOfDisk()
+{
+    
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Display a collection of Textures, each in a window, then wait for a char.
 void Texture::displayInWindow(std::vector<const Texture*> textures,

@@ -1072,23 +1072,41 @@ int main(int argc, const char * argv[])
 //    }
 //    (Grating(Vec2(), Color(0, 1, 0), Vec2(0, 0.1), Color(1,1,1), 0.2),
 //     ShadedSphereTest(Vec3(0, 0, 1)));
+
     
-    // Demo for Shade, March 25, 2020
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200326_";
-    ColorNoise color_noise(0.6, Vec2(), 0.2);
-    Texture::displayAndFile(color_noise, path + "color_noise");
-    auto terrain = [&](std::string name, const Texture& bump)
+//    // Demo for Shade, March 25, 2020
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200326_";
+//    ColorNoise color_noise(0.6, Vec2(), 0.2);
+//    Texture::displayAndFile(color_noise, path + "color_noise");
+//    auto terrain = [&](std::string name, const Texture& bump)
+//    {
+//        Texture::displayAndFile(bump, path + name);
+//        Texture::displayAndFile(Shader(Vec3(1, 3, 6), 0.3, color_noise, bump),
+//                                path + name + "_shaded");
+//    };
+//    terrain("Spot",
+//            Spot(Vec2(), 0.3, Color(1, 1, 1), 0.95, Color(0, 0, 0)));
+//    terrain("Noise",
+//            Noise(0.1, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
+//    terrain("Brownian",
+//            Brownian(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Looking at multi-threading (esp for Blur) -- March 27, 2020
+    // note: see "chrono" above for timing
+
+    Color yellow(1, 1, 0);
+    Color blue(0, 0, 1);
+    Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
+    Texture::displayAndFile(grating);
     {
-        Texture::displayAndFile(bump, path + name);
-        Texture::displayAndFile(Shader(Vec3(1, 3, 6), 0.3, color_noise, bump),
-                                path + name + "_shaded");
-    };
-    terrain("Spot",
-            Spot(Vec2(), 0.3, Color(1, 1, 1), 0.95, Color(0, 0, 0)));
-    terrain("Noise",
-            Noise(0.1, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
-    terrain("Brownian",
-            Brownian(0.3, Vec2(9, -5), Color(0, 0, 0), Color(1, 1, 1)));
+        Timer timer("Blur of Grating");
+        Texture::displayAndFile(Blur(0.2, grating));
+    }
+    Texture::displayAndFile(Blur(0.5, grating));
+    Texture::displayAndFile(Uniform(1));
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
