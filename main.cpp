@@ -1095,20 +1095,25 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Looking at multi-threading (esp for Blur) -- March 27, 2020
-    // note: see "chrono" above for timing
+    
+//    Blur::sqrt_of_subsample_count = 60;
+//    Blur::sqrt_of_subsample_count = 15;
 
     Color yellow(1, 1, 0);
     Color blue(0, 0, 1);
     Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
-    Texture::displayAndFile(grating);
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200329_";
+//    Texture::displayAndFile(grating);
     {
         Timer timer("Blur of Grating");
         Texture::displayAndFile(Blur(0.2, grating));
+//        Texture::displayAndFile(Blur(0.2, grating),
+//                                path + "Blur_60x60_subsamples");
     }
-    Texture::displayAndFile(Blur(0.5, grating));
-    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
-                                 0.0, Color(1,0,0),
-                                 0.6, Color(1,1,1)));
+//    Texture::displayAndFile(Blur(0.5, grating));
+//    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
+//                                 0.0, Color(1,0,0),
+//                                 0.6, Color(1,1,1)));
     
 
 //    Uniform(1).displayInWindow(11, false);

@@ -42,7 +42,13 @@ public:
                                 int size = 511, bool wait = true);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO experiment 
-    void rasterizeRowOfDisk(int j, int size, cv::Mat& opencv_image) const;
+//    void rasterizeRowOfDisk(int j, int size, cv::Mat& opencv_image) const;
+    
+    
+    void rasterizeRowOfDisk(int j, int size,
+                            cv::Mat& opencv_image,
+                            std::mutex& ocv_image_mutex) const;
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
