@@ -55,55 +55,149 @@
 //        if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
 //    }
 
+//    // Display this Texture in a pop-up OpenCV window, wait for key, then close.
+//    void Texture::displayInWindow(int size, bool wait) const
+//    {
+//        // Make a 3-float OpenCV Mat instance
+//        cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+//        // Reset statistics for debugging.
+//        resetStatistics();
+//
+//    //    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+//    //    rasterizeDisk(size,
+//    //                  [&](int i, int j, Vec2 position)
+//    //                  {
+//    //                      // Read TexSyn Color from Texture.
+//    //                      Color color = getColorClipped(position);
+//    //                      // Make OpenCV color, with reversed component order.
+//    //                      cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//    //                      // Make OpenCV location for pixel.
+//    //                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//    //                      // Write corresponding OpenCV color to pixel:
+//    //                      opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//    //                      // Collect statistics
+//    //                      // collectStatistics(position, color);
+//    //                  });
+//
+//        // TODO TEMP -- not quite sure what to do in this case, but for now just
+//        //              require that size is an odd number. Maybe only in the case
+//        //              of rasterizing a disk
+//        assert(size % 2 == 1 && "size needs to be odd (TODO)");
+//
+//        // For each pixel within the disk, get Texture's color, insert into cv::Mat.
+//        int half = size / 2;
+//
+//    //    debugPrint(half);  // TODO TEMP
+//
+//    //    for (int i = -half; i <= half; i++)
+//        for (int j = -half; j <= half; j++)
+//        {
+//
+//            // TODO TEMP
+//            int min_i = std::numeric_limits<int>::max();
+//            int max_i = std::numeric_limits<int>::min();
+//    //        std::cout << std::endl;
+//
+//    //        for (int j = -half; j <= half; j++)
+//            for (int i = -half; i <= half; i++)
+//            {
+//                float radius = std::sqrt(sq(i) + sq(j));
+//
+//    //            // TODO TEMP
+//    //            std::cout << ((radius <= half) ? "+" : "-") << " ";
+//    //            std::cout << "i,j:" << i << "," << j << " r:" << radius << std::endl;
+//
+//                if (radius <= half)
+//                {
+//                    // TODO TEMP
+//                    if (min_i > i) min_i = i;
+//                    if (max_i < i) max_i = i;
+//
+//                    Vec2 position(i / float(half), j / float(half));
+//
+//                    // Read TexSyn Color from Texture.
+//                    Color color = getColorClipped(position);
+//                    // Make OpenCV color, with reversed component order.
+//                    cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                    // Make OpenCV location for pixel.
+//                    cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//                    // Write corresponding OpenCV color to pixel:
+//                    opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                    // Collect statistics
+//                    // collectStatistics(position, color);
+//                }
+//            }
+//
+//            // TODO TEMP
+//    //        debugPrint(min_i);
+//    //        debugPrint(max_i);
+//    //        int xss = std::sqrt((half * half) - (j * j));
+//    //        debugPrint(xss);
+//
+//            int xss = std::sqrt((half * half) - (j * j));
+//            assert(xss == max_i && "error predicting x_start_stop");
+//
+//
+//        }
+//
+//
+//        static int window_counter = 0;
+//        static int window_position = 0;
+//        std::string window_name = "TexSyn" + std::to_string(window_counter++);
+//        cv::namedWindow(window_name);       // Create a window for display.
+//        //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
+//    //    cv::moveWindow(window_name, window_position, window_position);
+//    //    window_position += 30;
+//
+//        int tm = 23;  // TODO approximate top margin height
+//        cv::moveWindow(window_name, window_position, window_position + size + tm);
+//        window_position += tm;
+//        //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
+//        cv::imshow(window_name, opencv_image);  // Show our image inside it.
+//        if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
+//    }
+
+
 // Display this Texture in a pop-up OpenCV window, wait for key, then close.
 void Texture::displayInWindow(int size, bool wait) const
 {
     // Make a 3-float OpenCV Mat instance
     cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-    // Reset statistics for debugging.
-    resetStatistics();
     
-//    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
-//    rasterizeDisk(size,
-//                  [&](int i, int j, Vec2 position)
-//                  {
-//                      // Read TexSyn Color from Texture.
-//                      Color color = getColorClipped(position);
-//                      // Make OpenCV color, with reversed component order.
-//                      cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-//                      // Make OpenCV location for pixel.
-//                      cv::Point opencv_position((size / 2) + i, (size / 2) - j);
-//                      // Write corresponding OpenCV color to pixel:
-//                      opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
-//                      // Collect statistics
-//                      // collectStatistics(position, color);
-//                  });
+    // TODO TEMP -- not quite sure what to do in this case, but for now just
+    //              require that size is an odd number. Maybe only in the case
+    //              of rasterizing a disk
+    assert(size % 2 == 1 && "size needs to be odd (TODO)");
     
     // For each pixel within the disk, get Texture's color, insert into cv::Mat.
     int half = size / 2;
-    for (int i = -half; i <= half; i++)
+    for (int j = -half; j <= half; j++)
     {
-        for (int j = -half; j <= half; j++)
-        {
-            float radius = std::sqrt(sq(i) + sq(j));
-            if (radius <= half)
-            {
-                Vec2 position(i / float(half), j / float(half));
-                
-                // Read TexSyn Color from Texture.
-                Color color = getColorClipped(position);
-                // Make OpenCV color, with reversed component order.
-                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-                // Make OpenCV location for pixel.
-                cv::Point opencv_position((size / 2) + i, (size / 2) - j);
-                // Write corresponding OpenCV color to pixel:
-                opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
-                // Collect statistics
-                // collectStatistics(position, color);
-            }
-        }
+        
+//        int x_start_stop = std::sqrt(sq(half) - sq(j));
+//        for (int i = -half; i <= half; i++)
+//        {
+//            float radius = std::sqrt(sq(i) + sq(j));
+//            if (radius <= half)
+//            {
+//                Vec2 position(i / float(half), j / float(half));
+//
+//                // Read TexSyn Color from Texture.
+//                Color color = getColorClipped(position);
+//                // Make OpenCV color, with reversed component order.
+//                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                // Make OpenCV location for pixel.
+//                cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//                // Write corresponding OpenCV color to pixel:
+//                opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                // Collect statistics
+//                // collectStatistics(position, color);
+//            }
+//        }
+        
+//        rasterizeLineOfDisk(j, size, opencv_image);
+        rasterizeRowOfDisk(j, size, opencv_image);
     }
-    
 
     static int window_counter = 0;
     static int window_position = 0;
@@ -119,12 +213,78 @@ void Texture::displayInWindow(int size, bool wait) const
     //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
     cv::imshow(window_name, opencv_image);  // Show our image inside it.
     if (wait) cv::waitKey(0);        // Wait for a keystroke in the window.
+
+    
+//    std::cout << "no window" << std::endl;
 }
 
-//void Texture::rasterizeLineOfDisk()
-void rasterizeLineOfDisk()
+//    void Texture::rasterizeLineOfDisk(int j, int size, cv::Mat& opencv_image) const
+//    {
+//        int half = size / 2;
+//        int x_limit = std::sqrt(sq(half) - sq(j));
+//
+//    //    cv::Mat line_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+//        cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+//
+//        for (int i = -x_limit; i <= x_limit; i++)
+//        {
+//            float radius = std::sqrt(sq(i) + sq(j));
+//            if (radius <= half)
+//            {
+//                Vec2 position(i / float(half), j / float(half));
+//
+//                // Read TexSyn Color from Texture.
+//                Color color = getColorClipped(position);
+//                // Make OpenCV color, with reversed component order.
+//                cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//                // Make OpenCV location for pixel.
+//    //            cv::Point opencv_position((size / 2) + i, (size / 2) - j);
+//                cv::Point opencv_position((size / 2) + i, 0);
+//                // Write corresponding OpenCV color to pixel:
+//    //            opencv_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//    //            line_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//                row_image.at<cv::Vec3f>(opencv_position) = opencv_color;
+//            }
+//        }
+//
+//    //    cv::Rect rect(0, half - j, size, 1);
+//    //    cv::Mat roi(opencv_image, rect);
+//    //    line_image.copyTo(roi);
+//
+//    //    for (int i = 0; i < 1000000; i++)
+//    //        line_image.copyTo(cv::Mat(opencv_image, cv::Rect(0, half - j, size, 1)));
+//
+//        // Copy line_image into the j-th line of opencv_image.
+//        cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
+//    //    line_image.copyTo(row_of_full_image);
+//        row_image.copyTo(row_in_full_image);
+//
+//    }
+
+//void Texture::rasterizeLineOfDisk(int j, int size, cv::Mat& opencv_image) const
+void Texture::rasterizeRowOfDisk(int j, int size, cv::Mat& opencv_image) const
 {
-    
+    // Half the rendering's size corresponds to the disk's center.
+    int half = size / 2;
+    // First and last pixels on j-th row of time
+    int x_limit = std::sqrt(sq(half) - sq(j));
+    cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+    for (int i = -x_limit; i <= x_limit; i++)
+    {
+        float radius = std::sqrt(sq(i) + sq(j));
+        if (radius <= half)
+        {
+            // Read TexSyn Color from Texture at (i, j).
+            Color color = getColorClipped(Vec2(i, j) / half);
+            // Make OpenCV color, with reversed component order.
+            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+            // Write OpenCV color to corresponding pixel on row image:
+            row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
+        }
+    }
+    // Copy line_image into the j-th line of opencv_image.
+    cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
+    row_image.copyTo(row_in_full_image);
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

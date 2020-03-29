@@ -1106,7 +1106,21 @@ int main(int argc, const char * argv[])
         Texture::displayAndFile(Blur(0.2, grating));
     }
     Texture::displayAndFile(Blur(0.5, grating));
-    Texture::displayAndFile(Uniform(1));
+    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
+                                 0.0, Color(1,0,0),
+                                 0.6, Color(1,1,1)));
+    
+
+//    Uniform(1).displayInWindow(11, false);
+//    Uniform(1).displayInWindow(5, false);
+//    Uniform(1).displayInWindow(111, false);
+//    Uniform(1).displayInWindow(10, false);
+//    Uniform(1).displayInWindow(511, false);
+//    Uniform(1).displayInWindow(811, false);
+    
+//    Blur(0.2, grating).displayInWindow(511, false);
+//    Spot(Vec2(0.5, 0.5), 0, Color(1,0,0), 0.6, Color(1,1,1)).displayInWindow(511, false);
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

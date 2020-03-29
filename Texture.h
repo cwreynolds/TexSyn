@@ -11,6 +11,10 @@
 #include "Color.h"
 #include "Utilities.h"
 #include <vector>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+namespace cv {class Mat;}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Nickname for the type of PixelFunction used for rasterization.
 typedef std::function<void(int i, int j, Vec2 position)> PixelFunction;
@@ -36,6 +40,10 @@ public:
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = 511, bool wait = true);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO experiment 
+    void rasterizeRowOfDisk(int j, int size, cv::Mat& opencv_image) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
@@ -67,6 +75,7 @@ public:
                                int size = 511);
     static void waitKey();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO obsolete
     static int total_pixels_rendered;
     static int total_pixels_cached;
     static int total_cache_lookups;
