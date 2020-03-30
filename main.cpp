@@ -1112,6 +1112,14 @@ int main(int argc, const char * argv[])
     Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
                                  0.0, Color(1,0,0),
                                  0.6, Color(1,1,1)));
+    
+
+//    // Test cached file writing, plus rarely used bg_color and margin params
+//    Spot spot(Vec2(0.5, 0.5), 0.0, Color(1,0,0), 0.6, Color(1,1,1));
+//    spot.writeToFile(511,
+//                     "/Users/cwr/Desktop/TexSyn_temp/foobar",
+//                     Color(0, 0, 1),
+//                     50);
 
 //    Texture::displayAndFile(Blur(0.2, grating), path + "Blur_05_square");
 

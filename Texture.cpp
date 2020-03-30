@@ -18,10 +18,7 @@
 // Rasterize this texture into size² OpenCV image, display in pop-up window.
 void Texture::displayInWindow(int size, bool wait) const
 {
-    // Make a 3-float OpenCV Mat instance
-    cv::Mat opencv_image(size, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-    // Rasterize this texture into OpenCV image.
-    rasterizeToImage(size, true, opencv_image);
+    rasterizeToImageCache(size, true);
     // Display in pop-up window.
     static int window_counter = 0;
     static int window_position = 0;
@@ -30,39 +27,46 @@ void Texture::displayInWindow(int size, bool wait) const
     int tm = 23;  // TODO approximate top margin height
     cv::moveWindow(window_name, window_position, window_position + size + tm);
     window_position += tm;
-    cv::imshow(window_name, opencv_image);  // Show our image inside it.
+    cv::imshow(window_name, *raster_);  // Show our image inside it.
     if (wait) waitKey();  // Wait for a keystroke in the window.
 }
 
 // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
 // draw a round image, otherwise a square. Run parallel threads for speed.
-void Texture::rasterizeToImage(int size, bool disk, cv::Mat& opencv_image) const
+void Texture::rasterizeToImageCache(int size, bool disk) const
 {
-    // Code assumes disk center is at window center, so size must be odd. (TODO)
-    assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
-    // Synchronizes access to opencv_image by multiple row threads.
-    std::mutex ocv_image_mutex;
-    // Collection of all row threads. (Use clear() to remove initial threads,
-    // see https://stackoverflow.com/a/38130584/1991373 )
-    std::vector<std::thread> all_threads(size);
-    all_threads.clear();
-    // Loop bottom to top for all image rows. For each, launch a thread running
-    // rasterizeRowOfDisk() to compute pixels, write them to image via mutex.
-    for (int j = -(size / 2); j <= (size / 2); j++)
+    // If size changed, including from initial value of 0x0, generate raster.
+    // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
+    if ((size != raster_->rows) || (size != raster_->cols))
     {
-        // This requires some unpacking. It creates a thread which is pushed
-        // (using && move semantics, I think) onto the back of std::vector
-        // all_row_threads. Because the initial/toplevel function of the thread
-        // is a member function of this instance, it is specified as two values,
-        // a function pointer AND an instance pointer. The other four values are
-        // args to Texture::rasterizeRowOfDisk(row, size, disk, image, mutex).
-        all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
-                                          j, size, disk,
-                                          std::ref(opencv_image),
-                                          std::ref(ocv_image_mutex)));
+        // Reset our OpenCV Mat to be (size, size) with 3 floats per pixel.
+        raster_->create(size, size, CV_32FC3);
+        // Code assumes disk center is at window center, so size must be odd. (TODO)
+        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
+        // Synchronizes access to opencv_image by multiple row threads.
+        std::mutex ocv_image_mutex;
+        // Collection of all row threads. (Use clear() to remove initial threads,
+        // see https://stackoverflow.com/a/38130584/1991373 )
+        std::vector<std::thread> all_threads(size);
+        all_threads.clear();
+        // Loop all image rows, bottom to top. For each, launch a thread running
+        // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
+        for (int j = -(size / 2); j <= (size / 2); j++)
+        {
+            // This requires some unpacking. It creates a thread which is pushed
+            // (using && move semantics, I think) onto the back of std::vector
+            // all_row_threads. Because the initial/toplevel thread function is
+            // member function of this instance, it is specified as two values,
+            // a function pointer AND an instance pointer. The other four values
+            // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).
+            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
+                                              j, size, disk,
+                                              std::ref(*raster_),
+                                              std::ref(ocv_image_mutex)));
+        }
+        // Wait for all row threads to finish.
+        for (auto& t : all_threads) t.join();
     }
-    // Wait for all row threads to finish.
-    for (auto& t : all_threads) t.join();
 }
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
@@ -120,22 +124,12 @@ void Texture::writeToFile(int size,
                          cv::Scalar(255 * bg_color.b(),
                                     255 * bg_color.g(),
                                     255 * bg_color.r()));
-    // For each pixel within the disk, get Texture's color, insert into cv::Mat.
-    rasterizeDisk(size,
-                  [&](int i, int j, Vec2 position)
-                  {
-                      // Read TexSyn Color from Texture.
-                      Color color = getColorClipped(position);
-                      // Make 3x8b OpenCV color, with reversed component order.
-                      cv::Vec3b opencv_color(std::round(255 * color.b()),
-                                             std::round(255 * color.g()),
-                                             std::round(255 * color.r()));
-                      // Make OpenCV location for pixel.
-                      cv::Point opencv_position((size / 2) + margin + i,
-                                                (size / 2) + margin - j);
-                      // Write corresponding OpenCV color to pixel:
-                      opencv_image.at<cv::Vec3b>(opencv_position) = opencv_color;
-                  });
+    // Ensure cached rendering of Texture is available. (TODO "disk" arg inline)
+    rasterizeToImageCache(size, true);
+    // Define a new image, a "pointer" to portion of opencv_image inside margin.
+    cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
+    // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
+    raster_->convertTo(render_target, CV_8UC3, 255);
     bool ok = cv::imwrite(pathname + file_type, opencv_image);
     std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
     std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
@@ -222,3 +216,9 @@ int Texture::total_pixels_cached = 0;
 int Texture::total_cache_lookups = 0;
 size_t Texture::cache_size = 0;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
+std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
+{
+    return std::make_shared<cv::Mat>();
+}

@@ -27,7 +27,7 @@ class Texture : public AbstractTexture
 {
 public:
     // Default constructor.
-    Texture(){}
+    Texture() : raster_(emptyCvMat()) {}
     // Provide a default so Texture is a concrete (non-virtual) class.
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
@@ -39,7 +39,7 @@ public:
                                 int size = 511, bool wait = true);
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
-    void rasterizeToImage(int size, bool disk, cv::Mat& opencv_image) const;
+    void rasterizeToImageCache(int size, bool disk) const;
     // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
     // to run in its own thread, uses mutex to synchonize access to the image.
     void rasterizeRowOfDisk(int j, int size, bool disk,
@@ -90,4 +90,7 @@ private:
     static float max_x;
     static float min_y;
     static float max_y;
+    // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
+    std::shared_ptr<cv::Mat> emptyCvMat() const;
+    const std::shared_ptr<cv::Mat> raster_;
 };
