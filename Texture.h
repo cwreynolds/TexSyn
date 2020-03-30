@@ -11,10 +11,7 @@
 #include "Color.h"
 #include "Utilities.h"
 #include <vector>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 namespace cv {class Mat;}
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Nickname for the type of PixelFunction used for rasterization.
 typedef std::function<void(int i, int j, Vec2 position)> PixelFunction;
@@ -35,21 +32,19 @@ public:
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
-    // Display this Texture in a pop-up OpenCV window, wait for key, then close.
+    // Rasterize this texture into size² OpenCV image, display in pop-up window.
     void displayInWindow(int size = 511, bool wait = true) const;
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = 511, bool wait = true);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO experiment 
-//    void rasterizeRowOfDisk(int j, int size, cv::Mat& opencv_image) const;
-    
-    
-    void rasterizeRowOfDisk(int j, int size,
+    // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
+    // draw a round image, otherwise a square. Run parallel threads for speed.
+    void rasterizeToImage(int size, bool disk, cv::Mat& opencv_image) const;
+    // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
+    // to run in its own thread, uses mutex to synchonize access to the image.
+    void rasterizeRowOfDisk(int j, int size, bool disk,
                             cv::Mat& opencv_image,
                             std::mutex& ocv_image_mutex) const;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
@@ -67,7 +62,7 @@ public:
     // for a square and a disk of pixels. Each require a "size" (width of the
     // square or diameter of the disk) and a function to be applied at each
     // pixel. The function's parameters are i/j (column/row) indexes of the
-    // pixel raster, and the corresponding Vec2 in Texture space.
+    // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
     static void rasterizeSquare(int size, PixelFunction pixel_function);
     static void rasterizeDisk(int size, PixelFunction pixel_function);
     // Compare two textures, print stats, display inputs and AbsDiff of them
@@ -81,7 +76,7 @@ public:
                                int size = 511);
     static void waitKey();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO obsolete
+    // TODO [DEPRECATED]
     static int total_pixels_rendered;
     static int total_pixels_cached;
     static int total_cache_lookups;

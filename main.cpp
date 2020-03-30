@@ -1103,28 +1103,17 @@ int main(int argc, const char * argv[])
     Color blue(0, 0, 1);
     Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200329_";
-//    Texture::displayAndFile(grating);
+    Texture::displayAndFile(grating);
     {
         Timer timer("Blur of Grating");
         Texture::displayAndFile(Blur(0.2, grating));
-//        Texture::displayAndFile(Blur(0.2, grating),
-//                                path + "Blur_60x60_subsamples");
     }
-//    Texture::displayAndFile(Blur(0.5, grating));
-//    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
-//                                 0.0, Color(1,0,0),
-//                                 0.6, Color(1,1,1)));
-    
+    Texture::displayAndFile(Blur(0.5, grating));
+    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
+                                 0.0, Color(1,0,0),
+                                 0.6, Color(1,1,1)));
 
-//    Uniform(1).displayInWindow(11, false);
-//    Uniform(1).displayInWindow(5, false);
-//    Uniform(1).displayInWindow(111, false);
-//    Uniform(1).displayInWindow(10, false);
-//    Uniform(1).displayInWindow(511, false);
-//    Uniform(1).displayInWindow(811, false);
-    
-//    Blur(0.2, grating).displayInWindow(511, false);
-//    Spot(Vec2(0.5, 0.5), 0, Color(1,0,0), 0.6, Color(1,1,1)).displayInWindow(511, false);
+//    Texture::displayAndFile(Blur(0.2, grating), path + "Blur_05_square");
 
     Texture::waitKey();
 
