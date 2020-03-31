@@ -43,6 +43,8 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         raster_->create(size, size, CV_32FC3);
         // Code assumes disk center is at window center, so size must be odd. (TODO)
         assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
+        
+#if 0  //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Synchronizes access to opencv_image by multiple row threads.
         std::mutex ocv_image_mutex;
         // Collection of all row threads. (Use clear() to remove initial threads,
@@ -66,6 +68,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         }
         // Wait for all row threads to finish.
         for (auto& t : all_threads) t.join();
+#else  //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // A type for the pixel data structure passed to the lambda below.
+        typedef cv::Point3_<float> Pixel;
+        // Default background color. (Should be arg but this is just speed test)
+        *raster_ = cv::Vec3f(0.5, 0.5, 0.5);
+        auto get_texture_color_for_pixel = [&](Pixel& pixel, const int coords[])
+        {
+            Vec2 flip(coords[1], size - coords[0]);
+            Vec2 position = (flip / (size / 2)) - Vec2(1, 1);
+            if (!disk || (position.length() <= 1))
+            {
+                Color color = getColor(position);
+                pixel.x = color.b();
+                pixel.y = color.g();
+                pixel.z = color.r();
+            }
+        };
+        raster_->forEach<Pixel>(get_texture_color_for_pixel);
+#endif //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
 }
 

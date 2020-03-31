@@ -1123,6 +1123,12 @@ int main(int argc, const char * argv[])
 
 //    Texture::displayAndFile(Blur(0.2, grating), path + "Blur_05_square");
 
+    
+//    {
+//        Timer timer("Blur of Grating");
+//        Texture::displayAndFile(Blur(0.2, grating), "",  511);
+//    }
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
