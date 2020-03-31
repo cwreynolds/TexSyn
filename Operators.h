@@ -241,7 +241,7 @@ public:
         Vec2 new_y = fixed_ray.normalize();
         Vec2 new_x = new_y.rotate90degCW();
         // Measure angle (0 parallel to new_y axis, pi/2 parallel to new_x).
-        float angle = atan2 (p.dot(new_x), p.dot(new_y));
+        float angle = std::atan2(p.dot(new_x), p.dot(new_y));
         // Distance from "center".
         float radius = p.length();
         Vec2 new_point = (center +
@@ -444,9 +444,8 @@ public:
     Color getColor(Vec2 position) const override
     {
         Vec2 offset = position - center;
-        float local_y = offset.dot(slice_tangent);
-        float local_x = offset.dot(perpendicular);
-        float angle = atan2(local_x, local_y);
+        float angle = std::atan2(offset.dot(perpendicular),
+                                 offset.dot(slice_tangent));
         return texture.getColor(center + (slice_tangent * angle));
     }
 private:
@@ -853,13 +852,13 @@ public:
     Ring(float _copies, Vec2 _basis, Vec2 _center, const Texture& _texture)
       : copies(std::max(1.0f, std::round(std::abs(_copies)))),
         basis(_basis),
-        basis_angle(std::atan2(basis.x(), basis.y())),
+        basis_angle(basis.atan2()),
         center(_center),
         texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
         Vec2 offset = position - center;
-        float angle = std::atan2(offset.x(), offset.y()) - basis_angle;
+        float angle = offset.atan2() - basis_angle;
         float segment_angle = 2 * pi / copies;
         int segment_index = std::round(angle / segment_angle);
         float lookup_angle = angle - (segment_angle * segment_index);
