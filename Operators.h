@@ -241,7 +241,7 @@ public:
         Vec2 new_y = fixed_ray.normalize();
         Vec2 new_x = new_y.rotate90degCW();
         // Measure angle (0 parallel to new_y axis, pi/2 parallel to new_x).
-        float angle = std::atan2(p.dot(new_x), p.dot(new_y));
+        float angle = Vec2(p.dot(new_x), p.dot(new_y)).atan2();
         // Distance from "center".
         float radius = p.length();
         Vec2 new_point = (center +

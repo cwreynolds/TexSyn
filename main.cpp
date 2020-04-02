@@ -12,6 +12,18 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include <opencv2/imgproc.hpp>
+
+
+#pragma clang diagnostic pop
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 bool run_unit_tests = false;
 
 int main(int argc, const char * argv[])
@@ -1094,34 +1106,63 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Looking at multi-threading (esp for Blur) -- March 27, 2020
+//        // Looking at multi-threading (esp for Blur) -- March 27, 2020
+//
+//    //    Blur::sqrt_of_subsample_count = 60;
+//    //    Blur::sqrt_of_subsample_count = 15;
+//
+//        Color yellow(1, 1, 0);
+//        Color blue(0, 0, 1);
+//        Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200329_";
+//        Texture::displayAndFile(grating);
+//        {
+//            Timer timer("Blur of Grating");
+//            Texture::displayAndFile(Blur(0.2, grating));
+//        }
+//        Texture::displayAndFile(Blur(0.5, grating));
+//        Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
+//                                     0.0, Color(1,0,0),
+//                                     0.6, Color(1,1,1)));
+//
+//    //    // Test cached file writing, plus rarely used bg_color and margin params
+//    //    Spot spot(Vec2(0.5, 0.5), 0.0, Color(1,0,0), 0.6, Color(1,1,1));
+//    //    spot.writeToFile(511,
+//    //                     "/Users/cwr/Desktop/TexSyn_temp/foobar",
+//    //                     Color(0, 0, 1),
+//    //                     50);
+//
+//        Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    Blur::sqrt_of_subsample_count = 60;
-//    Blur::sqrt_of_subsample_count = 15;
-
-    Color yellow(1, 1, 0);
-    Color blue(0, 0, 1);
-    Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200329_";
-    Texture::displayAndFile(grating);
+    // Testing Andrew Willmott's "incremental Halton sequence"
+    int size = 511 * 2;
+    std::string window_name = "TexSyn";
+    cv::Mat opencv_image(size, size, CV_8UC3, cv::Scalar(127, 127, 127));
+    
+    cHaltonSequence3 seq;
+    for (int i = 0; i < 300; i++)
     {
-        Timer timer("Blur of Grating");
-        Texture::displayAndFile(Blur(0.2, grating));
+        printf("%d = (%g, %g, %g)\n", i, seq.mX, seq.mY, seq.mZ);
+        cv::Scalar a(50, 100, 200);
+        cv::Scalar b(100, 200, 50);
+        cv::Scalar c(200, 50, 100);
+        cv::circle(opencv_image,
+                   cv::Point(seq.mX * size, seq.mY * size),
+                   (i < 100 ? 20 : (i < 200 ? 10 : 5)),
+                   (i < 100 ? a : (i < 200 ? b : c)),
+                   cv::FILLED,
+                   cv::LINE_AA);
+        seq.inc();
     }
-    Texture::displayAndFile(Blur(0.5, grating));
-    Texture::displayAndFile(Spot(Vec2(0.5, 0.5),
-                                 0.0, Color(1,0,0),
-                                 0.6, Color(1,1,1)));
-
-//    // Test cached file writing, plus rarely used bg_color and margin params
-//    Spot spot(Vec2(0.5, 0.5), 0.0, Color(1,0,0), 0.6, Color(1,1,1));
-//    spot.writeToFile(511,
-//                     "/Users/cwr/Desktop/TexSyn_temp/foobar",
-//                     Color(0, 0, 1),
-//                     50);
+    cv::namedWindow(window_name);       // Create a window for display.
+    cv::imshow(window_name, opencv_image);  // Show our image inside it.
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200401_";
+    cv::imwrite(path + "Halton.png", opencv_image);
 
     Texture::waitKey();
-
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
