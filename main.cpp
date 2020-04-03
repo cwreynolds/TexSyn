@@ -1135,32 +1135,64 @@ int main(int argc, const char * argv[])
 //        Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
-    // Testing Andrew Willmott's "incremental Halton sequence"
-    int size = 511 * 2;
-    std::string window_name = "TexSyn";
-    cv::Mat opencv_image(size, size, CV_8UC3, cv::Scalar(127, 127, 127));
-    
-    cHaltonSequence3 seq;
-    for (int i = 0; i < 300; i++)
-    {
-        printf("%d = (%g, %g, %g)\n", i, seq.mX, seq.mY, seq.mZ);
-        cv::Scalar a(50, 100, 200);
-        cv::Scalar b(100, 200, 50);
-        cv::Scalar c(200, 50, 100);
-        cv::circle(opencv_image,
-                   cv::Point(seq.mX * size, seq.mY * size),
-                   (i < 100 ? 20 : (i < 200 ? 10 : 5)),
-                   (i < 100 ? a : (i < 200 ? b : c)),
-                   cv::FILLED,
-                   cv::LINE_AA);
-        seq.inc();
-    }
-    cv::namedWindow(window_name);       // Create a window for display.
-    cv::imshow(window_name, opencv_image);  // Show our image inside it.
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200401_";
-    cv::imwrite(path + "Halton.png", opencv_image);
 
+//    // Testing Andrew Willmott's "incremental Halton sequence"
+//    int size = 511 * 2;
+//    std::string window_name = "TexSyn";
+//    cv::Mat opencv_image(size, size, CV_8UC3, cv::Scalar(127, 127, 127));
+//
+//    cHaltonSequence3 seq;
+//    for (int i = 0; i < 300; i++)
+//    {
+//        printf("%d = (%g, %g, %g)\n", i, seq.mX, seq.mY, seq.mZ);
+//        cv::Scalar a(50, 100, 200);
+//        cv::Scalar b(100, 200, 50);
+//        cv::Scalar c(200, 50, 100);
+//        cv::circle(opencv_image,
+//                   cv::Point(seq.mX * size, seq.mY * size),
+//                   (i < 100 ? 20 : (i < 200 ? 10 : 5)),
+//                   (i < 100 ? a : (i < 200 ? b : c)),
+//                   cv::FILLED,
+//                   cv::LINE_AA);
+//        seq.inc();
+//    }
+//    cv::namedWindow(window_name);       // Create a window for display.
+//    cv::imshow(window_name, opencv_image);  // Show our image inside it.
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200401_";
+//    cv::imwrite(path + "Halton.png", opencv_image);
+//
+//    Texture::waitKey();
+//
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing LotsOfSpots prototype, April 2, 2020
+
+//    float density = 0.3;
+//    float density = 0.6;
+//    float density = 0.8;
+//    float density = 0.6;
+//    float density = 0.7;
+    float density = 0.8;
+
+//    float soft = 0.1;
+//    float soft = 0.5;
+    float soft = 0.1;
+    
+//    float rlo = 0.4;
+//    float rhi = 0.6;
+//    float rlo = 0.2;
+//    float rhi = 0.4;
+    float rlo = 0.1;
+    float rhi = 0.8;
+
+    {
+        Timer timer("LotsOfSpots(density, rlo, rhi, soft)");
+        LotsOfSpots(density, rlo, rhi, soft);
+    }
+
+    
+    Texture::displayAndFile(            LotsOfSpots(density, rlo, rhi, soft));
+    Texture::displayAndFile(Scale(0.13, LotsOfSpots(density, rlo, rhi, soft)));
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

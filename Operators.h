@@ -997,3 +997,136 @@ private:
     const Texture& color_texture;
     const Texture& bump_texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO VERY EXPERIMENTAL
+//
+// Try a version of this (http://www.red3d.com/cwr/texsyn/diary.html#20100208)
+// that if defined across entire texture plane. Current approach: just tile the
+// plane, using a “large” square tile (perhaps 10x10 compared to the typical
+// Texture rendering size of 2x2), centered on the origin.
+//
+// Ideas: the spots themselves could be like the Spot operator, or more in the
+// sense of SoftMatte(Spot(), a, b) where the spot's texture is taken from
+// another texture. Spot size would be in an interval, or another distribution,
+// or taken from the luninence of another texture. The “colored spots” demo
+// (http://www.red3d.com/cwr/texsyn/diary.html#20100209) was also a nice idea,
+// sampling spot colors from another texture.
+//
+
+
+class LotsOfSpots : public Operator
+{
+public:
+    LotsOfSpots(float _spot_density,
+                float _min_radius,
+                float _max_radius,
+                float _soft_edge_as_fraction_of_radius)
+      : spot_density(_spot_density),
+        min_radius(std::min(_min_radius, _max_radius)),
+        max_radius(std::max(_min_radius, _max_radius)),
+        soft_edge_as_fraction_of_radius(_soft_edge_as_fraction_of_radius)
+    {
+        generateSpots();
+    }
+    Color getColor(Vec2 position) const override
+    {
+        float gray_level = 0;
+        for (auto& spot : spots)
+        {
+            
+            // Distance from sample position to spot center.
+            float d = (position - spot.position).length();
+            float inner = spot.radius * (1 - soft_edge_as_fraction_of_radius);
+            // Fraction for interpolation: 0 inside, 1 outside, ramp between.
+            float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
+            // Sinusoidal interpolation between inner and outer colors.
+            float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
+            gray_level = std::max(gray_level, spot_level);
+
+//            const std::lock_guard<std::mutex> lock(mutex);
+//            debugPrint(d);
+//            debugPrint(inner);
+//            debugPrint(spot.radius);
+        }
+        return Color::gray(gray_level);
+    }
+private:
+    class Dot
+    {
+    public:
+        Dot(float r, Vec2 p) : radius(r), position(p) {}
+        float area() const { return pi * sq(radius); }
+        float radius = 0;
+        Vec2 position;
+    };
+    void generateSpots()
+    {
+        // Insert random spots until density threshold is met.
+        float half = tile_size / 2;
+        float total_area = 0;
+        while (total_area < (spot_density * sq(tile_size)))
+        {
+//            spots.push_back(Dot(frandom2(min_radius, max_radius),
+//                                Vec2(frandom2(-half, half),
+//                                     frandom2(-half, half))));
+//            total_area += spots.back().area();
+
+            Dot spot(frandom2(min_radius, max_radius),
+                     Vec2(frandom2(-half, half), frandom2(-half, half)));
+            spots.push_back(spot);
+            total_area += spot.area();
+        }
+        // Move spots away from regions of overlap, repeat move_count times.
+        for (int i = 0; i < move_count; i++)
+        {
+            debugPrint(i);
+            bool no_move = true;
+            for (auto& a : spots)
+            {
+                for (auto& b : spots)
+                {
+                    if (&a != &b)  // Ignore self overlap.
+                    {
+                        Vec2 offset = a.position - b.position;
+                        float distance = offset.length();
+                        float radius_sum = a.radius + b.radius;
+                        if (distance < radius_sum)
+                        {
+                            no_move = false;
+                            Vec2 basis = offset / distance;
+                            a.position += basis * (a.radius / +5);
+                            b.position += basis * (b.radius / -5);
+                        }
+                    }
+                }
+                
+                if ((a.position.x() > +half) ||
+                    (a.position.y() > +half) ||
+                    (a.position.x() < -half) ||
+                    (a.position.y() < -half))
+                {
+                    no_move = false;
+                    a.position = Vec2(clip(a.position.x(), -half, half),
+                                      clip(a.position.y(), -half, half));
+                }
+            }
+            if (no_move) break;
+        }
+    }
+    const float tile_size = 10;
+//    const int move_count = 20;
+//    const int move_count = 100;
+    const int move_count = 60;
+    std::vector<Dot> spots;
+    const float spot_density;
+    const float min_radius;
+    const float max_radius;
+    const float soft_edge_as_fraction_of_radius;
+    
+//    // TODO temp
+//    static std::mutex mutex;
+
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
