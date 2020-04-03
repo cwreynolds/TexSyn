@@ -1172,7 +1172,8 @@ int main(int argc, const char * argv[])
 //    float density = 0.8;
 //    float density = 0.6;
 //    float density = 0.7;
-    float density = 0.8;
+//    float density = 0.8;
+    float density = 0.6;
 
 //    float soft = 0.1;
 //    float soft = 0.5;
@@ -1190,9 +1191,9 @@ int main(int argc, const char * argv[])
         LotsOfSpots(density, rlo, rhi, soft);
     }
 
-    
-    Texture::displayAndFile(            LotsOfSpots(density, rlo, rhi, soft));
-    Texture::displayAndFile(Scale(0.13, LotsOfSpots(density, rlo, rhi, soft)));
+    LotsOfSpots lots_of_spots(density, rlo, rhi, soft);
+    Texture::displayAndFile(lots_of_spots);
+    Texture::displayAndFile(Scale(0.13, lots_of_spots));
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -38,9 +38,15 @@ float frandom2(float lowerBound, float upperBound);
 
 // Generic interpolation
 template<typename F,typename T>
-T interpolate (const F& alpha, const T& x0, const T& x1)
+T interpolate(const F& alpha, const T& x0, const T& x1)
 {
     return x0 + ((x1 - x0) * alpha);
+}
+
+// True when x is between given bounds (low ≤ x ≤ high)
+inline bool between(float x, float low, float high)
+{
+    return (low <= x) && (x <= high);
 }
 
 // TODO took this directly from TextureSynthesisTest, needs clean up:

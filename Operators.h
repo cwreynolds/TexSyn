@@ -1015,6 +1015,122 @@ private:
 //
 
 
+//    class LotsOfSpots : public Operator
+//    {
+//    public:
+//        LotsOfSpots(float _spot_density,
+//                    float _min_radius,
+//                    float _max_radius,
+//                    float _soft_edge_as_fraction_of_radius)
+//          : spot_density(_spot_density),
+//            min_radius(std::min(_min_radius, _max_radius)),
+//            max_radius(std::max(_min_radius, _max_radius)),
+//            soft_edge_as_fraction_of_radius(_soft_edge_as_fraction_of_radius)
+//        {
+//            generateSpots();
+//        }
+//        Color getColor(Vec2 position) const override
+//        {
+//            float gray_level = 0;
+//            for (auto& spot : spots)
+//            {
+//
+//                // Distance from sample position to spot center.
+//                float d = (position - spot.position).length();
+//                float inner = spot.radius * (1 - soft_edge_as_fraction_of_radius);
+//                // Fraction for interpolation: 0 inside, 1 outside, ramp between.
+//                float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
+//                // Sinusoidal interpolation between inner and outer colors.
+//                float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
+//                gray_level = std::max(gray_level, spot_level);
+//
+//    //            const std::lock_guard<std::mutex> lock(mutex);
+//    //            debugPrint(d);
+//    //            debugPrint(inner);
+//    //            debugPrint(spot.radius);
+//            }
+//            return Color::gray(gray_level);
+//        }
+//    private:
+//        class Dot
+//        {
+//        public:
+//            Dot(float r, Vec2 p) : radius(r), position(p) {}
+//            float area() const { return pi * sq(radius); }
+//            float radius = 0;
+//            Vec2 position;
+//        };
+//        void generateSpots()
+//        {
+//            // Insert random spots until density threshold is met.
+//            float half = tile_size / 2;
+//            float total_area = 0;
+//            while (total_area < (spot_density * sq(tile_size)))
+//            {
+//    //            spots.push_back(Dot(frandom2(min_radius, max_radius),
+//    //                                Vec2(frandom2(-half, half),
+//    //                                     frandom2(-half, half))));
+//    //            total_area += spots.back().area();
+//
+//                Dot spot(frandom2(min_radius, max_radius),
+//                         Vec2(frandom2(-half, half), frandom2(-half, half)));
+//                spots.push_back(spot);
+//                total_area += spot.area();
+//            }
+//            // Move spots away from regions of overlap, repeat move_count times.
+//            for (int i = 0; i < move_count; i++)
+//            {
+//                debugPrint(i);
+//                bool no_move = true;
+//                for (auto& a : spots)
+//                {
+//                    for (auto& b : spots)
+//                    {
+//                        if (&a != &b)  // Ignore self overlap.
+//                        {
+//                            Vec2 offset = a.position - b.position;
+//                            float distance = offset.length();
+//                            float radius_sum = a.radius + b.radius;
+//                            if (distance < radius_sum)
+//                            {
+//                                no_move = false;
+//                                Vec2 basis = offset / distance;
+//                                a.position += basis * (a.radius / +5);
+//                                b.position += basis * (b.radius / -5);
+//                            }
+//                        }
+//                    }
+//
+//                    // TODO oh, could just do the clip then test if changed
+//                    if ((a.position.x() > +half) ||
+//                        (a.position.y() > +half) ||
+//                        (a.position.x() < -half) ||
+//                        (a.position.y() < -half))
+//                    {
+//                        no_move = false;
+//                        a.position = Vec2(clip(a.position.x(), -half, half),
+//                                          clip(a.position.y(), -half, half));
+//                    }
+//                }
+//                if (no_move) break;
+//            }
+//        }
+//        const float tile_size = 10;
+//    //    const int move_count = 20;
+//    //    const int move_count = 100;
+//        const int move_count = 60;
+//        std::vector<Dot> spots;
+//        const float spot_density;
+//        const float min_radius;
+//        const float max_radius;
+//        const float soft_edge_as_fraction_of_radius;
+//
+//    //    // TODO temp
+//    //    static std::mutex mutex;
+//
+//    };
+
+
 class LotsOfSpots : public Operator
 {
 public:
@@ -1034,22 +1150,25 @@ public:
         float gray_level = 0;
         for (auto& spot : spots)
         {
-            
+            Vec2 tiled_point(fmod_floor(position.x() + 5, tile_size) - 5,
+                             fmod_floor(position.y() + 5, tile_size) - 5);
             // Distance from sample position to spot center.
-            float d = (position - spot.position).length();
+//            float d = (position - spot.position).length();
+            float d = (tiled_point - spot.position).length();
             float inner = spot.radius * (1 - soft_edge_as_fraction_of_radius);
             // Fraction for interpolation: 0 inside, 1 outside, ramp between.
             float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
             // Sinusoidal interpolation between inner and outer colors.
             float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
             gray_level = std::max(gray_level, spot_level);
-
-//            const std::lock_guard<std::mutex> lock(mutex);
-//            debugPrint(d);
-//            debugPrint(inner);
-//            debugPrint(spot.radius);
         }
-        return Color::gray(gray_level);
+//        return Color::gray(gray_level);
+        return ((between(position.x(), -tile_size / 2, tile_size / 2) &&
+                 between(position.y(), -tile_size / 2, tile_size / 2)) ?
+//                Color(0.7, 0.7, 1) * gray_level :
+//                Color::gray(gray_level));
+                Color::gray(gray_level) :
+                Color(0.6, 0.6, 0.8) * gray_level);
     }
 private:
     class Dot
@@ -1067,11 +1186,6 @@ private:
         float total_area = 0;
         while (total_area < (spot_density * sq(tile_size)))
         {
-//            spots.push_back(Dot(frandom2(min_radius, max_radius),
-//                                Vec2(frandom2(-half, half),
-//                                     frandom2(-half, half))));
-//            total_area += spots.back().area();
-
             Dot spot(frandom2(min_radius, max_radius),
                      Vec2(frandom2(-half, half), frandom2(-half, half)));
             spots.push_back(spot);
@@ -1087,8 +1201,65 @@ private:
                 for (auto& b : spots)
                 {
                     if (&a != &b)  // Ignore self overlap.
+//                    {
+//                        Vec2 offset = a.position - b.position;
+//                        float distance = offset.length();
+//                        float radius_sum = a.radius + b.radius;
+//                        if (distance < radius_sum)
+//                        {
+//                            no_move = false;
+//                            Vec2 basis = offset / distance;
+//                            a.position += basis * (a.radius / +5);
+//                            b.position += basis * (b.radius / -5);
+//                        }
+//                    }
                     {
-                        Vec2 offset = a.position - b.position;
+//                        auto nearest_of_9_tiles = [&](Vec2 ap, Vec2 bp)
+//                        {
+//                            // Nearest distance and point.
+//                            float nd = std::numeric_limits<float>::infinity();
+//                            Vec2 np = bp;
+//                            for (float x : {-tile_size, 0.0f, tile_size})
+//                            {
+//                                for (float y : {-tile_size, 0.0f, tile_size})
+//                                {
+//                                    Vec2 new_b = bp + Vec2(x, y);
+//                                    float d = (ap - new_b).length();
+//                                    if (nd > d)
+//                                    {
+//                                        nd = d;
+//                                        np = new_b;
+//                                    }
+//                                }
+//                            }
+//                            return np;
+//                        };
+                        
+                        auto nearest_of_9_tiles = [&](Dot& a, Dot& b)
+                        {
+                            // Nearest distance and point.
+                            float nd = std::numeric_limits<float>::infinity();
+                            Vec2 np = b.position;
+                            for (float x : {-tile_size, 0.0f, tile_size})
+                            {
+                                for (float y : {-tile_size, 0.0f, tile_size})
+                                {
+                                    Vec2 new_b = b.position + Vec2(x, y);
+                                    float d = (a.position - new_b).length();
+                                    if (nd > d)
+                                    {
+                                        nd = d;
+                                        np = new_b;
+                                    }
+                                }
+                            }
+                            return np;
+                        };
+
+                        
+                        
+//                        Vec2 offset = a.position - b.position;
+                        Vec2 offset = a.position - nearest_of_9_tiles(a, b);
                         float distance = offset.length();
                         float radius_sum = a.radius + b.radius;
                         if (distance < radius_sum)
@@ -1101,6 +1272,7 @@ private:
                     }
                 }
                 
+                // TODO oh, could just do the clip then test if changed
                 if ((a.position.x() > +half) ||
                     (a.position.y() > +half) ||
                     (a.position.x() < -half) ||
@@ -1128,5 +1300,4 @@ private:
 //    static std::mutex mutex;
 
 };
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
