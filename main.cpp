@@ -1174,6 +1174,8 @@ int main(int argc, const char * argv[])
 //    float density = 0.7;
 //    float density = 0.8;
 //    float density = 0.6;
+//    float density = 0.7;
+//    float density = 0.75;
     float density = 0.7;
 
 //    float soft = 0.1;
@@ -1190,7 +1192,10 @@ int main(int argc, const char * argv[])
 //    float rhi = 1;
 //    float rlo = 0.1;
 //    float rhi = 1.2;
+//    float rlo = 0.1;
+//    float rhi = 0.9;
     float rlo = 0.1;
+//    float rhi = 1.0;
     float rhi = 0.9;
 
     {
