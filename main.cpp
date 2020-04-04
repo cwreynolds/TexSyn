@@ -1173,18 +1173,25 @@ int main(int argc, const char * argv[])
 //    float density = 0.6;
 //    float density = 0.7;
 //    float density = 0.8;
-    float density = 0.6;
+//    float density = 0.6;
+    float density = 0.7;
 
 //    float soft = 0.1;
 //    float soft = 0.5;
     float soft = 0.1;
-    
+
 //    float rlo = 0.4;
 //    float rhi = 0.6;
 //    float rlo = 0.2;
 //    float rhi = 0.4;
+//    float rlo = 0.1;
+//    float rhi = 0.8;
+//    float rlo = 0.1;
+//    float rhi = 1;
+//    float rlo = 0.1;
+//    float rhi = 1.2;
     float rlo = 0.1;
-    float rhi = 0.8;
+    float rhi = 0.9;
 
     {
         Timer timer("LotsOfSpots(density, rlo, rhi, soft)");

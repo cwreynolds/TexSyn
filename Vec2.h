@@ -21,6 +21,7 @@ public:
     // Vector operations dot product, length (norm), normalize.
     float dot(const Vec2& v) const {return x() * v.x() + y() * v.y(); }
     float length() const { return std::sqrt(sq(x()) + sq(y())); }
+    float lengthSquared() const { return sq(x()) + sq(y()); }
     Vec2 normalize() const { return *this / length(); }
     // Basic operators + - * / == <
     Vec2 operator+(Vec2 v) const { return { x() + v.x(), y() + v.y() }; }
@@ -29,6 +30,7 @@ public:
     Vec2 operator*(float s) const { return { x() * s, y() * s}; }
     Vec2 operator/(float s) const { return { x() / s, y() / s}; }
     bool operator==(const Vec2 v) const { return x() == v.x() && y() == v.y(); }
+    bool operator!=(const Vec2 v) const { return x() != v.x() || y() != v.y(); }
     bool operator<(const Vec2 v) const {return length() < v.length();}
     Vec2 operator+=(const Vec2& rhs) { return *this = *this + rhs; }
     // Rotation about origin by angle in radians (or by precomputed sin/cos).
