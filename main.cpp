@@ -1207,36 +1207,19 @@ int main(int argc, const char * argv[])
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200403_";
     Texture::displayAndFile(lots_of_spots);
     Texture::displayAndFile(Scale(0.13, lots_of_spots));
-    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
-                                            Vec2(-1.54534, -0.593485),
-                                            Vec2(1.29155, -0.931471),
-                                            Vec2(0.768266, 0.24665),
-                                            Scale(0.13, lots_of_spots)));
-    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
-                                            Vec2(-1.54534, -0.593485),
-                                            Vec2(1.29155, -0.931471),
-                                            Vec2(0.768266, 0.24665),
-                                            Translate(Vec2(5, 5),
-                                                      Scale(0.13,
-                                                            lots_of_spots))));
-    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
-                                            Vec2(-1.54534, -0.593485),
-                                            Vec2(1.29155, -0.931471),
-                                            Vec2(0.768266, 0.24665),
-                                            Translate(Vec2(1,1),
-                                                      Scale(0.13,
-                                                            lots_of_spots))));
-    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
-                                            Vec2(-1.54534, -0.593485),
-                                            Vec2(1.29155, -0.931471),
-                                            Vec2(0.768266, 0.24665),
-                                            Scale(0.07, lots_of_spots)));
 
 
 //    Texture::displayAndFile(lots_of_spots, path + "LotsOfSpots");
 //    Texture::displayAndFile(Scale(0.13, lots_of_spots),
-//                            path + "LotsOfSpots zoomed out");
-    
+//                            path + "LotsOfSpots_zoomed_out");
+//    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
+//                                            Vec2(-1.54534, -0.593485),
+//                                            Vec2(1.29155, -0.931471),
+//                                            Vec2(0.768266, 0.24665),
+//                                            Translate(Vec2(-0.75, -0.75),
+//                                                      Scale(0.13,
+//                                                            lots_of_spots))),
+//                            path + "LotsOfSpots_Mobized");
    
     Texture::waitKey();
     
