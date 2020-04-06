@@ -1199,14 +1199,22 @@ int main(int argc, const char * argv[])
 //    //                                                            lots_of_spots))),
 //    //                            path + "LotsOfSpots_Mobized");
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200405_";
-    //                                             den  min  max  soft
-    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.5, 0.1, .15, 0.1)),
-                            ""); // path + "LotsOfSpots_d1");
-    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.7, 0.1, 1.0, 0.1)),
-                            ""); // path + "LotsOfSpots_d2");
-    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.9, 0.1, 1.0, 0.1)),
-                            ""); // path + "LotsOfSpots_d3");
+    
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200405_";
+//    //                                             den  min  max  soft
+//    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.5, 0.1, .15, 0.1)),
+//                            ""); // path + "LotsOfSpots_d1");
+//    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.7, 0.1, 1.0, 0.1)),
+//                            ""); // path + "LotsOfSpots_d2");
+//    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.9, 0.1, 1.0, 0.1)),
+//                            ""); // path + "LotsOfSpots_d3");
+
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
+    Color c(0, 0.8, 1);
+    Color m(0.8, 0, 0.8);
+    //                                  den  min   max  soft  colors
+    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m),
+                            path + "LotsOfSpots_with_color");
 
     
     Texture::waitKey();

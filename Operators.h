@@ -1016,11 +1016,15 @@ public:
     LotsOfSpots(float _spot_density,
                 float _min_radius,
                 float _max_radius,
-                float _soft_edge_width)
+                float _soft_edge_width,
+                Color _spot_color,
+                Color _background_color)
       : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
-        soft_edge_width(std::min(_soft_edge_width, min_radius / 2))
+        soft_edge_width(std::min(_soft_edge_width, min_radius / 2)),
+        spot_color(_spot_color),
+        background_color(_background_color)
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
@@ -1028,7 +1032,6 @@ public:
     }
     Color getColor(Vec2 position) const override
     {
-        float half = tile_size / 2;
         float gray_level = 0;
         Vec2 tiled_pos = wrapToCenterTile(position);
         for (auto& spot : spots)
@@ -1047,10 +1050,7 @@ public:
                 gray_level = std::max(gray_level, spot_level);
             }
         }
-        return ((between(position.x(), -half, half) &&
-                 between(position.y(), -half, half)) ?
-                Color::gray(gray_level) :
-                Color(0.6, 0.6, 0.8) * gray_level);
+        return interpolate(gray_level, background_color, spot_color);
     }
 private:
     class Dot
@@ -1083,4 +1083,6 @@ private:
     const float min_radius;
     const float max_radius;
     const float soft_edge_width;
+    const Color spot_color;
+    const Color background_color;
 };
