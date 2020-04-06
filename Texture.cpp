@@ -35,6 +35,7 @@ void Texture::displayInWindow(int size, bool wait) const
 // draw a round image, otherwise a square. Run parallel threads for speed.
 void Texture::rasterizeToImageCache(int size, bool disk) const
 {
+    Timer t("rasterizeToImageCache");
     // If size changed, including from initial value of 0x0, generate raster.
     // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
     if ((size != raster_->rows) || (size != raster_->cols))

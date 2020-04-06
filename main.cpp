@@ -1167,60 +1167,48 @@ int main(int argc, const char * argv[])
     
     // Testing LotsOfSpots prototype, April 2, 2020
 
-//    float density = 0.3;
-//    float density = 0.6;
-//    float density = 0.8;
-//    float density = 0.6;
 //    float density = 0.7;
-//    float density = 0.8;
-//    float density = 0.6;
-    float density = 0.7;
-//    float density = 0.75;
-//    float density = 0.8;
-
-//    float soft = 0.1;
-//    float soft = 0.5;
-    float soft = 0.1;
-
-//    float rlo = 0.4;
-//    float rhi = 0.6;
-//    float rlo = 0.2;
-//    float rhi = 0.4;
 //    float rlo = 0.1;
-//    float rhi = 0.8;
-//    float rlo = 0.1;
-//    float rhi = 1;
-//    float rlo = 0.1;
-//    float rhi = 1.2;
-//    float rlo = 0.1;
-//    float rhi = 0.9;
-    float rlo = 0.1;
 //    float rhi = 1.0;
-    float rhi = 0.9;
+//    float soft = 0.1;
 
-    {
-        Timer timer("LotsOfSpots(density, rlo, rhi, soft)");
-        LotsOfSpots(density, rlo, rhi, soft);
-    }
+//    {
+//        Timer timer("LotsOfSpots(density, rlo, rhi, soft)");
+//        LotsOfSpots(density, rlo, rhi, soft);
+//    }
+    
+//    Texture::displayAndFile(Scale(0.2, LotsOfSpots(density, rlo, rhi, soft)));
+//    Texture::displayAndFile(Scale(0.13, LotsOfSpots(density, rlo, rhi, soft)));
 
-    LotsOfSpots lots_of_spots(density, rlo, rhi, soft);
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200403_";
-    Texture::displayAndFile(lots_of_spots);
-    Texture::displayAndFile(Scale(0.13, lots_of_spots));
+    
+//        LotsOfSpots lots_of_spots(density, rlo, rhi, soft);
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200403_";
+//        Texture::displayAndFile(lots_of_spots);
+//        Texture::displayAndFile(Scale(0.13, lots_of_spots));
+//
+//
+//    //    Texture::displayAndFile(lots_of_spots, path + "LotsOfSpots");
+//    //    Texture::displayAndFile(Scale(0.13, lots_of_spots),
+//    //                            path + "LotsOfSpots_zoomed_out");
+//    //    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
+//    //                                            Vec2(-1.54534, -0.593485),
+//    //                                            Vec2(1.29155, -0.931471),
+//    //                                            Vec2(0.768266, 0.24665),
+//    //                                            Translate(Vec2(-0.75, -0.75),
+//    //                                                      Scale(0.13,
+//    //                                                            lots_of_spots))),
+//    //                            path + "LotsOfSpots_Mobized");
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200405_";
+    //                                             den  min  max  soft
+    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.5, 0.1, .15, 0.1)),
+                            ""); // path + "LotsOfSpots_d1");
+    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.7, 0.1, 1.0, 0.1)),
+                            ""); // path + "LotsOfSpots_d2");
+    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.9, 0.1, 1.0, 0.1)),
+                            ""); // path + "LotsOfSpots_d3");
 
-
-//    Texture::displayAndFile(lots_of_spots, path + "LotsOfSpots");
-//    Texture::displayAndFile(Scale(0.13, lots_of_spots),
-//                            path + "LotsOfSpots_zoomed_out");
-//    Texture::displayAndFile(MobiusTransform(Vec2(-0.958788, 1.64993),
-//                                            Vec2(-1.54534, -0.593485),
-//                                            Vec2(1.29155, -0.931471),
-//                                            Vec2(0.768266, 0.24665),
-//                                            Translate(Vec2(-0.75, -0.75),
-//                                                      Scale(0.13,
-//                                                            lots_of_spots))),
-//                            path + "LotsOfSpots_Mobized");
-   
+    
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

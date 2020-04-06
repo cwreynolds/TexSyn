@@ -1017,34 +1017,35 @@ public:
                 float _min_radius,
                 float _max_radius,
                 float _soft_edge_width)
-      : spot_density(_spot_density),
+      : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
         soft_edge_width(std::min(_soft_edge_width, min_radius / 2))
     {
-        generateSpots();
+        Timer timer("LotsOfSpots constructor");  // TODO temp
+        insertRandomSpots();
+        adjustOverlappingSpots();
     }
     Color getColor(Vec2 position) const override
     {
         float half = tile_size / 2;
         float gray_level = 0;
+        Vec2 tiled_pos = wrapToCenterTile(position);
         for (auto& spot : spots)
         {
-//            Vec2 tiled_pos(fmod_floor(position.x() + half, tile_size) - half,
-//                           fmod_floor(position.y() + half, tile_size) - half);
-            
-            Vec2 tiled_pos(fmod_floor(position.x(), tile_size),
-                           fmod_floor(position.y(), tile_size));
-
+            // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
             Vec2 tiled_spot = nearestByTiling(tiled_pos, spot.position);
-            // Distance from sample position to spot center.
+            // Distance from sample position to spot center. Ignore if too far.
             float d = (tiled_pos - tiled_spot).length();
-            float inner = spot.radius - soft_edge_width;
-            // Fraction for interpolation: 0 inside, 1 outside, ramp between.
-            float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
-            // Sinusoidal interpolation between inner and outer colors.
-            float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
-            gray_level = std::max(gray_level, spot_level);
+            if (d <= spot.radius)
+            {
+                float inner = spot.radius - soft_edge_width;
+                // Interpolation fraction: 0 inside, 1 outside, ramp between.
+                float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
+                // Sinusoidal interpolation between inner and outer colors.
+                float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
+                gray_level = std::max(gray_level, spot_level);
+            }
         }
         return ((between(position.x(), -half, half) &&
                  between(position.y(), -half, half)) ?
@@ -1060,82 +1061,24 @@ private:
         float radius = 0;
         Vec2 position;
     };
-    void generateSpots()
-    {
-        // Insert random spots until density threshold is met.
-        float total_area = 0;
-        float half = tile_size / 2;
-        RandomSequence rs(hash_float(spot_density) ^ hash_float(min_radius) ^
-                          hash_float(max_radius) ^ hash_float(soft_edge_width));
-        while (total_area < (spot_density * sq(tile_size)))
-        {
-            float i = std::pow(rs.frandom01(), 4);
-            float radius = interpolate(i, min_radius, max_radius);
-            Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
-            Dot spot(radius, center);
-            spots.push_back(spot);
-            total_area += spot.area();
-        }
-        // Move spots away from regions of overlap, repeat move_count times.
-        for (int i = 0; i < move_count; i++)
-        {
-            debugPrint(i);
-            bool no_move = true;
-            for (auto& a : spots)
-            {
-                for (auto& b : spots)
-                {
-                    if (&a != &b)  // Ignore self overlap.
-                    {
-                        Vec2 b_tile = nearestByTiling(a.position, b.position);
-                        Vec2 offset = a.position - b_tile;
-                        float distance = offset.length();
-                        float radius_sum = a.radius + b.radius;
-                        if (distance < radius_sum)
-                        {
-                            no_move = false;
-                            Vec2 basis = offset / distance;
-                            float adjust = interpolate(float(i) / move_count,
-                                                       0.6, 0.05);
-                            a.position += basis * (a.radius * adjust);
-                            b.position += basis * (b.radius * -adjust);
-                        }
-                    }
-                }
-                // Force "a"s position inside tile, clear "no_move" if outside.
-                Vec2 before = a.position;
-                a.position = Vec2(clip(a.position.x(), -half, half),
-                                  clip(a.position.y(), -half, half));
-                if (a.position != before) no_move = false;
-            }
-            if (no_move) break;
-        }
-    }
+    // Insert random spots until density threshold is met. Positions are
+    // uniformly distributed across center tile. Radii are chosen from interval
+    // [min_radius, max_radius] with a preference for smaller values.
+    void insertRandomSpots();
+    // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
+    // away from each other along the line connecting their centers. The whole
+    // process is repeated "move_count" times, or until no spots overlap.
+    void adjustOverlappingSpots();
     // Given a reference point (say to be rendered), and the center of a Spot,
     // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
-    // another tile) to "reference_point". (TODO need to be more than -1/0/+1 ?)
-    Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const
-    {
-        Vec2 nearest_point;
-        float nearest_distance = std::numeric_limits<float>::infinity();
-        for (float x : {-tile_size, 0.0f, tile_size})
-        {
-            for (float y : {-tile_size, 0.0f, tile_size})
-            {
-                Vec2 tiled = spot_center + Vec2(x, y);
-                float d = (reference_point - tiled).lengthSquared();
-                if (nearest_distance > d)
-                {
-                    nearest_distance = d;
-                    nearest_point = tiled;
-                }
-            }
-        }
-        return nearest_point;
-    };
+    // another tile) to "reference_point".
+    Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
+    // Given a position, find corresponding point on center tile, via fmod/wrap.
+    Vec2 wrapToCenterTile(Vec2 v) const;
+
+    std::vector<Dot> spots;
     const float tile_size = 10;
     const int move_count = 200;
-    std::vector<Dot> spots;
     const float spot_density;
     const float min_radius;
     const float max_radius;
