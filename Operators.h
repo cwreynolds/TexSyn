@@ -1015,6 +1015,8 @@ private:
 // Derived from that are:
 //     LotsOfSpots(density, min_r, max_r, soft, spot_color, bg_color)
 //     ColoredSpots(density, min_r, max_r, soft, color_texture, bg_color)
+//     LotsOfButtons(density, min_r, max_r, soft, button_center,
+//                   button_texture, bg_color)
 //
 class LotsOfSpotsBase : public Operator
 {

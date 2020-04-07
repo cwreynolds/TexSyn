@@ -1209,9 +1209,9 @@ int main(int argc, const char * argv[])
 //    Texture::displayAndFile(Scale(0.2, LotsOfSpots(0.9, 0.1, 1.0, 0.1)),
 //                            ""); // path + "LotsOfSpots_d3");
 
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
-    Color c(0, 0.8, 1);
-    Color m(0.8, 0, 0.8);
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
+//    Color c(0, 0.8, 1);
+//    Color m(0.8, 0, 0.8);
 //    //                                  den  min   max  soft  colors
 //    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m),
 //                            ""); // path + "LotsOfSpots_with_color");
@@ -1254,15 +1254,15 @@ int main(int argc, const char * argv[])
     [&]
     (const Texture& twist)
     {
-        Texture::displayAndFile(twist);
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
+        Texture::displayAndFile(twist
+                                , path + "Twist");
         Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.1,
-                                              Vec2(),
-                                              twist,
-                                              gray2));
+                                              Vec2(), twist, gray2)
+                                , path + "LotsOfButtons_1");
         Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.1,
-                                              Vec2(),
-                                              twist,
-                                              gray2));
+                                              Vec2(), twist, gray2)
+                                , path + "LotsOfButtons_2");
     }
     (Twist(7, 9, Vec2(),
            SliceToRadial(Vec2(0, 0.318), Vec2(),
