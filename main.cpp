@@ -1247,34 +1247,106 @@ int main(int argc, const char * argv[])
 //                                               Color::gray(0.5)))
 //                            ); //, path + "ColoredSpots");
 
-    // LotsOfButtons
-    Color gray2(0.2, 0.2, 0.2);
-    Color gray3(0.3, 0.3, 0.3);
-    Color red(1, 0, 0);
+//    // LotsOfButtons, Apr 6
+//    Color gray2(0.2, 0.2, 0.2);
+//    Color gray3(0.3, 0.3, 0.3);
+//    Color red(1, 0, 0);
+//    [&]
+//    (const Texture& twist)
+//    {
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
+//        Texture::displayAndFile(twist
+//                                , path + "Twist");
+//        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
+//                                              Vec2(), twist, gray2)
+//                                , path + "LotsOfButtons_1");
+//        Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.025,
+//                                              Vec2(), twist, gray2)
+//                                , path + "LotsOfButtons_2");
+//    }
+//    (Twist(7, 9, Vec2(),
+//           SliceToRadial(Vec2(0, 0.318), Vec2(),
+//                         Grating(Vec2(0, -0.1), red,
+//                                 Vec2(0, +0.1), gray3,
+//                                 0.3))));
+    
+    
+//    // testing soft_edge_width change Apr 7
+//    Texture::displayAndFile(LotsOfSpots(0.79, 0.1, 0.6, 0.5,
+//                                        Color(1,1,1), Color()));
+//    Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 1, 0.05,
+//                                        Color(1,1,1), Color()));
+
+    
+    // testing button_center Apr 7
+//        [&]
+//        (const Texture& quarters)
+//        {
+//            Texture::displayAndFile(quarters);
+//            Texture::displayAndFile(LotsOfButtons(0.8, 0.05, 0.5, 0.02,
+//                                                  Vec2(0.5, 0.5),
+//                                                  quarters,
+//    //                                              Color(0.5, 0.5, 0.5)));
+//                                                  Color(0.8, 0.2, 0.4)));
+//        }
+//    //    (Add(Gradation(Vec2(0.50, 0.50), Color(0, 1, 0),
+//    //                   Vec2(0.55, 0.55), Color()),
+//    //         Gradation(Vec2(0.50, 0.50), Color(0, 0, 1),
+//    //                   Vec2(0.55, 0.45), Color())));
+//    //    (Add(Gradation(Vec2(0.50, 0.50), Color::gray(0.2),
+//    //                   Vec2(0.51, 0.51), Color::gray(0.4)),
+//    //         Gradation(Vec2(0.50, 0.50), Color::gray(0.2),
+//    //                   Vec2(0.51, 0.49), Color::gray(0.4))));
+//    //    (Add(Gradation(Vec2(0.49, 0.49), Color::gray(0.2),
+//    //                   Vec2(0.51, 0.51), Color::gray(0.4)),
+//    //         Gradation(Vec2(0.51, 0.49), Color::gray(0.2),
+//    //                   Vec2(0.49, 0.51), Color::gray(0.4))));
+//        (Add(Gradation(Vec2(0.49, 0.49), Color(0, 0.3, 0),
+//                       Vec2(0.51, 0.51), Color(0, 0.8, 0)),
+//             Gradation(Vec2(0.51, 0.49), Color(0, 0, 0.3),
+//                       Vec2(0.49, 0.51), Color(0, 0, 0.8))));
+    
+//            [&]
+//            (const Texture& quarters)
+//            {
+//                Texture::displayAndFile(quarters);
+//    //            Texture::displayAndFile(LotsOfButtons(0.8, 0.05, 0.5, 0.02,
+//    //                                                  Vec2(0.5, 0.5),
+//    //                                                  quarters,
+//    //                                                  Color(0.3, 0.3, 0.3)));
+//                Texture::displayAndFile(LotsOfButtons(0.75, 0.04, 0.4, 0.02,
+//                                                      Vec2(0.5, 0.5),
+//                                                      quarters,
+//                                                      Color(0.3, 0.3, 0.3)));
+//            }
+//            (Add(Gradation(Vec2(0.49, 0.49), Color(0, 0.4, 0),
+//                           Vec2(0.51, 0.51), Color(0.4, 0.4, 0.4)),
+//                 Gradation(Vec2(0.51, 0.49), Color(0, 0, 0.4),
+//                           Vec2(0.49, 0.51), Color(0.4, 0.4, 0.4))));
+
+    Vec2 p1(-0.01, 0);
+    Vec2 p2(+0.01, 0);
+    float a3 = 2 * pi / 3;
     [&]
-    (const Texture& twist)
+    (const Texture& sixths)
     {
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
-        Texture::displayAndFile(twist
-                                , path + "Twist");
-        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
-                                              Vec2(), twist, gray2)
-                                , path + "LotsOfButtons_1");
-        Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.025,
-                                              Vec2(), twist, gray2)
-                                , path + "LotsOfButtons_2");
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
+        Texture::displayAndFile(sixths
+                                , path + "sixths");
+        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+                                              Vec2(0.5, 0.5),
+                                              sixths,
+                                              Color(0.3, 0.3, 0.3))
+                                , path + "LotsOfButtons_offset");
     }
-    (Twist(7, 9, Vec2(),
-           SliceToRadial(Vec2(0, 0.318), Vec2(),
-                         Grating(Vec2(0, -0.1), red,
-                                 Vec2(0, +0.1), gray3,
-                                 0.3))));
-    
-    
-    Texture::displayAndFile(LotsOfSpots(0.79, 0.1, 0.6, 0.5,
-                                        Color(1,1,1), Color()));
-    Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 1, 0.05,
-                                        Color(1,1,1), Color()));
+    (Translate(Vec2(0.5, 0.5),
+               Add(Gradation(p1, Color(0.3, 0.1, 0.1),
+                             p2, Color(0.3, 0.3, 0.3)),
+                   Add(Gradation(p1.rotate(a3), Color(0.1, 0.3, 0.1),
+                                 p2.rotate(a3), Color(0.3, 0.3, 0.3)),
+                       Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
+                                 p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3))))));
+
 
     
     Texture::waitKey();

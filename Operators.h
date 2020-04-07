@@ -1143,7 +1143,6 @@ private:
     const Texture& color_texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // This version takes a "button_center" and "button_texture". The region of
 // button_texture near button_center is copied into each of the spots. A color
 // is given for the background.
@@ -1168,17 +1167,15 @@ public:
         Vec2 spot_center = das.first.position;
         float spot_radius = das.first.radius;
         float dist_from_spot = (position - spot_center).length();
+        Vec2 button_sample_point = position + button_center - spot_center;
         return (dist_from_spot > spot_radius ?
                 background_color :
                 interpolate(matte,
                             background_color,
-                            button_texture.getColor(position - spot_center)));
+                            button_texture.getColor(button_sample_point)));
     }
 private:
-//    const Texture& color_texture;
     Vec2 button_center;
     const Texture& button_texture;
     const Color background_color;
-
 };
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
