@@ -1212,11 +1212,42 @@ int main(int argc, const char * argv[])
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
     Color c(0, 0.8, 1);
     Color m(0.8, 0, 0.8);
-    //                                  den  min   max  soft  colors
-    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m),
-                            path + "LotsOfSpots_with_color");
+//    //                                  den  min   max  soft  colors
+//    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m),
+//                            ""); // path + "LotsOfSpots_with_color");
 
-    
+//    Texture::displayAndFile(Scale(0.2, ColorNoise(1.2, Vec2(3, 4), 0.2)));
+//        Texture::displayAndFile(Scale(0.2,
+//                                      ColoredSpots(0.5, 0.1, .15, 0.1,
+//    //                                               ColorNoise(1.2, Vec2(3, 4), 0.2),
+//                                                   ColorNoise(2.5, Vec2(3, 4), 0.2),
+//    //                                               Color())));
+//                                                   Color::gray(0.5))));
+
+//        Texture::displayAndFile(ColoredSpots(0.7, 0.02, 0.2, 0.01,
+//    //                                         ColorNoise(1.2, Vec2(3, 4), 0.2),
+//    //                                         ColorNoise(0.24, Vec2(3, 4), 0.2),
+//                                             ColorNoise(0.5, Vec2(3, 4), 0.2),
+//                                             Color::gray(0.4)));
+
+//        Texture::displayAndFile(Scale(0.2, ColorNoise(2.5, Vec2(3, 4), 0.2)));
+//        Texture::displayAndFile(Scale(0.2,
+//    //                                  ColoredSpots(0.5, 0.1, .15, 0.1,
+//                                      ColoredSpots(0.5, 0.2, 0.3, 0.05,
+//                                                   ColorNoise(2.5, Vec2(3, 4), 0.2),
+//                                                   Color::gray(0.3))));
+
+    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
+    AdjustSaturation cn(1.2, cn0);
+    Texture::displayAndFile(Scale(0.2, cn)
+                            ); //, path + "ColorNoise");
+    Texture::displayAndFile(Scale(0.2,
+                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
+                                               cn,
+                                               Color::gray(0.5)))
+                            ); //, path + "ColoredSpots");
+
+                            
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

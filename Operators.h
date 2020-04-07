@@ -1010,29 +1010,44 @@ private:
 // (http://www.red3d.com/cwr/texsyn/diary.html#20100209) was also a nice idea,
 // sampling spot colors from another texture.
 //
-class LotsOfSpots : public Operator
+// Basic geometric framework is in base class:
+//     LotsOfSpotsBase(density, min_r, max_r, soft)
+// Derived from that are:
+//     LotsOfSpots(density, min_r, max_r, soft, spot_color, bg_color)
+//     ColoredSpots(density, min_r, max_r, soft, color_texture, bg_color)
+//
+class LotsOfSpotsBase : public Operator
 {
 public:
-    LotsOfSpots(float _spot_density,
-                float _min_radius,
-                float _max_radius,
-                float _soft_edge_width,
-                Color _spot_color,
-                Color _background_color)
+    LotsOfSpotsBase(float _spot_density,
+                    float _min_radius,
+                    float _max_radius,
+                    float _soft_edge_width)
       : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
-        soft_edge_width(std::min(_soft_edge_width, min_radius / 2)),
-        spot_color(_spot_color),
-        background_color(_background_color)
+        soft_edge_width(std::min(_soft_edge_width, min_radius / 2))
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
         adjustOverlappingSpots();
     }
-    Color getColor(Vec2 position) const override
+    // Represents a single spot
+    class Dot
+    {
+    public:
+        Dot(){}
+        Dot(float r, Vec2 p) : radius(r), position(p) {}
+        float area() const { return pi * sq(radius); }
+        float radius = 0;
+        Vec2 position;
+    };
+    // Find nearest spot (Dot) and the soft-edged opacity at "position".
+    typedef std::pair<Dot, float> DotAndSoft;
+    DotAndSoft getSpot(Vec2 position) const
     {
         float gray_level = 0;
+        Dot nearest_spot;
         Vec2 tiled_pos = wrapToCenterTile(position);
         for (auto& spot : spots)
         {
@@ -1048,19 +1063,12 @@ public:
                 // Sinusoidal interpolation between inner and outer colors.
                 float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
                 gray_level = std::max(gray_level, spot_level);
+                nearest_spot = spot;
             }
         }
-        return interpolate(gray_level, background_color, spot_color);
+        return std::make_pair(nearest_spot, gray_level);
     }
 private:
-    class Dot
-    {
-    public:
-        Dot(float r, Vec2 p) : radius(r), position(p) {}
-        float area() const { return pi * sq(radius); }
-        float radius = 0;
-        Vec2 position;
-    };
     // Insert random spots until density threshold is met. Positions are
     // uniformly distributed across center tile. Radii are chosen from interval
     // [min_radius, max_radius] with a preference for smaller values.
@@ -1083,6 +1091,52 @@ private:
     const float min_radius;
     const float max_radius;
     const float soft_edge_width;
+};
+
+// This version takes a color for the spots and another for the background.
+class LotsOfSpots : public LotsOfSpotsBase
+{
+public:
+    LotsOfSpots(float _spot_density,
+                float _min_radius,
+                float _max_radius,
+                float _soft_edge_width,
+                Color _spot_color,
+                Color _background_color)
+      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+        spot_color(_spot_color),
+        background_color(_background_color) {}
+    Color getColor(Vec2 position) const override
+    {
+        DotAndSoft das = getSpot(position);
+        return interpolate(das.second, background_color, spot_color);
+    }
+private:
     const Color spot_color;
     const Color background_color;
+};
+
+// This version takes a color for the spots and another for the background.
+class ColoredSpots : public LotsOfSpotsBase
+{
+public:
+    ColoredSpots(float _spot_density,
+                 float _min_radius,
+                 float _max_radius,
+                 float _soft_edge_width,
+                 const Texture& _color_texture,
+                 Color _background_color)
+      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+        color_texture(_color_texture),
+        background_color(_background_color) {}
+    Color getColor(Vec2 position) const override
+    {
+        DotAndSoft das = getSpot(position);
+        return interpolate(das.second,
+                           background_color,
+                           color_texture.getColor(das.first.position));
+    }
+private:
+    const Color background_color;
+    const Texture& color_texture;
 };

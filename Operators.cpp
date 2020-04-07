@@ -37,7 +37,7 @@ int Blur::sqrt_of_subsample_count = 11;
 // Insert random spots until density threshold is met. Positions are
 // uniformly distributed across center tile. Radii are chosen from interval
 // [min_radius, max_radius] with a preference for smaller values.
-void LotsOfSpots::insertRandomSpots()
+void LotsOfSpotsBase::insertRandomSpots()
 {
     float total_area = 0;
     float half = tile_size / 2;
@@ -62,7 +62,7 @@ void LotsOfSpots::insertRandomSpots()
 // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
 // away from each other along the line connecting their centers. The whole
 // process is repeated "move_count" times, or until no spots overlap.
-void LotsOfSpots::adjustOverlappingSpots()
+void LotsOfSpotsBase::adjustOverlappingSpots()
 {
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
@@ -103,7 +103,7 @@ void LotsOfSpots::adjustOverlappingSpots()
 // Given a reference point (say to be rendered), and the center of a Spot,
 // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
 // another tile) to "reference_point".
-Vec2 LotsOfSpots::nearestByTiling(Vec2 reference_point, Vec2 spot_center) const
+Vec2 LotsOfSpotsBase::nearestByTiling(Vec2 reference_point, Vec2 spot_center) const
 {
     Vec2 nearest_point;
     float nearest_distance = std::numeric_limits<float>::infinity();
@@ -124,7 +124,7 @@ Vec2 LotsOfSpots::nearestByTiling(Vec2 reference_point, Vec2 spot_center) const
 };
 
 // Given a position, find corresponding point on center tile, via fmod/wrap.
-Vec2 LotsOfSpots::wrapToCenterTile(Vec2 v) const
+Vec2 LotsOfSpotsBase::wrapToCenterTile(Vec2 v) const
 {
     float half = tile_size / 2;
     return Vec2(fmod_floor(v.x() + half, tile_size) - half,
