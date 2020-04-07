@@ -1140,3 +1140,43 @@ private:
     const Color background_color;
     const Texture& color_texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This version takes a "button_center" and "button_texture". The region of
+// button_texture near button_center is copied into each of the spots. A color
+// is given for the background.
+class LotsOfButtons : public LotsOfSpotsBase
+{
+public:
+    LotsOfButtons(float _spot_density,
+                  float _min_radius,
+                  float _max_radius,
+                  float _soft_edge_width,
+                  Vec2 _button_center,
+                  const Texture& _button_texture,
+                  Color _background_color)
+      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+        button_center(_button_center),
+        button_texture(_button_texture),
+        background_color(_background_color) {}
+    Color getColor(Vec2 position) const override
+    {
+        DotAndSoft das = getSpot(position);
+        float matte = das.second;
+        Vec2 spot_center = das.first.position;
+        float spot_radius = das.first.radius;
+        float dist_from_spot = (position - spot_center).length();
+        return (dist_from_spot > spot_radius ?
+                background_color :
+                interpolate(matte,
+                            background_color,
+                            button_texture.getColor(position - spot_center)));
+    }
+private:
+//    const Texture& color_texture;
+    Vec2 button_center;
+    const Texture& button_texture;
+    const Color background_color;
+
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

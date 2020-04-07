@@ -1237,17 +1237,39 @@ int main(int argc, const char * argv[])
 //                                                   ColorNoise(2.5, Vec2(3, 4), 0.2),
 //                                                   Color::gray(0.3))));
 
-    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
-    AdjustSaturation cn(1.2, cn0);
-    Texture::displayAndFile(Scale(0.2, cn)
-                            ); //, path + "ColorNoise");
-    Texture::displayAndFile(Scale(0.2,
-                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
-                                               cn,
-                                               Color::gray(0.5)))
-                            ); //, path + "ColoredSpots");
+//    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
+//    AdjustSaturation cn(1.2, cn0);
+//    Texture::displayAndFile(Scale(0.2, cn)
+//                            ); //, path + "ColorNoise");
+//    Texture::displayAndFile(Scale(0.2,
+//                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
+//                                               cn,
+//                                               Color::gray(0.5)))
+//                            ); //, path + "ColoredSpots");
 
-                            
+    
+    Color gray2(0.2, 0.2, 0.2);
+    Color gray3(0.3, 0.3, 0.3);
+    Color red(1, 0, 0);
+    [&]
+    (const Texture& twist)
+    {
+        Texture::displayAndFile(twist);
+        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.1,
+                                              Vec2(),
+                                              twist,
+                                              gray2));
+        Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.1,
+                                              Vec2(),
+                                              twist,
+                                              gray2));
+    }
+    (Twist(7, 9, Vec2(),
+           SliceToRadial(Vec2(0, 0.318), Vec2(),
+                         Grating(Vec2(0, -0.1), red,
+                                 Vec2(0, +0.1), gray3,
+                                 0.3))));
+    
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
