@@ -1247,7 +1247,7 @@ int main(int argc, const char * argv[])
 //                                               Color::gray(0.5)))
 //                            ); //, path + "ColoredSpots");
 
-    
+    // LotsOfButtons
     Color gray2(0.2, 0.2, 0.2);
     Color gray3(0.3, 0.3, 0.3);
     Color red(1, 0, 0);
@@ -1257,10 +1257,10 @@ int main(int argc, const char * argv[])
         std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200406_";
         Texture::displayAndFile(twist
                                 , path + "Twist");
-        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.1,
+        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
                                               Vec2(), twist, gray2)
                                 , path + "LotsOfButtons_1");
-        Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.1,
+        Texture::displayAndFile(LotsOfButtons(0.6, 0.05, 0.25, 0.025,
                                               Vec2(), twist, gray2)
                                 , path + "LotsOfButtons_2");
     }
@@ -1269,6 +1269,13 @@ int main(int argc, const char * argv[])
                          Grating(Vec2(0, -0.1), red,
                                  Vec2(0, +0.1), gray3,
                                  0.3))));
+    
+    
+    Texture::displayAndFile(LotsOfSpots(0.79, 0.1, 0.6, 0.5,
+                                        Color(1,1,1), Color()));
+    Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 1, 0.05,
+                                        Color(1,1,1), Color()));
+
     
     Texture::waitKey();
     

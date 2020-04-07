@@ -1028,7 +1028,7 @@ public:
       : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
-        soft_edge_width(std::min(_soft_edge_width, min_radius / 2))
+        soft_edge_width(_soft_edge_width)
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
@@ -1059,7 +1059,7 @@ public:
             float d = (tiled_pos - tiled_spot).length();
             if (d <= spot.radius)
             {
-                float inner = spot.radius - soft_edge_width;
+                float inner = std::max(0.0f, spot.radius - soft_edge_width);
                 // Interpolation fraction: 0 inside, 1 outside, ramp between.
                 float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
                 // Sinusoidal interpolation between inner and outer colors.
