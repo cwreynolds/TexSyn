@@ -1330,23 +1330,31 @@ int main(int argc, const char * argv[])
     [&]
     (const Texture& sixths)
     {
-        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
-        Texture::displayAndFile(sixths
-                                , path + "sixths");
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
+//        Texture::displayAndFile(sixths
+//                                ); // , path + "sixths");
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              0, // no rotation
+//                                              Color(0.3, 0.3, 0.3))
+//                                ); // , path + "LotsOfButtons_offset");
+        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200408_";
         Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
                                               Vec2(0.5, 0.5),
                                               sixths,
-                                              Color(0.3, 0.3, 0.3))
-                                , path + "LotsOfButtons_offset");
+                                              1, // random rotation
+                                              Color(0.3, 0.3, 0.3)),
+                                path + "LotsOfButtons_random_rotate");
+
     }
     (Translate(Vec2(0.5, 0.5),
-               Add(Gradation(p1, Color(0.3, 0.1, 0.1),
-                             p2, Color(0.3, 0.3, 0.3)),
+               Add(Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
+                             p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3)),
                    Add(Gradation(p1.rotate(a3), Color(0.1, 0.3, 0.1),
                                  p2.rotate(a3), Color(0.3, 0.3, 0.3)),
-                       Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
-                                 p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3))))));
-
+                       Gradation(p1,            Color(0.3, 0.1, 0.1),
+                                 p2,            Color(0.3, 0.3, 0.3))))));
 
     
     Texture::waitKey();

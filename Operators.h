@@ -1043,6 +1043,7 @@ public:
         float area() const { return pi * sq(radius); }
         float radius = 0;
         Vec2 position;
+        float angle = 0;
     };
     // Find nearest spot (Dot) and the soft-edged opacity at "position".
     typedef std::pair<Dot, float> DotAndSoft;
@@ -1070,11 +1071,12 @@ public:
         }
         return std::make_pair(nearest_spot, gray_level);
     }
-private:
     // Insert random spots until density threshold is met. Positions are
     // uniformly distributed across center tile. Radii are chosen from interval
     // [min_radius, max_radius] with a preference for smaller values.
     void insertRandomSpots();
+    void randomizeSpotRotations();
+    size_t seedForRandomSequence();
     // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
     // away from each other along the line connecting their centers. The whole
     // process is repeated "move_count" times, or until no spots overlap.
@@ -1085,7 +1087,7 @@ private:
     Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
     // Given a position, find corresponding point on center tile, via fmod/wrap.
     Vec2 wrapToCenterTile(Vec2 v) const;
-
+private:
     std::vector<Dot> spots;
     const float tile_size = 10;
     const int move_count = 200;
@@ -1155,11 +1157,16 @@ public:
                   float _soft_edge_width,
                   Vec2 _button_center,
                   const Texture& _button_texture,
+                  float _button_random_rotate,
                   Color _background_color)
       : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
         button_center(_button_center),
         button_texture(_button_texture),
-        background_color(_background_color) {}
+        button_random_rotate(_button_random_rotate),
+        background_color(_background_color)
+    {
+        if (button_random_rotate > 0.5) randomizeSpotRotations();
+    }
     Color getColor(Vec2 position) const override
     {
         DotAndSoft das = getSpot(position);
@@ -1167,7 +1174,8 @@ public:
         Vec2 spot_center = das.first.position;
         float spot_radius = das.first.radius;
         float dist_from_spot = (position - spot_center).length();
-        Vec2 button_sample_point = position + button_center - spot_center;
+        Vec2 rotated = (position - spot_center).rotate(das.first.angle);
+        Vec2 button_sample_point = button_center + rotated;
         return (dist_from_spot > spot_radius ?
                 background_color :
                 interpolate(matte,
@@ -1175,7 +1183,8 @@ public:
                             button_texture.getColor(button_sample_point)));
     }
 private:
-    Vec2 button_center;
+    const Vec2 button_center;
     const Texture& button_texture;
+    const float button_random_rotate;
     const Color background_color;
 };

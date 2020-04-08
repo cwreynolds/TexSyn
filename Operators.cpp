@@ -42,10 +42,7 @@ void LotsOfSpotsBase::insertRandomSpots()
     float total_area = 0;
     float half = tile_size / 2;
     // Seed the random number sequence from some operator parameters.
-    RandomSequence rs(hash_float(spot_density) ^
-                      hash_float(min_radius) ^
-                      hash_float(max_radius) ^
-                      hash_float(soft_edge_width));
+    RandomSequence rs(seedForRandomSequence());
     while (total_area < (spot_density * sq(tile_size)))
     {
         // Select radius, preferring the low end of the range.
@@ -57,6 +54,23 @@ void LotsOfSpotsBase::insertRandomSpots()
         total_area += spots.back().area();
     }
     debugPrint(spots.size());
+}
+
+void LotsOfSpotsBase::randomizeSpotRotations()
+{
+    // Seed the random number sequence from some operator parameters.
+    RandomSequence rs(seedForRandomSequence());
+    // Each spot gets a random rotation on [0, 2π]
+    for (auto& spot : spots) spot.angle = rs.frandom01() * pi * 2;
+}
+
+// Seed the random number sequence from some operator parameters.
+size_t LotsOfSpotsBase::seedForRandomSequence()
+{
+    return (hash_float(spot_density) ^
+            hash_float(min_radius) ^
+            hash_float(max_radius) ^
+            hash_float(soft_edge_width));
 }
 
 // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
