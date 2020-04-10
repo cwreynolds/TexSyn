@@ -8,6 +8,9 @@
 
 #pragma once
 #include "Texture.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <set>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class Operator : public Texture {};
 
@@ -1087,6 +1090,79 @@ public:
     Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
     // Given a position, find corresponding point on center tile, via fmod/wrap.
     Vec2 wrapToCenterTile(Vec2 v) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO experimental. Should be in utility? Use name Disk for Dot class?
+    // TODO -- OK to assume square for simplicty
+    // TODO -- move this and Dot/Disk out to Utility.h
+    // TODO -- separate out button_random_rotate to be fully in LotsOfButtons
+    //         do not store rotation in Disk
+    
+    class DiskOccupancyGrid
+    {
+    public:
+        DiskOccupancyGrid(float square_side_size, int grid_side_count)
+          : square_side_size_(square_side_size),
+            grid_side_count_(grid_side_count)
+        {
+            grid_.resize(grid_side_count);
+            for (auto& row : grid_) row.resize(grid_side_count);
+        }
+        //TODO insert()/delete() or insertDisk()/deleteDisk() ?
+        
+        
+        // TODO pass in a vector which is overwritten with all disks which overlap given point.
+        // TODO What about radius for point? two overloads?
+        void findNearbyDisks(Vec2 point, std::vector<Dot*>& disks)
+        {
+            // Treat point as a disk of zero radius.
+            findNearbyDisks(Dot(0, point), disks);
+        }
+        void findNearbyDisks(const Dot& query, std::vector<Dot*>& disks)
+        {
+            // Clear output argument.
+            disks.clear();
+            // Find min, max gird indices for bounding square of query disk.
+            int i_min = query.position.x() - query.radius;
+            int i_max = query.position.x() + query.radius;
+            int j_min = query.position.y() - query.radius;
+            int j_max = query.position.y() + query.radius;
+            
+            // Loop over those bounds (inclusively)
+            for (int i = i_min; i <= i_max; i++)
+            {
+                for (int j = j_min; j <= j_max; j++)
+                {
+                    // Each grid cell is an std::set of disk pointers
+                    // Add each pointer in the set to the output argument.
+                    for (auto& d : *getSetFromGrid(i, j))
+                    {
+                        disks.push_back(d);
+                    }
+                }
+            }
+        }
+        
+    private:
+        // Returns pointer to set of disk pointers at grid cell (i, j).
+        std::set<Dot*>* getSetFromGrid(int i, int j)
+        {
+            return &grid_.at(i).at(j);
+        }
+        
+        void insertSingle(int i, int j, Dot* d)
+        {
+            grid_.at(i).at(j).insert(d);
+        }
+        void eraseSingle(int i, int j, Dot* d)
+        {
+            grid_.at(i).at(j).erase(d);
+        }
+        const float square_side_size_;
+        const int grid_side_count_;
+        std::vector<std::vector<std::set<Dot*>>> grid_;
+    };
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     std::vector<Dot> spots;
     const float tile_size = 10;
