@@ -50,7 +50,7 @@ void LotsOfSpotsBase::insertRandomSpots()
         float i = (std::pow(k, 10) + (k / 2)) / 1.5;
         float radius = interpolate(i, min_radius, max_radius);
         Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
-        spots.push_back(Dot(radius, center));
+        spots.push_back(Disk(radius, center));
         total_area += spots.back().area();
     }
     debugPrint(spots.size());
