@@ -13,15 +13,19 @@
 #include "Utilities.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+//#include "Utilities.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#include <opencv2/imgproc.hpp>
-
-
-#pragma clang diagnostic pop
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wdocumentation"
+//#include <opencv2/core/core.hpp>
+//#include <opencv2/highgui/highgui.hpp>
+//
+//#include <opencv2/imgproc.hpp>
+//
+//
+//#pragma clang diagnostic pop
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = false;
@@ -1324,13 +1328,14 @@ int main(int argc, const char * argv[])
 //                 Gradation(Vec2(0.51, 0.49), Color(0, 0, 0.4),
 //                           Vec2(0.49, 0.51), Color(0.4, 0.4, 0.4))));
 
+/*
     Vec2 p1(-0.01, 0);
     Vec2 p2(+0.01, 0);
     float a3 = 2 * pi / 3;
     [&]
     (const Texture& sixths)
     {
-//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
+        //std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
         Texture::displayAndFile(sixths
                                 ); // , path + "sixths");
         Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
@@ -1358,7 +1363,57 @@ int main(int argc, const char * argv[])
 
     
     Texture::waitKey();
+*/
     
+//    DiskOccupancyGrid dog(10, 10);
+    DiskOccupancyGrid dog(Vec2(-5, -5), Vec2(5, 5), 10);
+//    Disk disk(1, Vec2(3,3));
+    Disk disk(4, Vec2(1, 1));
+
+//    for (int i = 3; i <= 4; i++)
+//    {
+//        for (int j = 3; j <= 4; j++)
+//        {
+//            dog.insertSingle(i, j, &disk);
+//        }
+//    }
+    
+    dog.insertDisk(disk);
+    
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            std::cout << dog.getSetFromGrid(i, j)->size();
+        }
+        std::cout << std::endl;
+    }
+    
+    std::cout << std::endl;
+    auto printDiskCountOfCell = [&](int i, int j)
+    {
+        std::cout << dog.getSetFromGrid(i, j)->size();
+        if (j == 9) std::cout << std::endl;
+    };
+    dog.applyToCellsInRect(0, 0, 9, 9, printDiskCountOfCell);
+    
+//    std::vector<Disk*> disks;
+//    dog.findNearbyDisks(Vec2(3, 3), disks);
+//    dog.findNearbyDisks(Vec2(3, 3), disks);
+    std::set<Disk*> disks;
+    dog.findNearbyDisks(Disk(100, Vec2(3, 3)), disks);
+    debugPrint(disks.size());
+//    debugPrint(disks.front());
+    debugPrint(*disks.begin());
+    debugPrint(&disk);
+    
+    dog.eraseDisk(disk);
+    dog.findNearbyDisks(Disk(100, Vec2(3, 3)), disks);
+    dog.applyToCellsInRect(0, 0, 9, 9, printDiskCountOfCell);
+    debugPrint(disks.size());
+
+
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

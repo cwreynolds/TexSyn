@@ -1040,49 +1040,130 @@ public:
 class DiskOccupancyGrid
 {
 public:
-    DiskOccupancyGrid(float square_side_size, int grid_side_count)
-      : square_side_size_(square_side_size),
+//    DiskOccupancyGrid(float square_side_size, int grid_side_count)
+//      : square_side_size_(square_side_size),
+//        grid_side_count_(grid_side_count)
+//    {
+//        grid_.resize(grid_side_count);
+//        for (auto& row : grid_) row.resize(grid_side_count);
+//    }
+  
+    DiskOccupancyGrid(Vec2 minXY,
+                      Vec2 maxXY,
+                      int grid_side_count)
+      : minXY_(minXY),
+        maxXY_(maxXY),
         grid_side_count_(grid_side_count)
     {
+        assert(((maxXY.x() - minXY.x()) == (maxXY.y() - minXY.y())) &&
+               "expecting square spatial dimentions");
         grid_.resize(grid_side_count);
         for (auto& row : grid_) row.resize(grid_side_count);
     }
+
     //TODO insert()/delete() or insertDisk()/deleteDisk() ?
     
+    void insertDisk(Disk& d)
+    {
+        // TODO maybe the first four lines should be on call that returns "Rect"
+        applyToCellsInRect(xToI(d.position.x() - d.radius),
+                           yToJ(d.position.y() - d.radius),
+                           xToI(d.position.x() + d.radius),
+                           yToJ(d.position.y() + d.radius),
+                           // Each grid cell is an std::set of disk pointers
+                           // Add each pointer in the set to the output argument.
+                           [&](int i, int j) { insertSingle(i, j, &d); });
+    }
+    void eraseDisk(Disk& d)
+    {
+        // TODO maybe the first four lines should be on call that returns "Rect"
+        applyToCellsInRect(xToI(d.position.x() - d.radius),
+                           yToJ(d.position.y() - d.radius),
+                           xToI(d.position.x() + d.radius),
+                           yToJ(d.position.y() + d.radius),
+                           // Each grid cell is an std::set of disk pointers
+                           // Add each pointer in the set to the output argument.
+                           [&](int i, int j) { eraseSingle(i, j, &d); });
+    }
+
     
-    // TODO pass in a vector which is overwritten with all disks which overlap given point.
-    // TODO What about radius for point? two overloads?
-    void findNearbyDisks(Vec2 point, std::vector<Disk*>& disks)
+    // TODO find "nearby" or "overlapping" or just "nearest
+    // TODO overloads for point or disk
+    // TODO pass in a set which is overwritten with all disks
+    //      which overlap given point.
+//    void findNearbyDisks(Vec2 point, std::vector<Disk*>& disks)
+    void findNearbyDisks(Vec2 point, std::set<Disk*>& disks)
     {
         // Treat point as a disk of zero radius.
         findNearbyDisks(Disk(0, point), disks);
     }
-    void findNearbyDisks(const Disk& query, std::vector<Disk*>& disks)
+//    void findNearbyDisks(const Disk& query, std::vector<Disk*>& disks)
+    void findNearbyDisks(const Disk& query, std::set<Disk*>& disks)
     {
         // Clear output argument.
         disks.clear();
-        // Find min, max gird indices for bounding square of query disk.
-        int i_min = query.position.x() - query.radius;
-        int i_max = query.position.x() + query.radius;
-        int j_min = query.position.y() - query.radius;
-        int j_max = query.position.y() + query.radius;
+//        // Find min, max gird indices for bounding square of query disk.
+//        int i_min = query.position.x() - query.radius;
+//        int i_max = query.position.x() + query.radius;
+//        int j_min = query.position.y() - query.radius;
+//        int j_max = query.position.y() + query.radius;
         
-        // Loop over those bounds (inclusively)
-        for (int i = i_min; i <= i_max; i++)
-        {
-            for (int j = j_min; j <= j_max; j++)
-            {
-                // Each grid cell is an std::set of disk pointers
-                // Add each pointer in the set to the output argument.
-                for (auto& d : *getSetFromGrid(i, j))
-                {
-                    disks.push_back(d);
-                }
-            }
-        }
+//        // Loop over those bounds (inclusively)
+//        for (int i = i_min; i <= i_max; i++)
+//        {
+//            for (int j = j_min; j <= j_max; j++)
+//            {
+//                // Each grid cell is an std::set of disk pointers
+//                // Add each pointer in the set to the output argument.
+//                for (auto& d : *getSetFromGrid(i, j))
+//                {
+//                    disks.push_back(d);
+//                }
+//            }
+//        }
+        
+        // TODO maybe the first four lines should be on call that returns "Rect"
+        applyToCellsInRect(xToI(query.position.x() - query.radius),
+                           yToJ(query.position.y() - query.radius),
+                           xToI(query.position.x() + query.radius),
+                           yToJ(query.position.y() + query.radius),
+                           // Each grid cell is an std::set of disk pointers
+                           // Add each pointer in the set to the output argument.
+                           [&](int i, int j)
+                           {
+                                std::cout << "x,y=" << i << "," << j;
+                                std::cout << " " << getSetFromGrid(i, j)->size()
+                                    << std::endl;
+                                for (auto& d : *getSetFromGrid(i, j))
+//                                    disks.push_back(d);
+                                    disks.insert(d);
+                           });
     }
     
-private:
+    int xToI(float x) const
+    {
+        return int(remapIntervalClip(x, minXY_.x(), maxXY_.x(),
+                                     0, grid_side_count_ - 1));
+    }
+    int yToJ(float y) const
+    {
+        return int(remapIntervalClip(y, minXY_.y(), maxXY_.y(),
+                                     0, grid_side_count_ - 1));
+    }
+
+    // Apply given function to each (i,j) cell within given inclusive bounds.
+    void applyToCellsInRect(int i_min,
+                            int j_min,
+                            int i_max,
+                            int j_max,
+                            std::function<void(int i, int j)> function)
+    {
+        for (int i = i_min; i <= i_max; i++)
+            for (int j = j_min; j <= j_max; j++)
+                function(i, j);
+    }
+    
+//private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
     std::set<Disk*>* getSetFromGrid(int i, int j)
     {
@@ -1097,7 +1178,11 @@ private:
     {
         grid_.at(i).at(j).erase(d);
     }
-    const float square_side_size_;
+private:
+//    const float square_side_size_;
+    
+    const Vec2 minXY_;
+    const Vec2 maxXY_;
     const int grid_side_count_;
     std::vector<std::vector<std::set<Disk*>>> grid_;
 };
