@@ -1060,12 +1060,11 @@ public:
         grid_.resize(grid_side_count);
         for (auto& row : grid_) row.resize(grid_side_count);
     }
-
-    //TODO insert()/delete() or insertDisk()/deleteDisk() ?
     
     void insertDisk(Disk& d)
     {
         // TODO maybe the first four lines should be on call that returns "Rect"
+        //      or maybe an overload to applyToCellsInRect for pos and radius
         applyToCellsInRect(xToI(d.position.x() - d.radius),
                            yToJ(d.position.y() - d.radius),
                            xToI(d.position.x() + d.radius),
@@ -1077,6 +1076,7 @@ public:
     void eraseDisk(Disk& d)
     {
         // TODO maybe the first four lines should be on call that returns "Rect"
+        //      or maybe an overload to applyToCellsInRect for pos and radius
         applyToCellsInRect(xToI(d.position.x() - d.radius),
                            yToJ(d.position.y() - d.radius),
                            xToI(d.position.x() + d.radius),
@@ -1123,6 +1123,7 @@ public:
 //        }
         
         // TODO maybe the first four lines should be on call that returns "Rect"
+        //      or maybe an overload to applyToCellsInRect for pos and radius
         applyToCellsInRect(xToI(query.position.x() - query.radius),
                            yToJ(query.position.y() - query.radius),
                            xToI(query.position.x() + query.radius),
@@ -1131,9 +1132,9 @@ public:
                            // Add each pointer in the set to the output argument.
                            [&](int i, int j)
                            {
-                                std::cout << "x,y=" << i << "," << j;
-                                std::cout << " " << getSetFromGrid(i, j)->size()
-                                    << std::endl;
+//                                std::cout << "x,y=" << i << "," << j;
+//                                std::cout << " " << getSetFromGrid(i, j)->size()
+//                                    << std::endl;
                                 for (auto& d : *getSetFromGrid(i, j))
 //                                    disks.push_back(d);
                                     disks.insert(d);
@@ -1144,11 +1145,23 @@ public:
     {
         return int(remapIntervalClip(x, minXY_.x(), maxXY_.x(),
                                      0, grid_side_count_ - 1));
+//        return std::min(int(remapIntervalClip(x, minXY_.x(), maxXY_.x(),
+//                                              0, grid_side_count_)),
+//                        grid_side_count_ - 1);
+        return (int(remapIntervalClip(x, minXY_.x(), maxXY_.x(),
+                                      0, grid_side_count_)) %
+                (grid_side_count_ - 1));
     }
     int yToJ(float y) const
     {
         return int(remapIntervalClip(y, minXY_.y(), maxXY_.y(),
                                      0, grid_side_count_ - 1));
+//        return std::min(int(remapIntervalClip(y, minXY_.y(), maxXY_.y(),
+//                                               0, grid_side_count_ - 1)),
+//                        grid_side_count_ - 1);
+//        return (int(remapIntervalClip(y, minXY_.y(), maxXY_.y(),
+//                                      0, grid_side_count_)) %
+//                (grid_side_count_ - 1));
     }
 
     // Apply given function to each (i,j) cell within given inclusive bounds.
@@ -1186,6 +1199,7 @@ private:
     const int grid_side_count_;
     std::vector<std::vector<std::set<Disk*>>> grid_;
 };
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1225,6 +1239,25 @@ public:
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
         adjustOverlappingSpots();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        for (Disk& spot : spots) test_dog.insertDisk(spot);
+        // TODO Apr 12, 2020
+        //      this makes it tile properly for rendering
+        //      but probably not the correct overall solution
+        for (Disk& spot : spots)
+        {
+            Disk saved_spot = spot;
+            for (float x : {-tile_size, 0.0f, tile_size})
+            {
+                for (float y : {-tile_size, 0.0f, tile_size})
+                {
+                    spot.position = saved_spot.position + Vec2(x, y);
+                    test_dog.insertDisk(spot);
+                }
+            }
+            spot = saved_spot;
+        }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    // Represents a single spot
@@ -1246,8 +1279,19 @@ public:
         float gray_level = 0;
         Disk nearest_spot;
         Vec2 tiled_pos = wrapToCenterTile(position);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+#if 0
         for (auto& spot : spots)
         {
+#else
+        std::set<Disk*> disks;
+//        test_dog.findNearbyDisks(position, disks);
+        test_dog.findNearbyDisks(tiled_pos, disks);
+        for (auto& disk : disks)
+        {
+            Disk spot = *disk;
+#endif
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
             Vec2 tiled_spot = nearestByTiling(tiled_pos, spot.position);
             // Distance from sample position to spot center. Ignore if too far.
@@ -1356,6 +1400,10 @@ public:
 //    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     std::vector<Disk> spots;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    DiskOccupancyGrid disk_occupancy_grid();
+    static DiskOccupancyGrid test_dog;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const float tile_size = 10;
     const int move_count = 200;
     const float spot_density;

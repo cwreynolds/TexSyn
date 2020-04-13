@@ -1411,7 +1411,27 @@ int main(int argc, const char * argv[])
     dog.findNearbyDisks(Disk(100, Vec2(3, 3)), disks);
     dog.applyToCellsInRect(0, 0, 9, 9, printDiskCountOfCell);
     debugPrint(disks.size());
+    
+//    Color white(1, 1, 1);
+//    Color black(0, 0, 0);
+//    Texture::displayAndFile(LotsOfSpots(0.8, 0.04, 0.4, 0.02, white, black));
+    
+//    Color c(0.0, 0.8, 1.0);
+//    Color m(0.8, 0.0, 0.8);
+//    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
 
+    Color c(0.0, 0.8, 1.0);
+    Color m(0.8, 0.0, 0.8);
+//    Texture::displayAndFile(Scale(0.13,
+//                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)));
+    
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200412_";
+    Texture::displayAndFile(Scale(0.13,
+                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
+                            ); // , path + "oops2");
+
+
+    Texture::waitKey();
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

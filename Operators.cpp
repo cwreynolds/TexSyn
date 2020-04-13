@@ -144,3 +144,7 @@ Vec2 LotsOfSpotsBase::wrapToCenterTile(Vec2 v) const
     return Vec2(fmod_floor(v.x() + half, tile_size) - half,
                 fmod_floor(v.y() + half, tile_size) - half);
 }
+
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+DiskOccupancyGrid LotsOfSpotsBase::test_dog(Vec2(-5, -5), Vec2(5, 5), 10);
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
