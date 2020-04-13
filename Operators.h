@@ -1061,26 +1061,74 @@ public:
         for (auto& row : grid_) row.resize(grid_side_count);
     }
     
+//    void insertDisk(Disk& d)
+//    {
+//        // TODO maybe the first four lines should be on call that returns "Rect"
+//        //      or maybe an overload to applyToCellsInRect for pos and radius
+//        applyToCellsInRect(xToI(d.position.x() - d.radius),
+//                           yToJ(d.position.y() - d.radius),
+//                           xToI(d.position.x() + d.radius),
+//                           yToJ(d.position.y() + d.radius),
+//                           // Each grid cell is an std::set of disk pointers
+//                           // Add each pointer in the set to the output argument.
+//                           [&](int i, int j) { insertSingle(i, j, &d); });
+//    }
+//    void eraseDisk(Disk& d)
+//    {
+//        // TODO maybe the first four lines should be on call that returns "Rect"
+//        //      or maybe an overload to applyToCellsInRect for pos and radius
+//        applyToCellsInRect(xToI(d.position.x() - d.radius),
+//                           yToJ(d.position.y() - d.radius),
+//                           xToI(d.position.x() + d.radius),
+//                           yToJ(d.position.y() + d.radius),
+//                           // Each grid cell is an std::set of disk pointers
+//                           // Add each pointer in the set to the output argument.
+//                           [&](int i, int j) { eraseSingle(i, j, &d); });
+//    }
+    
+    void insertDiskWrap(Disk& d)
+    {
+        Vec2 p = d.position;
+        float r = d.radius;
+        
+//        Vec2 wrap_x((tiled_pos.x() > 0) ? -tile_size : tile_size, 0);
+//        Vec2 wrap_y(0, (tiled_pos.y() > 0) ? -tile_size : tile_size);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_x, disks);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_y, disks);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_x + wrap_y, disks);
+
+        float tile_size = maxXY_.x() - minXY_.x();
+        
+        Vec2 wrap_x((p.x() > 0) ? -tile_size : tile_size, 0);
+        Vec2 wrap_y(0, (p.y() > 0) ? -tile_size : tile_size);
+
+        auto function = [&](int i, int j) { insertSingle(i, j, &d); };
+                
+        applyToCellsInRect(p,                   r, function);
+        applyToCellsInRect(p + wrap_x,          r, function);
+        applyToCellsInRect(p + wrap_y,          r, function);
+        applyToCellsInRect(p + wrap_x + wrap_y, r, function);
+
+        
+    }
+    void eraseDiskWrap(Disk& d)
+    {
+        std::cout << "eraseDiskWrap() not implemented" << std::endl;
+    }
+
+
     void insertDisk(Disk& d)
     {
-        // TODO maybe the first four lines should be on call that returns "Rect"
-        //      or maybe an overload to applyToCellsInRect for pos and radius
-        applyToCellsInRect(xToI(d.position.x() - d.radius),
-                           yToJ(d.position.y() - d.radius),
-                           xToI(d.position.x() + d.radius),
-                           yToJ(d.position.y() + d.radius),
+        applyToCellsInRect(d.position,
+                           d.radius,
                            // Each grid cell is an std::set of disk pointers
                            // Add each pointer in the set to the output argument.
                            [&](int i, int j) { insertSingle(i, j, &d); });
     }
     void eraseDisk(Disk& d)
     {
-        // TODO maybe the first four lines should be on call that returns "Rect"
-        //      or maybe an overload to applyToCellsInRect for pos and radius
-        applyToCellsInRect(xToI(d.position.x() - d.radius),
-                           yToJ(d.position.y() - d.radius),
-                           xToI(d.position.x() + d.radius),
-                           yToJ(d.position.y() + d.radius),
+        applyToCellsInRect(d.position,
+                           d.radius,
                            // Each grid cell is an std::set of disk pointers
                            // Add each pointer in the set to the output argument.
                            [&](int i, int j) { eraseSingle(i, j, &d); });
@@ -1167,6 +1215,19 @@ public:
 //                (grid_side_count_ - 1));
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Apply given function to each cell in bounding square of center and radius.
+    void applyToCellsInRect(Vec2 center,
+                            float radius,
+                            std::function<void(int i, int j)> function)
+    {
+        applyToCellsInRect(xToI(center.x() - radius),
+                           yToJ(center.y() - radius),
+                           xToI(center.x() + radius),
+                           yToJ(center.y() + radius),
+                           function);
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Apply given function to each (i,j) cell within given inclusive bounds.
     void applyToCellsInRect(int i_min,
                             int j_min,
@@ -1243,7 +1304,7 @@ public:
         insertRandomSpots();
         adjustOverlappingSpots();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        for (Disk& spot : spots) test_dog.insertDisk(spot);
+//        for (Disk& spot : spots) test_dog.insertDisk(spot);
 //        // TODO Apr 12, 2020
 //        //      this makes it tile properly for rendering
 //        //      but probably not the correct overall solution
@@ -1260,6 +1321,9 @@ public:
 //            }
 //            spot = saved_spot;
 //        }
+        
+        for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
+
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1290,12 +1354,12 @@ public:
         std::set<Disk*> disks;
         test_dog.findNearbyDisks(tiled_pos, disks);
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        // TODO just a quick and dirty way to do this, think more if kept
-        Vec2 wrap_x((tiled_pos.x() > 0) ? -tile_size : tile_size, 0);
-        Vec2 wrap_y(0, (tiled_pos.y() > 0) ? -tile_size : tile_size);
-        test_dog.findNearbyDisks(tiled_pos + wrap_x, disks);
-        test_dog.findNearbyDisks(tiled_pos + wrap_y, disks);
-        test_dog.findNearbyDisks(tiled_pos + wrap_x + wrap_y, disks);
+//        // TODO just a quick and dirty way to do this, think more if kept
+//        Vec2 wrap_x((tiled_pos.x() > 0) ? -tile_size : tile_size, 0);
+//        Vec2 wrap_y(0, (tiled_pos.y() > 0) ? -tile_size : tile_size);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_x, disks);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_y, disks);
+//        test_dog.findNearbyDisks(tiled_pos + wrap_x + wrap_y, disks);
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         for (auto& disk : disks)
         {
