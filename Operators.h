@@ -1100,8 +1100,11 @@ public:
 //    void findNearbyDisks(const Disk& query, std::vector<Disk*>& disks)
     void findNearbyDisks(const Disk& query, std::set<Disk*>& disks)
     {
-        // Clear output argument.
-        disks.clear();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // Clear output argument.
+//        disks.clear();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
 //        // Find min, max gird indices for bounding square of query disk.
 //        int i_min = query.position.x() - query.radius;
 //        int i_max = query.position.x() + query.radius;
@@ -1240,23 +1243,23 @@ public:
         insertRandomSpots();
         adjustOverlappingSpots();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        for (Disk& spot : spots) test_dog.insertDisk(spot);
-        // TODO Apr 12, 2020
-        //      this makes it tile properly for rendering
-        //      but probably not the correct overall solution
-        for (Disk& spot : spots)
-        {
-            Disk saved_spot = spot;
-            for (float x : {-tile_size, 0.0f, tile_size})
-            {
-                for (float y : {-tile_size, 0.0f, tile_size})
-                {
-                    spot.position = saved_spot.position + Vec2(x, y);
-                    test_dog.insertDisk(spot);
-                }
-            }
-            spot = saved_spot;
-        }
+        for (Disk& spot : spots) test_dog.insertDisk(spot);
+//        // TODO Apr 12, 2020
+//        //      this makes it tile properly for rendering
+//        //      but probably not the correct overall solution
+//        for (Disk& spot : spots)
+//        {
+//            Disk saved_spot = spot;
+//            for (float x : {-tile_size, 0.0f, tile_size})
+//            {
+//                for (float y : {-tile_size, 0.0f, tile_size})
+//                {
+//                    spot.position = saved_spot.position + Vec2(x, y);
+//                    test_dog.insertDisk(spot);
+//                }
+//            }
+//            spot = saved_spot;
+//        }
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1285,8 +1288,15 @@ public:
         {
 #else
         std::set<Disk*> disks;
-//        test_dog.findNearbyDisks(position, disks);
         test_dog.findNearbyDisks(tiled_pos, disks);
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // TODO just a quick and dirty way to do this, think more if kept
+        Vec2 wrap_x((tiled_pos.x() > 0) ? -tile_size : tile_size, 0);
+        Vec2 wrap_y(0, (tiled_pos.y() > 0) ? -tile_size : tile_size);
+        test_dog.findNearbyDisks(tiled_pos + wrap_x, disks);
+        test_dog.findNearbyDisks(tiled_pos + wrap_y, disks);
+        test_dog.findNearbyDisks(tiled_pos + wrap_x + wrap_y, disks);
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         for (auto& disk : disks)
         {
             Disk spot = *disk;
