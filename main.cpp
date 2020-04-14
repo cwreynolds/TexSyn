@@ -1433,19 +1433,19 @@ int main(int argc, const char * argv[])
 
     
     
-    // April 13, 2020
-    std::cout << "April 13, 2020" << std::endl;
-    DiskOccupancyGrid grid(Vec2(-5, -5), Vec2(5, 5), 10);
-    Disk d1(1, Vec2(3, 3));
-    Disk d2(2, Vec2(-3, -3));
-    grid.insertDiskWrap(d1);
-    grid.insertDiskWrap(d2);
-    grid.applyToCellsInRect(0, 0, 9, 9,
-                            [&](int i, int j)
-                            {
-                                std::cout << grid.getSetFromGrid(i, j)->size();
-                                if (j == 9) std::cout << std::endl;
-                            });
+//    // April 13, 2020
+//    std::cout << "April 13, 2020" << std::endl;
+//    DiskOccupancyGrid grid(Vec2(-5, -5), Vec2(5, 5), 10);
+//    Disk d1(1, Vec2(3, 3));
+//    Disk d2(2, Vec2(-3, -3));
+//    grid.insertDiskWrap(d1);
+//    grid.insertDiskWrap(d2);
+//    grid.applyToCellsInRect(0, 0, 9, 9,
+//                            [&](int i, int j)
+//                            {
+//                                std::cout << grid.getSetFromGrid(i, j)->size();
+//                                if (j == 9) std::cout << std::endl;
+//                            });
 
 
     Texture::displayAndFile(Scale(0.13,
