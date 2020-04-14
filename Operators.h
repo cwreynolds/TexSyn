@@ -1221,11 +1221,50 @@ public:
                             float radius,
                             std::function<void(int i, int j)> function)
     {
-        applyToCellsInRect(xToI(center.x() - radius),
-                           yToJ(center.y() - radius),
-                           xToI(center.x() + radius),
-                           yToJ(center.y() + radius),
-                           function);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        applyToCellsInRect(xToI(center.x() - radius),
+//                           yToJ(center.y() - radius),
+//                           xToI(center.x() + radius),
+//                           yToJ(center.y() + radius),
+//                           function);
+        
+//    //        float x0 = center.x() - radius;
+//    //        float y0 = center.y() - radius;
+//    //        float x1 = center.x() + radius;
+//    //        float y1 = center.y() + radius;
+//            float x0 = center.x() + radius;
+//            float y0 = center.y() + radius;
+//            float x1 = center.x() - radius;
+//            float y1 = center.y() - radius;
+//
+//            if ((x0 >= minXY_.x()) &&
+//                (y0 >= minXY_.y()) &&
+//                (x1 <= maxXY_.x()) &&
+//                (y1 <= maxXY_.y()))
+//            {
+//    //            applyToCellsInRect(xToI(x0), yToJ(y0), xToI(x1), yToJ(y1), function);
+//
+//                applyToCellsInRect(xToI(center.x() - radius),
+//                                   yToJ(center.y() - radius),
+//                                   xToI(center.x() + radius),
+//                                   yToJ(center.y() + radius),
+//                                   function);
+
+        // Does disk overlap with grid?
+        bool overlap = ((center.x() + radius >= minXY_.x()) &&
+                        (center.y() + radius >= minXY_.y()) &&
+                        (center.x() - radius <= maxXY_.x()) &&
+                        (center.y() - radius <= maxXY_.y()));
+        
+        if (overlap)
+        {
+            applyToCellsInRect(xToI(center.x() - radius),
+                               yToJ(center.y() - radius),
+                               xToI(center.x() + radius),
+                               yToJ(center.y() + radius),
+                               function);
+        }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Apply given function to each (i,j) cell within given inclusive bounds.
@@ -1235,6 +1274,11 @@ public:
                             int j_max,
                             std::function<void(int i, int j)> function)
     {
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        std::cout << "i_min,j_min,i_max,j_max ";
+//        std::cout << i_min << " " << j_min << " " << i_max << " " << j_max;
+//        std::cout << std::endl;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         for (int i = i_min; i <= i_max; i++)
             for (int j = j_min; j <= j_max; j++)
                 function(i, j);

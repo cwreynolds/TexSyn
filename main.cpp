@@ -1378,6 +1378,7 @@ int main(int argc, const char * argv[])
 //        }
 //    }
     
+    /*
     dog.insertDisk(disk);
     
     for (int i = 0; i < 10; i++)
@@ -1397,13 +1398,9 @@ int main(int argc, const char * argv[])
     };
     dog.applyToCellsInRect(0, 0, 9, 9, printDiskCountOfCell);
     
-//    std::vector<Disk*> disks;
-//    dog.findNearbyDisks(Vec2(3, 3), disks);
-//    dog.findNearbyDisks(Vec2(3, 3), disks);
     std::set<Disk*> disks;
     dog.findNearbyDisks(Disk(100, Vec2(3, 3)), disks);
     debugPrint(disks.size());
-//    debugPrint(disks.front());
     debugPrint(*disks.begin());
     debugPrint(&disk);
     
@@ -1411,6 +1408,7 @@ int main(int argc, const char * argv[])
     dog.findNearbyDisks(Disk(100, Vec2(3, 3)), disks);
     dog.applyToCellsInRect(0, 0, 9, 9, printDiskCountOfCell);
     debugPrint(disks.size());
+    */
     
 //    Color white(1, 1, 1);
 //    Color black(0, 0, 0);
@@ -1425,14 +1423,35 @@ int main(int argc, const char * argv[])
 //    Texture::displayAndFile(Scale(0.13,
 //                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)));
     
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200412_";
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200412_";
+//    Texture::displayAndFile(Scale(0.13,
+//                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
+//                            ); // , path + "oops2");
+//
+//
+//    Texture::waitKey();
+
+    
+    
+    // April 13, 2020
+    std::cout << "April 13, 2020" << std::endl;
+    DiskOccupancyGrid grid(Vec2(-5, -5), Vec2(5, 5), 10);
+    Disk d1(1, Vec2(3, 3));
+    Disk d2(2, Vec2(-3, -3));
+    grid.insertDiskWrap(d1);
+    grid.insertDiskWrap(d2);
+    grid.applyToCellsInRect(0, 0, 9, 9,
+                            [&](int i, int j)
+                            {
+                                std::cout << grid.getSetFromGrid(i, j)->size();
+                                if (j == 9) std::cout << std::endl;
+                            });
+
+
     Texture::displayAndFile(Scale(0.13,
                                   LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
-                            ); // , path + "oops2");
-
-
+                            );
     Texture::waitKey();
-
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
