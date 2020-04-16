@@ -54,9 +54,12 @@ void LotsOfSpotsBase::insertRandomSpots()
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO temporary implementation with static DiskOccupancyGrid
-#ifdef USE_DOG
+#ifdef USE_DOG_FOR_ADJUST
+        debugPrint(spots.size());
+        debugPrint(spots.back().i_am_a);
+        assert(spots.back().i_am_a == "Disk");
         test_dog.insertDiskWrap(spots.back());
-#endif // USE_DOG
+#endif // USE_DOG_FOR_ADJUST
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
         total_area += spots.back().area();
@@ -86,8 +89,7 @@ size_t LotsOfSpotsBase::seedForRandomSequence()
 // process is repeated "move_count" times, or until no spots overlap.
 void LotsOfSpotsBase::adjustOverlappingSpots()
 {
-#ifdef USE_DOG
-    
+#ifdef USE_DOG_FOR_ADJUST
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
@@ -96,30 +98,52 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         for (auto& a : spots)
         {
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            std::set<Disk*> disks;
-            test_dog.findNearbyDisks(a.position, disks);
-            
-            
-            
-            std::vector<Disk*> vector_of_nearby_disks;
-            for (auto& d : disks) vector_of_nearby_disks.push_back(d);
+//            std::set<Disk*> disks;
+//            test_dog.findNearbyDisks(a.position, disks);
+
+//            std::vector<Disk*> vector_of_nearby_disks;
+//            for (auto& d : disks) vector_of_nearby_disks.push_back(d);
             
 //            // TODO experiment try sort to see if it changes the nondeterminism
 //            std::sort(vector_of_nearby_disks.begin(),
 //                      vector_of_nearby_disks.end(),
 //                      [&](Disk* d, Disk* e){ return d->radius < e->radius; });
-            
-            
 //            debugPrint(disks.size());
 //            for (auto& foo : disks)
-
-            
 //            for (auto& b : spots)
+//            for (auto& foo : vector_of_nearby_disks)
             
-            for (auto& foo : vector_of_nearby_disks)
-
+            
+            
+            std::set<Disk*> disks_near_a;
+            debugPrint(disks_near_a.size());
+            disks_near_a.clear();
+            test_dog.findNearbyDisks(a.position, disks_near_a);
+            debugPrint(disks_near_a.size());
+            for (Disk* pointer_to_disk : disks_near_a)
             {
-                Disk& b = *foo;
+                debugPrint(pointer_to_disk->i_am_a);
+            }
+            
+            for (Disk* pointer_to_disk : disks_near_a)
+            {
+                Disk& b = *pointer_to_disk;
+                
+//                debugPrint(&a);
+//                debugPrint(&b);
+                
+//                if (a.i_am_a != "Disk") debugPrint(a.i_am_a);
+//                if (b.i_am_a != "Disk") debugPrint(b.i_am_a);
+
+                // TODO seems always to be "b"
+                if ((a.i_am_a != "Disk") || (b.i_am_a != "Disk"))
+                {
+                    debugPrint(pointer_to_disk->i_am_a);
+                    debugPrint(a.i_am_a);
+                    debugPrint(b.i_am_a);
+                }
+                assert(a.i_am_a == "Disk");
+                assert(b.i_am_a == "Disk");
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
                 
@@ -183,7 +207,7 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
 
     
     
-#else // USE_DOG
+#else // USE_DOG_FOR_ADJUST
     
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
@@ -224,7 +248,7 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
     debugPrint(spots.size());
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
-#endif // USE_DOG
+#endif // USE_DOG_FOR_ADJUST
 
 }
 
