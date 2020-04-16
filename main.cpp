@@ -1448,10 +1448,51 @@ int main(int argc, const char * argv[])
 //                            });
 
 
-    Texture::displayAndFile(Scale(0.13,
-                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
-                            );
-    Texture::waitKey();
+//    Texture::displayAndFile(Scale(0.13,
+//                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
+//                            );
+//    Texture::waitKey();
+
+
+    std::cout << "April 15, 2020" << std::endl;
+    DiskOccupancyGrid grid(Vec2(-5, -5), Vec2(5, 5), 10);
+    
+    std::cout << "insert d1 -- Disk d1(2, Vec2(2.5, 2.5))" << std::endl;
+    Disk d1(2, Vec2(2.5, 2.5));
+    grid.insertDiskWrap(d1);
+    grid.printCellCounts();
+    
+    std::cout << "insert d2 -- Disk d2(1, Vec2(2.5, 2.5))" << std::endl;
+    Disk d2(1, Vec2(2.5, 2.5));
+    grid.insertDiskWrap(d2);
+    grid.printCellCounts();
+
+    std::cout << "erase d1" << std::endl;
+    grid.eraseDiskWrap(d1);
+    grid.printCellCounts();
+
+    std::cout << "insert d3 -- Disk d3(1, Vec2(0, 0))" << std::endl;
+    Disk d3(1, Vec2(0, 0));
+    grid.insertDiskWrap(d3);
+    grid.printCellCounts();
+    
+    std::cout << "erase d2" << std::endl;
+    grid.eraseDiskWrap(d2);
+    grid.printCellCounts();
+
+    std::cout << "erase d3" << std::endl;
+    grid.eraseDiskWrap(d3);
+    grid.printCellCounts();
+
+//    std::cout << "insert d4 -- Disk d4(0.5, Vec2(5, 0))" << std::endl;
+//    Disk d4(0.5, Vec2(5, 0));
+//    grid.insertDiskWrap(d4);
+//    grid.printCellCounts();
+    
+    std::cout << "insert d4 -- Disk d4(0, Vec2(2, 4))" << std::endl;
+    Disk d4(0, Vec2(2, 4));
+    grid.insertDiskWrap(d4);
+    grid.printCellCounts();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

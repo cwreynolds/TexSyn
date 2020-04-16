@@ -51,6 +51,14 @@ void LotsOfSpotsBase::insertRandomSpots()
         float radius = interpolate(i, min_radius, max_radius);
         Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
         spots.push_back(Disk(radius, center));
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO temporary implementation with static DiskOccupancyGrid
+#ifdef USE_DOG
+        test_dog.insertDiskWrap(spots.back());
+#endif // USE_DOG
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
         total_area += spots.back().area();
     }
     debugPrint(spots.size());
@@ -78,6 +86,105 @@ size_t LotsOfSpotsBase::seedForRandomSequence()
 // process is repeated "move_count" times, or until no spots overlap.
 void LotsOfSpotsBase::adjustOverlappingSpots()
 {
+#ifdef USE_DOG
+    
+    // Move spots away from regions of overlap, repeat move_count times.
+    for (int i = 0; i < move_count; i++)
+    {
+        debugPrint(i);
+        bool no_move = true;
+        for (auto& a : spots)
+        {
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            std::set<Disk*> disks;
+            test_dog.findNearbyDisks(a.position, disks);
+            
+            
+            
+            std::vector<Disk*> vector_of_nearby_disks;
+            for (auto& d : disks) vector_of_nearby_disks.push_back(d);
+            
+//            // TODO experiment try sort to see if it changes the nondeterminism
+//            std::sort(vector_of_nearby_disks.begin(),
+//                      vector_of_nearby_disks.end(),
+//                      [&](Disk* d, Disk* e){ return d->radius < e->radius; });
+            
+            
+//            debugPrint(disks.size());
+//            for (auto& foo : disks)
+
+            
+//            for (auto& b : spots)
+            
+            for (auto& foo : vector_of_nearby_disks)
+
+            {
+                Disk& b = *foo;
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+                
+                if (&a != &b)  // Ignore self overlap.
+                {
+                    Vec2 b_tile = nearestByTiling(a.position, b.position);
+                    Vec2 offset = a.position - b_tile;
+                    float distance = offset.length();
+                    float radius_sum = a.radius + b.radius;
+                    if (distance < radius_sum)
+                    {
+                        no_move = false;
+                        Vec2 basis = offset / distance;
+                        float f = i;
+                        float fade = interpolate(f / move_count, 1.0, 0.5);
+                        float adjust = (radius_sum - distance) * fade;
+                        
+                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                        a.position += basis * adjust;
+//                        b.position += basis * -adjust;
+
+                        test_dog.eraseDiskWrap(a);
+                        a.position += basis * adjust;
+                        test_dog.insertDiskWrap(a);
+
+                        test_dog.eraseDiskWrap(b);
+                        b.position += basis * -adjust;
+                        test_dog.insertDiskWrap(b);
+                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+                    }
+                }
+            }
+            // Wrap "a"s position inside tile, clear "no_move" if was outside.
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            
+//            Vec2 before = a.position;
+//            a.position = wrapToCenterTile(a.position);
+//            if (a.position != before) no_move = false;
+            
+            Vec2 before = a.position;
+            Vec2 after = wrapToCenterTile(a.position);
+            if (after != before)
+            {
+                test_dog.eraseDiskWrap(a);
+                a.position = after;
+                test_dog.insertDiskWrap(a);
+                no_move = false;
+            }
+            
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        }
+        if (no_move) break;
+    }
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    std::set<Disk*> for_count;
+//    test_dog.findNearbyDisks(Disk(100, Vec2()), for_count);
+    test_dog.findNearbyDisks(Disk(5, Vec2()), for_count);
+    debugPrint(for_count.size());
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+    
+    
+#else // USE_DOG
+    
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
@@ -112,6 +219,13 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         }
         if (no_move) break;
     }
+
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    debugPrint(spots.size());
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+#endif // USE_DOG
+
 }
 
 // Given a reference point (say to be rendered), and the center of a Spot,

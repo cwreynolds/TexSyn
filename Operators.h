@@ -1128,6 +1128,23 @@ public:
                 function(i, j);
     }
     
+    // TODO temp for debugging
+    void printCellCounts()
+    {
+        int total_count = 0;
+        for (int j = grid_side_count_ - 1; j >= 0 ; j--)
+        {
+            for (int i = 0; i < grid_side_count_; i++)
+            {
+                size_t count = getSetFromGrid(i, j)->size();
+                std::cout << count << " ";
+                total_count += count;
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "total count: " << total_count << std::endl;
+    }
+
 private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
     std::set<Disk*>* getSetFromGrid(int i, int j)
@@ -1147,6 +1164,10 @@ private:
     const int grid_side_count_;
     std::vector<std::vector<std::set<Disk*>>> grid_;
 };
+
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//#define USE_DOG
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
 // A new LotsOfSpots (see http://www.red3d.com/cwr/texsyn/diary.html#20100208).
 // This is defined across entire texture plane. Current approach: just tile the
@@ -1183,10 +1204,10 @@ public:
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
         adjustOverlappingSpots();
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO temporary implementation with static DiskOccupancyGrid
-        for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO temporary implementation with static DiskOccupancyGrid
+//        for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     // Find nearest spot (Dot) and the soft-edged opacity at "position".
     typedef std::pair<Disk, float> DiskAndSoft;
@@ -1198,16 +1219,16 @@ public:
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO keep this conditionalized for now to allow timing comparison
         //      Rewrite later.
-#if 0
-        for (auto& spot : spots)
-        {
-#else
+#ifdef USE_DOG
         std::set<Disk*> disks;
         test_dog.findNearbyDisks(tiled_pos, disks);
         for (auto& disk : disks)
         {
             Disk spot = *disk;
-#endif
+#else // USE_DOG
+        for (auto& spot : spots)
+        {
+#endif // USE_DOG
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
             Vec2 tiled_spot = nearestByTiling(tiled_pos, spot.position);
