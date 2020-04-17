@@ -1482,10 +1482,11 @@ int main(int argc, const char * argv[])
 //    grid.insertDiskWrap(d4);
 //    grid.printCellCounts();
 
-    std::cout << "April 16, 2020" << std::endl;
+    std::cout << "April 17, 2020" << std::endl;
     Texture::displayAndFile(Scale(0.13,
-                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m))
-                            );
+                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)));
+    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
+    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

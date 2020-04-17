@@ -43,6 +43,10 @@ void LotsOfSpotsBase::insertRandomSpots()
     float half = tile_size / 2;
     // Seed the random number sequence from some operator parameters.
     RandomSequence rs(seedForRandomSequence());
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    // TODO very temp -- April 17
+//    Disk* dp = nullptr;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     while (total_area < (spot_density * sq(tile_size)))
     {
         // Select radius, preferring the low end of the range.
@@ -52,18 +56,39 @@ void LotsOfSpotsBase::insertRandomSpots()
         Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
         spots.push_back(Disk(radius, center));
         
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO temporary implementation with static DiskOccupancyGrid
-#ifdef USE_DOG_FOR_ADJUST
-        debugPrint(spots.size());
-        debugPrint(spots.back().i_am_a);
-        assert(spots.back().i_am_a == "Disk");
-        test_dog.insertDiskWrap(spots.back());
-#endif // USE_DOG_FOR_ADJUST
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            // TODO temporary implementation with static DiskOccupancyGrid
+//    #ifdef USE_DOG_FOR_ADJUST
+//            debugPrint(spots.size());
+//            debugPrint(spots.back().i_am_a);
+//            spots.back().checkValid();
+//            test_dog.insertDiskWrap(spots.back());
+//    #endif // USE_DOG_FOR_ADJUST
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO very temp -- April 17
+//        if ((spots.size() % 200) == 0)
+//        {
+//            if (dp == nullptr)
+//                dp = &(spots.at(100));
+//            else
+//                assert(dp == &(spots.at(100)));
+//        }
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
-        total_area += spots.back().area();
+
+//        total_area += spots.back().area();
+        total_area += Disk(radius, center).area();
     }
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO try inserting Disks to DiskOccupancyGrid AFTER all generated.
+    for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+    
+    
     debugPrint(spots.size());
 }
 
@@ -116,25 +141,19 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
             
             
             std::set<Disk*> disks_near_a;
-            debugPrint(disks_near_a.size());
+//            debugPrint(disks_near_a.size());
             disks_near_a.clear();
             test_dog.findNearbyDisks(a.position, disks_near_a);
-            debugPrint(disks_near_a.size());
-            for (Disk* pointer_to_disk : disks_near_a)
-            {
-                debugPrint(pointer_to_disk->i_am_a);
-            }
+//            debugPrint(disks_near_a.size());
+//            for (Disk* pointer_to_disk : disks_near_a)
+//            {
+//                debugPrint(pointer_to_disk->i_am_a);
+//            }
             
             for (Disk* pointer_to_disk : disks_near_a)
             {
                 Disk& b = *pointer_to_disk;
                 
-//                debugPrint(&a);
-//                debugPrint(&b);
-                
-//                if (a.i_am_a != "Disk") debugPrint(a.i_am_a);
-//                if (b.i_am_a != "Disk") debugPrint(b.i_am_a);
-
                 // TODO seems always to be "b"
                 if ((a.i_am_a != "Disk") || (b.i_am_a != "Disk"))
                 {
@@ -142,8 +161,8 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                     debugPrint(a.i_am_a);
                     debugPrint(b.i_am_a);
                 }
-                assert(a.i_am_a == "Disk");
-                assert(b.i_am_a == "Disk");
+                a.checkValid();
+                b.checkValid();
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
                 

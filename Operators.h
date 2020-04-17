@@ -1001,19 +1001,22 @@ private:
     const Texture& bump_texture;
 };
 
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+#define USE_DOG_FOR_ADJUST
+#define USE_DOG_FOR_RENDER
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
 // Represents a disk on the 2d plane, defined by center position and radius.
 // (TODO seems like it should be in a general geometric utility file.)
 class Disk
 {
 public:
     Disk(){}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Disk(float r, Vec2 p) : radius(r), position(p) {}
-    Disk(float r, Vec2 p) : radius(r), position(p), i_am_a("Disk") {}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Disk(float r, Vec2 p) : radius(r), position(p) {}
     float area() const { return pi * sq(radius); }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string i_am_a = "Disk";
+    void checkValid() { assert(i_am_a == "Disk"); }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     float radius = 0;
     Vec2 position;
@@ -1033,8 +1036,9 @@ public:
     {
         assert(((maxXY.x() - minXY.x()) == (maxXY.y() - minXY.y())) &&
                "expecting square spatial dimentions");
-        grid_.resize(grid_side_count);
-        for (auto& row : grid_) row.resize(grid_side_count);
+//        grid_.resize(grid_side_count);
+//        for (auto& row : grid_) row.resize(grid_side_count);
+        clear();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         checkAllDiskPointers();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1046,17 +1050,25 @@ public:
     void insertDiskWrap(Disk& d)
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        d.checkValid();
         checkAllDiskPointers();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         diskWrapUtility(d, [&](int i, int j) { insertIntoCell(i, j, &d); });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        d.checkValid();
         checkAllDiskPointers();
+//        std::cout << "all's well at end of insertDiskWrap()" << std::endl;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     void eraseDiskWrap(Disk& d)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        d.checkValid();
+        checkAllDiskPointers();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         diskWrapUtility(d, [&](int i, int j) { eraseFromCell(i, j, &d); });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        d.checkValid();
         checkAllDiskPointers();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
@@ -1066,6 +1078,9 @@ public:
     // up to 4 images of the Disk, each offset by tiling spacing in x, y, both.
     void diskWrapUtility(Disk& d, std::function<void(int i, int j)> function)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        d.checkValid();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO assumes square grid, only looks at x bounds.
         float tile_size = maxXY_.x() - minXY_.x();
         // Offsets to wrap around to the other side of nearest grid boundary.
@@ -1109,7 +1124,7 @@ public:
              for (auto& d : *getSetFromGrid(i, j)) disks.insert(d);
 //            for (auto& d : *getSetFromGrid(i, j))
 //            {
-//                assert(d->i_am_a == "Disk");
+//                d->checkValid()
 //                disks.insert(d);
 //            }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1195,6 +1210,14 @@ public:
                         0,
                         grid_side_count_ - 1));
     };
+    
+    // Remove all Disks from this grid, reset based on grid_side_count.
+    void clear()
+    {
+        grid_.clear();
+        grid_.resize(grid_side_count_);
+        for (auto& row : grid_) row.resize(grid_side_count_);
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 private:
@@ -1210,7 +1233,7 @@ private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void eraseFromCell(int i, int j, Disk* d)
     {
-        std::cout << "in eraseFromCell" << std::endl;
+//        std::cout << "in eraseFromCell" << std::endl;
         grid_.at(i).at(j).erase(d);
     }
 //    void eraseFromCell(int i, int j, Disk* d)
@@ -1232,23 +1255,19 @@ private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO very temp for testing
     void checkAllDiskPointers()
-    {
-        for (int j = 0; j < grid_side_count_; j++)
-        {
-            for (int i = 0; i < grid_side_count_; i++)
-            {
-                std::set<Disk*>& set = grid_.at(i).at(j);
-                for (Disk* disk : set) assert(disk->i_am_a == "Disk");
-            }
-        }
-    }
+    {}
+//    {
+//        for (int j = 0; j < grid_side_count_; j++)
+//        {
+//            for (int i = 0; i < grid_side_count_; i++)
+//            {
+//                std::set<Disk*>& set = grid_.at(i).at(j);
+//                for (Disk* disk : set) disk->checkValid();
+//            }
+//        }
+//    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
-
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//#define USE_DOG_FOR_ADJUST
-#define USE_DOG_FOR_RENDER
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
 // A new LotsOfSpots (see http://www.red3d.com/cwr/texsyn/diary.html#20100208).
 // This is defined across entire texture plane. Current approach: just tile the
@@ -1283,6 +1302,9 @@ public:
         soft_edge_width(_soft_edge_width)
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        test_dog.clear();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         insertRandomSpots();
         adjustOverlappingSpots();
 //        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
@@ -1295,6 +1317,7 @@ public:
 #ifdef USE_DOG_FOR_ADJUST
 #else // USE_DOG_FOR_ADJUST
     #ifdef USE_DOG_FOR_RENDER
+        std::cout << "NOT SEEING THIS RIGHT????????" << std::endl;
         for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
     #endif // USE_DOG_FOR_RENDER
 #endif // USE_DOG_FOR_ADJUST
