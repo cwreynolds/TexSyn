@@ -58,7 +58,7 @@ void LotsOfSpotsBase::insertRandomSpots()
     // Insert each new random Disk into the DiskOccupancyGrid.
     // (NB: very important this happens AFTER all Disks added to std::vector
     // spots (above). Otherwise pointers will be invalidated by reallocation.)
-    for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
+    for (Disk& spot : spots) disk_occupancy_grid->insertDiskWrap(spot);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 }
 
@@ -94,7 +94,7 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         {
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             std::set<Disk*> disks_near_a;
-            test_dog.findNearbyDisks(a.position, disks_near_a);
+            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
             for (Disk* pointer_to_disk : disks_near_a)
             {
                 Disk& b = *pointer_to_disk;
@@ -116,13 +116,14 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 //                        a.position += basis * adjust;
 //                        b.position += basis * -adjust;
-                        
-                        test_dog.eraseDiskWrap(a);
-                        test_dog.eraseDiskWrap(b);
+                                                
+                        disk_occupancy_grid->eraseDiskWrap(a);
+                        disk_occupancy_grid->eraseDiskWrap(b);
                         a.position += basis * adjust;
                         b.position += basis * -adjust;
-                        test_dog.insertDiskWrap(a);
-                        test_dog.insertDiskWrap(b);
+                        disk_occupancy_grid->insertDiskWrap(a);
+                        disk_occupancy_grid->insertDiskWrap(b);
+
                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
                     }
                 }
@@ -132,16 +133,17 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
 //            Vec2 before = a.position;
 //            a.position = wrapToCenterTile(a.position);
 //            if (a.position != before) no_move = false;
-
+            
             // If "a" is outside the central tile, wrap it in, clear "no_move".
             Vec2 wrapped_position = wrapToCenterTile(a.position);
             if (a.position != wrapped_position)
             {
-                test_dog.eraseDiskWrap(a);
+                disk_occupancy_grid->eraseDiskWrap(a);
                 a.position = wrapped_position;
-                test_dog.insertDiskWrap(a);
+                disk_occupancy_grid->insertDiskWrap(a);
                 no_move = false;
             }
+
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         }
         if (no_move) break;
@@ -184,10 +186,6 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         if (no_move) break;
     }
 
-//    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    debugPrint(spots.size());
-//    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
 #endif // USE_DOG_FOR_ADJUST
 
 }
@@ -222,7 +220,3 @@ Vec2 LotsOfSpotsBase::wrapToCenterTile(Vec2 v) const
     return Vec2(fmod_floor(v.x() + half, tile_size) - half,
                 fmod_floor(v.y() + half, tile_size) - half);
 }
-
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-DiskOccupancyGrid LotsOfSpotsBase::test_dog(Vec2(-5, -5), Vec2(5, 5), 10);
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~

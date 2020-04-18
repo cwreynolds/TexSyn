@@ -1214,11 +1214,21 @@ public:
       : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
-        soft_edge_width(_soft_edge_width)
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        soft_edge_width(_soft_edge_width)
+        soft_edge_width(_soft_edge_width),
+//        disk_occupancy_grid(Vec2(-5, -5), Vec2(5, 5), 10)
+    disk_occupancy_grid(std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5),
+                                                              Vec2(5, 5),
+                                                              10))
+    
+//    inverse_lut = std::make_shared<std::vector<float>>(lutSize());
+
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        test_dog.clear();
+        disk_occupancy_grid->clear();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         insertRandomSpots();
         adjustOverlappingSpots();
@@ -1227,7 +1237,7 @@ public:
 #else // USE_DOG_FOR_ADJUST
     #ifdef USE_DOG_FOR_RENDER
         std::cout << "NOT SEEING THIS RIGHT????????" << std::endl;
-        for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
+        for (Disk& spot : spots) disk_occupancy_grid.insertDiskWrap(spot);
     #endif // USE_DOG_FOR_RENDER
 #endif // USE_DOG_FOR_ADJUST
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
@@ -1244,7 +1254,7 @@ public:
         //      Rewrite later.
 #ifdef USE_DOG_FOR_RENDER
         std::set<Disk*> disks;
-        test_dog.findNearbyDisks(tiled_pos, disks);
+        disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
         for (auto& disk : disks)
         {
             Disk spot = *disk;
@@ -1289,8 +1299,7 @@ public:
 private:
     std::vector<Disk> spots;
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    DiskOccupancyGrid disk_occupancy_grid();
-    static DiskOccupancyGrid test_dog;
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const float tile_size = 10;
     const int move_count = 200;
