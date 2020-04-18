@@ -12,22 +12,6 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//#include "Utilities.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wdocumentation"
-//#include <opencv2/core/core.hpp>
-//#include <opencv2/highgui/highgui.hpp>
-//
-//#include <opencv2/imgproc.hpp>
-//
-//
-//#pragma clang diagnostic pop
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 bool run_unit_tests = false;
 
 int main(int argc, const char * argv[])
@@ -1366,9 +1350,9 @@ int main(int argc, const char * argv[])
 */
     
 //    DiskOccupancyGrid dog(10, 10);
-    DiskOccupancyGrid dog(Vec2(-5, -5), Vec2(5, 5), 10);
+//    DiskOccupancyGrid dog(Vec2(-5, -5), Vec2(5, 5), 10);
 //    Disk disk(1, Vec2(3,3));
-    Disk disk(4, Vec2(1, 1));
+//    Disk disk(4, Vec2(1, 1));
 
 //    for (int i = 3; i <= 4; i++)
 //    {
@@ -1482,13 +1466,33 @@ int main(int argc, const char * argv[])
 //    grid.insertDiskWrap(d4);
 //    grid.printCellCounts();
 
-    std::cout << "April 17, 2020" << std::endl;
-    LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
-    Texture::displayAndFile(Scale(0.13, los1));
-    Texture::displayAndFile(los1);
-    LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
-    Texture::displayAndFile(Scale(0.13, los2));
-    Texture::displayAndFile(los2);
+//    std::cout << "April 17, 2020" << std::endl;
+//    LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
+//    Texture::displayAndFile(Scale(0.13, los1));
+//    Texture::displayAndFile(los1);
+//    LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
+//    Texture::displayAndFile(Scale(0.13, los2));
+//    Texture::displayAndFile(los2);
+
+    std::cout << "April 18, 2020" << std::endl;
+    {
+        Timer timer("LOS timing test suite");
+        LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
+        Texture::displayAndFile(Scale(0.13, los1));
+        Texture::displayAndFile(los1);
+        LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
+        Texture::displayAndFile(Scale(0.13, los2));
+        Texture::displayAndFile(los2);
+        LotsOfSpots los3(0.8, 0.2, 0.2, 0.02, c, m);
+        Texture::displayAndFile(Scale(0.13, los3));
+        Texture::displayAndFile(los3);
+    }
+
+//    // Do these render identically?
+//    // ...Suprisingly they do, I expected pointer-ordering to randomise them.
+//    // Perhaps allocating them into a std::vector orders the pointers?
+//    Texture::displayAndFile(LotsOfSpots(0.8, 0.02, 0.4, 0.02, c, m));
+//    Texture::displayAndFile(LotsOfSpots(0.8, 0.02, 0.4, 0.02, c, m));
 
     Texture::waitKey();
 

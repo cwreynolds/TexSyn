@@ -1217,18 +1217,21 @@ public:
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 //        soft_edge_width(_soft_edge_width)
         soft_edge_width(_soft_edge_width),
-//        disk_occupancy_grid(Vec2(-5, -5), Vec2(5, 5), 10)
-    disk_occupancy_grid(std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5),
-                                                              Vec2(5, 5),
-                                                              10))
-    
-//    inverse_lut = std::make_shared<std::vector<float>>(lutSize());
-
+        disk_occupancy_grid(std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5),
+                                                                Vec2(5, 5),
+//                                                                10))
+//                                                                20))
+//                                                                30))
+//                                                                40))
+//                                                                50))
+                                                                60))
+//                                                                70))
+//                                                                100))
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        disk_occupancy_grid->clear();
+//        disk_occupancy_grid->clear();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         insertRandomSpots();
         adjustOverlappingSpots();

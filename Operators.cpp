@@ -88,13 +88,14 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
-        debugPrint(i);
+//        debugPrint(i);
         bool no_move = true;
         for (auto& a : spots)
         {
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             std::set<Disk*> disks_near_a;
-            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
+//            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
+            disk_occupancy_grid->findNearbyDisks(a, disks_near_a);
             for (Disk* pointer_to_disk : disks_near_a)
             {
                 Disk& b = *pointer_to_disk;
@@ -154,7 +155,7 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
-        debugPrint(i);
+//        debugPrint(i);
         bool no_move = true;
         for (auto& a : spots)
         {
