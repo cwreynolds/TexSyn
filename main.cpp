@@ -1483,10 +1483,13 @@ int main(int argc, const char * argv[])
 //    grid.printCellCounts();
 
     std::cout << "April 17, 2020" << std::endl;
-    Texture::displayAndFile(Scale(0.13,
-                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)));
-    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
-    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
+    LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
+    Texture::displayAndFile(Scale(0.13, los1));
+    Texture::displayAndFile(los1);
+    LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
+    Texture::displayAndFile(Scale(0.13, los2));
+    Texture::displayAndFile(los2);
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

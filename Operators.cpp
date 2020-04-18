@@ -34,19 +34,16 @@ void Texture::diff(const Texture& t0, const Texture& t1)
 // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
 int Blur::sqrt_of_subsample_count = 11;
 
-// Insert random spots until density threshold is met. Positions are
-// uniformly distributed across center tile. Radii are chosen from interval
-// [min_radius, max_radius] with a preference for smaller values.
+// Insert random Disks until density threshold is met. Disk center positions
+// are uniformly distributed across center tile. Radii are chosen from the
+// interval [min_radius, max_radius] with a preference for smaller values.
 void LotsOfSpotsBase::insertRandomSpots()
 {
     float total_area = 0;
     float half = tile_size / 2;
     // Seed the random number sequence from some operator parameters.
     RandomSequence rs(seedForRandomSequence());
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    // TODO very temp -- April 17
-//    Disk* dp = nullptr;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // Add random Disks until density threshold is met.
     while (total_area < (spot_density * sq(tile_size)))
     {
         // Select radius, preferring the low end of the range.
@@ -55,41 +52,14 @@ void LotsOfSpotsBase::insertRandomSpots()
         float radius = interpolate(i, min_radius, max_radius);
         Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
         spots.push_back(Disk(radius, center));
-        
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            // TODO temporary implementation with static DiskOccupancyGrid
-//    #ifdef USE_DOG_FOR_ADJUST
-//            debugPrint(spots.size());
-//            debugPrint(spots.back().i_am_a);
-//            spots.back().checkValid();
-//            test_dog.insertDiskWrap(spots.back());
-//    #endif // USE_DOG_FOR_ADJUST
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        // TODO very temp -- April 17
-//        if ((spots.size() % 200) == 0)
-//        {
-//            if (dp == nullptr)
-//                dp = &(spots.at(100));
-//            else
-//                assert(dp == &(spots.at(100)));
-//        }
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-
-//        total_area += spots.back().area();
-        total_area += Disk(radius, center).area();
+        total_area += spots.back().area();
     }
-    
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO try inserting Disks to DiskOccupancyGrid AFTER all generated.
+    // Insert each new random Disk into the DiskOccupancyGrid.
+    // (NB: very important this happens AFTER all Disks added to std::vector
+    // spots (above). Otherwise pointers will be invalidated by reallocation.)
     for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-    
-    
-    debugPrint(spots.size());
 }
 
 void LotsOfSpotsBase::randomizeSpotRotations()
@@ -123,49 +93,12 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         for (auto& a : spots)
         {
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            std::set<Disk*> disks;
-//            test_dog.findNearbyDisks(a.position, disks);
-
-//            std::vector<Disk*> vector_of_nearby_disks;
-//            for (auto& d : disks) vector_of_nearby_disks.push_back(d);
-            
-//            // TODO experiment try sort to see if it changes the nondeterminism
-//            std::sort(vector_of_nearby_disks.begin(),
-//                      vector_of_nearby_disks.end(),
-//                      [&](Disk* d, Disk* e){ return d->radius < e->radius; });
-//            debugPrint(disks.size());
-//            for (auto& foo : disks)
-//            for (auto& b : spots)
-//            for (auto& foo : vector_of_nearby_disks)
-            
-            
-            
             std::set<Disk*> disks_near_a;
-//            debugPrint(disks_near_a.size());
-            disks_near_a.clear();
             test_dog.findNearbyDisks(a.position, disks_near_a);
-//            debugPrint(disks_near_a.size());
-//            for (Disk* pointer_to_disk : disks_near_a)
-//            {
-//                debugPrint(pointer_to_disk->i_am_a);
-//            }
-            
             for (Disk* pointer_to_disk : disks_near_a)
             {
                 Disk& b = *pointer_to_disk;
-                
-                // TODO seems always to be "b"
-                if ((a.i_am_a != "Disk") || (b.i_am_a != "Disk"))
-                {
-                    debugPrint(pointer_to_disk->i_am_a);
-                    debugPrint(a.i_am_a);
-                    debugPrint(b.i_am_a);
-                }
-                a.checkValid();
-                b.checkValid();
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-                
                 if (&a != &b)  // Ignore self overlap.
                 {
                     Vec2 b_tile = nearestByTiling(a.position, b.position);
@@ -183,49 +116,37 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 //                        a.position += basis * adjust;
 //                        b.position += basis * -adjust;
-
+                        
                         test_dog.eraseDiskWrap(a);
-                        a.position += basis * adjust;
-                        test_dog.insertDiskWrap(a);
-
                         test_dog.eraseDiskWrap(b);
+                        a.position += basis * adjust;
                         b.position += basis * -adjust;
+                        test_dog.insertDiskWrap(a);
                         test_dog.insertDiskWrap(b);
                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
                     }
                 }
             }
-            // Wrap "a"s position inside tile, clear "no_move" if was outside.
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            
+//            // Wrap "a"s position inside tile, clear "no_move" if was outside.
 //            Vec2 before = a.position;
 //            a.position = wrapToCenterTile(a.position);
 //            if (a.position != before) no_move = false;
-            
-            Vec2 before = a.position;
-            Vec2 after = wrapToCenterTile(a.position);
-            if (after != before)
+
+            // If "a" is outside the central tile, wrap it in, clear "no_move".
+            Vec2 wrapped_position = wrapToCenterTile(a.position);
+            if (a.position != wrapped_position)
             {
                 test_dog.eraseDiskWrap(a);
-                a.position = after;
+                a.position = wrapped_position;
                 test_dog.insertDiskWrap(a);
                 no_move = false;
             }
-            
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         }
         if (no_move) break;
     }
-    
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    std::set<Disk*> for_count;
-//    test_dog.findNearbyDisks(Disk(100, Vec2()), for_count);
-    test_dog.findNearbyDisks(Disk(5, Vec2()), for_count);
-    debugPrint(for_count.size());
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-    
-    
+        
 #else // USE_DOG_FOR_ADJUST
     
     // Move spots away from regions of overlap, repeat move_count times.
@@ -263,9 +184,9 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         if (no_move) break;
     }
 
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    debugPrint(spots.size());
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    debugPrint(spots.size());
+//    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
 #endif // USE_DOG_FOR_ADJUST
 

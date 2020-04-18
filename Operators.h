@@ -8,9 +8,7 @@
 
 #pragma once
 #include "Texture.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include <set>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class Operator : public Texture {};
 
@@ -1014,10 +1012,6 @@ public:
     Disk(){}
     Disk(float r, Vec2 p) : radius(r), position(p) {}
     float area() const { return pi * sq(radius); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    std::string i_am_a = "Disk";
-    void checkValid() { assert(i_am_a == "Disk"); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     float radius = 0;
     Vec2 position;
     float angle = 0;
@@ -1036,12 +1030,7 @@ public:
     {
         assert(((maxXY.x() - minXY.x()) == (maxXY.y() - minXY.y())) &&
                "expecting square spatial dimentions");
-//        grid_.resize(grid_side_count);
-//        for (auto& row : grid_) row.resize(grid_side_count);
         clear();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        checkAllDiskPointers();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     
     // Insert (or erase) a given Disk from this occupancy grid. Assumes the grid
@@ -1049,28 +1038,11 @@ public:
     // that intersect grid boundary.
     void insertDiskWrap(Disk& d)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        d.checkValid();
-        checkAllDiskPointers();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         diskWrapUtility(d, [&](int i, int j) { insertIntoCell(i, j, &d); });
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        d.checkValid();
-        checkAllDiskPointers();
-//        std::cout << "all's well at end of insertDiskWrap()" << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     void eraseDiskWrap(Disk& d)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        d.checkValid();
-        checkAllDiskPointers();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         diskWrapUtility(d, [&](int i, int j) { eraseFromCell(i, j, &d); });
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        d.checkValid();
-        checkAllDiskPointers();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     
     // Used by insertDiskWrap() and eraseDiskWrap() for wrap-around tiling.
@@ -1078,9 +1050,6 @@ public:
     // up to 4 images of the Disk, each offset by tiling spacing in x, y, both.
     void diskWrapUtility(Disk& d, std::function<void(int i, int j)> function)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        d.checkValid();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO assumes square grid, only looks at x bounds.
         float tile_size = maxXY_.x() - minXY_.x();
         // Offsets to wrap around to the other side of nearest grid boundary.
@@ -1120,14 +1089,7 @@ public:
         // Add each pointer in the set to the output argument.
         auto collectCellDisks = [&](int i, int j)
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
              for (auto& d : *getSetFromGrid(i, j)) disks.insert(d);
-//            for (auto& d : *getSetFromGrid(i, j))
-//            {
-//                d->checkValid()
-//                disks.insert(d);
-//            }
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
         applyToCellsInRect(query.position, query.radius, collectCellDisks);
     }
@@ -1144,16 +1106,6 @@ public:
                         (center.y() - radius <= maxXY_.y()));
         if (overlap)
         {
-//            float g = grid_side_count_ - 1;
-//            auto xToI = [&](float x)
-//            { return int(remapIntervalClip(x, minXY_.x(), maxXY_.x(), 0, g)); };
-//            auto yToJ = [&](float y)
-//            { return int(remapIntervalClip(y, minXY_.y(), maxXY_.y(), 0, g)); };
-//            applyToCellsInRect(xToI(center.x() - radius),
-//                               yToJ(center.y() - radius),
-//                               xToI(center.x() + radius),
-//                               yToJ(center.y() + radius),
-//                               function);
             applyToCellsInRect(xToI(center.x() - radius),
                                xToI(center.y() - radius),
                                xToI(center.x() + radius),
@@ -1188,18 +1140,11 @@ public:
             std::cout << std::endl;
         }
         std::cout << "total count: " << total_count << std::endl;
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        for (float x = -6; x <= +6; x += 0.5)
-//        {
-//            std::cout << "x=" << x << " i=" << xToI(x) << std::endl;
-//        }
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Convert float x coordinate to int i cell index. Since we currently assume
-    // a square grid, this is currently used for both x to i and y to j. NB: the
-    // remapping goes from the 2d float bounds to [0, grid_side_count] then is
-    // clipped onto [0, grid_side_count]. Took me a while to get that right.
+    // a square grid, this is used for both x to i and y to j. NB: the remapping
+    // goes from the 2d float bounds to [0, grid_side_count] then is clipped
+    // onto [0, grid_side_count]. Took me a while to get that right.
     int xToI(float x) const
     {
         return int(clip(remapInterval(x,
@@ -1218,7 +1163,6 @@ public:
         grid_.resize(grid_side_count_);
         for (auto& row : grid_) row.resize(grid_side_count_);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
@@ -1230,43 +1174,14 @@ private:
     {
         grid_.at(i).at(j).insert(d);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void eraseFromCell(int i, int j, Disk* d)
     {
-//        std::cout << "in eraseFromCell" << std::endl;
         grid_.at(i).at(j).erase(d);
     }
-//    void eraseFromCell(int i, int j, Disk* d)
-//    {
-//        // Search for element "is"
-//        std::set<Disk*>::iterator it = grid_.at(i).at(j).find(d);
-//        // Check if Iterator is valid
-//        if(it != grid_.at(i).at(j).end())
-//        {
-//        // Deletes the element pointing by iterator it
-//        grid_.at(i).at(j).erase(it);
-//        }
-//    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const Vec2 minXY_;
     const Vec2 maxXY_;
     const int grid_side_count_;
     std::vector<std::vector<std::set<Disk*>>> grid_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO very temp for testing
-    void checkAllDiskPointers()
-    {}
-//    {
-//        for (int j = 0; j < grid_side_count_; j++)
-//        {
-//            for (int i = 0; i < grid_side_count_; i++)
-//            {
-//                std::set<Disk*>& set = grid_.at(i).at(j);
-//                for (Disk* disk : set) disk->checkValid();
-//            }
-//        }
-//    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // A new LotsOfSpots (see http://www.red3d.com/cwr/texsyn/diary.html#20100208).
@@ -1307,12 +1222,6 @@ public:
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         insertRandomSpots();
         adjustOverlappingSpots();
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        // TODO temporary implementation with static DiskOccupancyGrid
-//        for (Disk& spot : spots) test_dog.insertDiskWrap(spot);
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
-        
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 #ifdef USE_DOG_FOR_ADJUST
 #else // USE_DOG_FOR_ADJUST
@@ -1361,9 +1270,9 @@ public:
         }
         return std::make_pair(nearest_spot, gray_level);
     }
-    // Insert random spots until density threshold is met. Positions are
-    // uniformly distributed across center tile. Radii are chosen from interval
-    // [min_radius, max_radius] with a preference for smaller values.
+    // Insert random Disks until density threshold is met. Disk center positions
+    // are uniformly distributed across center tile. Radii are chosen from the
+    // interval [min_radius, max_radius] with a preference for smaller values.
     void insertRandomSpots();
     void randomizeSpotRotations();
     size_t seedForRandomSequence();
