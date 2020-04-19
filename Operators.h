@@ -1002,7 +1002,23 @@ private:
 //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 #define USE_DOG_FOR_ADJUST
 #define USE_DOG_FOR_RENDER
+#define THREADS_FOR_ADJUST
+
+// TODO -- Note first version with THREADS_FOR_ADJUST (but single threaded) did
+// the benchmark in about 5.37 seconds, versus 2.76 yesterday (using the old
+// "move both away", now it moves only one at a time.
+
+// TODO -- Note second version with THREADS_FOR_ADJUST (but single threaded) did
+// the benchmark in about 4.09 seconds, versus 2.76 yesterday (using the old
+// "move both away", now it moves only one at a time. (This version with
+// Disk::future_position)
+
 //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef THREADS_FOR_ADJUST
+#else // THREADS_FOR_ADJUST
+#endif // THREADS_FOR_ADJUST
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Represents a disk on the 2d plane, defined by center position and radius.
 // (TODO seems like it should be in a general geometric utility file.)
@@ -1015,6 +1031,14 @@ public:
     float radius = 0;
     Vec2 position;
     float angle = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef THREADS_FOR_ADJUST
+    // TODO if kept, make note that future_position and angle are clearly not
+    // properties of a minimal disk, but needed for efficiency of LotsOfSpotsBase
+    Vec2 future_position;
+#else // THREADS_FOR_ADJUST
+#endif // THREADS_FOR_ADJUST
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // DiskOccupancyGrid -- 2d spatial data structure for collections of Disks.
@@ -1214,25 +1238,11 @@ public:
       : spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius)),
         max_radius(std::max(_min_radius, _max_radius)),
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        soft_edge_width(_soft_edge_width)
         soft_edge_width(_soft_edge_width),
-        disk_occupancy_grid(std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5),
-                                                                Vec2(5, 5),
-//                                                                10))
-//                                                                20))
-//                                                                30))
-//                                                                40))
-//                                                                50))
-                                                                60))
-//                                                                70))
-//                                                                100))
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        disk_occupancy_grid
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        disk_occupancy_grid->clear();
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         insertRandomSpots();
         adjustOverlappingSpots();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
@@ -1301,9 +1311,7 @@ public:
     Vec2 wrapToCenterTile(Vec2 v) const;
 private:
     std::vector<Disk> spots;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const float tile_size = 10;
     const int move_count = 200;
     const float spot_density;

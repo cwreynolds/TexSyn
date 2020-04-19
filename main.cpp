@@ -1474,7 +1474,8 @@ int main(int argc, const char * argv[])
 //    Texture::displayAndFile(Scale(0.13, los2));
 //    Texture::displayAndFile(los2);
 
-    std::cout << "April 18, 2020" << std::endl;
+    // std::cout << "April 18, 2020" << std::endl;
+    std::cout << "April 19, 2020" << std::endl;
     {
         Timer timer("LOS timing test suite");
         LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);

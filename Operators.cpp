@@ -54,12 +54,17 @@ void LotsOfSpotsBase::insertRandomSpots()
         spots.push_back(Disk(radius, center));
         total_area += spots.back().area();
     }
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // Insert each new random Disk into the DiskOccupancyGrid.
     // (NB: very important this happens AFTER all Disks added to std::vector
     // spots (above). Otherwise pointers will be invalidated by reallocation.)
     for (Disk& spot : spots) disk_occupancy_grid->insertDiskWrap(spot);
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef THREADS_FOR_ADJUST
+    for (Disk& spot : spots) spot.future_position = spot.position;
+#else // THREADS_FOR_ADJUST
+#endif // THREADS_FOR_ADJUST
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 void LotsOfSpotsBase::randomizeSpotRotations()
@@ -88,10 +93,23 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
-//        debugPrint(i);
+        debugPrint(i);
         bool no_move = true;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef THREADS_FOR_ADJUST
+        for (int disk_index = 0; disk_index < spots.size(); disk_index++)
+#else // THREADS_FOR_ADJUST
         for (auto& a : spots)
+#endif // THREADS_FOR_ADJUST
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef THREADS_FOR_ADJUST
+            Disk& a = spots.at(disk_index);
+#else // THREADS_FOR_ADJUST
+#endif // THREADS_FOR_ADJUST
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             std::set<Disk*> disks_near_a;
 //            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
@@ -118,13 +136,16 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
 //                        a.position += basis * adjust;
 //                        b.position += basis * -adjust;
                                                 
+#ifdef THREADS_FOR_ADJUST
+                        a.future_position += basis * adjust;
+#else // THREADS_FOR_ADJUST
                         disk_occupancy_grid->eraseDiskWrap(a);
                         disk_occupancy_grid->eraseDiskWrap(b);
                         a.position += basis * adjust;
                         b.position += basis * -adjust;
                         disk_occupancy_grid->insertDiskWrap(a);
                         disk_occupancy_grid->insertDiskWrap(b);
-
+#endif // THREADS_FOR_ADJUST
                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
                     }
                 }
@@ -135,6 +156,11 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
 //            a.position = wrapToCenterTile(a.position);
 //            if (a.position != before) no_move = false;
             
+#ifdef THREADS_FOR_ADJUST
+            Vec2 before = a.future_position;
+            a.future_position = wrapToCenterTile(a.future_position);
+            if (a.future_position != before) no_move = false;
+#else // THREADS_FOR_ADJUST
             // If "a" is outside the central tile, wrap it in, clear "no_move".
             Vec2 wrapped_position = wrapToCenterTile(a.position);
             if (a.position != wrapped_position)
@@ -144,10 +170,25 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                 disk_occupancy_grid->insertDiskWrap(a);
                 no_move = false;
             }
+#endif // THREADS_FOR_ADJUST
+
 
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         }
         if (no_move) break;
+        
+#ifdef THREADS_FOR_ADJUST
+        for (auto& disk : spots)
+        {
+            if (disk.position != disk.future_position)
+            {
+                disk_occupancy_grid->eraseDiskWrap(disk);
+                disk.position = disk.future_position;
+                disk_occupancy_grid->insertDiskWrap(disk);
+            }
+        }
+#else // THREADS_FOR_ADJUST
+#endif // THREADS_FOR_ADJUST
     }
         
 #else // USE_DOG_FOR_ADJUST
