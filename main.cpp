@@ -1476,17 +1476,24 @@ int main(int argc, const char * argv[])
 
     // std::cout << "April 18, 2020" << std::endl;
     std::cout << "April 19, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200419_";
     {
         Timer timer("LOS timing test suite");
         LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
-        Texture::displayAndFile(Scale(0.13, los1));
-        Texture::displayAndFile(los1);
+        Texture::displayAndFile(Scale(0.13, los1)
+                                , path + "los1_scaled");
+        Texture::displayAndFile(los1
+                                , path + "los1");
         LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
-        Texture::displayAndFile(Scale(0.13, los2));
-        Texture::displayAndFile(los2);
+        Texture::displayAndFile(Scale(0.13, los2)
+                                , path + "los2_scaled");
+        Texture::displayAndFile(los2
+                                , path + "los2");
         LotsOfSpots los3(0.8, 0.2, 0.2, 0.02, c, m);
-        Texture::displayAndFile(Scale(0.13, los3));
-        Texture::displayAndFile(los3);
+        Texture::displayAndFile(Scale(0.13, los3)
+                                , path + "los3_scaled");
+        Texture::displayAndFile(los3
+                                , path + "los3");
     }
 
 //    // Do these render identically?
