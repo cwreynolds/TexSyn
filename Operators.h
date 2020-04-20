@@ -1306,6 +1306,16 @@ public:
     // Given a reference point (say to be rendered), and the center of a Spot,
     // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
     // another tile) to "reference_point".
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Top level for each worker thread adjusting spot overlap.
+//    void oneThreadAdjustingSpots(int first_disk_index, int disk_count);
+        
+    void oneThreadAdjustingSpots(int first_disk_index,
+                                 int disk_count,
+                                 int move_index,
+                                 bool& no_move);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
     // Given a position, find corresponding point on center tile, via fmod/wrap.
     Vec2 wrapToCenterTile(Vec2 v) const;

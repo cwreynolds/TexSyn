@@ -11,6 +11,9 @@
 // some static data members.
 
 #include "Operators.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <thread>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 void Texture::diff(const Texture& t0, const Texture& t1)
 {
@@ -84,100 +87,351 @@ size_t LotsOfSpotsBase::seedForRandomSequence()
             hash_float(soft_edge_width));
 }
 
+//    // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
+//    // away from each other along the line connecting their centers. The whole
+//    // process is repeated "move_count" times, or until no spots overlap.
+//    void LotsOfSpotsBase::adjustOverlappingSpots()
+//    {
+//    #ifdef USE_DOG_FOR_ADJUST
+//        // Move spots away from regions of overlap, repeat move_count times.
+//        for (int i = 0; i < move_count; i++)
+//        {
+//            debugPrint(i);
+//            bool no_move = true;
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    #ifdef THREADS_FOR_ADJUST
+//            for (int disk_index = 0; disk_index < spots.size(); disk_index++)
+//    #else // THREADS_FOR_ADJUST
+//            for (auto& a : spots)
+//    #endif // THREADS_FOR_ADJUST
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            {
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    #ifdef THREADS_FOR_ADJUST
+//                Disk& a = spots.at(disk_index);
+//    #else // THREADS_FOR_ADJUST
+//    #endif // THREADS_FOR_ADJUST
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                std::set<Disk*> disks_near_a;
+//    //            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
+//                disk_occupancy_grid->findNearbyDisks(a, disks_near_a);
+//                for (Disk* pointer_to_disk : disks_near_a)
+//                {
+//                    Disk& b = *pointer_to_disk;
+//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                    if (&a != &b)  // Ignore self overlap.
+//                    {
+//                        Vec2 b_tile = nearestByTiling(a.position, b.position);
+//                        Vec2 offset = a.position - b_tile;
+//                        float distance = offset.length();
+//                        float radius_sum = a.radius + b.radius;
+//                        if (distance < radius_sum)
+//                        {
+//                            no_move = false;
+//                            Vec2 basis = offset / distance;
+//                            float f = i;
+//                            float fade = interpolate(f / move_count, 1.0, 0.5);
+//                            float adjust = (radius_sum - distance) * fade;
+//
+//                            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //                        a.position += basis * adjust;
+//    //                        b.position += basis * -adjust;
+//
+//    #ifdef THREADS_FOR_ADJUST
+//                            a.future_position += basis * adjust;
+//    #else // THREADS_FOR_ADJUST
+//                            disk_occupancy_grid->eraseDiskWrap(a);
+//                            disk_occupancy_grid->eraseDiskWrap(b);
+//                            a.position += basis * adjust;
+//                            b.position += basis * -adjust;
+//                            disk_occupancy_grid->insertDiskWrap(a);
+//                            disk_occupancy_grid->insertDiskWrap(b);
+//    #endif // THREADS_FOR_ADJUST
+//                            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                        }
+//                    }
+//                }
+//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //            // Wrap "a"s position inside tile, clear "no_move" if was outside.
+//    //            Vec2 before = a.position;
+//    //            a.position = wrapToCenterTile(a.position);
+//    //            if (a.position != before) no_move = false;
+//
+//    #ifdef THREADS_FOR_ADJUST
+//                Vec2 before = a.future_position;
+//                a.future_position = wrapToCenterTile(a.future_position);
+//                if (a.future_position != before) no_move = false;
+//    #else // THREADS_FOR_ADJUST
+//                // If "a" is outside the central tile, wrap it in, clear "no_move".
+//                Vec2 wrapped_position = wrapToCenterTile(a.position);
+//                if (a.position != wrapped_position)
+//                {
+//                    disk_occupancy_grid->eraseDiskWrap(a);
+//                    a.position = wrapped_position;
+//                    disk_occupancy_grid->insertDiskWrap(a);
+//                    no_move = false;
+//                }
+//    #endif // THREADS_FOR_ADJUST
+//
+//
+//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            }
+//            if (no_move) break;
+//
+//    #ifdef THREADS_FOR_ADJUST
+//            for (auto& disk : spots)
+//            {
+//                if (disk.position != disk.future_position)
+//                {
+//                    disk_occupancy_grid->eraseDiskWrap(disk);
+//                    disk.position = disk.future_position;
+//                    disk_occupancy_grid->insertDiskWrap(disk);
+//                }
+//            }
+//    #else // THREADS_FOR_ADJUST
+//    #endif // THREADS_FOR_ADJUST
+//        }
+//
+//    #else // USE_DOG_FOR_ADJUST
+//
+//        // Move spots away from regions of overlap, repeat move_count times.
+//        for (int i = 0; i < move_count; i++)
+//        {
+//    //        debugPrint(i);
+//            bool no_move = true;
+//            for (auto& a : spots)
+//            {
+//                for (auto& b : spots)
+//                {
+//                    if (&a != &b)  // Ignore self overlap.
+//                    {
+//                        Vec2 b_tile = nearestByTiling(a.position, b.position);
+//                        Vec2 offset = a.position - b_tile;
+//                        float distance = offset.length();
+//                        float radius_sum = a.radius + b.radius;
+//                        if (distance < radius_sum)
+//                        {
+//                            no_move = false;
+//                            Vec2 basis = offset / distance;
+//                            float f = i;
+//                            float fade = interpolate(f / move_count, 1.0, 0.5);
+//                            float adjust = (radius_sum - distance) * fade;
+//                            a.position += basis * adjust;
+//                            b.position += basis * -adjust;
+//                        }
+//                    }
+//                }
+//                // Wrap "a"s position inside tile, clear "no_move" if was outside.
+//                Vec2 before = a.position;
+//                a.position = wrapToCenterTile(a.position);
+//                if (a.position != before) no_move = false;
+//            }
+//            if (no_move) break;
+//        }
+//
+//    #endif // USE_DOG_FOR_ADJUST
+//
+//    }
+
+// TODO April 19, prototyping the multi threaded version
+
+//    // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
+//    // away from each other along the line connecting their centers. The whole
+//    // process is repeated "move_count" times, or until no spots overlap.
+//    void LotsOfSpotsBase::adjustOverlappingSpots()
+//    {
+//    #ifdef USE_DOG_FOR_ADJUST
+//        // Move spots away from regions of overlap, repeat move_count times.
+//        for (int i = 0; i < move_count; i++)
+//        {
+//            debugPrint(i);
+//            bool no_move = true;
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    //#ifdef THREADS_FOR_ADJUST
+//            // TODO the multithreaded version QQQ
+//            // later...
+//            //const int max_threads = 100;
+//            //const int min_disks_per_thread = 100;
+//            // for rigth now...
+//            int thread_count = 40;
+//            int disks_per_thread = int(spots.size()) / thread_count;
+//
+//            // Collection of all row threads. (Use clear() to remove initial threads,
+//            // see https://stackoverflow.com/a/38130584/1991373 )
+//            std::vector<std::thread> all_threads(thread_count);
+//            all_threads.clear();
+//
+//            // Launch "thread_count" threads, each working on a given range of
+//            // "disks_per_thread" Disks.
+//            for (int t = 0; t <= thread_count; t++)
+//            {
+//
+//                int first_disk_index = t * disks_per_thread;
+//                int disk_count = ((t = thread_count)?
+//                                  int(spots.size()) - first_disk_index:
+//                                  disks_per_thread);
+//                all_threads.push_back(std::thread(&LotsOfSpotsBase::
+//                                                  oneThreadAdjustingSpots,
+//                                                  this,
+//                                                  first_disk_index,
+//                                                  disk_count,
+//                                                  i,
+//                                                  std::ref(no_move)));
+//            }
+//            // Wait for all row threads to finish.
+//            for (auto& t : all_threads) t.join();
+//
+//
+//    //#else // THREADS_FOR_ADJUST
+//
+//    //        // TODO the April 18 version 60x60 grid, does 2.76 on LOS benchmark
+//    //        for (auto& a : spots)
+//    //        {
+//    //            std::set<Disk*> disks_near_a;
+//    //            disk_occupancy_grid->findNearbyDisks(a, disks_near_a);
+//    //            for (Disk* pointer_to_disk : disks_near_a)
+//    //            {
+//    //                Disk& b = *pointer_to_disk;
+//    //                if (&a != &b)  // Ignore self overlap.
+//    //                {
+//    //                    Vec2 b_tile = nearestByTiling(a.position, b.position);
+//    //                    Vec2 offset = a.position - b_tile;
+//    //                    float distance = offset.length();
+//    //                    float radius_sum = a.radius + b.radius;
+//    //                    if (distance < radius_sum)
+//    //                    {
+//    //                        no_move = false;
+//    //                        Vec2 basis = offset / distance;
+//    //                        float f = i;
+//    //                        float fade = interpolate(f / move_count, 1.0, 0.5);
+//    //                        float adjust = (radius_sum - distance) * fade;
+//    //
+//    //                        disk_occupancy_grid->eraseDiskWrap(a);
+//    //                        disk_occupancy_grid->eraseDiskWrap(b);
+//    //                        a.position += basis * adjust;
+//    //                        b.position += basis * -adjust;
+//    //                        disk_occupancy_grid->insertDiskWrap(a);
+//    //                        disk_occupancy_grid->insertDiskWrap(b);
+//    //                    }
+//    //                }
+//    //            }
+//    //            // If "a" is outside the central tile, wrap it in, clear "no_move".
+//    //            Vec2 wrapped_position = wrapToCenterTile(a.position);
+//    //            if (a.position != wrapped_position)
+//    //            {
+//    //                disk_occupancy_grid->eraseDiskWrap(a);
+//    //                a.position = wrapped_position;
+//    //                disk_occupancy_grid->insertDiskWrap(a);
+//    //                no_move = false;
+//    //            }
+//    //#endif // THREADS_FOR_ADJUST
+//            }
+//            if (no_move) break;
+//
+//    #ifdef THREADS_FOR_ADJUST
+//            for (auto& disk : spots)
+//            {
+//                if (disk.position != disk.future_position)
+//                {
+//                    disk_occupancy_grid->eraseDiskWrap(disk);
+//                    disk.position = disk.future_position;
+//                    disk_occupancy_grid->insertDiskWrap(disk);
+//                }
+//            }
+//    #else // THREADS_FOR_ADJUST
+//    #endif // THREADS_FOR_ADJUST
+//        }
+//
+//    #else // USE_DOG_FOR_ADJUST
+//
+//        // Move spots away from regions of overlap, repeat move_count times.
+//        for (int i = 0; i < move_count; i++)
+//        {
+//    //        debugPrint(i);
+//            bool no_move = true;
+//            for (auto& a : spots)
+//            {
+//                for (auto& b : spots)
+//                {
+//                    if (&a != &b)  // Ignore self overlap.
+//                    {
+//                        Vec2 b_tile = nearestByTiling(a.position, b.position);
+//                        Vec2 offset = a.position - b_tile;
+//                        float distance = offset.length();
+//                        float radius_sum = a.radius + b.radius;
+//                        if (distance < radius_sum)
+//                        {
+//                            no_move = false;
+//                            Vec2 basis = offset / distance;
+//                            float f = i;
+//                            float fade = interpolate(f / move_count, 1.0, 0.5);
+//                            float adjust = (radius_sum - distance) * fade;
+//                            a.position += basis * adjust;
+//                            b.position += basis * -adjust;
+//                        }
+//                    }
+//                }
+//                // Wrap "a"s position inside tile, clear "no_move" if was outside.
+//                Vec2 before = a.position;
+//                a.position = wrapToCenterTile(a.position);
+//                if (a.position != before) no_move = false;
+//            }
+//            if (no_move) break;
+//        }
+//
+//    #endif // USE_DOG_FOR_ADJUST
+//
+//    }
+
+
 // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
 // away from each other along the line connecting their centers. The whole
 // process is repeated "move_count" times, or until no spots overlap.
 void LotsOfSpotsBase::adjustOverlappingSpots()
 {
-#ifdef USE_DOG_FOR_ADJUST
     // Move spots away from regions of overlap, repeat move_count times.
     for (int i = 0; i < move_count; i++)
     {
-        debugPrint(i);
+//        debugPrint(i);
         bool no_move = true;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef THREADS_FOR_ADJUST
-        for (int disk_index = 0; disk_index < spots.size(); disk_index++)
-#else // THREADS_FOR_ADJUST
-        for (auto& a : spots)
-#endif // THREADS_FOR_ADJUST
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO the multithreaded version QQQ
+        // later...
+        //const int max_threads = 100;
+        //const int min_disks_per_thread = 100;
+        // for rigth now...
+        int thread_count = 40;
+        int disks_per_thread = int(spots.size()) / thread_count;
+        
+        // Collection of all row threads. (Use clear() to remove initial threads,
+        // see https://stackoverflow.com/a/38130584/1991373 )
+        std::vector<std::thread> all_threads(thread_count);
+        all_threads.clear();
+
+        // Launch "thread_count" threads, each working on a given range of
+        // "disks_per_thread" Disks.
+        for (int t = 0; t <= thread_count; t++)
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef THREADS_FOR_ADJUST
-            Disk& a = spots.at(disk_index);
-#else // THREADS_FOR_ADJUST
-#endif // THREADS_FOR_ADJUST
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            std::set<Disk*> disks_near_a;
-//            disk_occupancy_grid->findNearbyDisks(a.position, disks_near_a);
-            disk_occupancy_grid->findNearbyDisks(a, disks_near_a);
-            for (Disk* pointer_to_disk : disks_near_a)
-            {
-                Disk& b = *pointer_to_disk;
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-                if (&a != &b)  // Ignore self overlap.
-                {
-                    Vec2 b_tile = nearestByTiling(a.position, b.position);
-                    Vec2 offset = a.position - b_tile;
-                    float distance = offset.length();
-                    float radius_sum = a.radius + b.radius;
-                    if (distance < radius_sum)
-                    {
-                        no_move = false;
-                        Vec2 basis = offset / distance;
-                        float f = i;
-                        float fade = interpolate(f / move_count, 1.0, 0.5);
-                        float adjust = (radius_sum - distance) * fade;
-                        
-                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                        a.position += basis * adjust;
-//                        b.position += basis * -adjust;
-                                                
-#ifdef THREADS_FOR_ADJUST
-                        a.future_position += basis * adjust;
-#else // THREADS_FOR_ADJUST
-                        disk_occupancy_grid->eraseDiskWrap(a);
-                        disk_occupancy_grid->eraseDiskWrap(b);
-                        a.position += basis * adjust;
-                        b.position += basis * -adjust;
-                        disk_occupancy_grid->insertDiskWrap(a);
-                        disk_occupancy_grid->insertDiskWrap(b);
-#endif // THREADS_FOR_ADJUST
-                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-                    }
-                }
-            }
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            // Wrap "a"s position inside tile, clear "no_move" if was outside.
-//            Vec2 before = a.position;
-//            a.position = wrapToCenterTile(a.position);
-//            if (a.position != before) no_move = false;
             
-#ifdef THREADS_FOR_ADJUST
-            Vec2 before = a.future_position;
-            a.future_position = wrapToCenterTile(a.future_position);
-            if (a.future_position != before) no_move = false;
-#else // THREADS_FOR_ADJUST
-            // If "a" is outside the central tile, wrap it in, clear "no_move".
-            Vec2 wrapped_position = wrapToCenterTile(a.position);
-            if (a.position != wrapped_position)
-            {
-                disk_occupancy_grid->eraseDiskWrap(a);
-                a.position = wrapped_position;
-                disk_occupancy_grid->insertDiskWrap(a);
-                no_move = false;
-            }
-#endif // THREADS_FOR_ADJUST
-
-
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            int first_disk_index = t * disks_per_thread;
+            int disk_count = ((t == thread_count)?
+                              int(spots.size()) - first_disk_index:
+                              disks_per_thread);
+            all_threads.push_back(std::thread(&LotsOfSpotsBase::
+                                              oneThreadAdjustingSpots,
+                                              this,
+                                              first_disk_index,
+                                              disk_count,
+                                              i,
+                                              std::ref(no_move)));
         }
+        // Wait for all row threads to finish.
+        for (auto& t : all_threads) t.join();
+        
         if (no_move) break;
         
-#ifdef THREADS_FOR_ADJUST
         for (auto& disk : spots)
         {
             if (disk.position != disk.future_position)
@@ -187,50 +441,67 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                 disk_occupancy_grid->insertDiskWrap(disk);
             }
         }
-#else // THREADS_FOR_ADJUST
-#endif // THREADS_FOR_ADJUST
     }
-        
-#else // USE_DOG_FOR_ADJUST
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//std::mutex print_mutex;
+
+
+
+// Top level for each worker thread adjusting spot overlap.
+void LotsOfSpotsBase::oneThreadAdjustingSpots(int first_disk_index,
+                                              int disk_count,
+                                              int move_index,
+                                              bool& no_move)
+{
+//    {
+//        // Wait to grab lock for access to image. (Lock released at end of block)
+//        const std::lock_guard<std::mutex> lock(print_mutex);
+//        std::cout << "in oneThreadAdjustingSpots " << first_disk_index
+//                  << std::endl;
+//    }
+//    for (int disk_index = 0; disk_index < spots.size(); disk_index++)
     
-    // Move spots away from regions of overlap, repeat move_count times.
-    for (int i = 0; i < move_count; i++)
+    for (int disk_index = first_disk_index;
+         disk_index < (first_disk_index + disk_count);
+         disk_index++)
     {
-//        debugPrint(i);
-        bool no_move = true;
-        for (auto& a : spots)
+        Disk& a = spots.at(disk_index);
+        std::set<Disk*> disks_near_a;
+        disk_occupancy_grid->findNearbyDisks(a, disks_near_a);
+        for (Disk* pointer_to_disk : disks_near_a)
         {
-            for (auto& b : spots)
+            Disk& b = *pointer_to_disk;
+            if (&a != &b)  // Ignore self overlap.
             {
-                if (&a != &b)  // Ignore self overlap.
+                Vec2 b_tile = nearestByTiling(a.position, b.position);
+                Vec2 offset = a.position - b_tile;
+                float distance = offset.length();
+                float radius_sum = a.radius + b.radius;
+                if (distance < radius_sum)
                 {
-                    Vec2 b_tile = nearestByTiling(a.position, b.position);
-                    Vec2 offset = a.position - b_tile;
-                    float distance = offset.length();
-                    float radius_sum = a.radius + b.radius;
-                    if (distance < radius_sum)
-                    {
-                        no_move = false;
-                        Vec2 basis = offset / distance;
-                        float f = i;
-                        float fade = interpolate(f / move_count, 1.0, 0.5);
-                        float adjust = (radius_sum - distance) * fade;
-                        a.position += basis * adjust;
-                        b.position += basis * -adjust;
-                    }
+                    no_move = false;
+                    Vec2 basis = offset / distance;
+                    
+                    float f = move_index;
+                    float fade = interpolate(f / move_count, 1.0, 0.5);
+//                    float fade = 1;
+//                    float f = move_index;
+//                    float fade = interpolate(f / move_count, 1.0, 0.1);
+                    
+                    float adjust = (radius_sum - distance) * fade;
+                    a.future_position += basis * adjust;
                 }
             }
-            // Wrap "a"s position inside tile, clear "no_move" if was outside.
-            Vec2 before = a.position;
-            a.position = wrapToCenterTile(a.position);
-            if (a.position != before) no_move = false;
         }
-        if (no_move) break;
+        Vec2 before = a.future_position;
+        a.future_position = wrapToCenterTile(a.future_position);
+        if (a.future_position != before) no_move = false;
     }
-
-#endif // USE_DOG_FOR_ADJUST
-
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Given a reference point (say to be rendered), and the center of a Spot,
 // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
