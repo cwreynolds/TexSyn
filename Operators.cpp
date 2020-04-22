@@ -402,12 +402,21 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         //const int max_threads = 100;
         //const int min_disks_per_thread = 100;
         // for rigth now...
-        int thread_count = 40;
+//        int thread_count = 40;
+//        int thread_count = 20;
+//        int thread_count = 24;
+//        int thread_count = 16;
+//        int thread_count = 8; // best?
+//        int thread_count = 10;
+//        int thread_count = 4;
+//        int thread_count = 14;
+        int thread_count = std::thread::hardware_concurrency();
         int disks_per_thread = int(spots.size()) / thread_count;
         
         // Collection of all row threads. (Use clear() to remove initial threads,
         // see https://stackoverflow.com/a/38130584/1991373 )
-        std::vector<std::thread> all_threads(thread_count);
+//        std::vector<std::thread> all_threads(thread_count);
+        std::vector<std::thread> all_threads;
         all_threads.clear();
 
         // Launch "thread_count" threads, each working on a given range of
@@ -432,6 +441,29 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
         
         if (no_move) break;
         
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef PARALLEL_DOG
+        
+        all_threads.clear();
+        // Launch "thread_count" threads, each working on a given range of
+        // "disks_per_thread" Disks.
+        for (int t = 0; t <= thread_count; t++)
+        {
+            
+            int first_disk_index = t * disks_per_thread;
+            int disk_count = ((t == thread_count)?
+                              int(spots.size()) - first_disk_index:
+                              disks_per_thread);
+            all_threads.push_back(std::thread(&LotsOfSpotsBase::
+                                              oneThreadMovingSpots,
+                                              this,
+                                              first_disk_index,
+                                              disk_count));
+        }
+        // Wait for all row threads to finish.
+        for (auto& t : all_threads) t.join();
+
+#else // PARALLEL_DOG
         for (auto& disk : spots)
         {
             if (disk.position != disk.future_position)
@@ -441,14 +473,29 @@ void LotsOfSpotsBase::adjustOverlappingSpots()
                 disk_occupancy_grid->insertDiskWrap(disk);
             }
         }
+#endif // PARALLEL_DOG
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//std::mutex print_mutex;
-
-
+// Top level for each worker thread moving spots.
+void LotsOfSpotsBase::oneThreadMovingSpots(int first_disk_index, int disk_count)
+{
+    for (int disk_index = first_disk_index;
+         disk_index < (first_disk_index + disk_count);
+         disk_index++)
+    {
+        Disk& disk = spots.at(disk_index);
+        if (disk.position != disk.future_position)
+        {
+            disk_occupancy_grid->eraseDiskWrap(disk);
+            disk.position = disk.future_position;
+            disk_occupancy_grid->insertDiskWrap(disk);
+        }
+    }
+}
 
 // Top level for each worker thread adjusting spot overlap.
 void LotsOfSpotsBase::oneThreadAdjustingSpots(int first_disk_index,
@@ -456,14 +503,6 @@ void LotsOfSpotsBase::oneThreadAdjustingSpots(int first_disk_index,
                                               int move_index,
                                               bool& no_move)
 {
-//    {
-//        // Wait to grab lock for access to image. (Lock released at end of block)
-//        const std::lock_guard<std::mutex> lock(print_mutex);
-//        std::cout << "in oneThreadAdjustingSpots " << first_disk_index
-//                  << std::endl;
-//    }
-//    for (int disk_index = 0; disk_index < spots.size(); disk_index++)
-    
     for (int disk_index = first_disk_index;
          disk_index < (first_disk_index + disk_count);
          disk_index++)
@@ -487,10 +526,6 @@ void LotsOfSpotsBase::oneThreadAdjustingSpots(int first_disk_index,
                     
                     float f = move_index;
                     float fade = interpolate(f / move_count, 1.0, 0.5);
-//                    float fade = 1;
-//                    float f = move_index;
-//                    float fade = interpolate(f / move_count, 1.0, 0.1);
-                    
                     float adjust = (radius_sum - distance) * fade;
                     a.future_position += basis * adjust;
                 }

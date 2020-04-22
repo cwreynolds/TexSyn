@@ -1481,19 +1481,19 @@ int main(int argc, const char * argv[])
         Timer timer("LOS timing test suite");
         LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
         Texture::displayAndFile(Scale(0.13, los1)
-                                , path + "los1_scaled");
+                                ); // , path + "los1_scaled");
         Texture::displayAndFile(los1
-                                , path + "los1");
+                                ); // , path + "los1");
         LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
         Texture::displayAndFile(Scale(0.13, los2)
-                                , path + "los2_scaled");
+                                ); // , path + "los2_scaled");
         Texture::displayAndFile(los2
-                                , path + "los2");
+                                ); // , path + "los2");
         LotsOfSpots los3(0.8, 0.2, 0.2, 0.02, c, m);
         Texture::displayAndFile(Scale(0.13, los3)
-                                , path + "los3_scaled");
+                                ); // , path + "los3_scaled");
         Texture::displayAndFile(los3
-                                , path + "los3");
+                                ); // , path + "los3");
     }
 
 //    // Do these render identically?

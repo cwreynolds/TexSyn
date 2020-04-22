@@ -1014,10 +1014,19 @@ private:
 // Disk::future_position)
 
 //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef THREADS_FOR_ADJUST
-#else // THREADS_FOR_ADJUST
-#endif // THREADS_FOR_ADJUST
+// TODO prototype multithread version of the “disk move” at the end of
+// LotsOfSpotsBase::adjustOverlappingSpots(). Change the instance in each
+// cell of DiskOccupancyGrid.
+
+#define PARALLEL_DOG
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef PARALLEL_DOG
+#else // PARALLEL_DOG
+#endif // PARALLEL_DOG
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Represents a disk on the 2d plane, defined by center position and radius.
@@ -1192,7 +1201,13 @@ private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
     std::set<Disk*>* getSetFromGrid(int i, int j)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef PARALLEL_DOG
+        return grid_.at(i).at(j).getSet();
+#else // PARALLEL_DOG
         return &grid_.at(i).at(j);
+#endif // PARALLEL_DOG
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     void insertIntoCell(int i, int j, Disk* d)
     {
@@ -1205,7 +1220,37 @@ private:
     const Vec2 minXY_;
     const Vec2 maxXY_;
     const int grid_side_count_;
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#ifdef PARALLEL_DOG
+    class Cell
+    {
+    public:
+        Cell(){}
+        Cell(const Cell& cell) : set_(cell.set_) {}
+        std::set<Disk*>* getSet() { return &set_; }
+        void insert(Disk* d)
+        {
+            // Wait to grab cell lock. (Lock released at end of block)
+            const std::lock_guard<std::mutex> lock(cell_mutex_);
+            set_.insert(d);
+        }
+        void erase(Disk* d)
+        {
+            // Wait to grab cell lock. (Lock released at end of block)
+            const std::lock_guard<std::mutex> lock(cell_mutex_);
+            set_.erase(d);
+        }
+    private:
+        std::set<Disk*> set_;
+        std::mutex cell_mutex_;
+    };
+    std::vector<std::vector<Cell>> grid_;
+#else // PARALLEL_DOG
     std::vector<std::vector<std::set<Disk*>>> grid_;
+#endif // PARALLEL_DOG
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 };
 
 // A new LotsOfSpots (see http://www.red3d.com/cwr/texsyn/diary.html#20100208).
@@ -1314,6 +1359,9 @@ public:
                                  int disk_count,
                                  int move_index,
                                  bool& no_move);
+
+    // Top level for each worker thread moving spots.
+    void oneThreadMovingSpots(int first_disk_index, int disk_count);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
