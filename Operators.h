@@ -1013,20 +1013,11 @@ private:
 // "move both away", now it moves only one at a time. (This version with
 // Disk::future_position)
 
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO prototype multithread version of the “disk move” at the end of
 // LotsOfSpotsBase::adjustOverlappingSpots(). Change the instance in each
 // cell of DiskOccupancyGrid.
 
 #define PARALLEL_DOG
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef PARALLEL_DOG
-#else // PARALLEL_DOG
-#endif // PARALLEL_DOG
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Represents a disk on the 2d plane, defined by center position and radius.
@@ -1035,19 +1026,14 @@ class Disk
 {
 public:
     Disk(){}
-    Disk(float r, Vec2 p) : radius(r), position(p) {}
+    Disk(float r, Vec2 p) : radius(r), position(p), future_position(p) {}
     float area() const { return pi * sq(radius); }
     float radius = 0;
     Vec2 position;
+    // Of course "angle" and "future_position" are not minimal properties disk.
+    // But they provide efficiency for LotsOfSpotsBase, the only user of Disk.
     float angle = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef THREADS_FOR_ADJUST
-    // TODO if kept, make note that future_position and angle are clearly not
-    // properties of a minimal disk, but needed for efficiency of LotsOfSpotsBase
     Vec2 future_position;
-#else // THREADS_FOR_ADJUST
-#endif // THREADS_FOR_ADJUST
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // DiskOccupancyGrid -- 2d spatial data structure for collections of Disks.
@@ -1201,13 +1187,7 @@ private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
     std::set<Disk*>* getSetFromGrid(int i, int j)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef PARALLEL_DOG
         return grid_.at(i).at(j).getSet();
-#else // PARALLEL_DOG
-        return &grid_.at(i).at(j);
-#endif // PARALLEL_DOG
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     void insertIntoCell(int i, int j, Disk* d)
     {
@@ -1221,8 +1201,7 @@ private:
     const Vec2 maxXY_;
     const int grid_side_count_;
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#ifdef PARALLEL_DOG
+    // The grid is a 2d array of these Cell objects, each containing an std::set of Disk pointers and a mutex to lock it for thread safety.
     class Cell
     {
     public:
@@ -1246,11 +1225,6 @@ private:
         std::mutex cell_mutex_;
     };
     std::vector<std::vector<Cell>> grid_;
-#else // PARALLEL_DOG
-    std::vector<std::vector<std::set<Disk*>>> grid_;
-#endif // PARALLEL_DOG
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 };
 
 // A new LotsOfSpots (see http://www.red3d.com/cwr/texsyn/diary.html#20100208).
@@ -1290,15 +1264,6 @@ public:
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
         adjustOverlappingSpots();
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-#ifdef USE_DOG_FOR_ADJUST
-#else // USE_DOG_FOR_ADJUST
-    #ifdef USE_DOG_FOR_RENDER
-        std::cout << "NOT SEEING THIS RIGHT????????" << std::endl;
-        for (Disk& spot : spots) disk_occupancy_grid.insertDiskWrap(spot);
-    #endif // USE_DOG_FOR_RENDER
-#endif // USE_DOG_FOR_ADJUST
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     // Find nearest spot (Dot) and the soft-edged opacity at "position".
     typedef std::pair<Disk, float> DiskAndSoft;
@@ -1307,20 +1272,11 @@ public:
         float gray_level = 0;
         Disk nearest_spot;
         Vec2 tiled_pos = wrapToCenterTile(position);
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO keep this conditionalized for now to allow timing comparison
-        //      Rewrite later.
-#ifdef USE_DOG_FOR_RENDER
         std::set<Disk*> disks;
         disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
         for (auto& disk : disks)
         {
             Disk spot = *disk;
-#else // USE_DOG_FOR_RENDER
-        for (auto& spot : spots)
-        {
-#endif // USE_DOG_FOR_RENDER
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
             Vec2 tiled_spot = nearestByTiling(tiled_pos, spot.position);
             // Distance from sample position to spot center. Ignore if too far.
@@ -1348,22 +1304,16 @@ public:
     // away from each other along the line connecting their centers. The whole
     // process is repeated "move_count" times, or until no spots overlap.
     void adjustOverlappingSpots();
-    // Given a reference point (say to be rendered), and the center of a Spot,
-    // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
-    // another tile) to "reference_point".
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Top level for each worker thread adjusting spot overlap.
-//    void oneThreadAdjustingSpots(int first_disk_index, int disk_count);
-        
     void oneThreadAdjustingSpots(int first_disk_index,
                                  int disk_count,
                                  int move_index,
                                  bool& no_move);
-
     // Top level for each worker thread moving spots.
     void oneThreadMovingSpots(int first_disk_index, int disk_count);
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Given a reference point (say to be rendered), and the center of a Spot,
+    // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
+    // another tile) to "reference_point".
     Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
     // Given a position, find corresponding point on center tile, via fmod/wrap.
     Vec2 wrapToCenterTile(Vec2 v) const;

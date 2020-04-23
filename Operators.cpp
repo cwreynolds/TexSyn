@@ -64,7 +64,8 @@ void LotsOfSpotsBase::insertRandomSpots()
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #ifdef THREADS_FOR_ADJUST
-    for (Disk& spot : spots) spot.future_position = spot.position;
+    // TODO apr 22 experiment -- comment this out, do in Disk constructor
+//    for (Disk& spot : spots) spot.future_position = spot.position;
 #else // THREADS_FOR_ADJUST
 #endif // THREADS_FOR_ADJUST
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
