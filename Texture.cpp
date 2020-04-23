@@ -48,10 +48,21 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 #if 0  //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Synchronizes access to opencv_image by multiple row threads.
         std::mutex ocv_image_mutex;
-        // Collection of all row threads. (Use clear() to remove initial threads,
-        // see https://stackoverflow.com/a/38130584/1991373 )
-        std::vector<std::thread> all_threads(size);
-        all_threads.clear();
+        
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        // (TODO added Apr 23, even though this branch of the if def is wrongly
+        //       turned off. LotsOfSpotsBase::adjustOverlappingSpots() has same
+        //       change, and it was based on this.)
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//      // Collection of all row threads. (Use clear() to remove initial threads,
+//      // see https://stackoverflow.com/a/38130584/1991373 )
+//      std::vector<std::thread> all_threads(size);
+//      all_threads.clear();
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        // Collection of all row threads.
+        std::vector<std::thread> all_threads;
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
         for (int j = -(size / 2); j <= (size / 2); j++)

@@ -999,27 +999,6 @@ private:
     const Texture& bump_texture;
 };
 
-//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-#define USE_DOG_FOR_ADJUST
-#define USE_DOG_FOR_RENDER
-#define THREADS_FOR_ADJUST
-
-// TODO -- Note first version with THREADS_FOR_ADJUST (but single threaded) did
-// the benchmark in about 5.37 seconds, versus 2.76 yesterday (using the old
-// "move both away", now it moves only one at a time.
-
-// TODO -- Note second version with THREADS_FOR_ADJUST (but single threaded) did
-// the benchmark in about 4.09 seconds, versus 2.76 yesterday (using the old
-// "move both away", now it moves only one at a time. (This version with
-// Disk::future_position)
-
-// TODO prototype multithread version of the “disk move” at the end of
-// LotsOfSpotsBase::adjustOverlappingSpots(). Change the instance in each
-// cell of DiskOccupancyGrid.
-
-#define PARALLEL_DOG
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Represents a disk on the 2d plane, defined by center position and radius.
 // (TODO seems like it should be in a general geometric utility file.)
 class Disk
