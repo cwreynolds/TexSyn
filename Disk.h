@@ -2,6 +2,8 @@
 //  Disk.h
 //  texsyn
 //
+//  Defines utility classes Disk and DiskOccupancyGrid.
+//
 //  Created by Craig Reynolds on 4/23/20.
 //  Copyright © 2020 Craig Reynolds. All rights reserved.
 //
@@ -10,6 +12,7 @@
 #include "Utilities.h"
 #include "Vec2.h"
 #include <set>
+#include <thread>
 
 // Represents a disk on the 2d plane, defined by center position and radius.
 // TODO stores some other properties: "future_position" for LotsOfSpotsBase,
@@ -176,7 +179,48 @@ public:
         grid_.resize(grid_side_count_);
         for (auto& row : grid_) row.resize(grid_side_count_);
     }
-
+    
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    // These functions specifically support use case of LotsOfSpotsBase.
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    // Relaxation process that attempts to reduce the overlaps in an arbitrary
+    // collection of Disks. Overlapping Disks are pushed away from each other
+    // along the line connecting their centers. The whole process is repeated
+    // "retries" times, or until none overlap.
+    //
+    // This uses parallel threads and spatial data structures. For consistent
+    // results, the work is broken into two sequential steps, each of which runs
+    // in parallel. Step one: find overlaps and compute Disk's future position.
+    // Step two: move Disk and update occupancy grid.
+    void reduceDiskOverlap(int retries, std::vector<Disk>& disks);
+    // Runs parallel update of all Disks. Parameter is function to generate one
+    // thread, given "first_disk_index" and "disk_count" in vector "disks". Each
+    // thread updates this given block of disks, in parallel with other threads.
+    void parallelDiskUpdate(std::vector<Disk>& disks,
+                            std::function<std::thread(int, int)> thread_maker);
+    // Top level for each worker thread adjusting spot overlap. For "disk_count"
+    // Disks beginning at "first_disk_index": look up nearest neighbor, if
+    // overlap compute new position.
+        void oneThreadAdjustingSpots(int first_disk_index,
+                                     int disk_count,
+                                     float retry_fraction,
+                                     bool& no_move,
+                                     std::vector<Disk>& disks);
+    // Top level for each worker thread moving spots. For "disk_count" Disks
+    // beginning at "first_disk_index": if the Disk's "future_position" has
+    // changed, erase it from the grid, update its position, then re-insert it
+    // back into the grid.
+    void oneThreadMovingSpots(int first_disk_index,
+                              int disk_count,
+                              std::vector<Disk>& disks);
+    // Given a reference point (say to be rendered), and the center of a Spot,
+    // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
+    // another tile) to "reference_point".
+    Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
+    // Given a position, find corresponding point on center tile, via fmod/wrap.
+    Vec2 wrapToCenterTile(Vec2 v) const;
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    
 private:
     // Returns pointer to set of disk pointers at grid cell (i, j).
     std::set<Disk*>* getSetFromGrid(int i, int j)

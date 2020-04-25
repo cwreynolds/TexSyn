@@ -1035,7 +1035,7 @@ public:
     {
         Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
-        adjustOverlappingSpots();
+        disk_occupancy_grid->reduceDiskOverlap(200, spots);
     }
     // Find nearest spot (Dot) and the soft-edged opacity at "position".
     typedef std::pair<Disk, float> DiskAndSoft;
@@ -1043,14 +1043,15 @@ public:
     {
         float gray_level = 0;
         Disk nearest_spot;
-        Vec2 tiled_pos = wrapToCenterTile(position);
+        Vec2 tiled_pos = disk_occupancy_grid->wrapToCenterTile(position);
         std::set<Disk*> disks;
         disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
         for (auto& disk : disks)
         {
             Disk spot = *disk;
             // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
-            Vec2 tiled_spot = nearestByTiling(tiled_pos, spot.position);
+            Vec2 tiled_spot =
+                disk_occupancy_grid->nearestByTiling(tiled_pos, spot.position);
             // Distance from sample position to spot center. Ignore if too far.
             float d = (tiled_pos - tiled_spot).length();
             if (d <= spot.radius)
@@ -1072,34 +1073,6 @@ public:
     void insertRandomSpots();
     void randomizeSpotRotations();
     size_t seedForRandomSequence();
-    // Relaxation process that attempts to move an arbitrary collection of Disks
-    // to have no overlaps, or at least "nearly so". When two Disks overlap they
-    // are pushed away from each other along the line connecting their centers.
-    // The whole process is repeated "move_count" times, or until none overlap.
-    //
-    // This uses parallel threads and spatial data structures. For consistent
-    // results, there are two sequential steps, each of which runs in parallel.
-    // Step one: find overlaps (accelerated by DiskOccupancyGrid) and compute
-    // Disk's future position. Step two: move Disk and update occupancy grid.
-    void adjustOverlappingSpots();
-    // Top level for each worker thread adjusting spot overlap. For "disk_count"
-    // Disks beginning at "first_disk_index": look up nearest neighbor, if
-    // overlap compute new position.
-    void oneThreadAdjustingSpots(int first_disk_index,
-                                 int disk_count,
-                                 int move_index,
-                                 bool& no_move);
-    // Top level for each worker thread moving spots. For "disk_count" Disks
-    // beginning at "first_disk_index": if the Disk's "future_position" has
-    // changed, erase it from the grid, update its position, then re-insert it
-    // back into the grid.
-    void oneThreadMovingSpots(int first_disk_index, int disk_count);
-    // Given a reference point (say to be rendered), and the center of a Spot,
-    // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
-    // another tile) to "reference_point".
-    Vec2 nearestByTiling(Vec2 reference_point, Vec2 spot_center) const;
-    // Given a position, find corresponding point on center tile, via fmod/wrap.
-    Vec2 wrapToCenterTile(Vec2 v) const;
 private:
     std::vector<Disk> spots;
     std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
