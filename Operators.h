@@ -1072,16 +1072,27 @@ public:
     void insertRandomSpots();
     void randomizeSpotRotations();
     size_t seedForRandomSequence();
-    // Considers all pairs of spots (so O(n²)). When two overlap they are pushed
-    // away from each other along the line connecting their centers. The whole
-    // process is repeated "move_count" times, or until no spots overlap.
+    // Relaxation process that attempts to move an arbitrary collection of Disks
+    // to have no overlaps, or at least "nearly so". When two Disks overlap they
+    // are pushed away from each other along the line connecting their centers.
+    // The whole process is repeated "move_count" times, or until none overlap.
+    //
+    // This uses parallel threads and spatial data structures. For consistent
+    // results, there are two sequential steps, each of which runs in parallel.
+    // Step one: find overlaps (accelerated by DiskOccupancyGrid) and compute
+    // Disk's future position. Step two: move Disk and update occupancy grid.
     void adjustOverlappingSpots();
-    // Top level for each worker thread adjusting spot overlap.
+    // Top level for each worker thread adjusting spot overlap. For "disk_count"
+    // Disks beginning at "first_disk_index": look up nearest neighbor, if
+    // overlap compute new position.
     void oneThreadAdjustingSpots(int first_disk_index,
                                  int disk_count,
                                  int move_index,
                                  bool& no_move);
-    // Top level for each worker thread moving spots.
+    // Top level for each worker thread moving spots. For "disk_count" Disks
+    // beginning at "first_disk_index": if the Disk's "future_position" has
+    // changed, erase it from the grid, update its position, then re-insert it
+    // back into the grid.
     void oneThreadMovingSpots(int first_disk_index, int disk_count);
     // Given a reference point (say to be rendered), and the center of a Spot,
     // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in

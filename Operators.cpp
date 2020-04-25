@@ -78,74 +78,77 @@ size_t LotsOfSpotsBase::seedForRandomSequence()
             hash_float(soft_edge_width));
 }
 
-// Considers all pairs of spots (so O(n²)). When two overlap they are pushed
-// away from each other along the line connecting their centers. The whole
-// process is repeated "move_count" times, or until no spots overlap.
+// Relaxation process that attempts to move an arbitrary collection of Disks
+// to have no overlaps, or at least "nearly so". When two Disks overlap they
+// are pushed away from each other along the line connecting their centers.
+// The whole process is repeated "move_count" times, or until none overlap.
+//
+// This uses parallel threads and spatial data structures. For consistent
+// results, there are two sequential steps, each of which runs in parallel.
+// Step one: find overlaps (accelerated by DiskOccupancyGrid) and compute
+// Disk's future position. Step two: move Disk and update occupancy grid.
 void LotsOfSpotsBase::adjustOverlappingSpots()
 {
-    // TODO for parallelism. I had arbitrarily set this to 40. (Rendering uses
-    // 512.) Then I noticed it got faster as I reduced it, hitting a min at 8,
-    // then going up. In case that is not a coincidence (my laptop has 8
-    // hyperthreads) I left it as one thread per hardware processor.
-    int thread_count = std::thread::hardware_concurrency();
-    int disks_per_thread = int(spots.size()) / thread_count;
-
-    // Move spots away from regions of overlap, repeat move_count times.
-    for (int i = 0; i < move_count; i++)
+    // Runs parallel update of all Disks. Parameter is function to generate one
+    // such threads, given "first_disk_index" and "disk_count" in vector "spots".
+    auto parallelDiskUpdate = [&]
+    (std::function<std::thread(int first_index, int count)> thread_maker)
     {
-        bool no_move = true;
+        // TODO I arbitrarily set this to 40 (rendering uses 512.) then noticed
+        // it got faster as I reduced it, with minimum at 8. In case that is not
+        // a coincidence (my laptop has 8 hyperthreads) I left it as one thread
+        // per hardware processor.
+        int thread_count = std::thread::hardware_concurrency();
+        int disks_per_thread = int(spots.size()) / thread_count;
         // Collection of worker threads.
         std::vector<std::thread> all_threads;
-        
-        // Launch "thread_count" threads, each working on a given range of
-        // "disks_per_thread" Disks. For each Disk, find nearest overlapping
-        // neighbor, compute minimal move to avoid overlap, save that position.
         for (int t = 0; t <= thread_count; t++)
         {
-            
             int first_disk_index = t * disks_per_thread;
             int disk_count = ((t == thread_count)?
                               int(spots.size()) - first_disk_index:
                               disks_per_thread);
-            all_threads.push_back(std::thread(&LotsOfSpotsBase::
-                                              oneThreadAdjustingSpots,
-                                              this,
-                                              first_disk_index,
-                                              disk_count,
-                                              i,
-                                              std::ref(no_move)));
+            all_threads.push_back(thread_maker(first_disk_index, disk_count));
         }
         // Wait for all row threads to finish.
         for (auto& t : all_threads) t.join();
-        
-        // No overlapping Disks found, exit adjustment loop.
+    };
+
+    // Repeat relaxation process move_count times, or until no overlaps remain.
+    for (int i = 0; i < move_count; i++)
+    {
+        // For each Disk, find nearest overlapping neighbor, compute minimal
+        // move to avoid overlap, save that position.
+        bool no_move = true;
+        parallelDiskUpdate([&]
+                           (int first_disk_index, int disk_count)
+                           { return std::thread(&LotsOfSpotsBase::
+                                                oneThreadAdjustingSpots,
+                                                this,
+                                                first_disk_index,
+                                                disk_count,
+                                                i,
+                                                std::ref(no_move)); });
+        // Exit adjustment loop if no overlapping Disks found.
         if (no_move) break;
         
-        // Now actually move the overlapping Disks, in a thread-safe way, to the
-        // future_position computed in the first pass. Each Disk is erased from
-        // the grid, moved, then re-inserted into the grid.
-        all_threads.clear();
-        // Launch "thread_count" threads, each working on a given range of
-        // "disks_per_thread" Disks.
-        for (int t = 0; t <= thread_count; t++)
-        {
-            
-            int first_disk_index = t * disks_per_thread;
-            int disk_count = ((t == thread_count)?
-                              int(spots.size()) - first_disk_index:
-                              disks_per_thread);
-            all_threads.push_back(std::thread(&LotsOfSpotsBase::
-                                              oneThreadMovingSpots,
-                                              this,
-                                              first_disk_index,
-                                              disk_count));
-        }
-        // Wait for all row threads to finish.
-        for (auto& t : all_threads) t.join();
+        // Now move the overlapping Disks, in a thread-safe way, to the
+        // future_position computed in the first pass. Each Disk is erased
+        // from the grid, moved, then re-inserted into the grid.
+        parallelDiskUpdate([&]
+                           (int first_disk_index, int disk_count)
+                           { return std::thread(&LotsOfSpotsBase::
+                                                oneThreadMovingSpots,
+                                                this,
+                                                first_disk_index,
+                                                disk_count); });
     }
 }
 
-// Top level for each worker thread moving spots.
+// Top level for each worker thread moving spots. For "disk_count" Disks
+// beginning at "first_disk_index": if the Disk's "future_position" has
+// changed, erase it from the grid, update its position, then re-insert it
+// back into the grid.
 void LotsOfSpotsBase::oneThreadMovingSpots(int first_disk_index, int disk_count)
 {
     for (int disk_index = first_disk_index;
@@ -162,7 +165,9 @@ void LotsOfSpotsBase::oneThreadMovingSpots(int first_disk_index, int disk_count)
     }
 }
 
-// Top level for each worker thread adjusting spot overlap.
+// Top level for each worker thread adjusting spot overlap. For "disk_count"
+// Disks beginning at "first_disk_index": look up nearest neighbor, if
+// overlap compute new position.
 void LotsOfSpotsBase::oneThreadAdjustingSpots(int first_disk_index,
                                               int disk_count,
                                               int move_index,
