@@ -1175,3 +1175,42 @@ private:
     const float button_random_rotate;
     const Color background_color;
 };
+
+// Gamma provides the standard operation used in digital image processing:
+// exponentiating the RGB components by a given parameter gamma (𝛾). Values
+// other than 1 cause a nonlinear contrast mapping. When gamma is less than 1:
+// mid-range colors will be brighter. When gamma is greater than 1: mid-range
+// colors will be darker. The brightest and darkest colors stay about the same.
+// Normally gamma correction is used on color values within the positive unit
+// RGB cube. In TexSyn colors are three arbitrary floats.
+class Gamma : public Operator
+{
+public:
+    Gamma(float _exponent, const Texture& _texture)
+      : exponent(_exponent),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color color = texture.getColor(position).gamma(exponent);
+        //
+        // TODO I tried some tests:
+        //      ColorNoise cn(0.3, Vec2(5, 3), 0.6);
+        //      Gamma(-1, cn);
+        //      Gamma(0, cn));
+        //      Gamma(1, AdjustBrightness(-1, cn));
+        // None produced any NaN, but there were some Inf. Is that a problem?
+        // Worked fine when called from Texture::rasterizeToImageCache()
+        //
+        //assert(!isnan(color.r()));
+        //assert(!isnan(color.g()));
+        //assert(!isnan(color.b()));
+        //assert(!isinf(color.r()));
+        //assert(!isinf(color.g()));
+        //assert(!isinf(color.b()));
+        //
+        return color;
+    }
+private:
+    const float exponent;
+    const Texture& texture;
+};

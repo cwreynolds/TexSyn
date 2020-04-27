@@ -1402,8 +1402,8 @@ int main(int argc, const char * argv[])
 //    Color m(0.8, 0.0, 0.8);
 //    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
 
-    Color c(0.0, 0.8, 1.0);
-    Color m(0.8, 0.0, 0.8);
+//    Color c(0.0, 0.8, 1.0);
+//    Color m(0.8, 0.0, 0.8);
 //    Texture::displayAndFile(Scale(0.13,
 //                                  LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)));
     
@@ -1474,34 +1474,58 @@ int main(int argc, const char * argv[])
 //    Texture::displayAndFile(Scale(0.13, los2));
 //    Texture::displayAndFile(los2);
 
-    // std::cout << "April 18, 2020" << std::endl;
-    std::cout << "April 19, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200419_";
-    {
-        Timer timer("LOS timing test suite");
-        LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
-        Texture::displayAndFile(Scale(0.13, los1)
-                                ); // , path + "los1_scaled");
-        Texture::displayAndFile(los1
-                                ); // , path + "los1");
-        LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
-        Texture::displayAndFile(Scale(0.13, los2)
-                                ); // , path + "los2_scaled");
-        Texture::displayAndFile(los2
-                                ); // , path + "los2");
-        LotsOfSpots los3(0.8, 0.2, 0.2, 0.02, c, m);
-        Texture::displayAndFile(Scale(0.13, los3)
-                                ); // , path + "los3_scaled");
-        Texture::displayAndFile(los3
-                                ); // , path + "los3");
-    }
+//    Color c(0.0, 0.8, 1.0);
+//    Color m(0.8, 0.0, 0.8);
+//
+//    // std::cout << "April 18, 2020" << std::endl;
+//    std::cout << "April 19, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200419_";
+//    {
+//        Timer timer("LOS timing test suite");
+//        LotsOfSpots los1(0.7, 0.02, 0.2, 0.01, c, m);
+//        Texture::displayAndFile(Scale(0.13, los1)
+//                                ); // , path + "los1_scaled");
+//        Texture::displayAndFile(los1
+//                                ); // , path + "los1");
+//        LotsOfSpots los2(0.8, 0.02, 0.4, 0.02, c, m);
+//        Texture::displayAndFile(Scale(0.13, los2)
+//                                ); // , path + "los2_scaled");
+//        Texture::displayAndFile(los2
+//                                ); // , path + "los2");
+//        LotsOfSpots los3(0.8, 0.2, 0.2, 0.02, c, m);
+//        Texture::displayAndFile(Scale(0.13, los3)
+//                                ); // , path + "los3_scaled");
+//        Texture::displayAndFile(los3
+//                                ); // , path + "los3");
+//    }
 
 //    // Do these render identically?
 //    // ...Suprisingly they do, I expected pointer-ordering to randomise them.
 //    // Perhaps allocating them into a std::vector orders the pointers?
 //    Texture::displayAndFile(LotsOfSpots(0.8, 0.02, 0.4, 0.02, c, m));
 //    Texture::displayAndFile(LotsOfSpots(0.8, 0.02, 0.4, 0.02, c, m));
+//
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    
+    std::cout << "April 26, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200426_";
+    ColorNoise cn(0.3, Vec2(5, 3), 0.6);
+    
+    Texture::displayAndFile(Gamma(0.50, cn) ); //, path + "Gamma_0_50");
+    Texture::displayAndFile(Gamma(0.66, cn) ); //, path + "Gamma_0_66");
+    Texture::displayAndFile(Gamma(1.00, cn) ); //, path + "Gamma_1_00");
+    Texture::displayAndFile(Gamma(1.50, cn) ); //, path + "Gamma_1_50");
+    Texture::displayAndFile(Gamma(2.00, cn) ); //, path + "Gamma_2_00");
+
+    //debugPrint(pow(-2, 1.5));
+    //Texture::displayAndFile(Gamma(-1, cn));
+    //Texture::displayAndFile(Gamma(0, cn));
+    //Texture::displayAndFile(Gamma(1, AdjustBrightness(-1, cn)));
+    //Texture::diff(cn, Gamma(1, cn));  // identical
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

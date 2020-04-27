@@ -62,6 +62,8 @@ public:
     Color normalize() const { return *this / length(); }
     // Get corresponding color value clipped to unit RGB cube.
     Color clipToUnitRGB() const;
+    // Exponentiate the RGB components by given gamma value ("exponent")
+    Color gamma(float g) const;
     // Random color uniformly distributed across the unit RGB cube.
     static Color randomUnitRGB();
     static Color gray(float value) { return { value, value, value }; }

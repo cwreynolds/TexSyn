@@ -252,6 +252,15 @@ Color Color::clipToUnitRGB() const
     return result;
 }
 
+// Exponentiate the RGB components by given gamma value ("exponent")
+Color Color::gamma(float exponent) const
+{
+    // TODO should it be per component, or by luminance()?
+    return Color(pow(std::max(r(), 0.0f), exponent),
+                 pow(std::max(g(), 0.0f), exponent),
+                 pow(std::max(b(), 0.0f), exponent));
+}
+
 // Random color uniformly distributed across the unit RGB cube.
 Color Color::randomUnitRGB()
 {
