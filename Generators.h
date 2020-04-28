@@ -309,6 +309,7 @@ class Uniform : public Generator
 {
 public:
     Uniform(Color _color) : color(_color) {};
+    Uniform(float red, float green, float blue) : color(red, green, blue) {};
     Uniform(float _gray_value) : color(Color::gray(_gray_value)) {};
     Color getColor(Vec2 position) const override { return color; }
 private:

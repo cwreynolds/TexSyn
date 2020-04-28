@@ -1508,23 +1508,43 @@ int main(int argc, const char * argv[])
 //    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
-    
-    std::cout << "April 26, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200426_";
-    ColorNoise cn(0.3, Vec2(5, 3), 0.6);
-    
-    Texture::displayAndFile(Gamma(0.50, cn) ); //, path + "Gamma_0_50");
-    Texture::displayAndFile(Gamma(0.66, cn) ); //, path + "Gamma_0_66");
-    Texture::displayAndFile(Gamma(1.00, cn) ); //, path + "Gamma_1_00");
-    Texture::displayAndFile(Gamma(1.50, cn) ); //, path + "Gamma_1_50");
-    Texture::displayAndFile(Gamma(2.00, cn) ); //, path + "Gamma_2_00");
 
-    //debugPrint(pow(-2, 1.5));
-    //Texture::displayAndFile(Gamma(-1, cn));
-    //Texture::displayAndFile(Gamma(0, cn));
-    //Texture::displayAndFile(Gamma(1, AdjustBrightness(-1, cn)));
-    //Texture::diff(cn, Gamma(1, cn));  // identical
+//    std::cout << "April 26, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200426_";
+//    ColorNoise cn(0.3, Vec2(5, 3), 0.6);
+//
+//    Texture::displayAndFile(Gamma(0.50, cn) ); //, path + "Gamma_0_50");
+//    Texture::displayAndFile(Gamma(0.66, cn) ); //, path + "Gamma_0_66");
+//    Texture::displayAndFile(Gamma(1.00, cn) ); //, path + "Gamma_1_00");
+//    Texture::displayAndFile(Gamma(1.50, cn) ); //, path + "Gamma_1_50");
+//    Texture::displayAndFile(Gamma(2.00, cn) ); //, path + "Gamma_2_00");
+//
+//    //debugPrint(pow(-2, 1.5));
+//    //Texture::displayAndFile(Gamma(-1, cn));
+//    //Texture::displayAndFile(Gamma(0, cn));
+//    //Texture::displayAndFile(Gamma(1, AdjustBrightness(-1, cn)));
+//    //Texture::diff(cn, Gamma(1, cn));  // identical
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    std::cout << "April 27, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200427_";
+
+    Uniform red(1, 0, 0);
+    Uniform green(0, 1, 0);
+    Uniform magenta(1, 0, 1);
+    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
+    [&]
+    (const Texture& two_spots)
+    {
+        Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
+        Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
+    }
+    (SoftMatte(Translate(Vec2(0.5, 0), spot),
+               SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
+               magenta));
     
     Texture::waitKey();
 
