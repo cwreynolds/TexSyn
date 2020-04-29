@@ -75,6 +75,7 @@ public:
                                std::string pathname = "",
                                int size = 511);
     static void waitKey();
+    static float final_gamma;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO [DEPRECATED]
     static int total_pixels_rendered;

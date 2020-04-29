@@ -1536,15 +1536,26 @@ int main(int argc, const char * argv[])
     Uniform green(0, 1, 0);
     Uniform magenta(1, 0, 1);
     Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
-    [&]
-    (const Texture& two_spots)
-    {
-        Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
-        Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
-    }
-    (SoftMatte(Translate(Vec2(0.5, 0), spot),
-               SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
-               magenta));
+//    [&]
+//    (const Texture& two_spots)
+//    {
+//        Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
+//        Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
+//    }
+//    (SoftMatte(Translate(Vec2(0.5, 0), spot),
+//               SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
+//               magenta));
+    
+    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+                                                green, red),
+                                      magenta));
+    Texture::final_gamma = 1;
+    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+                                                green, red),
+                                      magenta));
+
     
     Texture::waitKey();
 
