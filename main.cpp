@@ -1512,12 +1512,19 @@ int main(int argc, const char * argv[])
 //    std::cout << "April 26, 2020" << std::endl;
 //    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200426_";
 //    ColorNoise cn(0.3, Vec2(5, 3), 0.6);
+//    //Texture::displayAndFile(Gamma(0.50, cn) ); //, path + "Gamma_0_50");
+//    //Texture::displayAndFile(Gamma(0.66, cn) ); //, path + "Gamma_0_66");
+//    //Texture::displayAndFile(Gamma(1.00, cn) ); //, path + "Gamma_1_00");
+//    //Texture::displayAndFile(Gamma(1.50, cn) ); //, path + "Gamma_1_50");
+//    //Texture::displayAndFile(Gamma(2.00, cn) ); //, path + "Gamma_2_00");
 //
-//    Texture::displayAndFile(Gamma(0.50, cn) ); //, path + "Gamma_0_50");
-//    Texture::displayAndFile(Gamma(0.66, cn) ); //, path + "Gamma_0_66");
-//    Texture::displayAndFile(Gamma(1.00, cn) ); //, path + "Gamma_1_00");
-//    Texture::displayAndFile(Gamma(1.50, cn) ); //, path + "Gamma_1_50");
-//    Texture::displayAndFile(Gamma(2.00, cn) ); //, path + "Gamma_2_00");
+//    // testing April 28, 2020
+//    Texture::displayAndFile(Gamma(0.20, cn) );
+//    Texture::displayAndFile(Gamma(0.40, cn) );
+//    Texture::displayAndFile(Gamma(1.00, cn) );
+//    Texture::displayAndFile(Gamma(2.50, cn) );
+//    Texture::displayAndFile(Gamma(5.00, cn) );
+//
 //
 //    //debugPrint(pow(-2, 1.5));
 //    //Texture::displayAndFile(Gamma(-1, cn));
@@ -1536,27 +1543,31 @@ int main(int argc, const char * argv[])
     Uniform green(0, 1, 0);
     Uniform magenta(1, 0, 1);
     Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
-//    [&]
-//    (const Texture& two_spots)
-//    {
-//        Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
-//        Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
-//    }
-//    (SoftMatte(Translate(Vec2(0.5, 0), spot),
-//               SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
-//               magenta));
-    
-    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
-                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
-                                                green, red),
-                                      magenta));
+    //[&]
+    //(const Texture& two_spots)
+    //{
+    //    Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
+    //    Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
+    //}
+    //(SoftMatte(Translate(Vec2(0.5, 0), spot),
+    //           SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
+    //           magenta));
+
+//    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+//                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+//                                                green, red),
+//                                      magenta));
+
+    path = "/Users/cwr/Desktop/TexSyn_temp/20200429_";
+
     Texture::final_gamma = 1;
     Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
                                       SoftMatte(Translate(Vec2(-0.5, 0), spot),
                                                 green, red),
-                                      magenta));
+                                      magenta),
+                            path + "lin_interp_not_alpha");
 
-    
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

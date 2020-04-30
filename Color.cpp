@@ -255,7 +255,11 @@ Color Color::clipToUnitRGB() const
 // Exponentiate the RGB components by given gamma value ("exponent")
 Color Color::gamma(float exponent) const
 {
-    // TODO should it be per component, or by luminance()?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    assert((r() >= 0) && (r() <= 1));
+    assert((g() >= 0) && (g() <= 1));
+    assert((b() >= 0) && (b() <= 1));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     return Color(pow(std::max(r(), 0.0f), exponent),
                  pow(std::max(g(), 0.0f), exponent),
                  pow(std::max(b(), 0.0f), exponent));
@@ -279,3 +283,18 @@ std::ostream& operator<<(std::ostream& os, const Color& c)
     os << "(" << c.r() << ", " << c.g() << ", " << c.b() << ")";
     return os;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO experiment, hoping to override generic interpolation by doing it locally
+// in interpolate() and wherever other color arithmitic is done.
+
+Color interpolate(float alpha, const Color& x0, const Color& x1)
+{
+    float g = 2.2;
+    Color a = x0.gamma(g);
+    Color b = x1.gamma(g);
+    //Color result = a + ((b - a) * alpha);
+    Color result = a + ((b - a) * pow(alpha, g));
+    return result.gamma(1 / g);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

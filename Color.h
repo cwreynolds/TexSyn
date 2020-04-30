@@ -82,6 +82,12 @@ private:
     float blue_ = 0;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO experiment, hoping to override generic interpolation by doing it locally
+// in interpolate() and wherever other color arithmitic is done.
+Color interpolate(float alpha, const Color& x0, const Color& x1);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Is distance between RGB vectors less than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon);
 
