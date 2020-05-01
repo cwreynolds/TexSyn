@@ -58,6 +58,14 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO experimental
+    float defaultGamma() const { return 2.2; }
+    // Convert Color from normal "gamma-ed" space to temporary "linear" space.
+    Color deGamma(Color c) const { return c.gamma(defaultGamma()); }
+    // Convert Color from temporary "linear" space to normal "gamma-ed" space.
+    Color reGamma(Color c) const { return c.gamma(1 / defaultGamma()); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Utilities for rasterizing a Texture to tiling of pixels, with versions
     // for a square and a disk of pixels. Each require a "size" (width of the
     // square or diameter of the disk) and a function to be applied at each
@@ -75,7 +83,9 @@ public:
                                std::string pathname = "",
                                int size = 511);
     static void waitKey();
-    static float final_gamma;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    static float final_gamma;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO [DEPRECATED]
     static int total_pixels_rendered;

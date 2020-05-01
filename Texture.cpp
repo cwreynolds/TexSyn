@@ -95,7 +95,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                color = color.gamma(1 / 2.2);
 //                color = color.gamma(1);
-                color = color.gamma(final_gamma);
+//                color = color.gamma(final_gamma);
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 pixel.x = color.b();
                 pixel.y = color.g();
@@ -123,7 +123,7 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // Read TexSyn Color from Texture at (i, j).
         Color color = getColorClipped(Vec2(i, j) / half);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        color = color.gamma(final_gamma);
+//        color = color.gamma(final_gamma);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Make OpenCV color, with reversed component order.
         cv::Vec3f opencv_color(color.b(), color.g(), color.r());
@@ -264,4 +264,6 @@ std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
     return std::make_shared<cv::Mat>();
 }
 
-float Texture::final_gamma = 1 / 2.2;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//float Texture::final_gamma = 1 / 2.2;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1536,37 +1536,67 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    std::cout << "April 27, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200427_";
-
-    Uniform red(1, 0, 0);
-    Uniform green(0, 1, 0);
-    Uniform magenta(1, 0, 1);
-    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
-    //[&]
-    //(const Texture& two_spots)
-    //{
-    //    Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
-    //    Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
-    //}
-    //(SoftMatte(Translate(Vec2(0.5, 0), spot),
-    //           SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
-    //           magenta));
+//    std::cout << "April 27, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200427_";
+//    Uniform red(1, 0, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform magenta(1, 0, 1);
+//    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
+//    //[&]
+//    //(const Texture& two_spots)
+//    //{
+//    //    Texture::displayAndFile(two_spots);//,               path+"gamma_1_00");
+//    //    Texture::displayAndFile(Gamma(1/2.2, two_spots));//, path+"gamma_0_45");
+//    //}
+//    //(SoftMatte(Translate(Vec2(0.5, 0), spot),
+//    //           SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
+//    //           magenta));
 
 //    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
 //                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
 //                                                green, red),
 //                                      magenta));
 
-    path = "/Users/cwr/Desktop/TexSyn_temp/20200429_";
+    
+//    path = "/Users/cwr/Desktop/TexSyn_temp/20200429_";
+//    Texture::final_gamma = 1;
+//    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+//                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+//                                                green, red),
+//                                      magenta),
+//                            path + "lin_interp_not_alpha");
+//    Texture::waitKey();
 
-    Texture::final_gamma = 1;
-    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
-                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
-                                                green, red),
-                                      magenta),
-                            path + "lin_interp_not_alpha");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // Bring back test from March 27, 2020 for correct gamma during blur
+    //
+    
+    //        // Looking at multi-threading (esp for Blur) --
+    //
+    //    //    Blur::sqrt_of_subsample_count = 60;
+    //    //    Blur::sqrt_of_subsample_count = 15;
+    //
+    
+//    Texture::final_gamma = 1;
+    
+    std::cout << "April 30, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200430_";
+    
+//    Color yellow(1, 1, 0);
+//    Color blue(0, 0, 1);
+//    Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
+    
+    Grating grating(Vec2(), Color(1, 0, 0),
+                    Vec2(0.2, 0.2), Color(0.4, 0.4, 0.4), 0.01);
+
+//    Texture::displayAndFile(grating            ,path + "Grating");
+//    Texture::displayAndFile(Blur(0.2, grating) ,path + "Blur_before");
+//    Texture::displayAndFile(Blur(0.2, grating) ,path + "Blur_after");
+
+    Texture::displayAndFile(grating);
+    Texture::displayAndFile(Blur(0.2, grating, false));
+    Texture::displayAndFile(Blur(0.2, grating, true));
 
     Texture::waitKey();
 
