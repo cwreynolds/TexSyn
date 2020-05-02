@@ -1570,33 +1570,118 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // Bring back test from March 27, 2020 for correct gamma during blur
-    //
     
-    //        // Looking at multi-threading (esp for Blur) --
-    //
-    //    //    Blur::sqrt_of_subsample_count = 60;
-    //    //    Blur::sqrt_of_subsample_count = 15;
-    //
+    std::cout << "May 1, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200501_";
     
-//    Texture::final_gamma = 1;
-    
-    std::cout << "April 30, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200430_";
-    
-//    Color yellow(1, 1, 0);
-//    Color blue(0, 0, 1);
-//    Grating grating(Vec2(), yellow, Vec2(0.2, 0.2), blue, 0.01);
-    
-    Grating grating(Vec2(), Color(1, 0, 0),
-                    Vec2(0.2, 0.2), Color(0.4, 0.4, 0.4), 0.01);
 
-//    Texture::displayAndFile(grating            ,path + "Grating");
-//    Texture::displayAndFile(Blur(0.2, grating) ,path + "Blur_before");
-//    Texture::displayAndFile(Blur(0.2, grating) ,path + "Blur_after");
+    // keep this for doc
 
-    Texture::displayAndFile(grating);
-    Texture::displayAndFile(Blur(0.2, grating, false));
-    Texture::displayAndFile(Blur(0.2, grating, true));
+    Uniform red(1, 0, 0);
+    Uniform green(0, 1, 0);
+    Uniform magenta(1, 0, 1);
+    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
+    // Repeat the definition of two_spot to get around caching the bad version:
+    
+    Texture::use_linear = false;
+    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+                                                green, red),
+                                      magenta)
+//                            , path + "two_spot_before"
+                            );
+    Texture::use_linear = true;
+    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+                                                green, red),
+                                      magenta)
+//                            , path + "two_spot_after"
+                            );
+
+
+    
+    Color yellow(1, 1, 0);
+    Color blue(0, 0, 1);
+    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01);
+    Texture::displayAndFile(grating
+//                            , path + "Grating"
+                            );
+    Texture::use_linear = false;
+    Texture::displayAndFile(Blur(0.1, grating)
+//                            , path + "Blur_Grating_before"
+                            );
+    Texture::use_linear = true;
+    Texture::displayAndFile(Blur(0.1, grating)
+//                            , path + "Blur_Grating_after"
+                            );
+    
+    
+//    // May 1, 2020 -- these look identical
+//    // regression reality check from April 7
+//    Vec2 p1(-0.01, 0);
+//    Vec2 p2(+0.01, 0);
+//    float a3 = 2 * pi / 3;
+//    [&]
+//    (const Texture& sixths)
+//    {
+//        Texture::use_linear = false;
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              1, // random rotation
+//                                              Color(0.3, 0.3, 0.3)),
+//                                ""); // path + "LotsOfButtons_random_rotate");
+//        Texture::use_linear = true;
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              1, // random rotation
+//                                              Color(0.3, 0.3, 0.3)),
+//                                ""); // path + "LotsOfButtons_random_rotate");
+//
+//    }
+//    (Translate(Vec2(0.5, 0.5),
+//               Add(Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
+//                             p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3)),
+//                   Add(Gradation(p1.rotate(a3), Color(0.1, 0.3, 0.1),
+//                                 p2.rotate(a3), Color(0.3, 0.3, 0.3)),
+//                       Gradation(p1,            Color(0.3, 0.1, 0.1),
+//                                 p2,            Color(0.3, 0.3, 0.3))))));
+
+ 
+    
+    // keep this for doc
+    Color r(1, 0, 0);
+    Color g(0, 1, 0);
+    Texture::use_linear = false;
+    Texture::displayAndFile(LotsOfSpots(0.9, 0.02, 0.5, 0.1, r, g)
+//                            , path + "LotsOfSpots_before"
+                            );
+    Texture::use_linear = true;
+    Texture::displayAndFile(LotsOfSpots(0.9, 0.02, 0.5, 0.1, r, g)
+//                            , path + "LotsOfSpots_after"
+                            );
+    
+    
+    
+//    // May 1, 2020 -- these look identical
+//    // Demo for Mirror, March 9, 2020
+//    Grating grating(Vec2(0.1, 0), Color(1, 1, 1),
+//                    Vec2(0.3, 0), Color(0, 0, 0), 1);
+//    Multiply grating_squared(grating, grating);
+//    Brownian gray_noise(0.3, Vec2(-1, -3), Color(1, 1, 1), Color(0, 0, 0));
+//    Colorize squiggles(Vec2(1, 0), Vec2(), grating_squared, gray_noise);
+//
+//    ColorNoise color_noise(0.5, Vec2(-1, -3), 0.6);
+//    Multiply color_squiggles(color_noise, squiggles);
+//    Uniform white(Color(1, 1, 1));
+//    Subtract test(white, color_squiggles);
+//
+//    Texture::use_linear = false;
+//    Texture::displayAndFile(test);
+//    Texture::use_linear = true;
+//    Texture::displayAndFile(test);
+
 
     Texture::waitKey();
 

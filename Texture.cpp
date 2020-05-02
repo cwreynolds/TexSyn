@@ -266,4 +266,28 @@ std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //float Texture::final_gamma = 1 / 2.2;
+bool Texture::use_linear = true;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// move this back to Color.cpp after testing
+
+
+// ... OK this version linearizes the colors to be interpolated but NOT alpha
+Color interpolate(float alpha, const Color& x0, const Color& x1)
+{
+    if (Texture::use_linear)
+    {
+            float g = 2.2;
+            Color a = x0.gamma(g);
+            Color b = x1.gamma(g);
+            Color result = a + ((b - a) * alpha);
+            return result.gamma(1 / g);
+    }
+    else
+    {
+        return x0 + ((x1 - x0) * alpha);
+    }
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

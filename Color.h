@@ -69,9 +69,9 @@ public:
     static Color gray(float value) { return { value, value, value }; }
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO experiment, hoping to override generic interpolation by doing it
-    // locally in interpolate() and wherever other color arithmitic is done.
-    static Color matte(float alpha, const Color& x0, const Color& x1);
+//    // TODO experiment, hoping to override generic interpolation by doing it
+//    // locally in interpolate() and wherever other color arithmitic is done.
+//    static Color matte(float alpha, const Color& x0, const Color& x1);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Accessors:
@@ -92,7 +92,7 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO experiment, hoping to override generic interpolation by doing it locally
 // in interpolate() and wherever other color arithmitic is done.
-//Color interpolate(float alpha, const Color& x0, const Color& x1);
+Color interpolate(float alpha, const Color& x0, const Color& x1);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Is distance between RGB vectors less than epsilon?

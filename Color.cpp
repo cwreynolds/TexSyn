@@ -298,13 +298,26 @@ std::ostream& operator<<(std::ostream& os, const Color& c)
 //        return result.gamma(1 / g);
 //    }
 
-Color Color::matte(float alpha, const Color& x0, const Color& x1)
-{
-    float g = 2.2;
-    Color a = x0.gamma(g);
-    Color b = x1.gamma(g);
-    //Color result = a + ((b - a) * alpha);
-    Color result = a + ((b - a) * pow(alpha, g));
-    return result.gamma(1 / g);
-}
+//    // ... OK this version linearizes the colors to be interpolated but NOT alpha
+//    Color interpolate(float alpha, const Color& x0, const Color& x1)
+//    {
+//        float g = 2.2;
+//        Color a = x0.gamma(g);
+//        Color b = x1.gamma(g);
+//        Color result = a + ((b - a) * alpha);
+//    //    Color result = a + ((b - a) * pow(alpha, g));
+//        return result.gamma(1 / g);
+//    }
+
+
+//    Color Color::matte(float alpha, const Color& x0, const Color& x1)
+//    {
+//        float g = 2.2;
+//        Color a = x0.gamma(g);
+//        Color b = x1.gamma(g);
+//        //Color result = a + ((b - a) * alpha);
+//        Color result = a + ((b - a) * pow(alpha, g));
+//        return result.gamma(1 / g);
+//    }
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

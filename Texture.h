@@ -63,6 +63,7 @@ public:
     float defaultGamma() const { return 2.2; }
     // Convert Color from normal "gamma-ed" space to temporary "linear" space.
     Color deGamma(Color c) const { return c.gamma(defaultGamma()); }
+    float deGamma(float x) const { return pow(x, defaultGamma()); }
     // Convert Color from temporary "linear" space to normal "gamma-ed" space.
     Color reGamma(Color c) const { return c.gamma(1 / defaultGamma()); }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,6 +86,7 @@ public:
     static void waitKey();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    static float final_gamma;
+    static bool use_linear;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO [DEPRECATED]
