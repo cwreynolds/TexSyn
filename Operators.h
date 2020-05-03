@@ -49,19 +49,39 @@ public:
 //                             texture0.getColor(position),
 //                             texture1.getColor(position))));
         
-        
-        // NEED TO MAKE A USE_LINEAR ARG FOR SoftMatte
+                
+//        if (use_linear)
+//        {
+//            // Because of Spot, Gradient, Grating, etc. it is common for the "alpha"
+//            // blend factor to be exactly 0 or 1, so only one getColor() is needed.
+//            float alpha = matte.getColor(position).luminance();
+//            return (alpha == 0 ?
+//                    texture0.getColor(position) :
+//                    (alpha == 1 ?
+//                     texture1.getColor(position) :
+//                     interpolate(deGamma(alpha),
+//                                 texture0.getColor(position),
+//                                 texture1.getColor(position))));
+//        }
+//        else
+//        {
+//            return interpolate(matte.getColor(position).luminance(),
+//                               texture0.getColor(position),
+//                               texture1.getColor(position));
+//        }
         
         if (use_linear)
         {
             // Because of Spot, Gradient, Grating, etc. it is common for the "alpha"
             // blend factor to be exactly 0 or 1, so only one getColor() is needed.
-            float alpha = matte.getColor(position).luminance();
+//            float alpha = matte.getColor(position).luminance();
+            float alpha = deGamma(matte.getColor(position)).luminance();
             return (alpha == 0 ?
                     texture0.getColor(position) :
                     (alpha == 1 ?
                      texture1.getColor(position) :
-                     interpolate(deGamma(alpha),
+//                     interpolate(deGamma(alpha),
+                     interpolate(alpha,
                                  texture0.getColor(position),
                                  texture1.getColor(position))));
         }
