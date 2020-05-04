@@ -165,18 +165,14 @@ typedef std::complex<float> Complex;
 Complex inverse_mobius_transform(Complex z,
                                  Complex a, Complex b, Complex c, Complex d);
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Simple tool for inline timing sections of code. For example:
-//
 //    void foo()
 //    {
 //        Timer foo_timer("foo");
 //        bar();
 //        zap();
 //    }
-//
 // After the block containing the Timer construction it prints:
-//
 //    foo elapsed time: 1.86984 seconds
 //
 class Timer
@@ -232,10 +228,12 @@ public:
     // Returns a float randomly distributed between lowerBound and upperBound
     float frandom2(float a, float b) { return interpolate(frandom01(), a, b); }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO these duplicate the function of the same name in global namespace.
+    //  Maybe those should be replaced by defining a global RandomSequence which
+    // must be specifically written in source code. This may help avoid the
+    // "attractive nuisance" of random utilities which are non-repeatable.
     Vec2 randomPointInUnitDiameterCircle();
     Vec2 randomUnitVector();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     uint32_t state_;
 };

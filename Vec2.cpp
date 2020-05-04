@@ -28,6 +28,11 @@ Vec2 Vec2::randomUnitVector()
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO experimental versions inside RandomSequence instead of in Vec2
 
+// TODO these duplicate the function of the same name in global namespace.
+//  Maybe those should be replaced by defining a global RandomSequence which
+// must be specifically written in source code. This may help avoid the
+// "attractive nuisance" of random utilities which are non-repeatable.
+
 // Generate a random point inside a unit diameter disk centered on origin.
 Vec2 RandomSequence::randomPointInUnitDiameterCircle()
 {

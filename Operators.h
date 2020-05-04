@@ -25,62 +25,16 @@ public:
     Color getColor(Vec2 position) const override
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return interpolate(matte.getColor(position).luminance(),
-//                           texture0.getColor(position),
-//                           texture1.getColor(position));
-        
-//        return Color::matte(matte.getColor(position).luminance(),
-//                            texture0.getColor(position),
-//                            texture1.getColor(position));
-        
-        
-        
-//        // Check for special cases of 0 or 1 to avoid unneeded getColor().
-//        // Common because of Spot, Gradient, and Grating.
-        
-//        // Because of Spot, Gradient, Grating, etc. it is common for the "alpha"
-//        // blend factor to be exactly 0 or 1, so only one getColor() is needed.
-//        float alpha = matte.getColor(position).luminance();
-//        return (alpha == 0 ?
-//                texture0.getColor(position) :
-//                (alpha == 1 ?
-//                 texture1.getColor(position) :
-//                 interpolate(deGamma(alpha),
-//                             texture0.getColor(position),
-//                             texture1.getColor(position))));
-        
-                
-//        if (use_linear)
-//        {
-//            // Because of Spot, Gradient, Grating, etc. it is common for the "alpha"
-//            // blend factor to be exactly 0 or 1, so only one getColor() is needed.
-//            float alpha = matte.getColor(position).luminance();
-//            return (alpha == 0 ?
-//                    texture0.getColor(position) :
-//                    (alpha == 1 ?
-//                     texture1.getColor(position) :
-//                     interpolate(deGamma(alpha),
-//                                 texture0.getColor(position),
-//                                 texture1.getColor(position))));
-//        }
-//        else
-//        {
-//            return interpolate(matte.getColor(position).luminance(),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-//        }
-        
         if (use_linear)
         {
-            // Because of Spot, Gradient, Grating, etc. it is common for the "alpha"
-            // blend factor to be exactly 0 or 1, so only one getColor() is needed.
-//            float alpha = matte.getColor(position).luminance();
             float alpha = deGamma(matte.getColor(position)).luminance();
+            // Because of Spot, Gradient, Grating, etc. it is common for the
+            // "alpha" blend factor to be exactly 0 or 1, in those cases one
+            // getColor() result will be ignored, so we skip it.
             return (alpha == 0 ?
                     texture0.getColor(position) :
                     (alpha == 1 ?
                      texture1.getColor(position) :
-//                     interpolate(deGamma(alpha),
                      interpolate(alpha,
                                  texture0.getColor(position),
                                  texture1.getColor(position))));
@@ -91,7 +45,6 @@ public:
                                texture0.getColor(position),
                                texture1.getColor(position));
         }
-        
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
@@ -631,22 +584,15 @@ public:
                 float weight = 1 - sinusoid(length / radius);
                 Color color_at_offset = texture.getColor(position + offset);
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                sum_of_weighted_colors += color_at_offset * weight;
-//                sum_of_weighted_colors += deGamma(color_at_offset) * weight;
-                
                 sum_of_weighted_colors += ((use_linear ?
                                             deGamma(color_at_offset) :
                                             color_at_offset) *
                                            weight);
-
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 sum_of_weights += weight;
             }
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return sum_of_weighted_colors / sum_of_weights;
-//        return reGamma(sum_of_weighted_colors / sum_of_weights);
-        
         return (use_linear ?
                 reGamma(sum_of_weighted_colors / sum_of_weights) :
                 sum_of_weighted_colors / sum_of_weights);

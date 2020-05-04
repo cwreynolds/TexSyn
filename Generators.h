@@ -151,11 +151,6 @@ public:
     Color getColor(Vec2 position) const override
     {
         float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // Collect statistics
-//        Vec2 v = (position - center) / scale;
-//        collectStatistics(v, interpolate(noise, color0, color1));
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return interpolate(noise, color0, color1);
     }
 private:

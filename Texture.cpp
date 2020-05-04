@@ -92,11 +92,6 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             if (!disk || (position.length() <= 1))
             {
                 Color color = getColor(position);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                color = color.gamma(1 / 2.2);
-//                color = color.gamma(1);
-//                color = color.gamma(final_gamma);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 pixel.x = color.b();
                 pixel.y = color.g();
                 pixel.z = color.r();
@@ -122,9 +117,6 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     {
         // Read TexSyn Color from Texture at (i, j).
         Color color = getColorClipped(Vec2(i, j) / half);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        color = color.gamma(final_gamma);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Make OpenCV color, with reversed component order.
         cv::Vec3f opencv_color(color.b(), color.g(), color.r());
         // Write OpenCV color to corresponding pixel on row image:
@@ -251,13 +243,6 @@ void Texture::rasterizeDisk(int size, PixelFunction pixel_function)
     }
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-int Texture::total_pixels_rendered = 0;
-int Texture::total_pixels_cached = 0;
-int Texture::total_cache_lookups = 0;
-size_t Texture::cache_size = 0;
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
 std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
 {
@@ -270,10 +255,10 @@ bool Texture::use_linear = true;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// move this back to Color.cpp after testing
+// TODO move this back to Color.cpp after testing
 
-
-// ... OK this version linearizes the colors to be interpolated but NOT alpha
+// Override general interpolate() template with a version specific to Color,
+// so it can correctly handle gamma.
 Color interpolate(float alpha, const Color& x0, const Color& x1)
 {
     if (Texture::use_linear)

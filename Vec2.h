@@ -61,6 +61,7 @@ std::ostream& operator<<(std::ostream& os, const Vec2& v);
 
 
 // TODO should this be in this header file?
+// TODO should it even exist?
 class Vec3
 {
 public:
@@ -102,14 +103,10 @@ public:
 //    static Vec2 randomPointInUnitDiameterCircle();
 //    // Generate a random unit vector.
 //    static Vec2 randomUnitVector();
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO experimental
+    // Cross product of this Vec3 and another given Vec3.
     Vec3 cross(Vec3 o) const { return {y() * o.z() - z() * o.y(),
                                        z() * o.x() - x() * o.z(),
                                        x() * o.y() - y() * o.x() }; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 private:
     float x_ = 0;
     float y_ = 0;
