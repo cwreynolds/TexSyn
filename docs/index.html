@@ -65,7 +65,7 @@
     <div class="post" id="20200505"> <a href="#20200505" class="date">May 5,
         2020</a>
       <h1>Live in linear RGB space, gamma correct at end</h1>
-      <p>Say I re-re-refactor to follow the strategy I discussed <a href="#20200504">yesterday</a>:
+      <p>Say I did re-re-refactor to follow the strategy I discussed <a href="#20200504">yesterday</a>:
         assume TexSyn normally operates in a linear (<em>γ</em>=1) RGB color
         space, then do a single gamma correction (<em>γ</em>=1/2.2 for sRGB) at
         the end of the texture synthesis pipeline. Today's topic is: what does
@@ -75,17 +75,25 @@
         colored in red and green. First the “before <a href="#20200502">May 2</a>”
         version, then the proposed new “after” version: </p>
       <pre>red = Color(1, 0, 0)
-green = Color(0, 1, 0)<br><br>Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1)</pre>
-      <img src="images/20200505_lin_gam_a.png" alt="" title="" height="511" width="511">
-      <img src="images/20200505_lin_gam_b.png" alt="" title="" height="511" width="511">
+green = Color(0, 1, 0)
+
+Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1)</pre>
+      <img src="images/20200505_lin_gam_a.png" alt="Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1) before"
+        title="Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1) before" height="511"
+        width="511"> <img src="images/20200505_lin_gam_b.png" alt="Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1) after"
+        title="Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1) after" height="511"
+        width="511">
       <p>Two things jump out: the are undesirable “dark transitions” in the <u>before</u>
         version. But in the <u>after</u> version, the green stripes seem much
         wider. Why is that? Recall that the only difference between them is
         gamma correction at the end. OK, let's try reversing the role of red and
         green</p>
       <pre>Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1)</pre>
-      <img src="images/20200505_lin_gam_c.png" alt="" title="" height="511" width="511">
-      <img src="images/20200505_lin_gam_d.png" alt="" title="" height="511" width="511">
+      <img src="images/20200505_lin_gam_c.png" alt="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) before"
+        title="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) before" height="511"
+        width="511"> <img src="images/20200505_lin_gam_d.png" alt="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) after"
+        title="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) after" height="511"
+        width="511">
       <p>So the green stripes still appear wider in the <u>after</u> version,
         regardless of whether they are assigned to the white or black part of
         the <em>Grating</em>. This suggests to me that it it unrelated to the
@@ -96,12 +104,16 @@ green = Color(0, 1, 0)<br><br>Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1
         too dark, are dominated by the brighter green color in the gamma
         corrected <u>after</u> texture. </p>
       <p>To test this hypothesis, I picked two saturated colors that are very
-        close in brightness (as measured by <code>Color::luminance()</code>,
-        they are 0.7874 and 0.7848 respectively). </p>
+        close in brightness. As measured by <code>Color::luminance()</code>, <code>cyan</code>
+        is 0.7874 and <code>orange</code> is 0.7848:</p>
       <pre>cyan = Color(0, 1, 1)
-orange = Color(1, 0.8, 0)<br><br>Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)</pre>
-      <img src="images/20200505_lin_gam_e.png" alt="" title="" height="511" width="511">
-      <img src="images/20200505_lin_gam_f.png" alt="" title="" height="511" width="511">
+orange = Color(1, 0.8, 0)
+Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)</pre>
+      <img src="images/20200505_lin_gam_e.png" alt="Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1) before"
+        title="Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1) before" height="511"
+        width="511"> <img src="images/20200505_lin_gam_f.png" alt="Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1) after"
+        title="Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1) after" height="511"
+        width="511">
       <p>In this case, the width of the stripes in the after texture seem
         approximately the same. (Note in the <u>before</u> texture, the
         intermediate colors between stripes appear a bit green.) Here is a
@@ -121,27 +133,30 @@ orange = Color(1, 0.8, 0)<br><br>Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), oran
         simple <em>ColorNoise</em> using a basic Perlin 2d noise for each
         primary color:</p>
       <pre>ColorNoise(0.15, Vec2(3, -5), 0)</pre>
-      <img src="images/20200505_lin_gam_i.png" alt="" title="" height="511" width="511">
-      <img src="images/20200505_lin_gam_j.png" alt="" title="" height="511" width="511">
+      <img src="images/20200505_lin_gam_i.png" alt="ColorNoise(0.15, Vec2(3, -5), 0) before"
+        title="ColorNoise(0.15, Vec2(3, -5), 0) before" height="511" width="511">
+      <img src="images/20200505_lin_gam_j.png" alt="ColorNoise(0.15, Vec2(3, -5), 0) after"
+        title="ColorNoise(0.15, Vec2(3, -5), 0) after" height="511" width="511">
       <p>As in the previous case of <em>Brownian</em> noise, is there any basis
         to argue either of these is more correct? The <u>before</u> version is
         darker and more saturated. The <u>after</u> version is brighter and
         less saturated. Over the last few months I have come to expect the <u>before</u>
-        version. But the very first time I saw it it was like “yeah, I guess
-        that is what it should look like” and would probably have had the same
-        reaction to either of these textures. That is all to say, I do not
-        object to the <u>after</u> texture.</p>
+        version. But the very first time I saw it, I am sure my reaction was
+        “yeah, I guess that is what it should look like” and would probably have
+        had the same reaction to either of these textures. That is all to say, I
+        do not object to the <u>after</u> texture.</p>
       <p>Finally, here is a <em>SoftMatte</em> of the vertical red-green <em>Grating</em>
         and the horizontal cyan-orange <em>Grating</em> seen above. The matte
-        texture is a soft edged <em>Spot</em>, white on black, centered at the
-        origin:</p>
+        texture (first parameter) is a soft edged <em>Spot</em>, white on
+        black, centered at the origin:</p>
       <pre>white = Color(1, 1, 1)<br>black = Color(0, 0, 0)
 
 SoftMatte(Spot(Vec2(), 0.2, white, 1, black),
           Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
           Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1))</pre>
-      <img src="images/20200505_lin_gam_k.png" alt="" title="" height="511" width="511">
-      <img src="images/20200505_lin_gam_l.png" alt="" title="" height="511" width="511">
+      <img src="images/20200505_lin_gam_k.png" alt="SoftMatte before" title="SoftMatte before"
+        height="511" width="511"> <img src="images/20200505_lin_gam_l.png" alt="SoftMatte after"
+        title="SoftMatte after" height="511" width="511">
       <p>In this case, I am quite confident that the <u>before</u> texture is
         significantly “worse” than the <u>after</u> texture. In the <u>before</u>
         texture, incorrect darkening in areas of transition serve to strongly
