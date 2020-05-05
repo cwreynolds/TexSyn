@@ -251,7 +251,11 @@ std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //float Texture::final_gamma = 1 / 2.2;
-bool Texture::use_linear = true;
+
+//bool Texture::use_linear = true;
+// TODO test "Gamma angst: shouldn’t TexSyn use linear RGB?"
+bool Texture::use_linear = false;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

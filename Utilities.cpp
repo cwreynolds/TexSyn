@@ -183,11 +183,11 @@ namespace PerlinNoise
     {
         switch(int(fmod_floor(which, 1) * 5))
         {
-            case  0: return PerlinNoise::unitNoise2d(position);
-            case  1: return PerlinNoise::brownian2d(position);
-            case  2: return PerlinNoise::turbulence2d(position);
-            case  3: return PerlinNoise::furbulence2d(position);
-            default: return PerlinNoise::wrapulence2d(position);
+            case  0: return PerlinNoise::unitNoise2d(position);  // which 0
+            case  1: return PerlinNoise::brownian2d(position);   // which 0.2
+            case  2: return PerlinNoise::turbulence2d(position); // which 0.4
+            case  3: return PerlinNoise::furbulence2d(position); // which 0.6
+            default: return PerlinNoise::wrapulence2d(position); // which 0.8
         }
     }
 
