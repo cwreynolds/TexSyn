@@ -79,10 +79,6 @@ public:
                                std::string pathname = "",
                                int size = 511);
     static void waitKey();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    static float final_gamma;
-    static bool use_linear;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

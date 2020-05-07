@@ -24,29 +24,9 @@ public:
         : matte(_matte), texture0(_texture0), texture1(_texture1) {}
     Color getColor(Vec2 position) const override
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        if (use_linear)
-        if (use_linear && !applyGammaAtEnd())
-        {
-            float alpha = deGamma(matte.getColor(position)).luminance();
-            // Because of Spot, Gradient, Grating, etc. it is common for the
-            // "alpha" blend factor to be exactly 0 or 1, in those cases one
-            // getColor() result will be ignored, so we skip it.
-            return (alpha == 0 ?
-                    texture0.getColor(position) :
-                    (alpha == 1 ?
-                     texture1.getColor(position) :
-                     interpolate(alpha,
-                                 texture0.getColor(position),
-                                 texture1.getColor(position))));
-        }
-        else
-        {
             return interpolate(matte.getColor(position).luminance(),
                                texture0.getColor(position),
                                texture1.getColor(position));
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
     const Texture& matte;
@@ -584,23 +564,11 @@ public:
             {
                 float weight = 1 - sinusoid(length / radius);
                 Color color_at_offset = texture.getColor(position + offset);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                sum_of_weighted_colors += ((use_linear ?
-                sum_of_weighted_colors += (((use_linear && !applyGammaAtEnd()) ?
-                                            deGamma(color_at_offset) :
-                                            color_at_offset) *
-                                           weight);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                sum_of_weighted_colors += color_at_offset * weight;
                 sum_of_weights += weight;
             }
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return (use_linear ?
-        return ((use_linear && !applyGammaAtEnd()) ?
-                reGamma(sum_of_weighted_colors / sum_of_weights) :
-                sum_of_weighted_colors / sum_of_weights);
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        return sum_of_weighted_colors / sum_of_weights;
     }
     // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
     static int sqrt_of_subsample_count;

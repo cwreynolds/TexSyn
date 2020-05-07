@@ -82,10 +82,6 @@ private:
     float blue_ = 0;
 };
 
-// Override general interpolate() template with a version specific to Color,
-// so it can correctly handle gamma.
-Color interpolate(float alpha, const Color& x0, const Color& x1);
-
 // Is distance between RGB vectors less than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon);
 
