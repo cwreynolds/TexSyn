@@ -47,7 +47,7 @@
       <!-- --------------------------------------------------------------------------- -->
     </style>
   </head>
-  <body>
+  <body id="top">
     <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
         page on GitHub</a> </div>
     <h1>Introduction</h1>
@@ -55,13 +55,46 @@
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
       texture synthesis. It is not intended for use “by human hands.” TexSyn
       programs will be automatically generated with a Genetic Programming
-      system. This is a blog (or a lab notebook? a design diary?) about making
-      TexSyn. It is not proper documentation, although might be some sort of a
-      starting point. Mostly this describes in “blog order” the steps and design
-      decisions made in its construction. There is some background and
-      introductory information, at the bottom of this page, in the entry for <a
-        href="#20191215">December 15, 2019</a>.</p>
+      system. This is a blog (or a lab notebook? a design diary?)
+      about making TexSyn. It is not proper documentation, although might be
+      some sort of a starting point. Mostly this describes in “blog order” the
+      steps and design decisions made in its construction. There is some
+      background and introductory information, at the bottom of this page, in
+      the entry for <a href="#20191215">December 15, 2019</a>.</p>
+    <p><span style="background-color: red;">Note:</span> as of <a href="#20200506">May
+        6, 2020</a> an incompatible change was made to improve gamma handling.
+      For entries dated before then, the given TexSyn code, if re-rendered anew,
+      will produce a texture that looks different from the one shown in the doc.
+      It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200506"> <a href="#20200506" class="date">May 6,
+        2020</a>
+      <h1><span style="background-color: red;"> Gamma correction changed
+          incompatibly!</span></h1>
+      <p>“The deed is done!” The incompatible change discussed on <a href="#20200504">May
+          4</a> and <a href="#20200505">May 5</a> has now been made in this <a
+          href="https://github.com/cwreynolds/TexSyn/commit/a0d8390b60e15bf923e015d29bd84f30d4e411ed">git
+          commit</a>. TexSyn operates internally as it did before <a href="#20200502">May
+          2</a>. It assumes all color values are in <strong>linear</strong> RGB
+        space, as opposed to <strong>nonlinear</strong> (<em>γ</em>=2.2) sRGB
+        space. So it does <strong>not</strong> “de-gamma” then “re-gamma” color
+        values around operations like interpolation and low pass filtering, as
+        described on <a href="#20200502">May 2</a>. It <strong>does,</strong>
+        however, now apply a gamma correction (of <em>γ</em>=1/2.2, aka
+        “re-gamma”) at the very end of the texture synthesis pipeline.
+        Henceforth, Texsyn does its synthesis computation in linear RGB space,
+        then at the end applies an sRGB display gamma before passing pixel color
+        data on to OpenCV for output to display or file.</p>
+      <p>This means at all texture samples below from before this change, if
+        re-rendered, will now appear different. They will generally be brighter
+        and less saturated. On the plus side, certain color rendering “bugs”
+        will be fixed, and TexSyn will be on a more sound basis in <a href="https://en.wikipedia.org/wiki/Colorimetry">colorimetry</a>.
+        As a software guy, it pains me to make a change that is not
+        backward-compatible, even if this library has exactly one user. I will
+        make notes about this in the <a href="#top">Introduction</a> at the top
+        of this document and in the entry for <a href="#20191215">December 15,
+          2019</a> at the bottom.</p>
+    </div>
     <div class="post" id="20200505"> <a href="#20200505" class="date">May 5,
         2020</a>
       <h1>Live in linear RGB space, gamma correct at end</h1>
@@ -2343,6 +2376,11 @@ SoftMatte(spot(0.2),
         library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
           Synthesis Diary</a> and used as the basis of the 2011 paper <a href="https://www.red3d.com/cwr/iec/">Interactive
           Evolution of Camouflage</a>.</p>
+      <p>(<span style="background-color: red;">Note:</span> as of <a href="#20200506">May
+          6, 2020</a> an incompatible change was made to improve gamma handling.
+        For entries dated before then, the given TexSyn code, if re-rendered
+        anew, will produce a texture that looks different from the one shown in
+        the doc. It will generally be brighter and less saturated.)</p>
     </div>
     <div class="post" id="0">
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
