@@ -25,7 +25,8 @@ public:
     Color getColor(Vec2 position) const override
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (use_linear)
+//        if (use_linear)
+        if (use_linear && !applyGammaAtEnd())
         {
             float alpha = deGamma(matte.getColor(position)).luminance();
             // Because of Spot, Gradient, Grating, etc. it is common for the
@@ -584,7 +585,8 @@ public:
                 float weight = 1 - sinusoid(length / radius);
                 Color color_at_offset = texture.getColor(position + offset);
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                sum_of_weighted_colors += ((use_linear ?
+//                sum_of_weighted_colors += ((use_linear ?
+                sum_of_weighted_colors += (((use_linear && !applyGammaAtEnd()) ?
                                             deGamma(color_at_offset) :
                                             color_at_offset) *
                                            weight);
@@ -593,7 +595,8 @@ public:
             }
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return (use_linear ?
+//        return (use_linear ?
+        return ((use_linear && !applyGammaAtEnd()) ?
                 reGamma(sum_of_weighted_colors / sum_of_weights) :
                 sum_of_weighted_colors / sum_of_weights);
 

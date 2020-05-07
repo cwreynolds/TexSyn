@@ -87,7 +87,7 @@ Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1)</pre>
         version. But in the <u>after</u> version, the green stripes seem much
         wider. Why is that? Recall that the only difference between them is
         gamma correction at the end. OK, let's try reversing the role of red and
-        green</p>
+        green:</p>
       <pre>Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1)</pre>
       <img src="images/20200505_lin_gam_c.png" alt="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) before"
         title="Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1) before" height="511"
@@ -99,13 +99,13 @@ Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1)</pre>
         the <em>Grating</em>. This suggests to me that it it unrelated to the
         way <em>Grating</em> works, or the affects of gamma. Perhaps is due to
         the fact that green is the “brightest” of the three primaries (red is in
-        the middle and blue is the least bright). Perhaps the intermediate
-        colors between red and green, which in the <u>before</u> texture appear
-        too dark, are dominated by the brighter green color in the gamma
+        the middle and blue is the least bright). Perhaps the colors
+        intermediate between red and green, which in the <u>before</u> texture
+        appear too dark, are dominated by the brighter green color in the gamma
         corrected <u>after</u> texture. </p>
-      <p>To test this hypothesis, I picked two saturated colors that are very
-        close in brightness. As measured by <code>Color::luminance()</code>, <code>cyan</code>
-        is 0.7874 and <code>orange</code> is 0.7848:</p>
+      <p>To test this hypothesis, I picked two different saturated colors that
+        are very close in brightness. As measured by <code>Color::luminance()</code>,
+        <code>cyan</code> is 0.7874 and <code>orange</code> is 0.7848:</p>
       <pre>cyan = Color(0, 1, 1)
 orange = Color(1, 0.8, 0)
 Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)</pre>
@@ -219,16 +219,18 @@ SoftMatte(Spot(Vec2(), 0.2, white, 1, black),
         avoiding floating point representation, and packing the most information
         into small fixed point (often 8 bit) values. But in TexSyn, color is
         always represented in floating point, and images are generated
-        procedurally, not stored. Or at least not stored until they are written
-        into a frame buffer (graphics card) or stored in an external image file.</p>
-      <p>Finally I have tried to support the idea that TexSyn colors have
-        unrestricted <code>float</code> RGB values. So for example large
+        procedurally, not stored. Or at least not stored until the end of the
+        synthesis process when they are written into a frame buffer (graphics
+        card) or stored in an external image file.</p>
+      <p>Finally, I have tried to support the idea that TexSyn colors have
+        unrestricted <code>float</code> RGB values. So for example, large
         negative component values were allowed. Colors are not clipped until the
         end of the pipeline, when exporting to OpenCV for display or file
         output. So I would prefer to avoid gamma correcting (exponentiating)
         intermediate results—say in <code>interpolate()</code>—which
         effectively clips to positive values. Better to do that at the end of
-        the pipeline also, like the existing clip to unit RGB color cube.</p>
+        the pipeline also, like the existing clip to positive unit RGB color
+        cube.</p>
     </div>
     <div class="post" id="20200502"> <a href="#20200502" class="date">May 2,
         2020</a>

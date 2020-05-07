@@ -91,7 +91,15 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             Vec2 position = (flip / (size / 2)) - Vec2(1, 1);
             if (!disk || (position.length() <= 1))
             {
-                Color color = getColor(position);
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//                Color color = getColor(position);
+//                Color color = ((use_linear && !applyGammaAtEnd()) ?
+//                               getColor(position) :
+//                               getColorClipped(position).gamma(final_gamma));
+                Color color = ((use_linear && !applyGammaAtEnd()) ?
+                               getColor(position) :
+                               reGamma(getColorClipped(position)));
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
                 pixel.x = color.b();
                 pixel.y = color.g();
                 pixel.z = color.r();
@@ -115,8 +123,17 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
     for (int i = -x_limit; i <= x_limit; i++)
     {
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
         // Read TexSyn Color from Texture at (i, j).
-        Color color = getColorClipped(Vec2(i, j) / half);
+//        Color color = getColorClipped(Vec2(i, j) / half);
+//        Color color = ((use_linear && !applyGammaAtEnd()) ?
+//                       getColorClipped(Vec2(i, j) / half) :
+//                       getColorClipped(Vec2(i, j) / half).gamma(final_gamma));
+        Color color = ((use_linear && !applyGammaAtEnd()) ?
+                       getColorClipped(Vec2(i, j) / half) :
+                       reGamma(getColorClipped(Vec2(i, j) / half)));
+
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
         // Make OpenCV color, with reversed component order.
         cv::Vec3f opencv_color(color.b(), color.g(), color.r());
         // Write OpenCV color to corresponding pixel on row image:
@@ -265,9 +282,11 @@ bool Texture::use_linear = false;
 // so it can correctly handle gamma.
 Color interpolate(float alpha, const Color& x0, const Color& x1)
 {
-    if (Texture::use_linear)
+//    if (Texture::use_linear)
+    if (Texture::use_linear && !applyGammaAtEnd())
     {
-            float g = 2.2;
+//            float g = 2.2;
+            float g = defaultGamma();
             Color a = x0.gamma(g);
             Color b = x1.gamma(g);
             Color result = a + ((b - a) * alpha);

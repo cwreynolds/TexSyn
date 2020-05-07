@@ -58,14 +58,6 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Returns this texture's gamma value. For now defined to be const 2.2
-//    float defaultGamma() const { return 2.2; }
-    
-    // TODO test "Gamma angst: shouldn’t TexSyn use linear RGB?"
-    float defaultGamma() const { return 1; }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Convert Color from normal "gamma-ed" space to temporary "linear" space.
     Color deGamma(Color c) const { return c.gamma(defaultGamma()); }
     // Convert Color from temporary "linear" space to normal "gamma-ed" space.
@@ -88,6 +80,7 @@ public:
                                int size = 511);
     static void waitKey();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    static float final_gamma;
     static bool use_linear;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:

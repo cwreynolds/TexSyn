@@ -1648,18 +1648,24 @@ int main(int argc, const char * argv[])
      const Texture& color_noise,
      const Texture& soft_matte)
     {
-        Texture::displayAndFile(stripes_rg,                path + "lin_gam_a");
-        Texture::displayAndFile(Gamma(1/2.2, stripes_rg),  path + "lin_gam_b");
-        Texture::displayAndFile(stripes_gr,                path + "lin_gam_c");
-        Texture::displayAndFile(Gamma(1/2.2, stripes_gr),  path + "lin_gam_d");
-        Texture::displayAndFile(stripes_co,                path + "lin_gam_e");
-        Texture::displayAndFile(Gamma(1/2.2, stripes_co),  path + "lin_gam_f");
-        Texture::displayAndFile(brownian,                  path + "lin_gam_g");
-        Texture::displayAndFile(Gamma(1/2.2, brownian),    path + "lin_gam_h");
-        Texture::displayAndFile(color_noise,               path + "lin_gam_i");
-        Texture::displayAndFile(Gamma(1/2.2, color_noise), path + "lin_gam_j");
-        Texture::displayAndFile(soft_matte,                path + "lin_gam_k");
-        Texture::displayAndFile(Gamma(1/2.2, soft_matte),  path + "lin_gam_l");
+//        Texture::displayAndFile(stripes_rg,                path + "lin_gam_a");
+//        Texture::displayAndFile(Gamma(1/2.2, stripes_rg),  path + "lin_gam_b");
+//        Texture::displayAndFile(stripes_gr,                path + "lin_gam_c");
+//        Texture::displayAndFile(Gamma(1/2.2, stripes_gr),  path + "lin_gam_d");
+//        Texture::displayAndFile(stripes_co,                path + "lin_gam_e");
+//        Texture::displayAndFile(Gamma(1/2.2, stripes_co),  path + "lin_gam_f");
+//        Texture::displayAndFile(brownian,                  path + "lin_gam_g");
+//        Texture::displayAndFile(Gamma(1/2.2, brownian),    path + "lin_gam_h");
+//        Texture::displayAndFile(color_noise,               path + "lin_gam_i");
+//        Texture::displayAndFile(Gamma(1/2.2, color_noise), path + "lin_gam_j");
+//        Texture::displayAndFile(soft_matte,                path + "lin_gam_k");
+//        Texture::displayAndFile(Gamma(1/2.2, soft_matte),  path + "lin_gam_l");
+        Texture::displayAndFile(stripes_rg);
+        Texture::displayAndFile(stripes_gr);
+        Texture::displayAndFile(stripes_co);
+        Texture::displayAndFile(brownian);
+        Texture::displayAndFile(color_noise);
+        Texture::displayAndFile(soft_matte);
     }
     (Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
      Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1),
@@ -1671,6 +1677,50 @@ int main(int argc, const char * argv[])
                Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)));
     debugPrint(Color(0, 1, 1).luminance());
     debugPrint(Color(1, 0.8, 0).luminance());
+    
+    // TODO today only TODO today only TODO today only TODO today only TODO
+    
+    Vec2 p1(-0.01, 0);
+    Vec2 p2(+0.01, 0);
+    float a3 = 2 * pi / 3;
+    [&]
+    (const Texture& sixths)
+    {
+        //std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
+//        Texture::displayAndFile(sixths
+//                                ); // , path + "sixths");
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              0, // no rotation
+//                                              Color(0.3, 0.3, 0.3))
+//                                ); // , path + "LotsOfButtons_offset");
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200408_";
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              1, // random rotation
+//                                              Color(0.3, 0.3, 0.3)),
+//                                ""); // path + "LotsOfButtons_random_rotate");
+
+        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+                                              Vec2(0.5, 0.5),
+                                              sixths,
+                                              1, // random rotation
+                                              Color::gray(0.217638)));
+
+    }
+    (Translate(Vec2(0.5, 0.5),
+               Add(Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
+                             p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3)),
+                   Add(Gradation(p1.rotate(a3), Color(0.1, 0.3, 0.1),
+                                 p2.rotate(a3), Color(0.3, 0.3, 0.3)),
+                       Gradation(p1,            Color(0.3, 0.1, 0.1),
+                                 p2,            Color(0.3, 0.3, 0.3))))));
+    
+    debugPrint(Color::gray(0.5).gamma(2.2));
+
+    // TODO today only TODO today only TODO today only TODO today only TODO
 
     Texture::waitKey();
     
