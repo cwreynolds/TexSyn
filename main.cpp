@@ -1631,97 +1631,107 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // May 5, 2020 follow up on "Gamma angst: shouldn’t TexSyn use linear RGB?"
-    std::cout << "May 5, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200505_";
-    Color black(0, 0, 0);
-    Color white(1, 1, 1);
-    Color red(1, 0, 0);
-    Color green(0, 1, 0);
-    Color cyan(0, 1, 1);
-    Color orange(1, 0.8, 0);
-    [&]
-    (const Texture& stripes_rg,
-     const Texture& stripes_gr,
-     const Texture& stripes_co,
-     const Texture& brownian,
-     const Texture& color_noise,
-     const Texture& soft_matte)
-    {
-//        Texture::displayAndFile(stripes_rg,                path + "lin_gam_a");
-//        Texture::displayAndFile(Gamma(1/2.2, stripes_rg),  path + "lin_gam_b");
-//        Texture::displayAndFile(stripes_gr,                path + "lin_gam_c");
-//        Texture::displayAndFile(Gamma(1/2.2, stripes_gr),  path + "lin_gam_d");
-//        Texture::displayAndFile(stripes_co,                path + "lin_gam_e");
-//        Texture::displayAndFile(Gamma(1/2.2, stripes_co),  path + "lin_gam_f");
-//        Texture::displayAndFile(brownian,                  path + "lin_gam_g");
-//        Texture::displayAndFile(Gamma(1/2.2, brownian),    path + "lin_gam_h");
-//        Texture::displayAndFile(color_noise,               path + "lin_gam_i");
-//        Texture::displayAndFile(Gamma(1/2.2, color_noise), path + "lin_gam_j");
-//        Texture::displayAndFile(soft_matte,                path + "lin_gam_k");
-//        Texture::displayAndFile(Gamma(1/2.2, soft_matte),  path + "lin_gam_l");
-        Texture::displayAndFile(stripes_rg);
-        Texture::displayAndFile(stripes_gr);
-        Texture::displayAndFile(stripes_co);
-        Texture::displayAndFile(brownian);
-        Texture::displayAndFile(color_noise);
-        Texture::displayAndFile(soft_matte);
-    }
-    (Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
-     Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1),
-     Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1),
-     Brownian(0.2, Vec2(), red, green),
-     ColorNoise(0.15, Vec2(3, -5), 0),
-     SoftMatte(Spot(Vec2(), 0.2, white, 1, black),
-               Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
-               Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)));
-    debugPrint(Color(0, 1, 1).luminance());
-    debugPrint(Color(1, 0.8, 0).luminance());
+//    // May 5, 2020 follow up on "Gamma angst: shouldn’t TexSyn use linear RGB?"
+//    std::cout << "May 5, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200505_";
+//    Color black(0, 0, 0);
+//    Color white(1, 1, 1);
+//    Color red(1, 0, 0);
+//    Color green(0, 1, 0);
+//    Color cyan(0, 1, 1);
+//    Color orange(1, 0.8, 0);
+//    [&]
+//    (const Texture& stripes_rg,
+//     const Texture& stripes_gr,
+//     const Texture& stripes_co,
+//     const Texture& brownian,
+//     const Texture& color_noise,
+//     const Texture& soft_matte)
+//    {
+////        Texture::displayAndFile(stripes_rg,                path + "lin_gam_a");
+////        Texture::displayAndFile(Gamma(1/2.2, stripes_rg),  path + "lin_gam_b");
+////        Texture::displayAndFile(stripes_gr,                path + "lin_gam_c");
+////        Texture::displayAndFile(Gamma(1/2.2, stripes_gr),  path + "lin_gam_d");
+////        Texture::displayAndFile(stripes_co,                path + "lin_gam_e");
+////        Texture::displayAndFile(Gamma(1/2.2, stripes_co),  path + "lin_gam_f");
+////        Texture::displayAndFile(brownian,                  path + "lin_gam_g");
+////        Texture::displayAndFile(Gamma(1/2.2, brownian),    path + "lin_gam_h");
+////        Texture::displayAndFile(color_noise,               path + "lin_gam_i");
+////        Texture::displayAndFile(Gamma(1/2.2, color_noise), path + "lin_gam_j");
+////        Texture::displayAndFile(soft_matte,                path + "lin_gam_k");
+////        Texture::displayAndFile(Gamma(1/2.2, soft_matte),  path + "lin_gam_l");
+//        Texture::displayAndFile(stripes_rg);
+//        Texture::displayAndFile(stripes_gr);
+//        Texture::displayAndFile(stripes_co);
+//        Texture::displayAndFile(brownian);
+//        Texture::displayAndFile(color_noise);
+//        Texture::displayAndFile(soft_matte);
+//    }
+//    (Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
+//     Grating(Vec2(-0.2, 0), green, Vec2(0.2, 0), red, 1),
+//     Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1),
+//     Brownian(0.2, Vec2(), red, green),
+//     ColorNoise(0.15, Vec2(3, -5), 0),
+//     SoftMatte(Spot(Vec2(), 0.2, white, 1, black),
+//               Grating(Vec2(-0.2, 0), red, Vec2(0.2, 0), green, 1),
+//               Grating(Vec2(0, -0.2), cyan, Vec2(0, 0.2), orange, 1)));
+//    debugPrint(Color(0, 1, 1).luminance());
+//    debugPrint(Color(1, 0.8, 0).luminance());
+//
+//
+//    Texture::waitKey();
     
-    // TODO today only TODO today only TODO today only TODO today only TODO
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // After gamma switch, May 7, 2020
+    std::cout << "May 7, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200507_";
+
+    // two_spot
+    Uniform red(1, 0, 0);
+    Uniform green(0, 1, 0);
+    Uniform magenta(1, 0, 1);
+    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
+    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+                                                green, red),
+                                      magenta)
+                            ); // , path + "two_spots");
+
+    
+//    // original
+//    float m = 0.1;
+//    float n = 0.3;
+//    float o = 0.3;
+    
+    // revised for linear RGB:
+    float m = 0.005;
+    float n = 0.25;
+    float o = 0.07;
+
     Vec2 p1(-0.01, 0);
     Vec2 p2(+0.01, 0);
     float a3 = 2 * pi / 3;
     [&]
     (const Texture& sixths)
     {
-        //std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200407_";
-//        Texture::displayAndFile(sixths
-//                                ); // , path + "sixths");
-//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
-//                                              Vec2(0.5, 0.5),
-//                                              sixths,
-//                                              0, // no rotation
-//                                              Color(0.3, 0.3, 0.3))
-//                                ); // , path + "LotsOfButtons_offset");
-//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200408_";
-//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
-//                                              Vec2(0.5, 0.5),
-//                                              sixths,
-//                                              1, // random rotation
-//                                              Color(0.3, 0.3, 0.3)),
-//                                ""); // path + "LotsOfButtons_random_rotate");
-
         Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
                                               Vec2(0.5, 0.5),
                                               sixths,
                                               1, // random rotation
-                                              Color::gray(0.217638)));
-
+                                              Color(o, o, o))
+//                              , path + "LOB_original_code");
+//                              , path + "LOB_tweaked_code");
+                                );
     }
     (Translate(Vec2(0.5, 0.5),
-               Add(Gradation(p1.rotate(a3 * 2), Color(0.1, 0.1, 0.3),
-                             p2.rotate(a3 * 2), Color(0.3, 0.3, 0.3)),
-                   Add(Gradation(p1.rotate(a3), Color(0.1, 0.3, 0.1),
-                                 p2.rotate(a3), Color(0.3, 0.3, 0.3)),
-                       Gradation(p1,            Color(0.3, 0.1, 0.1),
-                                 p2,            Color(0.3, 0.3, 0.3))))));
+               Add(Gradation(p1.rotate(a3 * 2), Color(m, m, n),
+                             p2.rotate(a3 * 2), Color(n, n, n)),
+                   Add(Gradation(p1.rotate(a3), Color(m, n, m),
+                                 p2.rotate(a3), Color(n, n, n)),
+                       Gradation(p1,            Color(n, m, m),
+                                 p2,            Color(n, n, n))))));
     
-    debugPrint(Color::gray(0.5).gamma(2.2));
-
-    // TODO today only TODO today only TODO today only TODO today only TODO
-
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

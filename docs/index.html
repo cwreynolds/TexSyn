@@ -55,18 +55,86 @@
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
       texture synthesis. It is not intended for use “by human hands.” TexSyn
       programs will be automatically generated with a Genetic Programming
-      system. This is a blog (or a lab notebook? a design diary?)
-      about making TexSyn. It is not proper documentation, although might be
-      some sort of a starting point. Mostly this describes in “blog order” the
-      steps and design decisions made in its construction. There is some
-      background and introductory information, at the bottom of this page, in
-      the entry for <a href="#20191215">December 15, 2019</a>.</p>
+      system. This is a blog (or a lab notebook? a design diary?) about making
+      TexSyn. It is not proper documentation, although might be some sort of a
+      starting point. Mostly this describes in “blog order” the steps and design
+      decisions made in its construction. There is some background and
+      introductory information, at the bottom of this page, in the entry for <a
+        href="#20191215">December 15, 2019</a>.</p>
     <p><span style="background-color: red;">Note:</span> as of <a href="#20200506">May
         6, 2020</a> an incompatible change was made to improve gamma handling.
       For entries dated before then, the given TexSyn code, if re-rendered anew,
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200507"> <a href="#20200507" class="date">May 7,
+        2020</a>
+      <h1>Moving forward with new gamma</h1>
+      <p>I made another commit today which cleaned out all the gamma related
+        experiments from the last week or so. There were several temporary mode
+        switches which conditionally used one approach to gamma handling or
+        another. Now there is just one path left with no conditionalization:
+        internally TexSyn assumes linear RGB space as before. Gamma correction
+        is done exactly once (with <em>γ</em>=1/2.2, for sRGB) “on the way out”
+        as image data is passed to OpenCV. Just as a reality check, without any
+        special modes set, no tricks up my sleeves, this is a default render of
+        <code>two_spots</code>, the test case inspired by <a href="https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/#colour-blending">Novak's
+          article</a>, now free of “dark rings”:</p>
+      <pre>SoftMatte(Translate(Vec2(0.5, 0), spot),
+          SoftMatte(Translate(Vec2(-0.5, 0), spot), green, red),
+          magenta)</pre>
+      <img src="images/20200507_two_spots.png" alt="two_spots with new gamma handling"
+        title="two_spots with new gamma handling" height="511" width="511">
+      <p>As noted yesterday, due to the change in gamma handling, running
+        unmodified code from earlier examples (below, before yesterday) will now
+        produce different results. However TexSyn will be used with a genetic
+        programming optimizer, which can easily adapt to nonlinearities such as
+        gamma correction. This comes down to changing a few of the numeric
+        constant in a TexSyn expression. Here is one case in point. This
+        rendered image is from <a href="#20200407">April 7</a> (let's call this
+        version 1):</p>
+      <img src="images/20200408_LotsOfButtons_random_rotate.png" alt="LotsOfButtons version 1 (April 7)"
+        title="LotsOfButtons version 1 (April 7)" height="511" width="511">
+      <p>Running that same code <strong>today</strong> produces this result,
+        brighter and less saturated (let's call this version 2):</p>
+      <img src="images/20200507_LOB_original_code.png" alt="LotsOfButtons version 2"
+        title="LotsOfButtons version 2" height="511" width="511">
+      <p>On the other hand, with just a change of numeric constants in the
+        original TexSyn expression (see code details below) it is possible <strong>today</strong>
+        to closely reproduce the look of the earlier example (let's call this
+        version 3):</p>
+      <img src="images/20200507_LOB_tweaked_code.png" alt="LotsOfButtons version 3"
+        title="LotsOfButtons version 3" height="511" width="511">
+      <p>For details on the original texture, see <a href="#20200407">April 7</a>.
+        Here is basically the same code, with some RGB values that had been
+        written as inline constants, pulled out as <code>float</code> variables
+        <code>m</code>, <code>n</code>, and <code>o</code>:</p>
+      <pre><span class="comment">// For</span><span class="comment"><span class="comment"> "version 1"</span></span><span
+class="comment"><span class="comment"><span class="comment"> and "version 2"</span></span>, parameters from April 7:</span>
+m = 0.1
+n = 0.3
+o = 0.3
+
+<span class="comment">// For "version 3" hand tweaked today until they looked close:</span>
+m = 0.005
+n = 0.25
+o = 0.07
+
+<span class="comment">// Definition of "sixths" used for each button:</span>
+p1 = Vec2(-0.01, 0);
+p2 = Vec2(+0.01, 0);
+a3 = 2 * pi / 3
+sixths = Translate(Vec2(0.5, 0.5),
+                   Add(Gradation(p1.rotate(a3 * 2), Color(m, m, n),
+                                 p2.rotate(a3 * 2), Color(n, n, n)),
+                       Add(Gradation(p1.rotate(a3), Color(m, n, m),
+                                     p2.rotate(a3), Color(n, n, n)),
+                           Gradation(p1,            Color(n, m, m),
+                                     p2,            Color(n, n, n)))))
+
+<span class="comment">// Overall texture:</span>
+LotsOfButtons(0.8, 0.04, 0.4, 0.02, Vec2(0.5, 0.5), sixths, 1, Color(o, o, o))</pre>
+    </div>
     <div class="post" id="20200506"> <a href="#20200506" class="date">May 6,
         2020</a>
       <h1><span style="background-color: red;"> Gamma correction changed
@@ -279,9 +347,9 @@ SoftMatte(Spot(Vec2(), 0.2, white, 1, black),
         Novak's 2016 <a href="https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/">What
           Every Coder Should Know About Gamma</a> and was struck by the section
         on color blending, particularly Figure 8:</p>
-      <img src="images/Novak_gamma_blend_bad.png" alt="Figure 8b from John Novak's 2016 “What Every Coder Should Know About Gamma”"
+      <img src="images/20200502_Novak_bad.png" alt="Figure 8b from John Novak's 2016 “What Every Coder Should Know About Gamma”"
         title="Figure 8b from John Novak's 2016 “What Every Coder Should Know About Gamma”"
-        class="novak_pad" height="227" width="300"> <img src="images/Novak_gamma_blend_good.png"
+        class="novak_pad" height="227" width="300"> <img src="images/20200502_Novak_good.png"
         alt="Figure 8b from John Novak's 2016 “What Every Coder Should Know About Gamma”"
         title="Figure 8a from John Novak's 2016 “What Every Coder Should Know About Gamma”"
         class="novak_pad" height="227" width="300">
