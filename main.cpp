@@ -1683,55 +1683,74 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // After gamma switch, May 7, 2020
-    std::cout << "May 7, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200507_";
-
-    // two_spot
-    Uniform red(1, 0, 0);
-    Uniform green(0, 1, 0);
-    Uniform magenta(1, 0, 1);
-    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
-    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
-                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
-                                                green, red),
-                                      magenta)
-                            ); // , path + "two_spots");
-
-    
+//    // After gamma switch, May 7, 2020
+//    std::cout << "May 7, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200507_";
+//
+//    // two_spot
+//    Uniform red(1, 0, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform magenta(1, 0, 1);
+//    Spot spot(Vec2(), 0.1, Color(1, 1, 1), 0.5, Color(0, 0, 0));
+//    Texture::displayAndFile(SoftMatte(Translate(Vec2(0.5, 0), spot),
+//                                      SoftMatte(Translate(Vec2(-0.5, 0), spot),
+//                                                green, red),
+//                                      magenta)
+//                            ); // , path + "two_spots");
 //    // original
-//    float m = 0.1;
-//    float n = 0.3;
-//    float o = 0.3;
+//    //float m = 0.1;
+//    //float n = 0.3;
+//    //float o = 0.3;
+//    // revised for linear RGB:
+//    float m = 0.005;
+//    float n = 0.25;
+//    float o = 0.07;
+//
+//    Vec2 p1(-0.01, 0);
+//    Vec2 p2(+0.01, 0);
+//    float a3 = 2 * pi / 3;
+//    [&]
+//    (const Texture& sixths)
+//    {
+//        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
+//                                              Vec2(0.5, 0.5),
+//                                              sixths,
+//                                              1, // random rotation
+//                                              Color(o, o, o))
+//                              //, path + "LOB_original_code");
+//                              //, path + "LOB_tweaked_code");
+//                                );
+//    }
+//    (Translate(Vec2(0.5, 0.5),
+//               Add(Gradation(p1.rotate(a3 * 2), Color(m, m, n),
+//                             p2.rotate(a3 * 2), Color(n, n, n)),
+//                   Add(Gradation(p1.rotate(a3), Color(m, n, m),
+//                                 p2.rotate(a3), Color(n, n, n)),
+//                       Gradation(p1,            Color(n, m, m),
+//                                 p2,            Color(n, n, n))))));
+//
+//    Texture::waitKey();
     
-    // revised for linear RGB:
-    float m = 0.005;
-    float n = 0.25;
-    float o = 0.07;
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Duty cycle for Grating, May 8, 2020
+    std::cout << "May 8, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200508_";
+    
+    Color turq(0, 0.7, 0.5);
+    Color tan(0.5, 0.3, 0.1);
 
-    Vec2 p1(-0.01, 0);
-    Vec2 p2(+0.01, 0);
-    float a3 = 2 * pi / 3;
-    [&]
-    (const Texture& sixths)
-    {
-        Texture::displayAndFile(LotsOfButtons(0.8, 0.04, 0.4, 0.02,
-                                              Vec2(0.5, 0.5),
-                                              sixths,
-                                              1, // random rotation
-                                              Color(o, o, o))
-//                              , path + "LOB_original_code");
-//                              , path + "LOB_tweaked_code");
-                                );
-    }
-    (Translate(Vec2(0.5, 0.5),
-               Add(Gradation(p1.rotate(a3 * 2), Color(m, m, n),
-                             p2.rotate(a3 * 2), Color(n, n, n)),
-                   Add(Gradation(p1.rotate(a3), Color(m, n, m),
-                                 p2.rotate(a3), Color(n, n, n)),
-                       Gradation(p1,            Color(n, m, m),
-                                 p2,            Color(n, n, n))))));
-    
+    Grating grate1(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5);
+    GratingDC grate2(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.1);
+    GratingDC grate3(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.9);
+
+    Texture::displayAndFile(grate1);
+    Texture::displayAndFile(grate2);
+    Texture::displayAndFile(grate3);
+
+//    Texture::diff(grate1, grate2);
+
+
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

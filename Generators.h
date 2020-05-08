@@ -139,6 +139,92 @@ private:
     const float softness;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO experimental -- adding "duty_cycle" (assymetric phase) to Grating
+
+// started as a copy of Grating, renamed and added duty_cycle member variable
+// and arg to constructor. Trying an approach of remapping the parameter going
+// into softSquareWave().
+
+// A grating of two alternating colored stripes. The spacing and orientation is
+// defined by two points. The segment between them is perpendicular to the
+// stripes, the length of the segment is the width (wavelength) of the stripes.
+// The softness parameter varies from a square wave at 0 and a sinusoid at 1.
+class GratingDC : public Generator
+{
+public:
+    GratingDC(Vec2 point_0, Color color_0,
+              Vec2 point_1, Color color_1,
+              float softness_,
+              float duty_cycle_) :
+        color0(color_0),
+        color1(color_1),
+        origin(point_0),
+        distance((point_1 - point_0).length()),
+        basis((point_1 - point_0) / distance),
+//        softness(softness_) {}
+        softness(softness_),
+        duty_cycle(duty_cycle_) {}
+    Color getColor(Vec2 position) const override
+    {
+        if (distance == 0)
+        {
+            return interpolate(0.5, color0, color1);
+        }
+        else
+        {
+            Vec2 offset = position - origin;
+            float projection = basis.dot(offset);
+            float unit_modulo = fmod_floor(projection, distance) / distance;
+//            return interpolate(softSquareWave(unit_modulo), color0, color1);
+            return interpolate(softSquareWave(dutyCycle(unit_modulo)),
+                               color0,
+                               color1);
+        }
+    }
+    // Defines a "square wave with soft edges". When softness is 0 it is a
+    // square wave. When softness is 1 it is a sinusoid.
+    float softSquareWave(float fraction) const
+    {
+        // Clip fraction to [0, 1].
+        fraction = clip(fraction, 0, 1);
+        // Fold second half of range back over first. f ranges over [0, 0.5].
+        float f = (fraction < 0.5) ? fraction : (1 - fraction);
+        // Start/end of transition region, adjusted for softness.
+        float s = remapInterval(softness, 0, 1, 0.25, 0);
+        float e = remapInterval(softness, 0, 1, 0.25, 0.5);
+        // Piecewise linear transition (flat, ramp, flat).
+        float adjust_for_softness = remapIntervalClip(f, s, e, 0, 1);
+        // Apply sinusoid to adjusted value.
+        return sinusoid(adjust_for_softness);
+    }
+    
+    // TODO: I think this is kinda working (fine for duty_cycle = 0.1) but softSquareWave() defeats it, because sSW assumes the waveform is symmetric, and folds the definition in half, it does not work for duty_cycle = 0.9 (it gets the same result as for 0.1)
+    float dutyCycle(float fraction) const
+    {
+        assert(between(fraction, 0, 1));
+        assert(between(softness, 0, 1));
+        assert(between(duty_cycle, 0, 1));
+        
+        return ((fraction < 0.5) ?
+                remapInterval(fraction,  0, 0.5,  0, duty_cycle) :
+                remapInterval(fraction,  0.5, 1,  duty_cycle, 1));
+    }
+    
+    
+private:
+    const Vec2 origin;
+    const float distance;
+    const Vec2 basis;
+    const Color color0;
+    const Color color1;
+    const float softness;
+    const float duty_cycle;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This code based on a transliteration by Malcolm Kesson from Java to c:
