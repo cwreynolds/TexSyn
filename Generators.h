@@ -164,8 +164,9 @@ public:
         distance((point_1 - point_0).length()),
         basis((point_1 - point_0) / distance),
 //        softness(softness_) {}
-        softness(softness_),
-        duty_cycle(duty_cycle_) {}
+//        softness(softness_),
+        softness(clip(softness_, 0, 1)),
+        duty_cycle(clip(duty_cycle_, 0, 1)) {}
     Color getColor(Vec2 position) const override
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,10 +182,21 @@ public:
             Vec2 offset = position - origin;
             float projection = basis.dot(offset);
             float unit_modulo = fmod_floor(projection, distance) / distance;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //            return interpolate(softSquareWave(unit_modulo), color0, color1);
-            return interpolate(softSquareWave(dutyCycle(unit_modulo)),
-                               color0,
-                               color1);
+            
+//            // TODO duty_cycle tweak
+//            return interpolate(softSquareWave(dutyCycle(unit_modulo)),
+//                               color0,
+//                               color1);
+            
+            // TODO duty_cycle tweak PLUS gamma compensate
+            float dc_adjust = dutyCycle(unit_modulo);
+            float ssw = softSquareWave(dc_adjust);
+//            float gamma_adjust = pow(ssw, defaultGamma());
+            float gamma_adjust = deGamma(ssw);
+            return interpolate(gamma_adjust, color0, color1);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
     }
     // Defines a "square wave with soft edges". When softness is 0 it is a
@@ -248,18 +260,44 @@ public:
 //
 //        }
 
+//        // TODO this is the piecewise-linear version:
+//        float dutyCycle(float fraction) const
+//        {
+//    //        assert(between(fraction, 0, 1));
+//    //        assert(between(softness, 0, 1));    // now checked in constructor
+//    //        assert(between(duty_cycle, 0, 1));  // now checked in constructor
+//            // offset phase by 0.25 aka 90° to put middle of raising edge at 0
+//            float i = std::fmod(fraction + 0.25, 1.0);
+//            float result = ((i < duty_cycle) ?
+//                            remapInterval(i,  0, duty_cycle,  0, 0.5) :
+//                            remapInterval(i,  duty_cycle, 1,  0.5, 1));
+//            return std::fmod(result + 0.75, 1.0);
+//        }
+
     // TODO this is the piecewise-linear version:
     float dutyCycle(float fraction) const
     {
-        assert(between(fraction, 0, 1));
-        assert(between(softness, 0, 1));
-        assert(between(duty_cycle, 0, 1));
         // offset phase by 0.25 aka 90° to put middle of raising edge at 0
-        float i = std::fmod(fraction + 0.25, 1.0);
+        auto offset_phase = [](float p, float o){return std::fmod(p + o, 1.0);};
+        float i = offset_phase(fraction, 0.25);
+
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        
+        // Two linear ramps, from (0,0) to (dc,0.5), then (dc,0.5) to (1,1).
         float result = ((i < duty_cycle) ?
                         remapInterval(i,  0, duty_cycle,  0, 0.5) :
                         remapInterval(i,  duty_cycle, 1,  0.5, 1));
-        return std::fmod(result + 0.75, 1.0);
+        
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
+//        // eg p = 1.94336 when duty_cycle = 0.7
+//        float p = log(0.5) / log(duty_cycle);
+//        // "Gamma like" exponentiation shift^p
+//        float result = pow(i, p);
+        
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
+        return offset_phase(result, 0.75);
     }
 
     // TODO this is the gamma-like exponentiation version:

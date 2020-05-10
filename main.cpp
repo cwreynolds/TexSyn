@@ -1734,60 +1734,33 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Duty cycle for Grating, May 8, 2020
-    std::cout << "May 8, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200508_";
-    
-//    Color turq(0, 0.7, 0.5);
-//    Color tan(0.5, 0.3, 0.1);
-//    Color turq(0, 0.7, 0.7);
-//    Color tan(0.4, 0.2, 0.05);
-//    Color turq(1, 1, 1);
-//    Color tan(0, 0, 0);
-    Color turq(0, 0, 0);
-    Color tan(1, 1, 1);
-    
+    std::cout << "May 10, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200510_";
+    Color c1(0, 0, 0);
+    Color c2(0, 1, 0);
     Vec2 p1(-0.2, -0.05);
     Vec2 p2(0.2, 0.05);
-
-//    // Original for reference
-//    Grating grate0(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5);
-//    // New with duty_cycle==0.5 should be identical to grate0
-//    GratingDC grate1(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.5);
-//    GratingDC grate2(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.1);
-//    GratingDC grate3(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.9);
-//    GratingDC grate4(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.3);
-//    GratingDC grate5(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 0.5, 0.7);
-//    GratingDC grate6(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 1.0, 0.3);
-//    GratingDC grate7(Vec2(-0.2, -0.05), turq, Vec2(0.2, 0.05), tan, 1.0, 0.7);
-
-    // Original for reference
-    Grating grate0(p1, turq, p2, tan, 0.5);
-    // New with duty_cycle==0.5 should be identical to grate0
-    GratingDC grate1(p1, turq, p2, tan, 0.5, 0.5);
-    GratingDC grate2(p1, turq, p2, tan, 0.5, 0.1);
-    GratingDC grate3(p1, turq, p2, tan, 0.5, 0.9);
-    GratingDC grate4(p1, turq, p2, tan, 0.5, 0.3);
-    GratingDC grate5(p1, turq, p2, tan, 0.5, 0.7);
-    GratingDC grate6(p1, turq, p2, tan, 1.0, 0.3);
-    GratingDC grate7(p1, turq, p2, tan, 1.0, 0.7);
-
-//    Texture::diff(grate0, grate1);
-//    Texture::displayAndFile(grate2);
-//    Texture::displayAndFile(grate3);
-//    Texture::displayAndFile(grate4);
-//    Texture::displayAndFile(grate5);
-//    Texture::displayAndFile(grate6);
-//    Texture::displayAndFile(grate7);
+    float soft = 1;
+    float hard = 0.2;
     
-//    float soft = 0.2;
-    float soft = 0.8;
-
     // old
-    Texture::displayAndFile(Grating(p1, turq, p2, tan, soft));
+    Texture::displayAndFile(Grating(p1, c1, p2, c2, soft)
+                            ); // , path + "old_soft");
+    Texture::displayAndFile(Grating(p1, c1, p2, c2, hard)
+                            ); // , path + "old_hard");
     // new
-    Texture::displayAndFile(GratingDC(p1, turq, p2, tan, soft, 0.8));
-    Texture::displayAndFile(GratingDC(p1, turq, p2, tan, soft, 0.2));
-
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, soft, 0.8)
+                            ); // , path + "new_soft_0_8");
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, soft, 0.5)
+                            ); // , path + "new_soft_0_5");
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, soft, 0.2)
+                            ); // , path + "new_soft_0_2");
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, hard, 0.8)
+                            ); // , path + "new_hard_0_8");
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, hard, 0.5)
+                            ); // , path + "new_hard_0_5");
+    Texture::displayAndFile(GratingDC(p1, c1, p2, c2, hard, 0.2)
+                            ); // , path + "new_hard_0_2");
 
     Texture::waitKey();
     
