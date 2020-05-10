@@ -67,6 +67,72 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200510b"> <a href="#20200510b" class="date">May 10,
+        2020</a>
+      <h1><em>Gradient</em> with “duty cycle” — asymmetrical stripes</h1>
+      <p>This adds a parameter to <em>Grating</em> to control the relative
+        width of the two “sub-stripes” of a <em>Grating</em>'s waveform. In
+        signal analysis this is sometimes called <a href="https://en.wikipedia.org/wiki/Duty_cycle">duty
+          cycle</a>. (This term is borrowed from hardware design, where it means
+        the difference between say a motor meant to run continuously versus one
+        that runs for short periods of time.) Below are three pairs, for three
+        values of <code>duty_cycle</code>: 0.2, 0.5, and 0.8. A <code>duty_cycle</code>
+        of 0.5 is the symmetrical version—as <em>Grating</em> was previously
+        defined—the sub-stripes (here green and black) are approximately the
+        same width.</p>
+      <p><code>duty_cycle</code> is 0.2 — <code>softness</code> of 1.0 and 0.2:</p>
+      <img src="images/20200510_new_soft_0_2.png" alt="Grating duty_cycle=0.2, softness=1"
+        title="Grating duty_cycle=0.2, softness=1" height="511" width="511">
+      <img src="images/20200510_new_hard_0_2.png" alt="Grating duty_cycle=0.2, softness=0.2"
+        title="Grating duty_cycle=0.2, softness=0.2" height="511" width="511">
+      <p><code>duty_cycle</code> is 0.5 — <code>softness</code> of 1.0 and 0.2:</p>
+      <img src="images/20200510_new_soft_0_5.png" alt="Grating duty_cycle=0.5, softness=1"
+        title="Grating duty_cycle=0.5, softness=1" height="511" width="511"> <img
+        src="images/20200510_new_hard_0_5.png" alt="Grating duty_cycle=0.5, softness=0.2"
+        title="Grating duty_cycle=0.5, softness=0.2" height="511" width="511">
+      <p><code>duty_cycle</code> is 0.8 — <code>softness</code> of 1.0 and 0.2:</p>
+      <img src="images/20200510_new_soft_0_8.png" alt="Grating duty_cycle=0.8, softness=1"
+        title="Grating duty_cycle=0.8, softness=1" height="511" width="511"> <img
+        src="images/20200510_new_hard_0_8.png" alt="Grating duty_cycle=0.8, softness=0.2"
+        title="Grating duty_cycle=0.8, softness=0.2" height="511" width="511">
+      <p>I implemented this by “remapping” the cross-stripe parameter before it
+        goes into the waveform generator (<code>Grating::softSquareWave(</code><code><code>Grating::</code>dutyCycle(f))</code>).
+        My first attempt was based on a piecewise linear remapping composed of
+        two ramps. That was OK but I worried about <a href="https://en.wikipedia.org/wiki/Mach_bands">Mach
+          bands</a> where the ramps joined. So I looked into continuous versions
+        of the remapping. These all “looked wrong.” Perhaps the issue was that
+        they were not symmetrical across each sub-stripe and indeed the
+        transitions were wider on one side of a sub-stripe than the other. I
+        decided to live with any supposed Mach band artifacts and get on with my
+        life. The textures above use the piecewise linear remapping.</p>
+    </div>
+    <div class="post" id="20200510a"> <a href="#20200510a" class="date">May 10,
+        2020</a>
+      <h1>Gamma adjust <em>Gradient</em> waveform</h1>
+      <p>I mentioned this issue on <a href="#20200505">May 5</a>, <em>Gradient</em>
+        stripes that had been symmetrical before the gamma changes are now
+        asymmetrical. This added confusion during work on making stripes
+        intentionally asymmetrical (see next post, above). My previous theory
+        was this had to do with the colors involved. But I looked at black and
+        white <em>Gratings</em> (or here, black and green) and felt the
+        asymmetry was not acceptable. So I added a pre-de-gamma to the basic 1d
+        waveform of a <em>Grating</em>. That waveform can range between a pure
+        cosine wave or a square wave depending on the <em>Grating</em>
+        parameter <code>softness</code>. Here are four textures: the previous
+        and news versions, at softness values of 1.0 and 0.2. Note in the old
+        soft version the green stripes appear much wider than the black stripes:</p>
+      <img src="images/20200510_old_soft.png" alt="previous Grating, softness=1"
+        title="previous Grating, softness=1" height="511" width="511"> <img src="images/20200510_old_hard.png"
+        alt="previous Grating, softness=0.2" title="previous Grating, softness=0.2"
+        height="511" width="511">
+      <p>And this is the new gamma-adjusted version. The hard-edge <em>Grating</em>s
+        are nearly the same. The transition regions in the soft-edged versions
+        are different. In the new version, the green and black stripes are
+        closer in width for both soft and hard edge versions:</p>
+      <img src="images/20200510_new_soft_0_5.png" alt="new Grating, softness=1"
+        title="new Grating, softness=1" height="511" width="511"> <img src="images/20200510_new_hard_0_5.png"
+        alt="new Grating, softness=0.2" title="new Grating, softness=0.2" height="511"
+        width="511"> </div>
     <div class="post" id="20200507"> <a href="#20200507" class="date">May 7,
         2020</a>
       <h1>Moving forward with new gamma</h1>
