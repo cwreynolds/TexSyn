@@ -82,8 +82,8 @@
         same width.</p>
       <p><code>duty_cycle</code> is 0.2 — <code>softness</code> of 1.0 and 0.2:</p>
       <img src="images/20200510_new_soft_0_2.png" alt="Grating duty_cycle=0.2, softness=1"
-        title="Grating duty_cycle=0.2, softness=1" height="511" width="511">
-      <img src="images/20200510_new_hard_0_2.png" alt="Grating duty_cycle=0.2, softness=0.2"
+        title="Grating duty_cycle=0.2, softness=1" height="511" width="511"> <img
+        src="images/20200510_new_hard_0_2.png" alt="Grating duty_cycle=0.2, softness=0.2"
         title="Grating duty_cycle=0.2, softness=0.2" height="511" width="511">
       <p><code>duty_cycle</code> is 0.5 — <code>softness</code> of 1.0 and 0.2:</p>
       <img src="images/20200510_new_soft_0_5.png" alt="Grating duty_cycle=0.5, softness=1"
@@ -96,7 +96,7 @@
         src="images/20200510_new_hard_0_8.png" alt="Grating duty_cycle=0.8, softness=0.2"
         title="Grating duty_cycle=0.8, softness=0.2" height="511" width="511">
       <p>I implemented this by “remapping” the cross-stripe parameter before it
-        goes into the waveform generator (<code>Grating::softSquareWave(</code><code><code>Grating::</code>dutyCycle(f))</code>).
+        goes into the waveform generator (<code>Grating::softSquareWave(Grating::dutyCycle(f))</code>).
         My first attempt was based on a piecewise linear remapping composed of
         two ramps. That was OK but I worried about <a href="https://en.wikipedia.org/wiki/Mach_bands">Mach
           bands</a> where the ramps joined. So I looked into continuous versions
@@ -105,6 +105,14 @@
         transitions were wider on one side of a sub-stripe than the other. I
         decided to live with any supposed Mach band artifacts and get on with my
         life. The textures above use the piecewise linear remapping.</p>
+      <pre><span class="comment">// Grating with duty_cycle of 0.8 (so wide white, thin blue).</span>
+grating = Grating(Vec2(), Color(1, 1, 1), Vec2(0.04, 0.04), Color(0, 0, 1), 0.4, 0.8);
+<span class="comment">// A bit of smooth Perlin noise.</span>
+noise = Noise n(0.3, Vec2(2, 7), Color(), Color(1, 1, 1));
+<span class="comment">// Noise colorized with stripes to form a "coutour map".</span>
+Colorize(Vec2(1, 0), Vec2(), grating,  noise))</pre>
+      <img src="images/20200511_Grating.png" alt="Grating, duty_cycle=0.8 (wide white, thin blue)" title="Grating, duty_cycle=0.8 (wide white, thin blue)" height="511" width="511">
+      <img src="images/20200511_Colorize.png" alt="Colorize Noise with Grating" title="Colorize Noise with Grating" height="511" width="511">
     </div>
     <div class="post" id="20200510a"> <a href="#20200510a" class="date">May 10,
         2020</a>
@@ -119,7 +127,7 @@
         waveform of a <em>Grating</em>. That waveform can range between a pure
         cosine wave or a square wave depending on the <em>Grating</em>
         parameter <code>softness</code>. Here are four textures: the previous
-        and news versions, at softness values of 1.0 and 0.2. Note in the old
+        and new versions, at softness values of 1.0 and 0.2. Note in the old
         soft version the green stripes appear much wider than the black stripes:</p>
       <img src="images/20200510_old_soft.png" alt="previous Grating, softness=1"
         title="previous Grating, softness=1" height="511" width="511"> <img src="images/20200510_old_hard.png"
@@ -175,8 +183,7 @@
         Here is basically the same code, with some RGB values that had been
         written as inline constants, pulled out as <code>float</code> variables
         <code>m</code>, <code>n</code>, and <code>o</code>:</p>
-      <pre><span class="comment">// For</span><span class="comment"><span class="comment"> "version 1"</span></span><span
-class="comment"><span class="comment"><span class="comment"> and "version 2"</span></span>, parameters from April 7:</span>
+      <pre><span class="comment">// For "version 1" and "version 2", parameters from April 7:</span>
 m = 0.1
 n = 0.3
 o = 0.3

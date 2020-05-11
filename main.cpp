@@ -1761,6 +1761,21 @@ int main(int argc, const char * argv[])
                             ); // , path + "new_hard_0_5");
     Texture::displayAndFile(GratingDC(p1, c1, p2, c2, hard, 0.2)
                             ); // , path + "new_hard_0_2");
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    path = "/Users/cwr/Desktop/TexSyn_temp/20200511_";
+
+    GratingDC g(Vec2(), Color(1, 1, 1),
+                Vec2(0.04, 0.04), Color(0, 0, 1),
+                0.4, 0.8);
+    Noise n(0.3, Vec2(2, 7), Color(), Color(1, 1, 1));
+    Texture::displayAndFile(g); // , path + "Grating");
+    Texture::displayAndFile(Colorize(Vec2(1, 0), Vec2(), g,  n)
+                            ); // , path + "Colorize");
+
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Texture::waitKey();
     
