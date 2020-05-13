@@ -1022,14 +1022,16 @@ private:
 class LotsOfSpotsBase : public Operator
 {
 public:
-    LotsOfSpotsBase(float _spot_density,
-                    float _min_radius,
-                    float _max_radius,
-                    float _soft_edge_width)
+      LotsOfSpotsBase(float _spot_density,
+                      float _min_radius,
+                      float _max_radius,
+                      float _soft_edge_width,
+                      float _margin)
       : spot_density(std::min(_spot_density, 1.0f)),
-        min_radius(std::min(_min_radius, _max_radius)),
-        max_radius(std::max(_min_radius, _max_radius)),
+        min_radius(std::min(_min_radius, _max_radius) + _margin),
+        max_radius(std::max(_min_radius, _max_radius) + _margin),
         soft_edge_width(_soft_edge_width),
+        margin(_margin),
         disk_occupancy_grid
             (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
     {
@@ -1049,6 +1051,7 @@ public:
         for (auto& disk : disks)
         {
             Disk spot = *disk;
+            spot.radius -= margin;
             // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
             Vec2 tiled_spot =
                 disk_occupancy_grid->nearestByTiling(tiled_pos, spot.position);
@@ -1082,6 +1085,7 @@ private:
     const float min_radius;
     const float max_radius;
     const float soft_edge_width;
+    const float margin;
 };
 
 // This version takes a color for the spots and another for the background.
@@ -1092,11 +1096,16 @@ public:
                 float _min_radius,
                 float _max_radius,
                 float _soft_edge_width,
+                float _margin,
                 Color _spot_color,
                 Color _background_color)
-      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+      : LotsOfSpotsBase(_spot_density, _min_radius, _max_radius,
+                        _soft_edge_width, _margin),
         spot_color(_spot_color),
         background_color(_background_color) {}
+    // Provide backward compatibility for version before "margin".
+    LotsOfSpots(float a, float b, float c, float d, Color e, Color f)
+      : LotsOfSpots(a, b, c, d, 0, e, f) {}
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);
@@ -1115,11 +1124,16 @@ public:
                  float _min_radius,
                  float _max_radius,
                  float _soft_edge_width,
+                 float _margin,
                  const Texture& _color_texture,
                  Color _background_color)
-      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+      : LotsOfSpotsBase(_spot_density, _min_radius, _max_radius,
+                        _soft_edge_width, _margin),
         color_texture(_color_texture),
         background_color(_background_color) {}
+    // Provide backward compatibility for version before "margin".
+    ColoredSpots(float a, float b, float c, float d, const Texture& e, Color f)
+      : ColoredSpots(a, b, c, d, 0, e, f) {}
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);
@@ -1142,11 +1156,13 @@ public:
                   float _min_radius,
                   float _max_radius,
                   float _soft_edge_width,
+                  float _margin,
                   Vec2 _button_center,
                   const Texture& _button_texture,
                   float _button_random_rotate,
                   Color _background_color)
-      : LotsOfSpotsBase(_spot_density,_min_radius,_max_radius,_soft_edge_width),
+      : LotsOfSpotsBase(_spot_density, _min_radius, _max_radius,
+                        _soft_edge_width, _margin),
         button_center(_button_center),
         button_texture(_button_texture),
         button_random_rotate(_button_random_rotate),
@@ -1154,6 +1170,10 @@ public:
     {
         if (button_random_rotate > 0.5) randomizeSpotRotations();
     }
+    // Provide backward compatibility for version before "margin".
+    LotsOfButtons(float a, float b, float c, float d, Vec2 e,
+                  const Texture& f, float g, Color h)
+      : LotsOfButtons(a, b, c, d, 0, e, f, g, h) {}
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);

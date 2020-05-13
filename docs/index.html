@@ -67,6 +67,63 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200513"> <a href="#20200513" class="date">May 13,
+        2020</a>
+      <h1>Margins between spots</h1>
+      <p>While prototyping <em>LotsOfSpots</em> (and its base-class-sharing
+        friends <em>ColoredSpots</em> and <em>LotsOfButtons</em>) I originally
+        intended to add a parameter for how much empty “margin” to leave between
+        spots. At the time, I forgot to provide a parameter for this. So now
+        when I finally get back to adding that functionality, I have a “legacy
+        API” issue. Again, not a huge problem for software that currently has a
+        user community of exactly one. But I have tried to provide backward
+        compatibility, and generally want the older examples (below, in this
+        document) to produce the same result. So in addition to adding the <code>margin</code>
+        parameter and functionality, I also provided stubs for the old versions
+        without <code>margin</code>, so those should continue to work.</p>
+      <p>The “margin” is used to established an invisible boundary around each
+        spot. Its “radius for placement” is its “radius for display” plus <code>margin</code>.
+        The three texture operators (<em>LotsOfSpots</em>, <em>ColoredSpots</em>,
+        and <em>LotsOfButtons</em>) had four parameters in common used by the
+        shared base class. Now there are five. The new margin parameter is now
+        the <strong>fifth</strong> parameter to each.</p>
+      <p>Five sample textures are shown below. The first three being identical
+        calls to <em>LotsOfSpots</em> except for the new <code>margin</code>
+        parameter which has values of: <strong>0</strong>, <strong>0.02</strong>,
+        and <strong>0.04</strong>. The last two textures are calls to <em>ColoredSpots</em>
+        and <em>LotsOfButtons</em> with the same first five basic spot
+        parameters as the third <em>LotsOfSpots</em> texture. As a result, the
+        last three textures have identical arrangements of spots, with different
+        renderings.</p>
+      <pre>yellow = Color c1(0.7, 0.7, 0)
+red = Color(0.9, 0, 0)
+
+<span class="comment">// LotsOfSpots with margin=0 (fifth parameter).</span>
+LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0, yellow, red)</pre>
+      <img src="images/20200513_LOS_margin_0.png" alt="margin=0 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0, yellow, red)"
+        title="margin=0 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0, yellow, red)" height="511"
+        width="511">
+      <pre><span class="comment">// LotsOfSpots with margin=0.02 (fifth parameter).</span>
+LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.02, yellow, red)</pre>
+      <img src="images/20200513_LOS_margin_0_02.png" alt="margin=0.02 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.02, yellow, red)"
+        title="margin=0.02 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.02, yellow, red)"
+        height="511" width="511">
+      <pre><span class="comment">// LotsOfSpots with margin=0.04 (fifth parameter).</span>
+LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.04, yellow, red)</pre>
+      <img src="images/20200513_LOS_margin_0_04.png" alt="margin=0.04 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.04, yellow, red)"
+        title="margin=0.04 LotsOfSpots(0.8, 0.1, 0.3, 0.01, 0.04, yellow, red)"
+        height="511" width="511">
+      <pre><span class="comment">// ColoredSpots with margin=0.04, same first five parameters, so same spot placement.</span>
+noise = Noise(0.03, Vec2(), yellow, red)
+ColoredSpots(0.8, 0.1, 0.3, 0.01, 0.04, noise, red)</pre>
+      <img src="images/20200513_CS_margin_0_04.png" alt="ColoredSpots(0.8, 0.1, 0.3, 0.01, 0.04, noise, red)"
+        title="ColoredSpots(0.8, 0.1, 0.3, 0.01, 0.04, noise, red)" height="511"
+        width="511">
+      <pre><span class="comment">// </span><span class="comment">LotsOfButtons with margin=0.04, same first five parameters, so same spot placement.</span>
+LotsOfButtons(0.8, 0.1, 0.3, 0.01, 0.04, Vec2(), noise, 1, red)</pre>
+      <img src="images/20200513_LOB_margin_0_04.png" alt="LotsOfButtons(0.8, 0.1, 0.3, 0.01, 0.04, Vec2(), noise, 1, red)"
+        title="LotsOfButtons(0.8, 0.1, 0.3, 0.01, 0.04, Vec2(), noise, 1, red)"
+        height="511" width="511"> </div>
     <div class="post" id="20200510b"> <a href="#20200510b" class="date">May 10,
         2020</a>
       <h1><em>Gradient</em> with “duty cycle” — asymmetrical stripes</h1>
@@ -111,9 +168,10 @@ grating = Grating(Vec2(), Color(1, 1, 1), Vec2(0.04, 0.04), Color(0, 0, 1), 0.4,
 noise = Noise n(0.3, Vec2(2, 7), Color(), Color(1, 1, 1));
 <span class="comment">// Noise colorized with stripes to form a "coutour map".</span>
 Colorize(Vec2(1, 0), Vec2(), grating,  noise))</pre>
-      <img src="images/20200511_Grating.png" alt="Grating, duty_cycle=0.8 (wide white, thin blue)" title="Grating, duty_cycle=0.8 (wide white, thin blue)" height="511" width="511">
-      <img src="images/20200511_Colorize.png" alt="Colorize Noise with Grating" title="Colorize Noise with Grating" height="511" width="511">
-    </div>
+      <img src="images/20200511_Grating.png" alt="Grating, duty_cycle=0.8 (wide white, thin blue)"
+        title="Grating, duty_cycle=0.8 (wide white, thin blue)" height="511" width="511">
+      <img src="images/20200511_Colorize.png" alt="Colorize Noise with Grating"
+        title="Colorize Noise with Grating" height="511" width="511"> </div>
     <div class="post" id="20200510a"> <a href="#20200510a" class="date">May 10,
         2020</a>
       <h1>Gamma adjust <em>Gradient</em> waveform</h1>
