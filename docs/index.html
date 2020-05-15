@@ -67,6 +67,105 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200514"> <a href="#20200514" class="date">May 14,
+        2020</a>
+      <h1>Inherent matting</h1>
+      <p>Since <a href="#20191219">December 19, 2019</a> this note has been on
+        my TexSyn to-do list:</p>
+      <p style="margin-left: 40px;">While writing <a href="https://cwreynolds.github.io/TexSyn/#20191219">Designing
+          for genetic programming</a>, I wondered: instead of giving <em>Generators</em>
+        two <em>Colors</em>, what if we gave them two <em>Texture</em>s? This
+        effectively turns each <em>Generator</em> into a <em>SoftMatte</em>.
+        This might be more “GP friendly” overall. This would mean all current <em>Generators</em>
+        would become <em>Operators</em>. (Except for <em>Uniform</em>?)</p>
+      <p>I am not quite ready to make that change, but I am creeping up on it,
+        in the context of <em>LotsOfSpots</em> and friends. To unpack that
+        note: <em>Texture</em> is TexSyn's base class for representing its
+        model of textures. On top of <em>Texture</em> are two “category
+        classes” <em>Generator</em> and <em>Operator</em>. These (as in the
+        2010-ish version of this library) serve no purpose other than to be the
+        base class for two disjoint sets of concrete texture types. So for
+        example, <em>Spot</em>'s base class is <em>Generator</em>, as are the
+        other <em>Texture</em> types whose parameters do <strong>not</strong>
+        include <em>Texture</em>s. Conversely, <em>Operator</em> is the base
+        class for <em>SoftMatte</em> or <em>Add</em>, <em>Texture</em>s that
+        have one or more <em>Texture</em>s among their parameters.</p>
+      <p>In the old library, <em>Generator</em>s like <em>Spot</em> produced a
+        monochrome signal to be manipulated by other operators. It would be as
+        if LotsOfSpots always used white and black as its color parameters:</p>
+      <pre>los = LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03, Color(1, 1, 1), Color(0, 0, 0))</pre>
+      <img src="images/20200514_LotsOfSpots_b_and_w.png" alt="los = LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03, w, b)"
+        title="los = LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03, w, b)" height="511"
+        width="511">
+      <p>You (or GP evolution) could take that result then tint it, and add it
+        to some other texture, etc. Or you could use <em>SoftMatte</em> to get
+        the effect of current <em>LotsOfSpots</em>, where the basic texture is
+        used to modulate between two colors, here represented as <em>Uniform</em>
+        textures:</p>
+      <pre>SoftMatte(los, Uniform(Color(0.1, 0.1, 0.1)), Uniform(Color(0.1, 0.6, 0.1)))</pre>
+      <img src="images/20200514_SoftMatte_of_Uniforms.png" alt="SoftMatte(los, gray, green)"
+        title="SoftMatte(los, gray, green)" height="511" width="511">
+      <p>Of course, this more general case allows using the <code>los</code>
+        pattern to combine arbitrary textures, not just <em>Uniform</em>s:</p>
+      <pre>black_red  = Grating(Vec2(0.1, 0), Color(0, 0, 0), Vec2(0, 0), Color(1, 0, 0), 0.1, 0.5)
+white_cyan = Grating(Vec2(0, 0.2), Color(1, 1, 1), Vec2(0, 0), Color(0, 1, 1), 0.1, 0.5)<br>SoftMatte(los, black_red, white_cyan)</pre>
+      <img src="images/20200514_striped_spots_new.png" alt="" title="" height="511"
+        width="511">
+      <p>The textures above are simple to create with the current version of <em>LotsOfSpots</em>.
+        It is easy because it is a pure <em>Generator</em> with no <em>Texture</em>
+        parameters. The same is not true of its sibling classes <em>ColoredSpots</em>
+        and <em>LotsOfButtons</em>. All three have a <code>background_color</code>
+        parameter, with no convenient way to insert a background texture
+        “behind” the spots. Say we wanted to define a texture somewhere between
+        the texture below and the <em>LotsOfButtons</em> examples on <a href="#20200406c">April
+          6</a>. This texture would have cyan and white stripes in the
+        background, with a red spiral “button” on each spot. This is not
+        impossible but a bit awkward. You would need a <code>los</code> matte
+        as in the first texture above, then you would need a <em>LotsOfButtons</em>
+        element (“<code>lob</code>”) as on April 6, but carefully constructed to
+        exactly match the matte, then you could SoftMatte <code>lob</code> over
+        the cyan-white grating, using <code>los</code> as the matte.</p>
+      <p>I have convinced myself this requires too much troubling code nesting
+        “context” (in the sense described on <a href="#20191219">December 19,
+          2019</a> and in my to-do note quoted at the top of this post). So I
+        decided to change <em>LotsOfSpots</em>, <em>ColoredSpots</em>, and <em>LotsOfButtons</em>.
+        to take a <code>background_<strong>texture</strong></code> parameter
+        instead of a <code>background_<strong>color</strong></code> parameter.
+        For the same reason, I think <em>LotsOfSpots</em>'s <code>spot_<strong>color</strong></code>
+        parameter should become <code>spot_<strong>texture</strong></code>.
+        This implements <strong>inherent matting</strong> for the three “spots”
+        operators. I strongly suspect I will go on to make a corresponding
+        change to the other <em>Generators</em>, but that wait for later.</p>
+      <p><strong>So after this change:</strong> here is <em>LotsOfSpots</em>
+        with the same “spot geometry” but its last two parameters are now
+        textures rather than colors. Instead of making a monochrome matte and
+        using it with SoftMatte, we can now directly combine the two input
+        textures (in this case two <em>Grating</em>s) according to the
+        collection of spots. I reversed the two gratings just so this image is
+        not identical to the previous one. Before this change, the last two
+        parameters of <em>LotsOfSpots</em> were <code>spot_color</code> and <code>background_color</code>,
+        now they are <code>spot_texture</code> and <code>background_texture</code>.</p>
+      <pre>LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03, white_cyan, black_red)</pre>
+      <img src="images/20200514_striped_spots.png" alt="LotsOfSpots with spot_texture and background_texture"
+        title="LotsOfSpots with spot_texture and background_texture" height="511"
+        width="511">
+      <p>Similarly, after this change, the last parameter to <em>LotsOfButtons</em>
+        is a background texture instead of a background color. Here is the <code>twist</code>
+        texture (as described on <a href="#20200406c">April 6</a>) used as the
+        <code>button_texture</code> and <code>white_cyan</code> used as the <code>background_texture</code>:.
+        Note that the spots containing black and red spirals are in the same
+        distribution as the ones containing black and red stripes above:</p>
+      <pre>LotsOfButtons(0.9, 0.1, 0.4, 0.08, 0.03, Vec2(), twist, 1, white_cyan)</pre>
+      <img src="images/20200514_LotsOfButtons.png" alt="LotsOfButtons with background_texture"
+        title="LotsOfButtons with background_texture" height="511" width="511">
+      <p>Finally the new <em>ColoredSpots</em> with its new <code>background_texture</code>
+        parameter. The spot colors come from a yellow-green <em>Noise</em>
+        texture, over a blue-gray <em>Noise</em> background texture:</p>
+      <pre>ColoredSpots(0.6, 0.05, 0.1, 0.03, 0.01,
+             Noise(0.30, Vec2(-3,2), Color(1, 1, 0), Color(0, 1, 0)),
+             Noise(0.05, Vec2(3, 7), Color(0, 0, 1), Color(0.4, 0.4, 0.7)))</pre>
+      <img src="images/20200514_ColoredSpots.png" alt="ColoredSpots with background_texture"
+        title="ColoredSpots with background_texture" height="511" width="511"> </div>
     <div class="post" id="20200513"> <a href="#20200513" class="date">May 13,
         2020</a>
       <h1>Margins between spots</h1>

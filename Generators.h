@@ -93,11 +93,24 @@ private:
 class Grating : public Generator
 {
 public:
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Grating(Vec2 point_0, Color color_0,
+//            Vec2 point_1, Color color_1,
+//            float softness_,
+//            // (default to symmetric case if omitted: backward compatibility)
+//            float duty_cycle_ = 0.5) :
+//        color0(color_0),
+//        color1(color_1),
+//        origin(point_0),
+//        distance((point_1 - point_0).length()),
+//        basis((point_1 - point_0) / distance),
+//        softness(clip(softness_, 0, 1)),
+//        duty_cycle(clip(duty_cycle_, 0, 1)) {}
+    
     Grating(Vec2 point_0, Color color_0,
             Vec2 point_1, Color color_1,
             float softness_,
-            // (default to symmetric case if omitted: backward compatibility)
-            float duty_cycle_ = 0.5) :
+            float duty_cycle_) :
         color0(color_0),
         color1(color_1),
         origin(point_0),
@@ -105,6 +118,10 @@ public:
         basis((point_1 - point_0) / distance),
         softness(clip(softness_, 0, 1)),
         duty_cycle(clip(duty_cycle_, 0, 1)) {}
+    // For backward compatibility with old version before duty_cycle_.
+    Grating(Vec2 a, Color b, Vec2 c, Color d, float e)
+      : Grating(a, b, c, d, e, 0.5) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Color getColor(Vec2 position) const override
     {
         if (distance == 0)
