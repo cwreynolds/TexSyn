@@ -67,20 +67,21 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
-    <div class="post" id="20200515"> <a href="#yyyymmdd" class="date">May 15,
+    <div class="post" id="20200515"> <a href="#20200515" class="date">May 15,
         2020</a>
       <h1>Backward compatibility: our little secret<span style="font-family: monospace;"></span><code></code></h1>
-      <p>Several recent changes involved retrofitting new features into existing
-        texture classes. These required adding or changing parameters to texture
-        constructors. My goal has been to provide backward compatibility for the
-        old version, so that old examples (below, in this file) will continue to
-        work. This was done using the C++ features that allows one class
-        constructor to invoke another. So for example, consider <a href="#20200513">Margins
-          between spots</a>, which added a new <code>margin</code> parameter in
-        the middle of the old parameter sequence. I added a new “rewriting
-        constructor” with the old parameters that merely forwards to the new
-        constructor, inserting the 0 default for <code>margin</code> in its new
-        place.</p>
+      <p>Several recent changes involved retrofitting new features (margins
+        between spots, inherent matting, duty cycle) into existing texture
+        classes. These required adding or changing parameters to texture
+        constructors. My goal has been to, where possible, provide backward
+        compatibility for the old version, so that old examples (below, in this
+        file) will continue to work. This was done using the C++ feature
+        allowing one class constructor to invoke another. So for example,
+        consider <a href="#20200513">Margins between spots</a>, which added a
+        new <code>margin</code> parameter in the middle of the old parameter
+        list. I added a new “rewriting constructor” with the old parameters that
+        merely forwards to the new constructor, inserting the 0 default for <code>margin</code>
+        in its new place.</p>
       <p>But it was slightly more complicated for <a href="#20200514">Inherent
           matting</a> where <em>Color</em> parameters were replaced with <em>Texture</em>
         references. The solution—to be used solely for this backward
@@ -2168,7 +2169,7 @@ MobiusTransform(Vec2(-0.958788, 1.64993), Vec2(-1.54534, -0.593485), Vec2(1.2915
         height="511" width="511"> <img src="images/20200128_MobiusTransform_2.png"
         alt="MobiusTransform 4" title="MobiusTransform 4" height="511" width="511">
     </div>
-    <div class="post" id="yyyymmdd"> <a href="#yyyymmdd" class="date">January
+    <div class="post" id="20200124"> <a href="#20200124" class="date">January
         24, 2020</a>
       <h1><em>SliceToRadial</em></h1>
       <p><em>SliceToRadial</em> maps a “slice” of its input texture—specified by
