@@ -7,3 +7,13 @@
 //
 
 #include "Generators.h"
+
+// BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
+// is called ONLY from constructors providing backward compatibility. The
+// tiny Uniform texture object is allowed to "memory leak" for ease of use.
+Texture& Texture::disposableUniform(Color color)
+{
+    std::cout << "Warning: creating disposableUniform" << color
+              << " for backward compatibility." << std::endl;
+    return *(new Uniform(color));
+}

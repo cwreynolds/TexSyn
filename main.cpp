@@ -1846,7 +1846,29 @@ int main(int argc, const char * argv[])
     Noise n2(0.05, Vec2(3, 7), Color(0, 0, 1), Color(0.4, 0.4, 0.7));
     Texture::displayAndFile(ColoredSpots(0.6, 0.05, 0.1, 0.03, 0.01, n1, n2)
                             ); // , path + "ColoredSpots");
-
+    
+    // testing BACKWARD_COMPATIBILITY May 15, 2020
+    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
+    AdjustSaturation cn(1.2, cn0);
+    Color gray50(0.25, 0.25, 0.25);
+    Texture::displayAndFile(Scale(0.2,
+                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
+                                               cn, gray50)));
+    [&]
+    (const Texture& twist)
+    {
+        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
+                                              Vec2(), twist, 1, Color()));
+    }
+    (Twist(7, 9, Vec2(),
+           SliceToRadial(Vec2(0, 0.318), Vec2(),
+                         Grating(Vec2(0, -0.1), Color(1, 0, 0),
+                                 Vec2(0, +0.1), black,
+                                 0.3, 0.5))));
+    Color c(0.0, 0.8, 1.0);
+    Color m(0.8, 0.0, 0.8);
+    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

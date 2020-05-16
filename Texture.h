@@ -80,6 +80,10 @@ public:
                                std::string pathname = "",
                                int size = 511);
     static void waitKey();
+    // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
+    // is called ONLY from constructors providing backward compatibility. The
+    // tiny Uniform texture object is allowed to "memory leak" for ease of use.
+    static Texture& disposableUniform(Color color);
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
