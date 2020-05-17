@@ -67,6 +67,38 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200517"> <a href="#20200517" class="date">May 17,
+        2020</a>
+      <h1>Inherent matting for <em>Spot</em>, <em>Gradient</em>, and <em>Grating</em></h1>
+      <p>Continuing with the “inherent matting” theme from <a href="#20200514">May
+          14</a>: three basic <em>Generators</em> are changed to take two <em>Texture</em>
+        references where they used to allow only <em>Color</em> values. For
+        example, Spot previously took an <code>inside_color</code> and an <code>outside_color</code>,
+        now it takes an <code>inside_texture</code> and an <code>outside_texture</code>:</p>
+      <pre><span class="comment">// Define Spot with white_cyan/black_red as its input parameters.</span>
+Spot(Vec2(0, 0), 0.2, white_cyan, 0.9, black_red)</pre>
+      <img src="images/20200517_Spot.png" alt="Spot with Texture inputs" title="Spot with Texture inputs"
+        height="511" width="511">
+      <pre><span class="comment">// </span><span class="comment"><span class="comment">Similarly, a diagonal </span></span><span
+class="comment"><span class="comment">Gradation using white_cyan/black_red</span>.</span><br>Gradation(Vec2(0.7, -0.7), white_cyan, Vec2(-0.7, 0.7), black_red)</pre>
+      <img src="images/20200517_Gradation.png" alt="Gradation with Texture inputs"
+        title="Gradation with Texture inputs" height="511" width="511">
+      <pre><span class="comment">// A </span><span class="comment">Grating using white_cyan/black_red, 20% square-wave with 30% duty-cycle.</span>
+Grating(Vec2(0.1, -0.2), white_cyan, Vec2(-0.1, 0.2), black_red, 0.2, 0.3)</pre>
+      <img src="images/20200517_Grating.png" alt="Grating with Texture inputs" title="Grating with Texture inputs"
+        height="511" width="511">
+      <pre><span class="comment">// Interesting mistake, first thing I typed in, Grating happens to align with "black_red".</span>
+Grating(Vec2(0.1, 0), white_cyan, Vec2(-0.1, 0), black_red, 0.2, 0.5)
+</pre> <img src="images/20200517_Grating_oops.png" alt="" title="" height="511"
+        width="511">
+      <pre><span class="comment">// Define "white_cyan"/"black_red" as before, using Uniform in place of Color.</span>
+black = Uniform(Color(0, 0, 0))
+white = Uniform(Color(1, 1, 1))
+red = Uniform(Color(1, 0, 0))
+cyan = Uniform(Color(0, 1, 1))
+white_cyan = Grating(Vec2(0, 0.2), white, Vec2(0, 0), cyan, 0.1, 0.5)
+black_red = Grating(Vec2(0.1, 0), black, Vec2(0, 0), red, 0.1, 0.5)
+</pre> </div>
     <div class="post" id="20200515"> <a href="#20200515" class="date">May 15,
         2020</a>
       <h1>Backward compatibility: our little secret<span style="font-family: monospace;"></span><code></code></h1>

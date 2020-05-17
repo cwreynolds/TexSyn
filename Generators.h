@@ -11,56 +11,14 @@
 
 class Generator : public Texture {};
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//    // Color gradation texture with two colors and arbitrary position, width, and
-//    // orientation. The arguments are two points, defining a line segment, and a
-//    // color for each end. The gradation occurs alone the line segment, a given
-//    // location on the texture is projected onto that line to determine its color.
-//    // (See discussion at http://www.red3d.com/cwr/texsyn/diary.html#20090329)
-//    class Gradation : public Generator
-//    {
-//    public:
-//        Gradation(Vec2 point_0, Color color_0, Vec2 point_1, Color color_1) :
-//            color0(color_0),
-//            color1(color_1),
-//            origin(point_0),
-//            distance((point_1 - point_0).length()),
-//            basis((point_1 - point_0) / distance) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//            if (distance == 0)
-//            {
-//                return interpolate(0.5, color0, color1);
-//            }
-//            else
-//            {
-//                Vec2 offset = position - origin;
-//                float projection = basis.dot(offset);
-//                float relative = remapIntervalClip(projection, 0, distance, 0, 1);
-//                return interpolate(sinusoid(relative), color0, color1);
-//            }
-//        }
-//    private:
-//        const Vec2 origin;
-//        const float distance;
-//        const Vec2 basis;
-//        const Color color0;
-//        const Color color1;
-//};
-
-
-// Color gradation texture with two colors and arbitrary position, width, and
+// Gradation between two textures with arbitrary position, width, and
 // orientation. The arguments are two points, defining a line segment, and a
-// color for each end. The gradation occurs alone the line segment, a given
-// location on the texture is projected onto that line to determine its color.
-// (See discussion at http://www.red3d.com/cwr/texsyn/diary.html#20090329)
+// texture for each end. The gradation occurs along the line segment, a given
+// location on the texture is projected onto that line to determine its mix of
+// the two input textures.
 class Gradation : public Generator
 {
 public:
-//    Gradation(Vec2 point_0, Color color_0, Vec2 point_1, Color color_1) :
-//        color0(color_0),
-//        color1(color_1),
         Gradation(Vec2 point_0, const Texture& texture_0,
                   Vec2 point_1, const Texture& texture_1) :
             texture0(texture_0),
@@ -68,19 +26,14 @@ public:
         origin(point_0),
         distance((point_1 - point_0).length()),
         basis((point_1 - point_0) / distance) {}
-    
-    
     // BACKWARD_COMPATIBILITY for version before inherent matting.
     Gradation(Vec2 a, Color b, Vec2 c, Color d)
       : Gradation(a, disposableUniform(b), c, disposableUniform(d)){}
-
-    
     Color getColor(Vec2 position) const override
     {
         // TODO isn't this handled inside interpolate these days?
         if (distance == 0)
         {
-//            return interpolate(0.5, color0, color1);
             return interpolate(0.5,
                                texture0.getColor(position),
                                texture1.getColor(position));
@@ -90,7 +43,6 @@ public:
             Vec2 offset = position - origin;
             float projection = basis.dot(offset);
             float relative = remapIntervalClip(projection, 0, distance, 0, 1);
-//            return interpolate(sinusoid(relative), color0, color1);
             return interpolate(sinusoid(relative),
                                texture0.getColor(position),
                                texture1.getColor(position));
@@ -100,79 +52,34 @@ private:
     const Vec2 origin;
     const float distance;
     const Vec2 basis;
-//    const Color color0;
-//    const Color color1;
     const Texture& texture0;
     const Texture& texture1;
 };
 
-//    // A circular spot, centered at a given point, with two radii. Within an inner
-//    // radius it is uniformly one color. Beyond an outer radius it is uniformly
-//    // another color. Between the two radii, there is a sinusoid transition from one
-//    // color to the other. (Reverses radii if they are out of order.)
-//    class Spot : public Generator
-//    {
-//    public:
-//        Spot(Vec2 center_,
-//             float inner_radius_, Color inner_color_,
-//             float outer_radius_, Color outer_color_) :
-//                center(center_),
-//                inner_radius(std::min(inner_radius_, outer_radius_)),
-//                inner_color(inner_color_),
-//                outer_radius(std::max(inner_radius_, outer_radius_)),
-//                outer_color(outer_color_)
-//        {
-//            assert(inner_radius >= 0);
-//            assert(outer_radius >= 0);
-//            assert(outer_radius >= inner_radius);
-//        }
-//        Color getColor(Vec2 position) const override
-//        {
-//            // Distance from sample position to spot center.
-//            float d = (position - center).length();
-//            // Fraction for interpolation: 0 inside, 1 outside, ramp between.
-//            float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
-//            // Sinusoidal interpolation between inner and outer colors.
-//            return interpolate(sinusoid(f), inner_color, outer_color);
-//        }
-//    private:
-//        const Vec2 center;
-//        const float inner_radius;
-//        const float outer_radius;
-//        const Color inner_color;
-//        const Color outer_color;
-//    };
-
 // A circular spot, centered at a given point, with two radii. Within an inner
-// radius it is uniformly one color. Beyond an outer radius it is uniformly
-// another color. Between the two radii, there is a sinusoid transition from one
-// color to the other. (Reverses radii if they are out of order.)
+// radius it is colored according to one input texture. Beyond an outer radius
+// it is uniformly colored according a second input texture. Between the two
+// radii, there is a sinusoid transition from one texture to the other.
+// (Reverses radii if they are out of order.)
 class Spot : public Generator
 {
 public:
     Spot(Vec2 center_,
-//         float inner_radius_, Color inner_color_,
-//         float outer_radius_, Color outer_color_)
          float inner_radius_, const Texture& inner_texture_,
          float outer_radius_, const Texture& outer_texture_)
       : center(center_),
-            inner_radius(std::min(inner_radius_, outer_radius_)),
-//            inner_color(inner_color_),
-            inner_texture(inner_texture_),
-            outer_radius(std::max(inner_radius_, outer_radius_)),
-//            outer_color(outer_color_)
+        inner_radius(std::min(inner_radius_, outer_radius_)),
+        inner_texture(inner_texture_),
+        outer_radius(std::max(inner_radius_, outer_radius_)),
         outer_texture(outer_texture_)
     {
         assert(inner_radius >= 0);
         assert(outer_radius >= 0);
         assert(outer_radius >= inner_radius);
     }
-    
     // BACKWARD_COMPATIBILITY for version before inherent matting.
     Spot(Vec2 a, float b, Color c, float d, Color e)
       : Spot(a, b, disposableUniform(c), d, disposableUniform(e)){}
-
-    
     Color getColor(Vec2 position) const override
     {
         // Distance from sample position to spot center.
@@ -180,7 +87,6 @@ public:
         // Fraction for interpolation: 0 inside, 1 outside, ramp between.
         float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
         // Sinusoidal interpolation between inner and outer colors.
-//        return interpolate(sinusoid(f), inner_color, outer_color);
         return interpolate(sinusoid(f),
                            inner_texture.getColor(position),
                            outer_texture.getColor(position));
@@ -189,43 +95,43 @@ private:
     const Vec2 center;
     const float inner_radius;
     const float outer_radius;
-//    const Color inner_color;
-//    const Color outer_color;
     const Texture& inner_texture;
     const Texture& outer_texture;
 };
 
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// A grating of two alternating colored stripes. Spacing and orientation is
-// defined by two points. Stripes are perpendicular to the segment between these
-// two points. That segment's length is the width (wavelength) of the stripe.
-// The softness parameter varies from a square wave at 0 and a sinusoid at 1.
-// The duty_cycle parameter controls relative width of sub-stripes, it is the
-// ratio of the first color's stripes to the stripe pair's total width.
+// A grating of two alternating stripes each colored according to two given
+// input textures. Spacing and orientation is defined by two points. Stripes are
+// perpendicular to the segment between these two points. That segment's length
+// is the width (wavelength) of the stripe. The softness parameter varies from a
+// square wave at 0 and a sinusoid at 1. The duty_cycle parameter controls
+// relative width of sub-stripes, it is the ratio of the first color's stripes
+// to the stripe pair's total width.
 class Grating : public Generator
 {
 public:
-    Grating(Vec2 point_0, Color color_0,
-            Vec2 point_1, Color color_1,
+    Grating(Vec2 point_0, const Texture& texture_0,
+            Vec2 point_1, const Texture& texture_1,
             float softness_,
             float duty_cycle_) :
-        color0(color_0),
-        color1(color_1),
+        texture0(texture_0),
+        texture1(texture_1),
         origin(point_0),
         distance((point_1 - point_0).length()),
         basis((point_1 - point_0) / distance),
         softness(clip(softness_, 0, 1)),
         duty_cycle(clip(duty_cycle_, 0, 1)) {}
-    // BACKWARD_COMPATIBILITY with old version before duty_cycle_.
+    // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
     Grating(Vec2 a, Color b, Vec2 c, Color d, float e)
-      : Grating(a, b, c, d, e, 0.5) {}
+      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
+    Grating(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
+      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
     Color getColor(Vec2 position) const override
     {
         if (distance == 0)
         {
-            return interpolate(0.5, color0, color1);
+            return interpolate(0.5,
+                               texture0.getColor(position),
+                               texture1.getColor(position));
         }
         else
         {
@@ -237,8 +143,8 @@ public:
             // wave" generator, finally de-gamma-ed to preserve equal stripe
             // width (assuming duty-cycle = 0.5).
             return interpolate(deGamma(softSquareWave(dutyCycle(unit_modulo))),
-                               color0,
-                               color1);
+                               texture0.getColor(position),
+                               texture1.getColor(position));
         }
     }
     // Defines a "square wave with soft edges". When softness is 0 it is a
@@ -275,11 +181,13 @@ private:
     const Vec2 origin;
     const float distance;
     const Vec2 basis;
-    const Color color0;
-    const Color color1;
+    const Texture& texture0;
+    const Texture& texture1;
     const float softness;
     const float duty_cycle;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/

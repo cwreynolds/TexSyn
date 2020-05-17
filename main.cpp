@@ -1873,23 +1873,31 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Inherent matting, part 2, May 16, 2020
-    std::cout << "May 16, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200516_";
-    Color black(0, 0, 0);
-    Color white(1, 1, 1);
-    Color red(1, 0, 0);
-    Color cyan(0, 1, 1);
+    // Inherent matting, part 2, May 17, 2020
+    std::cout << "May 17, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200517_";
+    
+    Uniform black(Color(0, 0, 0));
+    Uniform white(Color(1, 1, 1));
+    Uniform red(Color(1, 0, 0));
+    Uniform cyan(Color(0, 1, 1));
     Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
     Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
-    
-    Texture::displayAndFile(Spot(Vec2(), 0.2, white_cyan, 0.9, black_red));
-    
-    Texture::displayAndFile(Gradation(Vec2(1, -1).normalize() * 0.8,
-                                      white_cyan,
-                                      Vec2(-1, 1).normalize() * 0.8,
-                                      black_red));
 
+    Texture::displayAndFile(Spot(Vec2(), 0.2, white_cyan, 0.9, black_red)
+                            ); // , path + "Spot");
+    Texture::displayAndFile(Gradation(Vec2(0.7, -0.7), white_cyan,
+                                      Vec2(-0.7, 0.7), black_red)
+                            ); // , path + "Gradation");
+    Texture::displayAndFile(Grating(Vec2(0.1, 0), white_cyan,
+                                    Vec2(-0.1, 0), black_red,
+                                    0.2, 0.5)
+                            ); // , path + "Grating_oops");
+    Texture::displayAndFile(Grating(Vec2(0.1, -0.2), white_cyan,
+                                    Vec2(-0.1, 0.2), black_red,
+                                    0.2, 0.3)
+                            ); // , path + "Grating");
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
