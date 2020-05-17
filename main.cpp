@@ -1796,79 +1796,100 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Add margin to LotsOfSpotsBase, May 14, 2020
-    std::cout << "May 14, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200514_";
-    
+//    // Inherent matting, May 14, 2020
+//    std::cout << "May 14, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200514_";
+//
+//    Color black(0, 0, 0);
+//    Color white(1, 1, 1);
+//
+//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), Color(0, 1, 1), 0.1, 0.5);
+//    Grating black_red(Vec2(0.1, 0), black, Vec2(), Color(1, 0, 0), 0.1, 0.5);
+//
+//    Texture::displayAndFile(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
+//                                        Uniform(white),
+//                                        Uniform(black))
+//                            ); // , path + "LotsOfSpots_b_and_w");
+//
+//    Texture::displayAndFile(SoftMatte(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
+//                                                  Uniform(white),
+//                                                  Uniform(black)),
+//                                      Uniform(Color(0.1, 0.1, 0.1)),
+//                                      Uniform(Color(0.1, 0.6, 0.1)))
+//                            ); // , path + "SoftMatte_of_Uniforms");
+//
+//    Texture::displayAndFile(SoftMatte(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
+//                                                  Uniform(white),
+//                                                  Uniform(black)),
+//                                      white_cyan, black_red)
+//                            ); // , path + "striped_spots");
+//
+//    Texture::displayAndFile(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
+//                                        white_cyan, black_red)
+//                            ); // , path + "striped_spots_new");
+//
+//    // Copy twist texture from https://cwreynolds.github.io/TexSyn/#20200406c
+//    [&]
+//    (const Texture& twist)
+//    {
+//        Texture::displayAndFile(LotsOfButtons(0.9, 0.1, 0.4, 0.08, 0.03,
+//                                              Vec2(), twist, 1, white_cyan)
+//                                ); // , path + "LotsOfButtons");
+//    }
+//    (Twist(7, 9, Vec2(),
+//           SliceToRadial(Vec2(0, 0.318), Vec2(),
+//                         Grating(Vec2(0, -0.1), Color(1, 0, 0),
+//                                 Vec2(0, +0.1), black,
+//                                 0.3, 0.5))));
+//
+//    Noise n1(0.3, Vec2(-3,2), Color(1, 1, 0), Color(0, 1, 0));
+//    Noise n2(0.05, Vec2(3, 7), Color(0, 0, 1), Color(0.4, 0.4, 0.7));
+//    Texture::displayAndFile(ColoredSpots(0.6, 0.05, 0.1, 0.03, 0.01, n1, n2)
+//                            ); // , path + "ColoredSpots");
+//
+//    // testing BACKWARD_COMPATIBILITY May 15, 2020
+//    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
+//    AdjustSaturation cn(1.2, cn0);
+//    Color gray50(0.25, 0.25, 0.25);
+//    Texture::displayAndFile(Scale(0.2,
+//                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
+//                                               cn, gray50)));
+//    [&]
+//    (const Texture& twist)
+//    {
+//        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
+//                                              Vec2(), twist, 1, Color()));
+//    }
+//    (Twist(7, 9, Vec2(),
+//           SliceToRadial(Vec2(0, 0.318), Vec2(),
+//                         Grating(Vec2(0, -0.1), Color(1, 0, 0),
+//                                 Vec2(0, +0.1), black,
+//                                 0.3, 0.5))));
+//    Color c(0.0, 0.8, 1.0);
+//    Color m(0.8, 0.0, 0.8);
+//    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Inherent matting, part 2, May 16, 2020
+    std::cout << "May 16, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200516_";
     Color black(0, 0, 0);
     Color white(1, 1, 1);
+    Color red(1, 0, 0);
+    Color cyan(0, 1, 1);
+    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
     
-    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), Color(0, 1, 1), 0.1, 0.5);
-    Grating black_red(Vec2(0.1, 0), black, Vec2(), Color(1, 0, 0), 0.1, 0.5);
+    Texture::displayAndFile(Spot(Vec2(), 0.2, white_cyan, 0.9, black_red));
     
-    Texture::displayAndFile(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
-                                        Uniform(white),
-                                        Uniform(black))
-                            ); // , path + "LotsOfSpots_b_and_w");
-    
-    Texture::displayAndFile(SoftMatte(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
-                                                  Uniform(white),
-                                                  Uniform(black)),
-                                      Uniform(Color(0.1, 0.1, 0.1)),
-                                      Uniform(Color(0.1, 0.6, 0.1)))
-                            ); // , path + "SoftMatte_of_Uniforms");
-    
-    Texture::displayAndFile(SoftMatte(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
-                                                  Uniform(white),
-                                                  Uniform(black)),
-                                      white_cyan, black_red)
-                            ); // , path + "striped_spots");
+    Texture::displayAndFile(Gradation(Vec2(1, -1).normalize() * 0.8,
+                                      white_cyan,
+                                      Vec2(-1, 1).normalize() * 0.8,
+                                      black_red));
 
-    Texture::displayAndFile(LotsOfSpots(0.9, 0.1, 0.4, 0.08, 0.03,
-                                        white_cyan, black_red)
-                            ); // , path + "striped_spots_new");
-
-    // Copy twist texture from https://cwreynolds.github.io/TexSyn/#20200406c
-    [&]
-    (const Texture& twist)
-    {
-        Texture::displayAndFile(LotsOfButtons(0.9, 0.1, 0.4, 0.08, 0.03,
-                                              Vec2(), twist, 1, white_cyan)
-                                ); // , path + "LotsOfButtons");
-    }
-    (Twist(7, 9, Vec2(),
-           SliceToRadial(Vec2(0, 0.318), Vec2(),
-                         Grating(Vec2(0, -0.1), Color(1, 0, 0),
-                                 Vec2(0, +0.1), black,
-                                 0.3, 0.5))));
-    
-    Noise n1(0.3, Vec2(-3,2), Color(1, 1, 0), Color(0, 1, 0));
-    Noise n2(0.05, Vec2(3, 7), Color(0, 0, 1), Color(0.4, 0.4, 0.7));
-    Texture::displayAndFile(ColoredSpots(0.6, 0.05, 0.1, 0.03, 0.01, n1, n2)
-                            ); // , path + "ColoredSpots");
-    
-    // testing BACKWARD_COMPATIBILITY May 15, 2020
-    ColorNoise cn0(2.5, Vec2(3, 4), 0.2);
-    AdjustSaturation cn(1.2, cn0);
-    Color gray50(0.25, 0.25, 0.25);
-    Texture::displayAndFile(Scale(0.2,
-                                  ColoredSpots(0.5, 0.2, 0.3, 0.05,
-                                               cn, gray50)));
-    [&]
-    (const Texture& twist)
-    {
-        Texture::displayAndFile(LotsOfButtons(0.79, 0.1, 0.6, 0.05,
-                                              Vec2(), twist, 1, Color()));
-    }
-    (Twist(7, 9, Vec2(),
-           SliceToRadial(Vec2(0, 0.318), Vec2(),
-                         Grating(Vec2(0, -0.1), Color(1, 0, 0),
-                                 Vec2(0, +0.1), black,
-                                 0.3, 0.5))));
-    Color c(0.0, 0.8, 1.0);
-    Color m(0.8, 0.0, 0.8);
-    Texture::displayAndFile(LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m));
-    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
