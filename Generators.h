@@ -56,6 +56,59 @@ private:
     const Texture& texture1;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO EXPERIMENT -- deGamma() for pattern generators? -- May 18, 2020
+
+// Gradation between two textures with arbitrary position, width, and
+// orientation. The arguments are two points, defining a line segment, and a
+// texture for each end. The gradation occurs along the line segment, a given
+// location on the texture is projected onto that line to determine its mix of
+// the two input textures.
+class Gradation2 : public Generator
+{
+public:
+        Gradation2(Vec2 point_0, const Texture& texture_0,
+                  Vec2 point_1, const Texture& texture_1) :
+            texture0(texture_0),
+            texture1(texture_1),
+        origin(point_0),
+        distance((point_1 - point_0).length()),
+        basis((point_1 - point_0) / distance) {}
+    // BACKWARD_COMPATIBILITY for version before inherent matting.
+    Gradation2(Vec2 a, Color b, Vec2 c, Color d)
+      : Gradation2(a, disposableUniform(b), c, disposableUniform(d)){}
+    Color getColor(Vec2 position) const override
+    {
+        // TODO isn't this handled inside interpolate these days?
+        if (distance == 0)
+        {
+            return interpolate(0.5,
+                               texture0.getColor(position),
+                               texture1.getColor(position));
+        }
+        else
+        {
+            Vec2 offset = position - origin;
+            float projection = basis.dot(offset);
+            float relative = remapIntervalClip(projection, 0, distance, 0, 1);
+//            return interpolate(sinusoid(relative),
+            return interpolate(deGamma(sinusoid(relative)),
+                               texture0.getColor(position),
+                               texture1.getColor(position));
+        }
+    }
+private:
+    const Vec2 origin;
+    const float distance;
+    const Vec2 basis;
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 // A circular spot, centered at a given point, with two radii. Within an inner
 // radius it is colored according to one input texture. Beyond an outer radius
 // it is uniformly colored according a second input texture. Between the two
@@ -98,6 +151,58 @@ private:
     const Texture& inner_texture;
     const Texture& outer_texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO EXPERIMENT -- deGamma() for pattern generators? -- May 18, 2020
+
+// A circular spot, centered at a given point, with two radii. Within an inner
+// radius it is colored according to one input texture. Beyond an outer radius
+// it is uniformly colored according a second input texture. Between the two
+// radii, there is a sinusoid transition from one texture to the other.
+// (Reverses radii if they are out of order.)
+class Spot2 : public Generator
+{
+public:
+    Spot2(Vec2 center_,
+         float inner_radius_, const Texture& inner_texture_,
+         float outer_radius_, const Texture& outer_texture_)
+      : center(center_),
+        inner_radius(std::min(inner_radius_, outer_radius_)),
+        inner_texture(inner_texture_),
+        outer_radius(std::max(inner_radius_, outer_radius_)),
+        outer_texture(outer_texture_)
+    {
+        assert(inner_radius >= 0);
+        assert(outer_radius >= 0);
+        assert(outer_radius >= inner_radius);
+    }
+    // BACKWARD_COMPATIBILITY for version before inherent matting.
+    Spot2(Vec2 a, float b, Color c, float d, Color e)
+      : Spot2(a, b, disposableUniform(c), d, disposableUniform(e)){}
+    Color getColor(Vec2 position) const override
+    {
+        // Distance from sample position to spot center.
+        float d = (position - center).length();
+        // Fraction for interpolation: 0 inside, 1 outside, ramp between.
+        float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
+        // Sinusoidal interpolation between inner and outer colors.
+        
+//        return interpolate(sinusoid(f),
+        return interpolate(deGamma(sinusoid(f)),
+                           
+                           inner_texture.getColor(position),
+                           outer_texture.getColor(position));
+    }
+private:
+    const Vec2 center;
+    const float inner_radius;
+    const float outer_radius;
+    const Texture& inner_texture;
+    const Texture& outer_texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // A grating of two alternating stripes each colored according to two given
 // input textures. Spacing and orientation is defined by two points. Stripes are
