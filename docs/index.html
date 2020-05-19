@@ -90,16 +90,17 @@
         mid-tones, leading to the “doughnut shaped” difference image.</p>
       <pre>black = Uniform(Color(0, 0, 0))
 white = Uniform(Color(1, 1, 1))
-    
-Spot(Vec2(), 0.1, white, 1.0, black)</pre>
+<br>Texture::diff(Spot (Vec2(), 0.1, white, 1.0, black),
+              Spot2(Vec2(), 0.1, white, 1.0, black))</pre>
       <img src="images/20200518_Spot_diff.png" alt="Spot Texture::diff()" title="Spot Texture::diff()"
-        height="335" width="1000">
+        height="333" width="999">
       <p>For the <em>Gradation</em> comparison below, I think the new version
         (second image) is better. The mid-point of the gray scale transition
         seems to fall closer to the geometric center.</p>
-      <pre>Gradation(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white)</pre>
+      <pre>Texture::diff(Gradation (Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white),
+              Gradation2(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white))</pre>
       <img src="images/20200518_Gradation_diff.png" alt="Gradation Texture::diff()"
-        title="Gradation Texture::diff()" height="335" width="1000">
+        title="Gradation Texture::diff()" height="333" width="999">
       <p><strong>So:</strong> <em>Grating</em> and <em>Gradation</em> seem
         better with “de-gamma-ed” waveform. I will keep this new version. I will
         plan to make the same change to the various Perlin noise based

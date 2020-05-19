@@ -1910,9 +1910,11 @@ int main(int argc, const char * argv[])
     Uniform white(Color(1, 1, 1));
     
     Texture::diff(Spot (Vec2(), 0.1, white, 1.0, black),
-                  Spot2(Vec2(), 0.1, white, 1.0, black));
+                  Spot2(Vec2(), 0.1, white, 1.0, black)
+                  , path + "Spot_diff");
     Texture::diff(Gradation (Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white),
-                  Gradation2(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white));
+                  Gradation2(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white)
+                  , path + "Gradation_diff");
     
     // 11am: definitely looks "better" in that the gray transition seems better
     //       aligned by the geometry of the transition, middle gray near center
