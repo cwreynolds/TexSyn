@@ -13,10 +13,8 @@
 #include "Operators.h"
 #include <thread>
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//void Texture::diff(const Texture& t0, const Texture& t1)
+// Compare textures, print stats, optional file, display inputs and AbsDiff.
 void Texture::diff(const Texture& t0, const Texture& t1, std::string pathname)
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
     AbsDiff abs_diff(t0, t1);
     int pixel_count = 0;
@@ -32,20 +30,7 @@ void Texture::diff(const Texture& t0, const Texture& t1, std::string pathname)
     debugPrint(pixel_count);
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Texture::displayInWindow({ &t0, &t1, &abs_diff }, 451, false);
-    
-    // TODO EXPERIMENTAL
-
-//    t0.rasterizeToImageCache(333, true);
-//    t1.rasterizeToImageCache(333, true);
-//    abs_diff.rasterizeToImageCache(333, true);
-    
-//    cv::Mat foo;
-    
     Texture::displayAndFile3(t0, t1, abs_diff, pathname);
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:

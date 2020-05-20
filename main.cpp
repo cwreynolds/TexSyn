@@ -1873,32 +1873,32 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Inherent matting, part 2, May 17, 2020
-    std::cout << "May 17, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200517_";
-
-    Uniform black(Color(0, 0, 0));
-    Uniform white(Color(1, 1, 1));
-    Uniform red(Color(1, 0, 0));
-    Uniform cyan(Color(0, 1, 1));
-    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
-    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
-
-    Texture::displayAndFile(Spot(Vec2(), 0.2, white_cyan, 0.9, black_red)
-                            , path + "Spot");
-    Texture::displayAndFile(Gradation(Vec2(0.7, -0.7), white_cyan,
-                                      Vec2(-0.7, 0.7), black_red)
-                            , path + "Gradation");
-    Texture::displayAndFile(Grating(Vec2(0.1, 0), white_cyan,
-                                    Vec2(-0.1, 0), black_red,
-                                    0.2, 0.5)
-                            , path + "Grating_oops");
-    Texture::displayAndFile(Grating(Vec2(0.1, -0.2), white_cyan,
-                                    Vec2(-0.1, 0.2), black_red,
-                                    0.2, 0.3)
-                            , path + "Grating");
-
-    Texture::waitKey();
+//    // Inherent matting, part 2, May 17, 2020
+//    std::cout << "May 17, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200517_";
+//
+//    Uniform black(Color(0, 0, 0));
+//    Uniform white(Color(1, 1, 1));
+//    Uniform red(Color(1, 0, 0));
+//    Uniform cyan(Color(0, 1, 1));
+//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+//    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+//
+//    Texture::displayAndFile(Spot(Vec2(), 0.2, white_cyan, 0.9, black_red)
+//                            , path + "Spot");
+//    Texture::displayAndFile(Gradation(Vec2(0.7, -0.7), white_cyan,
+//                                      Vec2(-0.7, 0.7), black_red)
+//                            , path + "Gradation");
+//    Texture::displayAndFile(Grating(Vec2(0.1, 0), white_cyan,
+//                                    Vec2(-0.1, 0), black_red,
+//                                    0.2, 0.5)
+//                            , path + "Grating_oops");
+//    Texture::displayAndFile(Grating(Vec2(0.1, -0.2), white_cyan,
+//                                    Vec2(-0.1, 0.2), black_red,
+//                                    0.2, 0.3)
+//                            , path + "Grating");
+//
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1911,15 +1911,34 @@ int main(int argc, const char * argv[])
 //
 //    Texture::diff(Spot (Vec2(), 0.1, white, 1.0, black),
 //                  Spot2(Vec2(), 0.1, white, 1.0, black)
-//                  , path + "Spot_diff");
+//                  ); // , path + "Spot_diff");
 //    Texture::diff(Gradation (Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white),
 //                  Gradation2(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white)
-//                  , path + "Gradation_diff");
+//                  ); // , path + "Gradation_diff");
 //
 //    // 11am: definitely looks "better" in that the gray transition seems better
 //    //       aligned by the geometry of the transition, middle gray near center
 //
 //    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // clean up displayAndFile3() and windowPlacementTool() -- May 20, 2020
+    std::cout << "May 20, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200520_";
+
+    Uniform black(Color(0, 0, 0));
+    Uniform white(Color(1, 1, 1));
+
+    Texture::diff(Spot(Vec2(), 0.1, white, 1.0, black),
+                  Gradation(Vec2(0.6, 0.6), black, Vec2(-0.6, -0.6), white));
+    Texture::diff(Noise(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0)),
+                  Grating(Vec2(), Color(0, 1, 1),
+                          Vec2(0.1, 0.1), Color(0, 0, 1), 0.5));
+    Texture::displayAndFile(Wrapulence(0.2, Vec2(7, 9),
+                                       Color(1, 0, 0), Color(0.8, 1, 0)));
+    
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

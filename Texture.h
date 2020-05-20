@@ -37,6 +37,8 @@ public:
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = 511, bool wait = true);
+    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
+    static void windowPlacementTool(cv::Mat& mat);
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
     void rasterizeToImageCache(int size, bool disk) const;
@@ -70,14 +72,10 @@ public:
     // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
     static void rasterizeSquare(int size, PixelFunction pixel_function);
     static void rasterizeDisk(int size, PixelFunction pixel_function);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    // Compare two textures, print stats, display inputs and AbsDiff of them
-//    static void diff(const Texture& t0, const Texture& t1);
-    // Compare two textures, print stats, display inputs and AbsDiff of them
+    // Compare textures, print stats, optional file, display inputs and AbsDiff.
     static void diff(const Texture& t0,
                      const Texture& t1,
                      std::string pathname = "");
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Combines display on screen and writing file, but primary benefit is that
     // this allows writing an arbitrarily nested expression of TexSyn
     // constructors, whose lifetime extends across both operations.
@@ -90,17 +88,12 @@ public:
     // is called ONLY from constructors providing backward compatibility. The
     // tiny Uniform texture object is allowed to "memory leak" for ease of use.
     static Texture& disposableUniform(Color color);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO EXPERIMENTAL
-    
-    // Special utility for Texture::diff() maybe refactor to be more general.
-    
+    // Special utility for Texture::diff() maybe refactor to be more general?
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
                                 std::string pathname = "",
                                 int size = 333);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

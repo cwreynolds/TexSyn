@@ -15,49 +15,27 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO EXPERIMENTAL
-
-void windowPlacementTool(cv::Mat& mat)
+// Rasterize this texture into size² OpenCV image, display in pop-up window.
+void Texture::displayInWindow(int size, bool wait) const
 {
-    // Display in pop-up window.
+    rasterizeToImageCache(size, true);
+    windowPlacementTool(*raster_);
+    if (wait) waitKey();  // Wait for a keystroke in the window.
+}
+
+// Display cv::Mat in pop-up window. Stack diagonally from upper left.
+void Texture::windowPlacementTool(cv::Mat& mat)
+{
     static int window_counter = 0;
     static int window_position = 0;
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
     int tm = 23;  // TODO approximate top margin height
-    
-//    cv::moveWindow(window_name, window_position, window_position + size + tm);
-    int h = mat.rows;
-    cv::moveWindow(window_name, window_position, window_position + h + tm);
-    
+    int window_position_y = window_position + tm + mat.rows;
+    cv::moveWindow(window_name, window_position, window_position_y);
     window_position += tm;
-//    cv::imshow(window_name, *raster_);  // Show our image inside it.
     cv::imshow(window_name, mat);  // Show our image inside it.
-
 }
-
-
-// Rasterize this texture into size² OpenCV image, display in pop-up window.
-void Texture::displayInWindow(int size, bool wait) const
-{
-    rasterizeToImageCache(size, true);
-    
-//    // Display in pop-up window.
-//    static int window_counter = 0;
-//    static int window_position = 0;
-//    std::string window_name = "TexSyn" + std::to_string(window_counter++);
-//    cv::namedWindow(window_name);       // Create a window for display.
-//    int tm = 23;  // TODO approximate top margin height
-//    cv::moveWindow(window_name, window_position, window_position + size + tm);
-//    window_position += tm;
-//    cv::imshow(window_name, *raster_);  // Show our image inside it.
-    
-    windowPlacementTool(*raster_);
-    
-    if (wait) waitKey();  // Wait for a keystroke in the window.
-}
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
 // draw a round image, otherwise a square. Run parallel threads for speed.
@@ -277,45 +255,31 @@ std::shared_ptr<cv::Mat> Texture::emptyCvMat() const
     return std::make_shared<cv::Mat>();
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO EXPERIMENTAL
-// Special utility for Texture::diff() maybe refactor to be more general.
+// Special utility for Texture::diff() maybe refactor to be more general?
 void Texture::displayAndFile3(const Texture& t1,
                               const Texture& t2,
                               const Texture& t3,
                               std::string pathname,
                               int size)
 {
-    t1.rasterizeToImageCache(size, true);
-    t2.rasterizeToImageCache(size, true);
-    t3.rasterizeToImageCache(size, true);
-        
-    // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
+    // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
     cv::Mat mat(size, size * 3, CV_8UC3);
-    
-//    cv::namedWindow("foo");       // Create a window for display.
-//    cv::imshow("foo", mat);  // Show our image inside it.
-
-    
-    // Define a new image, a "pointer" to portion of "mat".
-    cv::Mat render_target(mat, cv::Rect(0, 0, size, size));
-    // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
-    (t1.raster_)->convertTo(render_target, CV_8UC3, 255);
-    
-//    cv::Mat render_target2(mat, cv::Rect(0, size - 1, size, size));
-//    cv::Mat render_target2(mat, cv::Rect(size - 1, 0, size, size));
-    cv::Mat render_target2(mat, cv::Rect(size, 0, size, size));
-    (t2.raster_)->convertTo(render_target2, CV_8UC3, 255);
-
-//    cv::Mat render_target3(mat, cv::Rect(0, size * 2 - 1, size, size));
-//    cv::Mat render_target3(mat, cv::Rect(size * 2 - 1, 0, size, size));
-    cv::Mat render_target3(mat, cv::Rect(size * 2, 0, size, size));
-    (t3.raster_)->convertTo(render_target3, CV_8UC3, 255);
-
-    std::string file_type = ".png";
-    cv::imwrite(pathname + file_type, mat);
-
+    // Function to handle each Texture.
+    auto subwindow = [&](const Texture& t, int x)
+    {
+        // Render Texture to its raster_ cv::Mat.
+        t.rasterizeToImageCache(size, true);
+        // Define a size*size portion of "mat" whose left edge is at "x".
+        cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
+        // Copy into submat while conveting from rgb float to rgb uint8_t
+        t.raster_->convertTo(submat, CV_8UC3, 255);
+    };
+    subwindow(t1, 0);
+    subwindow(t2, size);
+    subwindow(t3, size * 2);
+    // Write "mat" to file if non-empty "pathname" given.
+    std::string file_type = ".png";  // Maybe should be an optional parameter?
+    if (pathname != "") cv::imwrite(pathname + file_type, mat);
+    // Display "mat" in the TexSyn fashion.
     windowPlacementTool(mat);
-
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
