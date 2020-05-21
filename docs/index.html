@@ -67,6 +67,35 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200520"> <a href="#20200520" class="date">May 20,
+        2020</a>
+      <h1><em>Noise</em>, inherent matting, and disappointment...</h1>
+      <p>I began to convert the various generators based on Perlin noise to
+        support recent design changes: to accept general <em>Texture</em>
+        references instead of <em>Color</em>s, and to “de-gamma” their
+        waveform, which is to say, their basic scalar noise amplitude. The first
+        results, here with <em>Noise</em>, were disappointing. Here are two
+        versions of Noise, first changed to take textures as input (“inherent
+        matting” using the same two textures introduced on <a href="#20200514">May
+          14</a>), and then the same with “de-gamma” of noise amplitude:</p>
+      <pre>Noise(0.2, Vec2(), white_cyan, black_red)</pre>
+      <img src="images/20200520_inherent_matting.png" alt="Noise with inherent matting"
+        title="Noise with inherent matting" height="511" width="511"> <img src="images/20200520_inherent_matting_gamma.png"
+        alt="Noise with inherent matting and de-gamma" title="Noise with inherent matting and de-gamma"
+        height="511" width="511">
+      <p>I find these disappointing because they are so mushy and indistinct.
+        Almost the entire texture is a mixture of the two input textures. I am
+        trying to decide is this is a real problem, or just bad expectations. I
+        think in my mind I was picturing something a bit more like this:</p>
+      <pre><span class="comment">// What I was hoping to see:</span>
+SoftMatte(SoftThreshold(0.2, 0.6, Noise(0.2, Vec2(-5, 3), white, black)),
+          white_cyan,
+          black_red)</pre>
+      <img src="images/20200520_in_my_mind.png" alt="" title="" height="511" width="511">
+    </div>
+    <p>I need to look at the distribution of values coming out of the basic
+      noise utilities and see if they are what I expect. Yes, I know, I should
+      have done this back on <a href="#20200103">January 3</a>.</p>
     <div class="post" id="20200518"> <a href="#20200518" class="date">May 18,
         2020</a>
       <h1>Gamma correction and waveform generators</h1>

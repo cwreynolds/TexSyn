@@ -187,6 +187,31 @@ private:
     const float duty_cycle;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    // Perlin Noise
+//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+//    // This code based on a transliteration by Malcolm Kesson from Java to c:
+//    // http://www.fundza.com/c4serious/noise/perlin/perlin.html
+//    class Noise : public Generator
+//    {
+//    public:
+//        Noise(float _scale, Vec2 _center, Color _color0, Color _color1) :
+//            scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//            return interpolate(noise, color0, color1);
+//        }
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Color color0;
+//        const Color color1;
+//    };
+
+// TODO like previous version, but with "inherent matting"
+
 // Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This code based on a transliteration by Malcolm Kesson from Java to c:
@@ -194,19 +219,103 @@ private:
 class Noise : public Generator
 {
 public:
-    Noise (float _scale, Vec2 _center, Color _color0, Color _color1) :
-        scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+//    Noise(float _scale, Vec2 _center, Color _color0, Color _color1) :
+//        scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    
+    Noise(float _scale,
+          Vec2 _center,
+          const Texture& _texture0,
+          const Texture& _texture1)
+    :
+        scale (_scale),
+        center (_center),
+        texture0(_texture0),
+        texture1(_texture1)
+    {};
+    
+//    Grating(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
+//      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
+
+    Noise(float a, Vec2 b, Color c, Color d)
+      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
+
     Color getColor(Vec2 position) const override
     {
         float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-        return interpolate(noise, color0, color1);
+
+//        return interpolate(noise, color0, color1);
+
+        return interpolate(noise,
+                           texture0.getColor(position),
+                           texture1.getColor(position));
     }
 private:
     const float scale;
     const Vec2 center;
-    const Color color0;
-    const Color color1;
+//    const Color color0;
+//    const Color color1;
+    const Texture& texture0;
+    const Texture& texture1;
 };
+
+
+//    class Noise2 : public Generator
+//    {
+//    public:
+//        Noise2(float _scale, Vec2 _center, Color _color0, Color _color1) :
+//            scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//    //        return interpolate(noise, color0, color1);
+//            return interpolate(deGamma(noise), color0, color1);
+//        }
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Color color0;
+//        const Color color1;
+//    };
+
+
+// TODO like previous version, but with "inherent matting"
+
+// Perlin Noise
+// Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+// This code based on a transliteration by Malcolm Kesson from Java to c:
+// http://www.fundza.com/c4serious/noise/perlin/perlin.html
+class Noise2 : public Generator
+{
+public:
+    Noise2(float _scale,
+          Vec2 _center,
+          const Texture& _texture0,
+          const Texture& _texture1)
+    :
+        scale (_scale),
+        center (_center),
+        texture0(_texture0),
+        texture1(_texture1)
+    {};
+    Noise2(float a, Vec2 b, Color c, Color d)
+      : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+    Color getColor(Vec2 position) const override
+    {
+        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//        return interpolate(noise,
+        return interpolate(deGamma(noise),
+                           texture0.getColor(position),
+                           texture1.getColor(position));
+    }
+private:
+    const float scale;
+    const Vec2 center;
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Brownian Noise -- fractal 1/f Perlin Noise
 class Brownian : public Generator
