@@ -287,6 +287,14 @@ struct cHaltonSequence3
 // for comparison purposes
 float HaltonSequence(int n, int b);
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // Return 2.2, TexSyn's default output gamma, intended to approximate
+//    // the nonlinearity of sRGB (digital display screen) color space.
+//    inline float defaultGamma() { return 2.2; }
+
 // Return 2.2, TexSyn's default output gamma, intended to approximate
 // the nonlinearity of sRGB (digital display screen) color space.
-inline float defaultGamma() { return 2.2; }
+float defaultGamma();
+void setDefaultGamma(float gamma);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

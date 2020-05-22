@@ -101,12 +101,24 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                 pixel.x = color.b();
                 pixel.y = color.g();
                 pixel.z = color.r();
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // TODO super duper temp
+                float luma = color.luminance();
+                assert(between(luma, 0, 1));
+                histogram.at(luma * (histogram.size() - 1))++;
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
         };
         raster_->forEach<Pixel>(get_texture_color_for_pixel);
 #endif //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO super duper temp
+std::vector<int> Texture::histogram(100, 0);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.

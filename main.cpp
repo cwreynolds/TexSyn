@@ -1942,10 +1942,48 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Inherent matting and gamma for noise textures -- May 20, 2020
-    std::cout << "May 20, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200520_";
+//    // Inherent matting and gamma for noise textures -- May 20, 2020
+//    std::cout << "May 20, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200520_";
+//
+//    Uniform black(Color(0, 0, 0));
+//    Uniform white(Color(1, 1, 1));
+//    Uniform red(Color(1, 0, 0));
+//    Uniform cyan(Color(0, 1, 1));
+//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+//    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+//
+//    Texture::diff(Noise (0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0)),
+//                  Noise2(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0)));
+//    Texture::diff(Noise (0.2, Vec2(), Color(1, 1, 0), Color(1, 0, 0)),
+//                  Noise2(0.2, Vec2(), Color(1, 1, 0), Color(1, 0, 0)));
+//    Texture::diff(Noise (0.2, Vec2(), white_cyan, black_red),
+//                  Noise2(0.2, Vec2(), white_cyan, black_red));
+//    Texture::diff(Noise (0.2, Vec2(), black, white),
+//                  Noise2(0.2, Vec2(), black, white));
+//
+//    Texture::displayAndFile(Noise(0.2, Vec2(), white_cyan, black_red)
+//                            ); // , path + "inherent_matting");
+//    Texture::displayAndFile(Noise2(0.2, Vec2(), white_cyan, black_red)
+//                            ); // , path + "inherent_matting_gamma");
+//    Texture::displayAndFile(SoftMatte(SoftThreshold(0.2,
+//                                                    0.6,
+//                                                    Noise(0.2,
+//                                                          Vec2(-5, 3),
+//                                                          white,
+//                                                          black)),
+//                                      white_cyan,
+//                                      black_red)
+//                            ); // , path + "in_my_mind");
+//
+//
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // gamma and noise -- May 21, 2020
+    std::cout << "May 20, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200521_";
     
     Uniform black(Color(0, 0, 0));
     Uniform white(Color(1, 1, 1));
@@ -1953,30 +1991,25 @@ int main(int argc, const char * argv[])
     Uniform cyan(Color(0, 1, 1));
     Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
     Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+        
+    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
+    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red));
+    setDefaultGamma(1);
+    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
+    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
+                            ); // , path + "Noise_1_0_im");
 
-
-    Texture::diff(Noise (0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0)),
-                  Noise2(0.2, Vec2(), Color(1, 0, 0), Color(1, 1, 0)));
-    Texture::diff(Noise (0.2, Vec2(), Color(1, 1, 0), Color(1, 0, 0)),
-                  Noise2(0.2, Vec2(), Color(1, 1, 0), Color(1, 0, 0)));
-    Texture::diff(Noise (0.2, Vec2(), white_cyan, black_red),
-                  Noise2(0.2, Vec2(), white_cyan, black_red));
-    Texture::diff(Noise (0.2, Vec2(), black, white),
-                  Noise2(0.2, Vec2(), black, white));
-    
-    Texture::displayAndFile(Noise(0.2, Vec2(), white_cyan, black_red)
-                            ); // , path + "inherent_matting");
-    Texture::displayAndFile(Noise2(0.2, Vec2(), white_cyan, black_red)
-                            ); // , path + "inherent_matting_gamma");
-    Texture::displayAndFile(SoftMatte(SoftThreshold(0.2,
-                                                    0.6,
-                                                    Noise(0.2,
-                                                          Vec2(-5, 3),
-                                                          white,
-                                                          black)),
-                                      white_cyan,
-                                      black_red)
-                            ); // , path + "in_my_mind");
+//    // for histogram test
+//    setDefaultGamma(1);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white, black)
+//                            ); // , path + "Noise_1_0");
+//    setDefaultGamma(2.2);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white, black)
+//                            ); // , path + "Noise_2_2");
+//    Texture::displayAndFile(Noise2(0.1, Vec2(), white, black)
+//                            ); // , path + "Noise_2_2_dg");
+//    for (int i = 0; i < Texture::histogram.size(); i++)
+//        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
 
     Texture::waitKey();
 

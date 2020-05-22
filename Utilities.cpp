@@ -413,3 +413,15 @@ float HaltonSequence(int n, int b)
 
     return result;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Return 2.2, TexSyn's default output gamma, intended to approximate
+// the nonlinearity of sRGB (digital display screen) color space.
+// (Made settable for testing/debugging.)
+
+float default_gamma = 2.2;
+float defaultGamma() { return default_gamma; }
+void setDefaultGamma(float gamma) { default_gamma = gamma; }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

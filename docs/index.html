@@ -67,6 +67,51 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200521"> <a href="#20200521" class="date">May 21,
+        2020</a>
+      <h1><em>Noise</em> and gamma</h1>
+      <p>As mentioned <a href="#20200520">yesterday</a>, I needed to measure
+        the luminance distribution of my Perlin noise generators. I did a lot of
+        measurement back in <a href="#20200103">January</a> but now realize I
+        made the mistake of characterizing the luminance distribution only in
+        terms of max and min. I was probably thrown off by a few outliers, a
+        rare very bright or very dark point in the noise. This exaggerated the
+        typical range of the noise generator. Today I made a histogram with 100
+        integer “buckets” . During rendering I convert pixel luminance to a
+        index on [0, 99] and increment the corresponding bucket. </p>
+      <p>Here is how it looked, before <a href="#20200506">May 6</a>, with
+        linear gamma. The distribution (see histogram below) is centered, but
+        misses at least 10% at both dark and light ends of the (sRGB) color
+        space. For “inherent matting” we want to see one input texture in the
+        bright areas of noise, and the <strong>other</strong> input texture in
+        dark areas of noise. If it never gets below 10% or above 90% we will
+        always see a mixture of the input textures. </p>
+      <pre><span class="comment">// All made with these definitions:</span>
+Noise(0.1, Vec2(), white, black)<br>Noise(0.1, Vec2(), white_cyan, black_red)</pre>
+      <img src="images/20200521_Noise_1_0.png" alt="" title="" height="511" width="511">
+      <img src="images/20200521_Noise_1_0_im.png" alt="" title="" height="511" width="511">
+      <br>
+      <img src="images/20200521_Chart_g_1_0.png" alt="" title="" height="229" width="500">
+      <p>Below is how it has been since <a href="#20200506">May 6</a> , with
+        gamma of 2.2 applied at the end. I interpret the histogram shifting to
+        the right (bright) side as the intended effect of gamma correction,
+        pushing up the mid-range values. The result of this for “inherent
+        matting” is that one input texture is visible in most places, with
+        occasional place were we can see a bit of the other input texture.</p>
+      <img src="images/20200521_Noise_2_2.png" alt="" title="" height="511" width="511">
+      <img src="images/20200520_inherent_matting.png" alt="Noise with inherent matting"
+        title="Noise with inherent matting" height="511" width="511"> <br>
+      <img src="images/20200521_Chart_g_2_2.png" alt="" title="" height="229" width="500">
+      <p>Below is with gamma of 2.2 and a “de-gamma” applied to the scalar noise
+        amplitude. This is like the previous one, but worse.</p>
+      <img src="images/20200521_Noise_2_2_dg.png" alt="" title="" height="511" width="511">
+      <img src="images/20200520_inherent_matting_gamma.png" alt="Noise with inherent matting and de-gamma"
+        title="Noise with inherent matting and de-gamma" height="511" width="511">
+      <br>
+      <img src="images/20200521_Chart_g_2_2_dg.png" alt="" title="" height="229"
+        width="500">
+      <p> &nbsp; </p>
+    </div>
     <div class="post" id="20200520"> <a href="#20200520" class="date">May 20,
         2020</a>
       <h1><em>Noise</em>, inherent matting, and disappointment...</h1>

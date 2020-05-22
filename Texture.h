@@ -105,4 +105,9 @@ private:
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const;
     const std::shared_ptr<cv::Mat> raster_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO super duper temp
+public:
+    static std::vector<int> histogram;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
