@@ -101,7 +101,11 @@ namespace PerlinNoise
     float unitNoise2d(Vec2 position)
     {
         // Remap raw noise from approximately [-1, 1] to [0, 1].
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO -- VERY EXPERIMENTAL AND TEMPORARY
         return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.8, 0.8, 0, 1);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // For 1/f subdivision recursion from "image scale" to "pixel scale"

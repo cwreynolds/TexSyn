@@ -88,27 +88,31 @@
         always see a mixture of the input textures. </p>
       <pre><span class="comment">// All made with these definitions:</span>
 Noise(0.1, Vec2(), white, black)<br>Noise(0.1, Vec2(), white_cyan, black_red)</pre>
-      <img src="images/20200521_Noise_1_0.png" alt="" title="" height="511" width="511">
-      <img src="images/20200521_Noise_1_0_im.png" alt="" title="" height="511" width="511">
-      <br>
-      <img src="images/20200521_Chart_g_1_0.png" alt="" title="" height="229" width="500">
+      <img src="images/20200521_Noise_1_0.png" alt="Noise grayscale gamma=1.0"
+        title="Noise grayscale gamma=1.0" height="511" width="511"> <img src="images/20200521_Noise_1_0_im.png"
+        alt="Noise matting gamma=1.0" title="Noise matting gamma=1.0" height="511"
+        width="511"> <br>
+      <img src="images/20200521_Chart_g_1_0.png" alt="Histogram of Noise grayscale gamma=1.0"
+        title="Histogram of Noise grayscale gamma=1.0" height="229" width="500">
       <p>Below is how it has been since <a href="#20200506">May 6</a> , with
         gamma of 2.2 applied at the end. I interpret the histogram shifting to
         the right (bright) side as the intended effect of gamma correction,
         pushing up the mid-range values. The result of this for “inherent
         matting” is that one input texture is visible in most places, with
         occasional place were we can see a bit of the other input texture.</p>
-      <img src="images/20200521_Noise_2_2.png" alt="" title="" height="511" width="511">
-      <img src="images/20200520_inherent_matting.png" alt="Noise with inherent matting"
-        title="Noise with inherent matting" height="511" width="511"> <br>
-      <img src="images/20200521_Chart_g_2_2.png" alt="" title="" height="229" width="500">
+      <img src="images/20200521_Noise_2_2.png" alt="Noise grayscale gamma=2.2" title="Noise grayscale gamma=2.2"
+        height="511" width="511"> <img src="images/20200521_Noise_2_2_im.png" alt="Noise matting gamma=2.2"
+        title="Noise matting gamma=2.2" height="511" width="511"> <br>
+      <img src="images/20200521_Chart_g_2_2.png" alt="Histogram of Noise grayscale gamma=2.2"
+        title="Histogram of Noise grayscale gamma=2.2" height="229" width="500">
       <p>Below is with gamma of 2.2 and a “de-gamma” applied to the scalar noise
         amplitude. This is like the previous one, but worse.</p>
-      <img src="images/20200521_Noise_2_2_dg.png" alt="" title="" height="511" width="511">
-      <img src="images/20200520_inherent_matting_gamma.png" alt="Noise with inherent matting and de-gamma"
-        title="Noise with inherent matting and de-gamma" height="511" width="511">
-      <br>
-      <img src="images/20200521_Chart_g_2_2_dg.png" alt="" title="" height="229"
+      <img src="images/20200521_Noise_2_2_dg.png" alt="Noise grayscale gamma=2.2 with de-gamma"
+        title="Noise grayscale gamma=2.2 with de-gamma" height="511" width="511"> <img src="images/20200521_Noise2_2_2_im.png"
+        alt="Noise matting gamma=2.2 with de-gamma" title="Noise matting gamma=2.2 with de-gamma"
+        height="511" width="511"> <br>
+      <img src="images/20200521_Chart_g_2_2_dg.png" alt="Histogram of Noise grayscale gamma=2.2 with de-gamma"
+        title="Histogram of Noise grayscale gamma=2.2 with de-gamma" height="229"
         width="500">
       <p> &nbsp; </p>
     </div>

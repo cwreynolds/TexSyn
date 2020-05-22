@@ -1992,12 +1992,12 @@ int main(int argc, const char * argv[])
     Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
     Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
         
-    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
-    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red));
-    setDefaultGamma(1);
-    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
-    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
-                            ); // , path + "Noise_1_0_im");
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red));
+//    setDefaultGamma(1);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
+//                            ); // , path + "Noise_1_0_im");
 
 //    // for histogram test
 //    setDefaultGamma(1);
@@ -2011,6 +2011,14 @@ int main(int argc, const char * argv[])
 //    for (int i = 0; i < Texture::histogram.size(); i++)
 //        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
 
+    
+    setDefaultGamma(2.2);
+    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
+                            , path + "Noise_2_2_im");
+    Texture::displayAndFile(Noise2(0.1, Vec2(), white_cyan, black_red)
+                            , path + "Noise2_2_2_im");
+
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
