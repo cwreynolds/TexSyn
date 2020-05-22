@@ -103,8 +103,16 @@ namespace PerlinNoise
         // Remap raw noise from approximately [-1, 1] to [0, 1].
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO -- VERY EXPERIMENTAL AND TEMPORARY
-        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
+//        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
 //        return remapIntervalClip(noise2d(position), -0.8, 0.8, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.7, 0.7, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.9, 0.7, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.70, 0.75, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.7, 0.75, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.65, 0.75, 0, 1);
+//        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
+        return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 

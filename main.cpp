@@ -1981,17 +1981,17 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // gamma and noise -- May 21, 2020
-    std::cout << "May 20, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200521_";
-    
-    Uniform black(Color(0, 0, 0));
-    Uniform white(Color(1, 1, 1));
-    Uniform red(Color(1, 0, 0));
-    Uniform cyan(Color(0, 1, 1));
-    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
-    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
-        
+//    // gamma and noise -- May 21, 2020
+//    std::cout << "May 20, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200521_";
+//
+//    Uniform black(Color(0, 0, 0));
+//    Uniform white(Color(1, 1, 1));
+//    Uniform red(Color(1, 0, 0));
+//    Uniform cyan(Color(0, 1, 1));
+//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+//    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+//
 //    Texture::displayAndFile(Noise(0.1, Vec2(), white, black));
 //    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red));
 //    setDefaultGamma(1);
@@ -2012,13 +2012,63 @@ int main(int argc, const char * argv[])
 //        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
 
     
-    setDefaultGamma(2.2);
-    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
-                            , path + "Noise_2_2_im");
-    Texture::displayAndFile(Noise2(0.1, Vec2(), white_cyan, black_red)
-                            , path + "Noise2_2_2_im");
+//    setDefaultGamma(2.2);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), white_cyan, black_red)
+//                            , path + "Noise_2_2_im");
+//    Texture::displayAndFile(Noise2(0.1, Vec2(), white_cyan, black_red)
+//                            , path + "Noise2_2_2_im");
 
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // Noise range and gamma -- May 22, 2020
+    std::cout << "May 22, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200522_";
+
+    Uniform black(Color(0, 0, 0));
+    Uniform white(Color(1, 1, 1));
+    Uniform red(Color(1, 0, 0));
+    Uniform cyan(Color(0, 1, 1));
+    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+        
+    setDefaultGamma(1);
+    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
+                            ); // , path + "Noise_g_1_0_gray");
+    
+    //setDefaultGamma(2.2);
+    //Texture::displayAndFile(Noise(0.1, Vec2(), black, white));
+    //for (int i = 0; i < Texture::histogram.size(); i++)
+    //    std::cout << i << "," << Texture::histogram.at(i) << std::endl;
+    
+    setDefaultGamma(2.2);
+    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
+                            ); // , path + "Noise_g_2_2_gray");
+    Texture::displayAndFile(Noise(0.1, Vec2(), black_red, white_cyan)
+                            ); // , path + "Noise_g_2_2_im");
+    Texture::displayAndFile(Noise(0.1, Vec2(), Uniform(1, 1, 0), red)
+                            ); // , path + "Noise_g_2_2_colors");
+    
+    //Texture::displayAndFile(Noise(0.1, Vec2(),
+    //                              Uniform(1, 0, 0), Uniform(0, 1, 0)));
+    //
+    //Texture::displayAndFile(Brownian(0.3, Vec2(),
+    //                                 Color(1, 1, 1), Color(0, 0, 0)));
+    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
+    //                                           Color(1, 1, 1), Color(0, 0, 0)),
+    //                                  white_cyan,
+    //                                  black_red));
+    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
+    //                                           Color(1, 1, 1), Color(0, 0, 0)),
+    //                                  Uniform(1, 1, 0),
+    //                                  Uniform(1, 0, 0)));
+    //Texture::displayAndFile(SoftMatte(Furbulence(0.3, Vec2(),
+    //                                             Color(1, 1, 1),
+    //                                             Color(0, 0, 0)),
+    //                                  Uniform(1, 1, 0),
+    //                                  Uniform(1, 0, 0)));
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
