@@ -94,27 +94,46 @@ namespace PerlinNoise
                                     grad(p[BB], x-1, y-1, 0)));
         // Experimentally "raw" ranges on [-0.88, 0.88], very occasionally up to
         // [-0.88, 1]. For predictable output, clip smaller range to [-1, 1].
-        return remapIntervalClip(raw, -0.88, 0.88, -1, 1);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        return remapIntervalClip(raw, -0.88, 0.88, -1, 1);
+//        return remapIntervalClip(raw, -1, 1, -1, 1);
+//        return remapIntervalClip(raw, -0.70, 0.66, -1, 1);
+        return remapIntervalClip(raw, -0.70, 0.70, -1, 1);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//        // Classic Perlin noise, in 2d, output range on [0, 1].
+//        float unitNoise2d(Vec2 position)
+//        {
+//            // Remap raw noise from approximately [-1, 1] to [0, 1].
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO -- VERY EXPERIMENTAL AND TEMPORARY
+//    //        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.8, 0.8, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.7, 0.7, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.9, 0.7, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.70, 0.75, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.7, 0.75, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.65, 0.75, 0, 1);
+//    //        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
+//            return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        }
 
     // Classic Perlin noise, in 2d, output range on [0, 1].
     float unitNoise2d(Vec2 position)
     {
-        // Remap raw noise from approximately [-1, 1] to [0, 1].
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO -- VERY EXPERIMENTAL AND TEMPORARY
-//        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.8, 0.8, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.7, 0.7, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.9, 0.7, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.70, 0.75, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.7, 0.75, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.65, 0.75, 0, 1);
-//        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
-        return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Remap raw noise from a measured distribution onto [0, 1].
+//        // See discussion at https://cwreynolds.github.io/TexSyn/#20200522
+//        return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
+        
+        // (oops, after subsequent fix to noise2d() revert to the simple case.)
+        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // For 1/f subdivision recursion from "image scale" to "pixel scale"
     // TODO this recursion criteria should be pixel-aware like Perlin's

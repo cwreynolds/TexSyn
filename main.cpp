@@ -2022,53 +2022,113 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Noise range and gamma -- May 22, 2020
-    std::cout << "May 22, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200522_";
+//    // Noise range and gamma -- May 22, 2020
+//    std::cout << "May 22, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200522_";
+//
+//    Uniform black(Color(0, 0, 0));
+//    Uniform white(Color(1, 1, 1));
+//    Uniform red(Color(1, 0, 0));
+//    Uniform cyan(Color(0, 1, 1));
+//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+//    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+//
+//    setDefaultGamma(1);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
+//                            ); // , path + "Noise_g_1_0_gray");
+//
+//    //setDefaultGamma(2.2);
+//    //Texture::displayAndFile(Noise(0.1, Vec2(), black, white));
+//    //for (int i = 0; i < Texture::histogram.size(); i++)
+//    //    std::cout << i << "," << Texture::histogram.at(i) << std::endl;
+//
+//    setDefaultGamma(2.2);
+//    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
+//                            ); // , path + "Noise_g_2_2_gray");
+//    Texture::displayAndFile(Noise(0.1, Vec2(), black_red, white_cyan)
+//                            ); // , path + "Noise_g_2_2_im");
+//    Texture::displayAndFile(Noise(0.1, Vec2(), Uniform(1, 1, 0), red)
+//                            ); // , path + "Noise_g_2_2_colors");
+//
+//    //Texture::displayAndFile(Noise(0.1, Vec2(),
+//    //                              Uniform(1, 0, 0), Uniform(0, 1, 0)));
+//    //
+//    //Texture::displayAndFile(Brownian(0.3, Vec2(),
+//    //                                 Color(1, 1, 1), Color(0, 0, 0)));
+//    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
+//    //                                           Color(1, 1, 1), Color(0, 0, 0)),
+//    //                                  white_cyan,
+//    //                                  black_red));
+//    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
+//    //                                           Color(1, 1, 1), Color(0, 0, 0)),
+//    //                                  Uniform(1, 1, 0),
+//    //                                  Uniform(1, 0, 0)));
+//    //Texture::displayAndFile(SoftMatte(Furbulence(0.3, Vec2(),
+//    //                                             Color(1, 1, 1),
+//    //                                             Color(0, 0, 0)),
+//    //                                  Uniform(1, 1, 0),
+//    //                                  Uniform(1, 0, 0)));
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    
+    // xxxxxxxxxxxxxxxxx -- May 23, 2020
+    std::cout << "May 23, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200523_";
 
     Uniform black(Color(0, 0, 0));
     Uniform white(Color(1, 1, 1));
     Uniform red(Color(1, 0, 0));
     Uniform cyan(Color(0, 1, 1));
+    Uniform yellow(Color(1, 1, 0));
     Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
     Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
-        
-    setDefaultGamma(1);
-    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
-                            ); // , path + "Noise_g_1_0_gray");
-    
-    //setDefaultGamma(2.2);
-    //Texture::displayAndFile(Noise(0.1, Vec2(), black, white));
-    //for (int i = 0; i < Texture::histogram.size(); i++)
-    //    std::cout << i << "," << Texture::histogram.at(i) << std::endl;
-    
-    setDefaultGamma(2.2);
-    Texture::displayAndFile(Noise(0.1, Vec2(), black, white)
-                            ); // , path + "Noise_g_2_2_gray");
-    Texture::displayAndFile(Noise(0.1, Vec2(), black_red, white_cyan)
-                            ); // , path + "Noise_g_2_2_im");
-    Texture::displayAndFile(Noise(0.1, Vec2(), Uniform(1, 1, 0), red)
-                            ); // , path + "Noise_g_2_2_colors");
-    
-    //Texture::displayAndFile(Noise(0.1, Vec2(),
-    //                              Uniform(1, 0, 0), Uniform(0, 1, 0)));
-    //
-    //Texture::displayAndFile(Brownian(0.3, Vec2(),
-    //                                 Color(1, 1, 1), Color(0, 0, 0)));
-    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
-    //                                           Color(1, 1, 1), Color(0, 0, 0)),
-    //                                  white_cyan,
-    //                                  black_red));
-    //Texture::displayAndFile(SoftMatte(Brownian(0.3, Vec2(),
-    //                                           Color(1, 1, 1), Color(0, 0, 0)),
-    //                                  Uniform(1, 1, 0),
-    //                                  Uniform(1, 0, 0)));
-    //Texture::displayAndFile(SoftMatte(Furbulence(0.3, Vec2(),
-    //                                             Color(1, 1, 1),
-    //                                             Color(0, 0, 0)),
-    //                                  Uniform(1, 1, 0),
-    //                                  Uniform(1, 0, 0)));
 
+//    Texture::displayAndFile(Noise(0.1, Vec2(), black, white));
+//    Texture::displayAndFile(Noise(0.1, Vec2(), black_red, white_cyan));
+//    Texture::displayAndFile(Noise(0.1, Vec2(), yellow, red));
+//    Texture::displayAndFile(Noise2(0.1, Vec2(), black, white));
+//    Texture::displayAndFile(Noise2(0.1, Vec2(), black_red, white_cyan));
+//    Texture::displayAndFile(Noise2(0.1, Vec2(), yellow, red));
+//    for (int i = 0; i < Texture::histogram.size(); i++)
+//        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
+    
+    
+//    Texture::displayAndFile(Turbulence(0.3, Vec2(), black, white));
+//    for (int i = 0; i < Texture::histogram.size(); i++)
+//        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
+
+    
+    Texture::displayAndFile(Noise(0.3, Vec2(), black_red, white_cyan));
+    Texture::displayAndFile(Noise(0.3, Vec2(), yellow, red));
+
+    Texture::displayAndFile(Brownian(0.3, Vec2(), black_red, white_cyan));
+    Texture::displayAndFile(Brownian(0.3, Vec2(), yellow, red));
+
+    Texture::displayAndFile(Turbulence(0.3, Vec2(), black_red, white_cyan));
+    Texture::displayAndFile(Turbulence(0.3, Vec2(), yellow, red));
+
+    
+//    // Make histogram for 100 luminance levels, on [-1, 1] to test distribution
+//    // of values from PerlinNoise::noise2d()
+//    std::vector<int> histogram(100, 0);
+//    RandomSequence rs(94548558);
+//    for (int i = 0; i < 10000000; i++)
+//    {
+//        Vec2 p = rs.randomPointInUnitDiameterCircle() * 10;
+//        float noise = PerlinNoise::noise2d(p);
+//        assert(between(noise, -1, 1));
+//        histogram.at((noise + 1) * 0.5 * (histogram.size() - 1))++;
+//    }
+//    for (int i = 0; i < histogram.size(); i++)
+//    {
+//        float x = interpolate(i * 0.01, -1.0, +1.0);
+//        std::cout << x << "," << histogram.at(i) << std::endl;
+//    }
+    
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

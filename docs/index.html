@@ -72,27 +72,29 @@
       <h1>Belatedly adjusting the range of <em>Noise</em></h1>
       <p>I decided the issues I was wrestling with (<em>Noise</em>, inherent
         matting, gamma) were exacerbated by my poorly calibrated Perlin noise
-        generator. Specifically the utility function named <code>PerlinNoise::unitNoise2d()</code>
-        seems to promise that its output ranges over [0, 1]. But (as the first
-        histogram from <a href="#20200521">yesterday</a> showed) its actual
-        range looked more like [0.1, 0.85]. These “dead zones” at the top and
-        bottom prevented good “inherent matting” — and in combination with gamma
+        generator. Specifically, the utility function named <code>PerlinNoise::unitNoise2d()</code>
+        promises that its output ranges over [0, 1]. But (as the first histogram
+        from <a href="#20200521">yesterday</a> showed) its actual range looked
+        more like [0.1, 0.85]. These “dead zones” at the top and bottom
+        prevented good “inherent matting” — and in combination with gamma
         correction the bottom (dark) dead zone covered nearly half of the
         dynamic range. (I think I had originally assumed (in a linear color
         space) that GP evolution would easily adjust for these range artifacts.
         But now, with gamma correction, it seems more problematic.)</p>
       <p>So today I readjusted the output range of <code>PerlinNoise::unitNoise2d()</code>.
-        Fortuantely it already called the (strict) range-adjusting utility <code>remapIntervalClip()</code>,
-        in a botched attempt to re-range the raw <code>PerlinNoise::noise2d()</code>
-        into [0, 1]. So all I had to do was pick better bounds than the previous
-        [-1, 1]. These are completely <em>ad hoc</em>, based only on measuring
-        what happens to come out of my noise generator. I adjusted the bounds so
-        that in the 100 bucket histograms, the top and bottom values were not
-        zero and were not much bigger than the adjacent bucket. (That is: bucket
-        0 has a value near bucket 1, similarly 98 and 99.) Here are the new
-        histograms, after adjusting the output range of <code>PerlinNoise::noise2d()</code>
-        for both (old, obsolete) linear gamma, and for the current gamma of 2.2.
-        Compare these to the first two histograms from <a href="#20200521">May
+        Fortunately it already called the (strict) linear range-adjusting
+        utility <code>remapIntervalClip()</code>, in an earlier attempt to
+        re-range the raw <code>PerlinNoise::noise2d()</code> into [0, 1]. So
+        all I had to do was pick better bounds than the previous [-1, 1]. These
+        new values: [-0.75, 0.80], are completely <em>ad hoc</em>, based only
+        on measuring what happens to come out of the current implementation my
+        noise generator. I adjusted the bounds so that in the 100 bucket
+        histograms, the top and bottom values were not zero and were not much
+        bigger than the adjacent bucket. (That is: bucket 0 has a value near
+        that of bucket 1, similarly 98 and 99.) Here are the new histograms,
+        after adjusting the output range of <code>PerlinNoise::noise2d()</code>
+        for both (the old, obsolete) linear gamma, and for the current gamma of
+        2.2. Compare these to the first two histograms from <a href="#20200521">May
           21</a>.</p>
       <pre>setDefaultGamma(1)
 Noise(0.1, Vec2(), black, white)
