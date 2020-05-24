@@ -67,6 +67,46 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200524"> <a href="#20200524" class="date">May 24,
+        2020</a>
+      <h1>Inherent matting for other noise textures</h1>
+      <p>Following on from May 20, after some intervening improvements on the
+        noise utilities, I upgraded <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>,
+        <em>Wrapulence</em>, and <em>MultiNoise</em> to use input parameters
+        that are textures rather than colors. Here are examples of <em>Noise</em>,
+        <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>, and <em>Wrapulence</em>.
+        I tested <em>MultiNoise</em> but its output is identical to the others
+        for appropriate parameters.</p>
+      <pre>Noise(0.3, Vec2(), black_red, white_cyan)
+Noise(0.3, Vec2(), yellow, red)</pre>
+      <img src="images/20200524_Noise_stripes.png" alt="" title="" height="511"
+        width="511"> <img src="images/20200524_Noise_y_r.png" alt="" title="" height="511"
+        width="511">
+      <pre>Brownian(0.3, Vec2(), black_red, white_cyan)
+Brownian(0.3, Vec2(), yellow, red)</pre>
+      <img src="images/20200524_Brownian_stripes.png" alt="Brownian(0.3, Vec2(), black_red, white_cyan)"
+        title="Brownian(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
+      <img src="images/20200524_Brownian_y_r.png" alt="Brownian(0.3, Vec2(), yellow, red)"
+        title="Brownian(0.3, Vec2(), yellow, red)" height="511" width="511">
+      <pre>Turbulence(0.3, Vec2(), black_red, white_cyan)
+Turbulence(0.3, Vec2(), yellow, red)</pre>
+      <img src="images/20200524_Turbulence_stripes.png" alt="Turbulence(0.3, Vec2(), black_red, white_cyan)"
+        title="Turbulence(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
+      <img src="images/20200524_Turbulence_y_r.png" alt="Turbulence(0.3, Vec2(), yellow, red)"
+        title="Turbulence(0.3, Vec2(), yellow, red)" height="511" width="511">
+      <pre>Furbulence(0.3, Vec2(), black_red, white_cyan)
+Furbulence(0.3, Vec2(), yellow, red)</pre>
+      <img src="images/20200524_Furbulence_stripes.png" alt="Furbulence(0.3, Vec2(), black_red, white_cyan)"
+        title="Furbulence(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
+      <img src="images/20200524_Furbulence_y_r.png" alt="Furbulence(0.3, Vec2(), yellow, red)"
+        title="Furbulence(0.3, Vec2(), yellow, red)" height="511" width="511">
+      <p>...</p>
+      <pre>Wrapulence(0.3, Vec2(), black_red, white_cyan)
+Wrapulence(0.3, Vec2(), yellow, red)</pre>
+      <img src="images/20200524_Wrapulence_stripes.png" alt="Wrapulence(0.3, Vec2(), black_red, white_cyan)"
+        title="Wrapulence(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
+      <img src="images/20200524_Wrapulence_y_r.png" alt="Wrapulence(0.3, Vec2(), yellow, red)"
+        title="Wrapulence(0.3, Vec2(), yellow, red)" height="511" width="511"> </div>
     <div class="post" id="20200523"> <a href="#20200523" class="date">May 23,
         2020</a>
       <h1>Fixing noise range, again</h1>

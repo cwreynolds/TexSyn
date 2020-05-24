@@ -415,47 +415,149 @@ private:
     const Texture& texture1;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+//    // Furbulence: two "fold" version of Turbulence producing sharp features at
+//    // both low and high ends of the output range.
+//    class Furbulence : public Generator
+//    {
+//    public:
+//        Furbulence(float _scale, Vec2 _center, Color _color0, Color _color1)
+//            : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            float f = PerlinNoise::furbulence2d((position - center) / scale);
+//            return interpolate(f, color0, color1);
+//        }
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Color color0;
+//        const Color color1;
+//    };
+//
 
 // Furbulence: two "fold" version of Turbulence producing sharp features at
 // both low and high ends of the output range.
 class Furbulence : public Generator
 {
 public:
-    Furbulence(float _scale, Vec2 _center, Color _color0, Color _color1)
-        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Furbulence(float _scale,
+               Vec2 _center,
+               const Texture& _texture0,
+               const Texture& _texture1)
+      : scale (_scale),
+        center (_center),
+        texture0(_texture0),
+        texture1(_texture1) {};
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    Furbulence(float a, Vec2 b, Color c, Color d)
+        : Furbulence(a, b, disposableUniform(c), disposableUniform(d)) {};
     Color getColor(Vec2 position) const override
     {
         float f = PerlinNoise::furbulence2d((position - center) / scale);
-        return interpolate(f, color0, color1);
+//        return interpolate(f, color0, color1);
+        return interpolate(f,
+                           texture0.getColor(position),
+                           texture1.getColor(position));
     }
 private:
     const float scale;
     const Vec2 center;
-    const Color color0;
-    const Color color1;
+//    const Color color0;
+//    const Color color1;
+    const Texture& texture0;
+    const Texture& texture1;
 };
 
-// Wrapulence: another variation on turbulence(). noise() is scaled up in
-// value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
-// all scales.
+
+
+
+//    // Wrapulence: another variation on turbulence(). noise() is scaled up in
+//    // value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
+//    // all scales.
+//    class Wrapulence : public Generator
+//    {
+//    public:
+//        Wrapulence(float _scale, Vec2 _center, Color _color0, Color _color1)
+//            : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            float w = PerlinNoise::wrapulence2d((position - center) / scale);
+//            return interpolate(w, color0, color1);
+//        }
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Color color0;
+//        const Color color1;
+//    };
+
+// Wrapulence: another variation on turbulence(). noise() is scaled up in value,
+// then wrapped modulo [0, 1]. It has hard edge discontinuities at all scales.
 class Wrapulence : public Generator
 {
 public:
-    Wrapulence(float _scale, Vec2 _center, Color _color0, Color _color1)
-        : scale (_scale), center (_center), color0(_color0), color1(_color1) {};
+    Wrapulence(float _scale,
+               Vec2 _center,
+               const Texture& _texture0,
+               const Texture& _texture1)
+    : scale (_scale),
+    center (_center),
+    texture0(_texture0),
+    texture1(_texture1) {}
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    Wrapulence(float a, Vec2 b, Color c, Color d)
+        : Wrapulence(a, b, disposableUniform(c), disposableUniform(d)) {};
+
     Color getColor(Vec2 position) const override
     {
         float w = PerlinNoise::wrapulence2d((position - center) / scale);
-        return interpolate(w, color0, color1);
+//        return interpolate(w, color0, color1);
+        return interpolate(w,
+                           texture0.getColor(position),
+                           texture1.getColor(position));
     }
 private:
     const float scale;
     const Vec2 center;
-    const Color color0;
-    const Color color1;
+//    const Color color0;
+//    const Color color1;
+    const Texture& texture0;
+    const Texture& texture1;
 };
+
+
+//    // MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
+//    // Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
+//    // that selects between them. (This is to allow all the variations without
+//    // "overwhelming" the space of generators when randomly selecting for GP. An
+//    // alternative would be to specify a "likeliness" weighting in the GP defs for
+//    // making the random selections.)
+//    class MultiNoise : public Generator
+//    {
+//    public:
+//        MultiNoise(float _scale, Vec2 _center,
+//                   Color _color0, Color _color1,
+//                   float _which)
+//          : scale(_scale),
+//            center(_center),
+//            color0(_color0),
+//            color1(_color1),
+//            which(_which) {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            Vec2 adjusted = (position - center) / scale;
+//            float noise = PerlinNoise::multiNoise2d(adjusted, which);
+//            return interpolate(noise, color0, color1);
+//        }
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Color color0;
+//        const Color color1;
+//        const float which;
+//    };
 
 // MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
 // Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
@@ -466,27 +568,43 @@ private:
 class MultiNoise : public Generator
 {
 public:
-    MultiNoise(float _scale, Vec2 _center,
-               Color _color0, Color _color1,
+    MultiNoise(float _scale,
+               Vec2 _center,
+               const Texture& _texture0,
+               const Texture& _texture1,
                float _which)
       : scale(_scale),
         center(_center),
-        color0(_color0),
-        color1(_color1),
+        texture0(_texture0),
+        texture1(_texture1),
         which(_which) {};
     Color getColor(Vec2 position) const override
     {
         Vec2 adjusted = (position - center) / scale;
         float noise = PerlinNoise::multiNoise2d(adjusted, which);
-        return interpolate(noise, color0, color1);
+//        return interpolate(noise, color0, color1);
+        return interpolate(noise,
+                           texture0.getColor(position),
+                           texture1.getColor(position));
     }
+    
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    MultiNoise(float a, Vec2 b, Color c, Color d, float e)
+        : MultiNoise(a, b, disposableUniform(c), disposableUniform(d), e) {};
+
 private:
     const float scale;
     const Vec2 center;
-    const Color color0;
-    const Color color1;
+//    const Color color0;
+//    const Color color1;
+    const Texture& texture0;
+    const Texture& texture1;
     const float which;
 };
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Color Noise -- RGB Perlin Noise
 // (TODO should this have a "which" parameter like MultiNoise? Maybe there
