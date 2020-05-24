@@ -67,6 +67,22 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200523"> <a href="#20200523" class="date">May 23,
+        2020</a>
+      <h1>Fixing noise range, again</h1>
+      <p>Well <em>that</em> did not last long. I moved on to making the other
+        noise textures conform to the new “inherent matting” approach. Then I
+        recalled that all of the multi-octave fractal noise generators actually
+        call <code>PerlinNoise::noise2d()</code> instead of <code>PerlinNoise::unitNoise2d()</code>
+        which is where I made <a href="#20200522">yesterday</a>'s change. The
+        problem was deeper, in the “raw” Perlin noise generator, whose output
+        range was hand-waving-ly described as being on [-1, 1] but measured
+        (over 10 million random <code>Vec2</code>s) to be closer to [-0.7,
+        0.7]. It now maps its internal result on [-0.7, 0.7] to the nominal
+        output range [-1, 1], as shown in the histogram below. Now unitNoise2d()
+        just remaps [-1, 1] values onto [0, 1].</p>
+      <img src="images/20200523_chart.png" alt="" title="" height="235" width="500">
+    </div>
     <div class="post" id="20200522"> <a href="#20200522" class="date">May 22,
         2020</a>
       <h1>Belatedly adjusting the range of <em>Noise</em></h1>
