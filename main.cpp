@@ -2087,26 +2087,32 @@ int main(int argc, const char * argv[])
     Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
     
     Texture::displayAndFile(Noise(0.3, Vec2(), black_red, white_cyan)
-                            , path + "Noise_stripes");
+                            ); // , path + "Noise_stripes");
     Texture::displayAndFile(Noise(0.3, Vec2(), yellow, red)
-                            , path + "Noise_y_r");
+                            ); // , path + "Noise_y_r");
     Texture::displayAndFile(Brownian(0.3, Vec2(), black_red, white_cyan)
-                            , path + "Brownian_stripes");
+                            ); // , path + "Brownian_stripes");
     Texture::displayAndFile(Brownian(0.3, Vec2(), yellow, red)
-                            , path + "Brownian_y_r");
+                            ); // , path + "Brownian_y_r");
     Texture::displayAndFile(Turbulence(0.3, Vec2(), black_red, white_cyan)
-                            , path + "Turbulence_stripes");
+                            ); // , path + "Turbulence_stripes");
     Texture::displayAndFile(Turbulence(0.3, Vec2(), yellow, red)
-                            , path + "Turbulence_y_r");
+                            ); // , path + "Turbulence_y_r");
     Texture::displayAndFile(Furbulence(0.3, Vec2(), black_red, white_cyan)
-                            , path + "Furbulence_stripes");
+                            ); // , path + "Furbulence_stripes");
     Texture::displayAndFile(Furbulence(0.3, Vec2(), yellow, red)
-                            , path + "Furbulence_y_r");
+                            ); // , path + "Furbulence_y_r");
     Texture::displayAndFile(Wrapulence(0.3, Vec2(), black_red, white_cyan)
-                            , path + "Wrapulence_stripes");
+                            ); // , path + "Wrapulence_stripes");
     Texture::displayAndFile(Wrapulence(0.3, Vec2(), yellow, red)
-                            , path + "Wrapulence_y_r");
+                            ); // , path + "Wrapulence_y_r");
     
+    Uniform blue(Color(0, 0, 1));
+    Texture::displayAndFile(Noise(0.2, Vec2(1, 2),
+                                  Furbulence(0.1, Vec2(3, -2), yellow, red),
+                                  Brownian(0.1, Vec2(-1, 5), blue, cyan))
+                            ); // , path + "less_trivial");
+
     //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.0));
     //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.2));
     //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.4));

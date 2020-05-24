@@ -76,7 +76,8 @@
         that are textures rather than colors. Here are examples of <em>Noise</em>,
         <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>, and <em>Wrapulence</em>.
         I tested <em>MultiNoise</em> but its output is identical to the others
-        for appropriate parameters.</p>
+        for appropriate parameters — its final parameter selects between the
+        noise types below.</p>
       <pre>Noise(0.3, Vec2(), black_red, white_cyan)
 Noise(0.3, Vec2(), yellow, red)</pre>
       <img src="images/20200524_Noise_stripes.png" alt="" title="" height="511"
@@ -100,13 +101,20 @@ Furbulence(0.3, Vec2(), yellow, red)</pre>
         title="Furbulence(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
       <img src="images/20200524_Furbulence_y_r.png" alt="Furbulence(0.3, Vec2(), yellow, red)"
         title="Furbulence(0.3, Vec2(), yellow, red)" height="511" width="511">
-      <p>...</p>
       <pre>Wrapulence(0.3, Vec2(), black_red, white_cyan)
 Wrapulence(0.3, Vec2(), yellow, red)</pre>
       <img src="images/20200524_Wrapulence_stripes.png" alt="Wrapulence(0.3, Vec2(), black_red, white_cyan)"
         title="Wrapulence(0.3, Vec2(), black_red, white_cyan)" height="511" width="511">
       <img src="images/20200524_Wrapulence_y_r.png" alt="Wrapulence(0.3, Vec2(), yellow, red)"
-        title="Wrapulence(0.3, Vec2(), yellow, red)" height="511" width="511"> </div>
+        title="Wrapulence(0.3, Vec2(), yellow, red)" height="511" width="511">
+      <p>One more slightly less trivial example: a four color pattern. A simple
+        Perlin <em>Noise</em> texture modulates two higher frequency textures:
+        a yellow and red <em>Furbulence</em>, and a blue and cyan <em>Brownian</em>.</p>
+      <pre>Noise(0.2, Vec2(1, 2),
+      Furbulence(0.1, Vec2(3, -2), yellow, red),
+      Brownian(0.1, Vec2(-1, 5), blue, cyan))</pre>
+      <img src="images/20200524_less_trivial.png" alt="less trivial example" title="less trivial example"
+        height="511" width="511"> </div>
     <div class="post" id="20200523"> <a href="#20200523" class="date">May 23,
         2020</a>
       <h1>Fixing noise range, again</h1>
