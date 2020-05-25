@@ -67,6 +67,41 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200525"> <a href="#20200525" class="date">May 25,
+        2020</a>
+      <h1>D'oh! Switch back to row-by-row parallelism</h1>
+      <p>On <a href="#20200330">March 30</a> I mentioned discovering that my
+        multi-threaded texture rendering code essentially duplicated a feature
+        already provided in OpenCV: <code><a href="https://docs.opencv.org/trunk/d3/d63/classcv_1_1Mat.html#a952ef1a85d70a510240cb645a90efc0d">cv::Mat::forEach()</a></code>.
+        It is kind of embarrassing to code from scratch something you could have
+        just called from a library. My dignity was partially preserved because
+        my version was about 11% faster than the similar code from OpenCV. I
+        suspect the difference may be that my code created a thread for each <strong>row</strong>
+        of the image, while <code>cv::Mat::forEach()</code> makes a thread for
+        each <strong>pixel</strong>. It may turn out that the overhead for
+        running a new thread, and/or waiting for mutex locks, is in the same
+        ballpark as rendering one pixel of a TexSyn texture. If so, a thread per
+        pixel may be “excessive parallelism.”</p>
+      <p>In any case, I write today because I noticed that the <code>#ifdef</code>
+        I used to compare those two implementations, was still there, and still
+        set to use the slightly slower OpenCV version. I fixed that and tried
+        some tests. Recall that <em>Blur</em> uses a stochastic sparse
+        convolution. The good news is that textures 2-4 all take the same amount
+        of time, unrelated to kernel size. The bad news is that results become
+        noisier as kernel size increases. This can be adjusted by increasing <code>Blur::sqrt_of_subsample_count</code>
+        from its default value of 11, but that is a global setting, and so not a
+        convenient solution. (I increased it today to 30 to slow down rendering
+        to better measure performance numbers.)</p>
+      <pre>grating = Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5)
+Blur(0.1, grating)</pre>
+      <img src="images/20200525_grating.png" alt="grating" title="grating" height="511"
+        width="511"> <img src="images/20200525_Blur_0_1.png" alt="Blur(0.1, grating)"
+        title="Blur(0.1, grating)" height="511" width="511">
+      <pre>Blur(0.2, grating)
+Blur(0.4, grating)</pre>
+      <img src="images/20200525_Blur_0_2.png" alt="Blur(0.2, grating)" title="Blur(0.2, grating)"
+        height="511" width="511"> <img src="images/20200525_Blur_0_4.png" alt="Blur(0.4, grating)"
+        title="Blur(0.4, grating)" height="511" width="511"> </div>
     <div class="post" id="20200524"> <a href="#20200524" class="date">May 24,
         2020</a>
       <h1>Inherent matting for other noise textures</h1>

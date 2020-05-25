@@ -51,24 +51,11 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // Code assumes disk center is at window center, so size must be odd. (TODO)
         assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
         
-#if 0  //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+#if 1  //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // Synchronizes access to opencv_image by multiple row threads.
         std::mutex ocv_image_mutex;
-        
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-        // (TODO added Apr 23, even though this branch of the if def is wrongly
-        //       turned off. LotsOfSpotsBase::adjustOverlappingSpots() has same
-        //       change, and it was based on this.)
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-//      // Collection of all row threads. (Use clear() to remove initial threads,
-//      // see https://stackoverflow.com/a/38130584/1991373 )
-//      std::vector<std::thread> all_threads(size);
-//      all_threads.clear();
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
         // Collection of all row threads.
         std::vector<std::thread> all_threads;
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
         for (int j = -(size / 2); j <= (size / 2); j++)
@@ -86,7 +73,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         }
         // Wait for all row threads to finish.
         for (auto& t : all_threads) t.join();
-#else  //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+#else  //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // A type for the pixel data structure passed to the lambda below.
         typedef cv::Point3_<float> Pixel;
         // Default background color. (Should be arg but this is just speed test)
@@ -101,24 +88,12 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                 pixel.x = color.b();
                 pixel.y = color.g();
                 pixel.z = color.r();
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                // TODO super duper temp
-                float luma = color.luminance();
-                assert(between(luma, 0, 1));
-                histogram.at(luma * (histogram.size() - 1))++;
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
         };
         raster_->forEach<Pixel>(get_texture_color_for_pixel);
-#endif //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+#endif //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     }
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO super duper temp
-std::vector<int> Texture::histogram(100, 0);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.
