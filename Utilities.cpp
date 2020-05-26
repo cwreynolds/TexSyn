@@ -92,48 +92,17 @@ namespace PerlinNoise
                                     grad(p[BA], x-1, y  , 0)),
                             lerp(u, grad(p[AB], x  , y-1, 0),
                                     grad(p[BB], x-1, y-1, 0)));
-        // Experimentally "raw" ranges on [-0.88, 0.88], very occasionally up to
-        // [-0.88, 1]. For predictable output, clip smaller range to [-1, 1].
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return remapIntervalClip(raw, -0.88, 0.88, -1, 1);
-//        return remapIntervalClip(raw, -1, 1, -1, 1);
-//        return remapIntervalClip(raw, -0.70, 0.66, -1, 1);
+        // Experimentally (see https://cwreynolds.github.io/TexSyn/#20200523)
+        // "raw" ranges on about [-0.7, 0.7]. Remap and clip that to [-1, 1].
         return remapIntervalClip(raw, -0.70, 0.70, -1, 1);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//        // Classic Perlin noise, in 2d, output range on [0, 1].
-//        float unitNoise2d(Vec2 position)
-//        {
-//            // Remap raw noise from approximately [-1, 1] to [0, 1].
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // TODO -- VERY EXPERIMENTAL AND TEMPORARY
-//    //        return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.8, 0.8, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.7, 0.7, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.9, 0.7, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.70, 0.75, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.7, 0.75, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.65, 0.75, 0, 1);
-//    //        return remapIntervalClip(noise2d(position), -0.75, 0.75, 0, 1);
-//            return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        }
 
     // Classic Perlin noise, in 2d, output range on [0, 1].
     float unitNoise2d(Vec2 position)
     {
-        // Remap raw noise from a measured distribution onto [0, 1].
-//        // See discussion at https://cwreynolds.github.io/TexSyn/#20200522
-//        return remapIntervalClip(noise2d(position), -0.75, 0.80, 0, 1);
-        
-        // (oops, after subsequent fix to noise2d() revert to the simple case.)
+        // Remap trditional noise from [-1, 1] like a sine wave, to [0, 1].
         return remapIntervalClip(noise2d(position), -1, 1, 0, 1);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // For 1/f subdivision recursion from "image scale" to "pixel scale"
     // TODO this recursion criteria should be pixel-aware like Perlin's
@@ -197,16 +166,11 @@ namespace PerlinNoise
         float octave = 1.0f;
         for (int i = 0; i < recursion_levels; i++)
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             position = disalignment_rotation(position);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             float pn = noise2d(position * octave);
             float sn = pn * 3;
             value += (sn - floor (sn)) / octave;
             octave *= 2;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            position = disalignment_rotation(position);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // TODO revisit Wrapulence clip bounds after running Release build.
         return remapIntervalClip(value, 0, 1.9, 0, 1);
@@ -450,14 +414,9 @@ float HaltonSequence(int n, int b)
     return result;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Return 2.2, TexSyn's default output gamma, intended to approximate
 // the nonlinearity of sRGB (digital display screen) color space.
 // (Made settable for testing/debugging.)
-
 float default_gamma = 2.2;
 float defaultGamma() { return default_gamma; }
 void setDefaultGamma(float gamma) { default_gamma = gamma; }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

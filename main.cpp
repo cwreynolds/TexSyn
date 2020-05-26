@@ -2073,107 +2073,107 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    // inherent matting for rest of noise textures -- May 24, 2020
-//    std::cout << "May 24, 2021" << std::endl;
-//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200524_";
-//
-//    Uniform black(Color(0, 0, 0));
-//    Uniform white(Color(1, 1, 1));
-//    Uniform red(Color(1, 0, 0));
-//    Uniform cyan(Color(0, 1, 1));
-//    Uniform yellow(Color(1, 1, 0));
-//    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
-//    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
-//
-//    Texture::displayAndFile(Noise(0.3, Vec2(), black_red, white_cyan)
-//                            ); // , path + "Noise_stripes");
-//    Texture::displayAndFile(Noise(0.3, Vec2(), yellow, red)
-//                            ); // , path + "Noise_y_r");
-//    Texture::displayAndFile(Brownian(0.3, Vec2(), black_red, white_cyan)
-//                            ); // , path + "Brownian_stripes");
-//    Texture::displayAndFile(Brownian(0.3, Vec2(), yellow, red)
-//                            ); // , path + "Brownian_y_r");
-//    Texture::displayAndFile(Turbulence(0.3, Vec2(), black_red, white_cyan)
-//                            ); // , path + "Turbulence_stripes");
-//    Texture::displayAndFile(Turbulence(0.3, Vec2(), yellow, red)
-//                            ); // , path + "Turbulence_y_r");
-//    Texture::displayAndFile(Furbulence(0.3, Vec2(), black_red, white_cyan)
-//                            ); // , path + "Furbulence_stripes");
-//    Texture::displayAndFile(Furbulence(0.3, Vec2(), yellow, red)
-//                            ); // , path + "Furbulence_y_r");
-//    Texture::displayAndFile(Wrapulence(0.3, Vec2(), black_red, white_cyan)
-//                            ); // , path + "Wrapulence_stripes");
-//    Texture::displayAndFile(Wrapulence(0.3, Vec2(), yellow, red)
-//                            ); // , path + "Wrapulence_y_r");
-//
-//    Uniform blue(Color(0, 0, 1));
-//    Texture::displayAndFile(Noise(0.2, Vec2(1, 2),
-//                                  Furbulence(0.1, Vec2(3, -2), yellow, red),
-//                                  Brownian(0.1, Vec2(-1, 5), blue, cyan))
-//                            ); // , path + "less_trivial");
-//
-//    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.0));
-//    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.2));
-//    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.4));
-//    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.6));
-//    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.8));
-//
-//    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.0));
-//    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.2));
-//    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.4));
-//    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.6));
-//    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.8));
-//
-//    //    Texture::displayAndFile(Turbulence(0.3, Vec2(), black, white));
-//    //    for (int i = 0; i < Texture::histogram.size(); i++)
-//    //        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
-//
-//    //    // Make histogram for 100 luminance levels, on [-1, 1] to test
-//    //    // distribution of values from PerlinNoise::noise2d()
-//    //    std::vector<int> histogram(100, 0);
-//    //    RandomSequence rs(94548558);
-//    //    for (int i = 0; i < 10000000; i++)
-//    //    {
-//    //        Vec2 p = rs.randomPointInUnitDiameterCircle() * 10;
-//    //        float noise = PerlinNoise::noise2d(p);
-//    //        assert(between(noise, -1, 1));
-//    //        histogram.at((noise + 1) * 0.5 * (histogram.size() - 1))++;
-//    //    }
-//    //    for (int i = 0; i < histogram.size(); i++)
-//    //    {
-//    //        float x = interpolate(i * 0.01, -1.0, +1.0);
-//    //        std::cout << x << "," << histogram.at(i) << std::endl;
-//    //    }
-//
-//
-//    Texture::waitKey();
+    // inherent matting for rest of noise textures -- May 24, 2020
+    std::cout << "May 24, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200524_";
+
+    Uniform black(Color(0, 0, 0));
+    Uniform white(Color(1, 1, 1));
+    Uniform red(Color(1, 0, 0));
+    Uniform cyan(Color(0, 1, 1));
+    Uniform yellow(Color(1, 1, 0));
+    Grating white_cyan(Vec2(0, 0.2), white, Vec2(), cyan, 0.1, 0.5);
+    Grating black_red(Vec2(0.1, 0), black, Vec2(), red, 0.1, 0.5);
+
+    Texture::displayAndFile(Noise(0.3, Vec2(), black_red, white_cyan)
+                            ); // , path + "Noise_stripes");
+    Texture::displayAndFile(Noise(0.3, Vec2(), yellow, red)
+                            ); // , path + "Noise_y_r");
+    Texture::displayAndFile(Brownian(0.3, Vec2(), black_red, white_cyan)
+                            ); // , path + "Brownian_stripes");
+    Texture::displayAndFile(Brownian(0.3, Vec2(), yellow, red)
+                            ); // , path + "Brownian_y_r");
+    Texture::displayAndFile(Turbulence(0.3, Vec2(), black_red, white_cyan)
+                            ); // , path + "Turbulence_stripes");
+    Texture::displayAndFile(Turbulence(0.3, Vec2(), yellow, red)
+                            ); // , path + "Turbulence_y_r");
+    Texture::displayAndFile(Furbulence(0.3, Vec2(), black_red, white_cyan)
+                            ); // , path + "Furbulence_stripes");
+    Texture::displayAndFile(Furbulence(0.3, Vec2(), yellow, red)
+                            ); // , path + "Furbulence_y_r");
+    Texture::displayAndFile(Wrapulence(0.3, Vec2(), black_red, white_cyan)
+                            ); // , path + "Wrapulence_stripes");
+    Texture::displayAndFile(Wrapulence(0.3, Vec2(), yellow, red)
+                            ); // , path + "Wrapulence_y_r");
+
+    Uniform blue(Color(0, 0, 1));
+    Texture::displayAndFile(Noise(0.2, Vec2(1, 2),
+                                  Furbulence(0.1, Vec2(3, -2), yellow, red),
+                                  Brownian(0.1, Vec2(-1, 5), blue, cyan))
+                            ); // , path + "less_trivial");
+
+    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.0));
+    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.2));
+    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.4));
+    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.6));
+    //    Texture::displayAndFile(MultiNoise(0.5, Vec2(), red, white, 0.8));
+
+    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.0));
+    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.2));
+    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.4));
+    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.6));
+    //    Texture::displayAndFile(ColorNoise(0.5, Vec2(), 0.8));
+
+    //    Texture::displayAndFile(Turbulence(0.3, Vec2(), black, white));
+    //    for (int i = 0; i < Texture::histogram.size(); i++)
+    //        std::cout << i << "," << Texture::histogram.at(i) << std::endl;
+
+    //    // Make histogram for 100 luminance levels, on [-1, 1] to test
+    //    // distribution of values from PerlinNoise::noise2d()
+    //    std::vector<int> histogram(100, 0);
+    //    RandomSequence rs(94548558);
+    //    for (int i = 0; i < 10000000; i++)
+    //    {
+    //        Vec2 p = rs.randomPointInUnitDiameterCircle() * 10;
+    //        float noise = PerlinNoise::noise2d(p);
+    //        assert(between(noise, -1, 1));
+    //        histogram.at((noise + 1) * 0.5 * (histogram.size() - 1))++;
+    //    }
+    //    for (int i = 0; i < histogram.size(); i++)
+    //    {
+    //        float x = interpolate(i * 0.01, -1.0, +1.0);
+    //        std::cout << x << "," << histogram.at(i) << std::endl;
+    //    }
+
+
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Switch back to row-by-row parallelism -- May 25, 2020
-    std::cout << "May 25, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200525_";
-    
-    Uniform blue(0, 0, 1);
-    Uniform yellow(1, 1, 0);
-    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
-    
-    //Texture::displayAndFile(grating);
-    //Texture::displayAndFile(Blur(0.1, grating));
-    //Blur::sqrt_of_subsample_count = 20;
-    //Texture::displayAndFile(Blur(0.1, grating));
-    //Texture::displayAndFile(Blur(0.2, grating));
-    //Texture::displayAndFile(Blur(0.4, grating));
-    ////Blur::sqrt_of_subsample_count = 30;
-    //Blur::sqrt_of_subsample_count = 11;
-    //Texture::displayAndFile(Blur(0.4, grating));
-
-    Texture::displayAndFile(grating           ); // , path + "grating");
-    Texture::displayAndFile(Blur(0.1, grating)); // , path + "Blur_0_1");
-    Texture::displayAndFile(Blur(0.2, grating)); // , path + "Blur_0_2");
-    Texture::displayAndFile(Blur(0.4, grating)); // , path + "Blur_0_4");
-
-    Texture::waitKey();
+//    // Switch back to row-by-row parallelism -- May 25, 2020
+//    std::cout << "May 25, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200525_";
+//
+//    Uniform blue(0, 0, 1);
+//    Uniform yellow(1, 1, 0);
+//    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+//
+//    //Texture::displayAndFile(grating);
+//    //Texture::displayAndFile(Blur(0.1, grating));
+//    //Blur::sqrt_of_subsample_count = 20;
+//    //Texture::displayAndFile(Blur(0.1, grating));
+//    //Texture::displayAndFile(Blur(0.2, grating));
+//    //Texture::displayAndFile(Blur(0.4, grating));
+//    ////Blur::sqrt_of_subsample_count = 30;
+//    //Blur::sqrt_of_subsample_count = 11;
+//    //Texture::displayAndFile(Blur(0.4, grating));
+//
+//    Texture::displayAndFile(grating           ); // , path + "grating");
+//    Texture::displayAndFile(Blur(0.1, grating)); // , path + "Blur_0_1");
+//    Texture::displayAndFile(Blur(0.2, grating)); // , path + "Blur_0_2");
+//    Texture::displayAndFile(Blur(0.4, grating)); // , path + "Blur_0_4");
+//
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
