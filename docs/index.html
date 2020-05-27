@@ -114,6 +114,20 @@ MobiusTransform(Vec2( 0.246782, -0.338772),
       <p>10x10 jittered grid, 100 subsamples per pixel.</p>
       <img src="images/20200526_mt_ss_100.png" alt="MobiusTransform, subsamples=100 (10x10)"
         title="MobiusTransform, subsamples=100 (10x10)" height="511" width="511">
+      <p><strong>Update the next morning</strong>: I was curious about that
+        remaining “confetti noise” in the previous image. Will that persist
+        regardless of how many point samples are averaged together? I decided to
+        crank it up to see if I could get the noise to fade away. (I have plenty
+        of time: I'm retired, and we're in the middle of a pandemic. But I'm
+        being melodramatic, the render below took about 5 minutes.) The formerly
+        “confetti” area to the left of center is now an apparently flat field of
+        yellow. There are eight little “moiré rosettes” arranged in a circle
+        around the flat color area. I am not certain if I am looking at actual
+        features of this <code>plaid</code> pattern as seen through this <em>MobiusTransform</em>,
+        or if they are just a deeper level of aliasing artifacts.</p>
+      <p>150x150 jittered grid, 22500 subsamples per pixel.</p>
+      <img src="images/20200527_mt_ss_22500.png" alt="MobiusTransform, subsamples=22500 (150x150)"
+        title="MobiusTransform, subsamples=22500 (150x150)" height="511" width="511">
     </div>
     <div class="post" id="20200525"> <a href="#20200525" class="date">May 25,
         2020</a>

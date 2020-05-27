@@ -2210,6 +2210,11 @@ int main(int argc, const char * argv[])
     Texture::sqrt_of_aa_subsample_count = 10;
     Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
                             ); // , path + "mt_ss_100");
+    
+    //// Update: Wednesday morning, May 27
+    //Texture::sqrt_of_aa_subsample_count = 150; // 22500 samples, 273 seconds
+    //Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+    //                        ); // , path + "mt_ss_22500");
 
     Texture::waitKey();
     
