@@ -549,6 +549,9 @@ public:
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());
         float cell_width = width / sqrt_of_subsample_count;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // qqq
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         for (int i = 0; i < sqrt_of_subsample_count; i++)
             for (int j = 0; j < sqrt_of_subsample_count; j++)
                 offsets.push_back(Vec2((i * cell_width) - radius, // cell corner

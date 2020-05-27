@@ -67,6 +67,54 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200526"> <a href="#20200526" class="date">May 26,
+        2020</a>
+      <h1>Prototype anti-aliasing</h1>
+      <p>Describing <em>MobiusTransform</em> on <a href="#20200128">January 28</a>,
+        I point out the aliasing (“under-sampling confetti”) in areas where the
+        transform strongly compresses its input texture. In a transformation
+        like this, spatial frequencies in the input can be shifted up
+        arbitrarily high by geometric compression. The point sampling used by
+        TexSyn's rendering will inevitably fail in this case. Since then, <em>Blur</em>
+        was implemented with a stochastic sampling approach using a jittered
+        grid of subsamples. I realized the same approach, even the same code,
+        could be re-purposed to approximate area sampling with a jittered grid
+        of point samples within each pixel. Shown below is the fourth example
+        from <a href="#20200128">January 28</a> (updated for changes in Grating
+        and gamma correction) then renderings of the same texture at 5x5, 7x7,
+        and 10x10 subsampling per pixel.</p>
+      <p>While this additional sampling helps significantly, the test case below
+        is pretty hard to get correct, and indeed, there is still some low
+        amplitude confetti noise in the region of high contraction. Also note
+        that this is a global setting, so cannot be used “only where needed.”
+        Absolutely no adaptive detection of aliasing artifacts is supported.</p>
+      <pre>float f = 1.0
+float d = 0.1  <span class="comment">// Changed from 0.3 to 0.1 to compensate for May 6 gamma change.</span>
+full_green = Uniform(Color(f, 0, 0))
+dark_green = Uniform(Color(d, 0, 0))
+full_red = Uniform(Color(0, f, 0))
+dark_red =Uniform(Color(0, d, 0))
+red_stripes = Grating(Vec2(0, 0), full_red, Vec2(0.1, 0.1), dark_red, 0.3, 0.5)
+green_stripes = Grating(Vec2(0, 0), full_green, Vec2(-0.1, 0.1), dark_green, 0.3, 0.5)
+plaid = Add(red_stripes, green_stripes);
+
+MobiusTransform(Vec2( 0.246782, -0.338772),
+                Vec2(-1.73553,  -0.969689),
+                Vec2( 0.535863, -1.75309),
+                Vec2(-0.201844, -0.394775),
+                plaid)</pre>
+      <img src="images/20200526_mt_ss_1.png" alt="MobiusTransform, subsamples=1"
+        title="MobiusTransform, subsamples=1" height="511" width="511">
+      <p>5x5 jittered grid, 25 subsamples per pixel.</p>
+      <img src="images/20200526_mt_ss_25.png" alt="MobiusTransform, subsamples=25 (5x5)"
+        title="MobiusTransform, subsamples=25 (5x5)" height="511" width="511">
+      <p>7x7 jittered grid, 49 subsamples per pixel.</p>
+      <img src="images/20200526_mt_ss_49.png" alt="MobiusTransform, subsamples=49 (7x7)"
+        title="MobiusTransform, subsamples=49 (7x7)" height="511" width="511">
+      <p>10x10 jittered grid, 100 subsamples per pixel.</p>
+      <img src="images/20200526_mt_ss_100.png" alt="MobiusTransform, subsamples=100 (10x10)"
+        title="MobiusTransform, subsamples=100 (10x10)" height="511" width="511">
+    </div>
     <div class="post" id="20200525"> <a href="#20200525" class="date">May 25,
         2020</a>
       <h1>D'oh! Switch back to row-by-row parallelism</h1>

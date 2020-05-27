@@ -87,8 +87,74 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
     for (int i = -x_limit; i <= x_limit; i++)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // Read TexSyn Color from Texture at (i, j).
+//        Color color = reGamma(getColorClipped(Vec2(i, j) / half));
+
+//            // Read TexSyn Color from Texture at (i, j).
+//            Color color(0, 0, 0);
+//    //        if (temp_aa_flag)
+//            if (temp_aa_subsamples > 1)
+//            {
+//                Vec2 pixel_center = Vec2(i, j) / half;
+//    //            float pixel_radius = 1.0 / size;
+//                float pixel_radius = 2.0 / size;
+//    //            int subsamples = 16;
+//    //            int subsamples = 100;
+//    //            for (int k = 0; k < subsamples; k++)
+//                for (int k = 0; k < temp_aa_subsamples; k++)
+//                {
+//                    // TODO note these should use RandomSequence utilities.
+//                    Vec2 offset(frandom2(-pixel_radius, pixel_radius),
+//                                frandom2(-pixel_radius, pixel_radius));
+//                    color += getColorClipped(pixel_center + offset);
+//                }
+//    //            color = reGamma(color / subsamples);
+//                color = reGamma(color / temp_aa_subsamples);
+//            }
+//            else
+//            {
+//                color = reGamma(getColorClipped(Vec2(i, j) / half));
+//            }
+
         // Read TexSyn Color from Texture at (i, j).
-        Color color = reGamma(getColorClipped(Vec2(i, j) / half));
+        Color color(0, 0, 0);
+        if (sqrt_of_aa_subsample_count > 1)
+        {
+            Vec2 pixel_center = Vec2(i, j) / half;
+            float pixel_radius = 2.0 / size;
+
+            std::vector<Vec2> offsets;
+            RandomSequence rs(pixel_center.hash());
+
+            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
+                                        pixel_radius * 2,
+                                        rs,
+                                        offsets);
+            
+//            for (int k = 0; k < temp_aa_subsamples; k++)
+//            {
+//                // TODO note these should use RandomSequence utilities.
+//                Vec2 offset(frandom2(-pixel_radius, pixel_radius),
+//                            frandom2(-pixel_radius, pixel_radius));
+//                color += getColorClipped(pixel_center + offset);
+//            }
+            
+            for (Vec2 offset : offsets)
+            {
+                color += getColorClipped(pixel_center + offset);
+            }
+            
+//            color = reGamma(color / temp_aa_subsamples);
+            color = reGamma(color / sq(sqrt_of_aa_subsample_count));
+
+        }
+        else
+        {
+            color = reGamma(getColorClipped(Vec2(i, j) / half));
+        }
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Make OpenCV color, with reversed component order.
         cv::Vec3f opencv_color(color.b(), color.g(), color.r());
         // Write OpenCV color to corresponding pixel on row image:
@@ -249,3 +315,12 @@ void Texture::displayAndFile3(const Texture& t1,
     // Display "mat" in the TexSyn fashion.
     windowPlacementTool(mat);
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//bool Texture::temp_aa_flag = false;
+//int Texture::temp_aa_subsamples = 1;
+
+// Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
+int Texture::sqrt_of_aa_subsample_count = 1;
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
