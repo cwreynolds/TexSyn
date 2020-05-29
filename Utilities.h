@@ -292,9 +292,6 @@ float HaltonSequence(int n, int b);
 float defaultGamma();
 void setDefaultGamma(float gamma);
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO EXPERIMENTAL
-//
 // Utility for randomized subsampling in a square 2d region. Generates 2d
 // offsets from the center of the square for an NxN jittered grid. Parameters:
 //     n: square root of the number of grid cells (and offsets returned).
@@ -306,4 +303,3 @@ void jittered_grid_NxN_in_square(int n,
                                  float square_side_length,
                                  RandomSequence& rs,
                                  std::vector<Vec2>& offsets);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

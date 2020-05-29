@@ -94,14 +94,8 @@ public:
                                 const Texture& t3,
                                 std::string pathname = "",
                                 int size = 333);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    static bool temp_aa_flag;
-//    static int temp_aa_subsamples;
-    
     // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
     static int sqrt_of_aa_subsample_count;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

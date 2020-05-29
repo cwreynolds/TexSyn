@@ -2177,47 +2177,67 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
-    // anti-aliasing -- May 26, 2020
-    std::cout << "May 26, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200526_";
-  
-    float f = 1;
-    // float d = 0.3; // note this change, compensate for gamma change
-    float d = 0.1;    // note this change, compensate for gamma change
-    Uniform full_green(Color(f, 0, 0));
-    Uniform dark_green(Color(d, 0, 0));
-    Uniform full_red(Color(0, f, 0));
-    Uniform dark_red(Color(0, d, 0));
-    Grating red_stripes(Vec2(0, 0), full_red,
-                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
-    Grating green_stripes(Vec2(0, 0), full_green,
-                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
-    Add plaid(red_stripes, green_stripes);
-
-    Vec2 p( 0.246782, -0.338772);
-    Vec2 q(-1.73553,  -0.969689);
-    Vec2 r( 0.535863, -1.75309);
-    Vec2 s(-0.201844, -0.394775);
+//    // anti-aliasing -- May 26, 2020
+//    std::cout << "May 26, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200526_";
+//
+//    float f = 1;
+//    // float d = 0.3; // note this change, compensate for gamma change
+//    float d = 0.1;    // note this change, compensate for gamma change
+//    Uniform full_green(Color(f, 0, 0));
+//    Uniform dark_green(Color(d, 0, 0));
+//    Uniform full_red(Color(0, f, 0));
+//    Uniform dark_red(Color(0, d, 0));
+//    Grating red_stripes(Vec2(0, 0), full_red,
+//                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+//    Grating green_stripes(Vec2(0, 0), full_green,
+//                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+//    Add plaid(red_stripes, green_stripes);
+//
+//    Vec2 p( 0.246782, -0.338772);
+//    Vec2 q(-1.73553,  -0.969689);
+//    Vec2 r( 0.535863, -1.75309);
+//    Vec2 s(-0.201844, -0.394775);
+//
+//    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+//                            ); // , path + "mt_ss_1");
+//    Texture::sqrt_of_aa_subsample_count = 5;
+//    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+//                            ); // , path + "mt_ss_25");
+//    Texture::sqrt_of_aa_subsample_count = 7;
+//    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+//                            ); // , path + "mt_ss_49");
+//    Texture::sqrt_of_aa_subsample_count = 10;
+//    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+//                            ); // , path + "mt_ss_100");
+//
+//    //// Update: Wednesday morning, May 27
+//    //Texture::sqrt_of_aa_subsample_count = 150; // 22500 samples, 273 seconds
+//    //Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
+//    //                        ); // , path + "mt_ss_22500");
+//
+//    Texture::waitKey();
     
-    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
-                            ); // , path + "mt_ss_1");
-    Texture::sqrt_of_aa_subsample_count = 5;
-    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
-                            ); // , path + "mt_ss_25");
-    Texture::sqrt_of_aa_subsample_count = 7;
-    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
-                            ); // , path + "mt_ss_49");
-    Texture::sqrt_of_aa_subsample_count = 10;
-    Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
-                            ); // , path + "mt_ss_100");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        
+    // Use new jittered_grid_NxN_in_square() in Blur -- May 28, 2020
+    std::cout << "May 28, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200528_";
     
-    //// Update: Wednesday morning, May 27
-    //Texture::sqrt_of_aa_subsample_count = 150; // 22500 samples, 273 seconds
-    //Texture::displayAndFile(MobiusTransform(p, q, r, s, plaid)
-    //                        ); // , path + "mt_ss_22500");
+    Uniform blue(0, 0, 1);
+    Uniform yellow(1, 1, 0);
+    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+    
+//    Texture::sqrt_of_aa_subsample_count = 5;
 
+    Texture::displayAndFile(grating           ); // , path + "grating");
+    Texture::displayAndFile(Blur(0.1, grating)); // , path + "Blur_0_1");
+    Texture::displayAndFile(Blur(0.2, grating)); // , path + "Blur_0_2");
+    Texture::displayAndFile(Blur(0.4, grating)); // , path + "Blur_0_4");
+
+    
     Texture::waitKey();
-    
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

@@ -421,10 +421,6 @@ float default_gamma = 2.2;
 float defaultGamma() { return default_gamma; }
 void setDefaultGamma(float gamma) { default_gamma = gamma; }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// TODO EXPERIMENTAL
-//
 // Utility for randomized subsampling in a square 2d region. Generates 2d
 // offsets from the center of the square for an NxN jittered grid. Parameters:
 //     n: square root of the number of grid cells (and offsets returned).
@@ -432,8 +428,7 @@ void setDefaultGamma(float gamma) { default_gamma = gamma; }
 //     rs: a RandomSequence for generating random jitter.
 //     offsets: vector to be filled with Vec2d offsets
 // (FYI See https://www.redblobgames.com/x/1830-jittered-grid/)
-
-void jittered_grid_NxN_in_square(int n,                    // sqrt of cells in
+void jittered_grid_NxN_in_square(int n,
                                  float square_side_length,
                                  RandomSequence& rs,
                                  std::vector<Vec2>& offsets)
@@ -448,5 +443,3 @@ void jittered_grid_NxN_in_square(int n,                    // sqrt of cells in
                               Vec2(rs.frandom01() * cell_width,  // jitter
                                    rs.frandom01() * cell_width));
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

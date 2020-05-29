@@ -548,16 +548,7 @@ public:
         float radius = width / 2;
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());
-        float cell_width = width / sqrt_of_subsample_count;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // qqq
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        for (int i = 0; i < sqrt_of_subsample_count; i++)
-            for (int j = 0; j < sqrt_of_subsample_count; j++)
-                offsets.push_back(Vec2((i * cell_width) - radius, // cell corner
-                                       (j * cell_width) - radius) +
-                                  Vec2(rs.frandom01() * cell_width,  // jiggle
-                                       rs.frandom01() * cell_width));
+        jittered_grid_NxN_in_square(sqrt_of_subsample_count, width, rs, offsets);
         Color sum_of_weighted_colors(0, 0, 0);
         float sum_of_weights = 0;
         for (Vec2 offset : offsets)
