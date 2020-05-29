@@ -187,6 +187,41 @@ private:
     const float duty_cycle;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    // Perlin Noise
+//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+//    // This and other noise textures below use PerlinNoise package in Utilities.h
+//    class Noise : public Generator
+//    {
+//    public:
+//        Noise(float _scale,
+//              Vec2 _center,
+//              const Texture& _texture0,
+//              const Texture& _texture1)
+//        :
+//            scale (_scale),
+//            center (_center),
+//            texture0(_texture0),
+//            texture1(_texture1)
+//        {};
+//        Color getColor(Vec2 position) const override
+//        {
+//            float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//            return interpolate(noise,
+//                               texture0.getColor(position),
+//                               texture1.getColor(position));
+//        }
+//        // BACKWARD_COMPATIBILITY with version before inherent matting.
+//        Noise(float a, Vec2 b, Color c, Color d)
+//          : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Texture& texture0;
+//        const Texture& texture1;
+//    };
+
 // Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
@@ -197,15 +232,40 @@ public:
           Vec2 _center,
           const Texture& _texture0,
           const Texture& _texture1)
-    :
-        scale (_scale),
-        center (_center),
+      //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+      : basis({1, 0}),
+      //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        scale(_scale),
+        center(_center),
         texture0(_texture0),
         texture1(_texture1)
     {};
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    Noise(Vec2 point_0,
+          Vec2 point_1,
+          const Texture& texture_0,
+          const Texture& texture_1)
+      : basis(point_1 - point_0),
+        scale(basis.length()),
+        center (point_0),
+        texture0(texture_0),
+        texture1(texture_1) {}
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+    
     Color getColor(Vec2 position) const override
     {
-        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+        
+        Vec2 p = ((position - center) / scale);
+        
+//        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
+        position = (basis * p.x()) + (basis.rotate90degCCW() * p.y());
+        
+        float noise = PerlinNoise::unitNoise2d(position);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return interpolate(noise,
                            texture0.getColor(position),
                            texture1.getColor(position));
@@ -214,11 +274,16 @@ public:
     Noise(float a, Vec2 b, Color c, Color d)
       : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
 private:
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    const Vec2 basis;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const float scale;
     const Vec2 center;
     const Texture& texture0;
     const Texture& texture1;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Brownian Noise -- multi octave fractal 1/f Perlin Noise
 class Brownian : public Generator

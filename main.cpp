@@ -2220,22 +2220,50 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
-    // Use new jittered_grid_NxN_in_square() in Blur -- May 28, 2020
-    std::cout << "May 28, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200528_";
-    
-    Uniform blue(0, 0, 1);
-    Uniform yellow(1, 1, 0);
-    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
-    
-//    Texture::sqrt_of_aa_subsample_count = 5;
+//    // Use new jittered_grid_NxN_in_square() in Blur -- May 28, 2020
+//    std::cout << "May 28, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200528_";
+//
+//    Uniform blue(0, 0, 1);
+//    Uniform yellow(1, 1, 0);
+//    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+//
+//    Texture::displayAndFile(grating           ); // , path + "grating");
+//    Texture::displayAndFile(Blur(0.1, grating)); // , path + "Blur_0_1");
+//    Texture::displayAndFile(Blur(0.2, grating)); // , path + "Blur_0_2");
+//    Texture::displayAndFile(Blur(0.4, grating)); // , path + "Blur_0_4");
+//
+//    Texture::waitKey();
 
-    Texture::displayAndFile(grating           ); // , path + "grating");
-    Texture::displayAndFile(Blur(0.1, grating)); // , path + "Blur_0_1");
-    Texture::displayAndFile(Blur(0.2, grating)); // , path + "Blur_0_2");
-    Texture::displayAndFile(Blur(0.4, grating)); // , path + "Blur_0_4");
-
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        
+    // Experiment with new "2 point" spec for noise textures -- May 29, 2020
+    std::cout << "May 29, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200529_";
     
+    Uniform white(1);
+    Uniform black(0);
+    Uniform gray(0.4);
+    Uniform green(0, 1, 0);
+    Uniform magenta(0.7, 0, 0.9);
+    float spot_ir = 0.02;
+    float spot_or = 0.03;
+
+    auto two_point_noise = [&] (Vec2 p1, Vec2 p2)
+    {
+        Noise n1(p1, p2, black, white);
+        SoftThreshold n2(0.50, 0.53, n1);
+        SoftMatte noise(n2, gray, magenta);
+        Spot spot1(p2, spot_ir, green, spot_or, noise);
+        Spot spot2(p1, spot_ir, green, spot_or, spot1);
+        Texture::displayAndFile(spot2);
+    };
+    two_point_noise(Vec2(-0.3, -0.7), Vec2(-0.2, -0.6));
+    two_point_noise(Vec2(-0.3, -0.7), Vec2(0.5, -0.1));
+    two_point_noise(Vec2(0, 0), Vec2(0.5, 0));
+    two_point_noise(Vec2(0, 0.5), Vec2(0, -0.5));
+    two_point_noise(Vec2(0, 0.1), Vec2(0, -0.1));
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
