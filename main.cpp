@@ -2244,17 +2244,21 @@ int main(int argc, const char * argv[])
     Uniform white(1);
     Uniform black(0);
     Uniform gray(0.4);
+    Uniform red(1, 0, 0);
     Uniform green(0, 1, 0);
     Uniform magenta(0.7, 0, 0.9);
     float spot_ir = 0.02;
     float spot_or = 0.03;
+    
+    Texture::displayAndFile(SoftThreshold(0.50, 0.53,
+                                          Noise(0.4, Vec2(), black, white)));
 
     auto two_point_noise = [&] (Vec2 p1, Vec2 p2)
     {
-        Noise n1(p1, p2, black, white);
+        Noise2 n1(p1, p2, black, white);
         SoftThreshold n2(0.50, 0.53, n1);
         SoftMatte noise(n2, gray, magenta);
-        Spot spot1(p2, spot_ir, green, spot_or, noise);
+        Spot spot1(p2, spot_ir, red, spot_or, noise);
         Spot spot2(p1, spot_ir, green, spot_or, spot1);
         Texture::displayAndFile(spot2);
     };
