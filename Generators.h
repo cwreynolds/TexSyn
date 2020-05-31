@@ -246,8 +246,10 @@ public:
           Vec2 point_1,
           const Texture& texture_0,
           const Texture& texture_1)
-      : basis(point_1 - point_0),
-        scale(basis.length()),
+//      : basis(point_1 - point_0),
+//        scale(basis.length()),
+      : scale((point_1 - point_0).length()),
+        basis((point_1 - point_0).normalize()),
         center (point_0),
         texture0(texture_0),
         texture1(texture_1) {}
@@ -260,10 +262,7 @@ public:
 //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
         
         Vec2 p = ((position - center) / scale);
-        
-//        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-        position = (basis * p.x()) + (basis.rotate90degCCW() * p.y());
-        
+        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
         float noise = PerlinNoise::unitNoise2d(position);
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return interpolate(noise,
@@ -274,11 +273,11 @@ public:
     Noise2(float a, Vec2 b, Color c, Color d)
       : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
 private:
+    const float scale;
+    const Vec2 center;
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const Vec2 basis;
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    const float scale;
-    const Vec2 center;
     const Texture& texture0;
     const Texture& texture1;
 };

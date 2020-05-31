@@ -67,6 +67,73 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200531"> <a href="#20200531" class="date">May 31,
+        2020</a>
+      <h1>New “two point” specification for <em>Noise</em></h1>
+      <p>When the Noise texture was first described on <a href="#20200103">January
+          3</a>, it included this design note: <span class="designnote">I don't
+          like that the noise pattern is always “axis aligned” in this
+          formulation. I could add a rotation angle. But I am leaning toward
+          changing to a specification with two points (<em>Vec2</em>s)—like used
+          in <em>Gradation</em>—or a point and a basis vector to specify a
+          whole transform: translation, rotation, and scale.</span> </p>
+      <p>That change has now been made. I was worried back then about making a
+        non-backward-compatible change. But over the last month I have developed
+        a workable scheme for backward compatibility. (So the old specification
+        still works after the new one was added.) In the new style, the
+        parameters to <em>Noise</em> are: two points and two textures. The two
+        points define a full transformation of the texture plane including
+        translation, rotation, and scale. It operates like “two finger” gestures
+        on a touch screen (drag, pinch, twist). Below are two identical
+        textures, one defined by the old specification (with center point and
+        scale) and one by the new specification with two points. In the latter,
+        the origin point is indicated with a red spot, the other point is green.
+        (Note the magenta “bulb” near the red point and the green point nearby.
+        The noise is transformed to keep the two points aligned with the same
+        parts of the texture. As in the other examples.)</p>
+      <pre><span class="comment">// Full texture expression shown at end of this post.</span>
+s = 0.4
+Noise(s, Vec2(0, 0), gray, magenta)
+Noise(Vec2(0, 0), Vec2(s, 0), gray, magenta)</pre>
+      <img src="images/20200531_old_Noise.png" alt="Noise(s, Vec2(0, 0), gray, magenta)"
+        title="Noise(s, Vec2(0, 0), gray, magenta)" height="511" width="511"> <img
+        src="images/20200531_new_Noise_1.png" alt="Noise(Vec2(0, 0), Vec2(s, 0), gray, magenta)"
+        title="Noise(Vec2(0, 0), Vec2(s, 0), gray, magenta)" height="511" width="511">
+      <p>The <em>Noise</em> pattern's transform is based on the line segment
+        between the two points. It can be thought of as corresponding to the
+        unit basis vector of the texture's <strong>x</strong> axis. The texture
+        center moves to the first point. The texture rotates to align with the
+        tangent vector of the line segment. The texture scales with the length
+        of the segment. In these examples, both points are within the unit
+        radius rendered extent of the texture. They are in fact allowed to be
+        anywhere on the texture plane. In the textures below, the two points are
+        symmetric about the origin. In the second one they have each moved to
+        1/4 of the previous distance. This changes the scale while position and
+        orientation stay fixed.</p>
+      <pre>Noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13), gray, magenta)
+Noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03), gray, magenta)</pre>
+      <img src="images/20200531_new_Noise_2.png" alt="Noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13), gray, magenta)"
+        title="Noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13), gray, magenta)" height="511"
+        width="511"> <img src="images/20200531_new_Noise_3.png" alt="Noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03), gray, magenta)"
+        title="Noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03), gray, magenta)" height="511"
+        width="511">
+      <p>Two more examples:</p>
+      <pre>Noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8), gray, magenta)<br>Noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68), gray, magenta)</pre>
+      <img src="images/20200531_new_Noise_4.png" alt="Noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8), gray, magenta)"
+        title="Noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8), gray, magenta)" height="511"
+        width="511"> <img src="images/20200531_new_Noise_5.png" alt="Noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68), gray, magenta)"
+        title="Noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68), gray, magenta)" height="511"
+        width="511">
+      <p>...</p>
+      <pre><span class="comment">// The first texture was defined by this expression, others analogously.</span> 
+Spot(p1, spot_ir, red, spot_or,
+     Spot(p2, spot_ir, green, spot_or,
+          SoftMatte(SoftThreshold(0.50,
+                                  0.53,
+                                  Noise(p1, p2, black, white)),
+                    gray,
+                    magenta)))</pre>
+    </div>
     <div class="post" id="20200526"> <a href="#20200526" class="date">May 26,
         2020</a>
       <h1>Prototype anti-aliasing</h1>
@@ -2853,11 +2920,13 @@ SoftMatte(spot(0.2),
         Perlin <code>noise()</code> function as described in his <a href="https://mrl.nyu.edu/%7Eperlin/noise/">SIGGRAPH
           2002 paper <em>Improving Noise</em></a>. The parameters are a scale
         factor, a center/translation, and two colors.</p>
-      <p class="designnote">(Design note: I don't like that the noise pattern is
-        always “axis aligned” in this formulation. I could add a rotation angle.
-        But I am leaning toward changing to a specification with two points (<em>Vec2</em>s)—like
-        used in <em>Gradation</em>—or a point and a basis vector to specify a
-        whole transform: translation, rotation, and scale.)</p>
+      <p><strong>Update</strong>: this “two point” approach was implemented on <a
+          href="#20200531">May 31</a>: <span class="designnote">(Design note: I
+          don't like that the noise pattern is always “axis aligned” in this
+          formulation. I could add a rotation angle. But I am leaning toward
+          changing to a specification with two points (<em>Vec2</em>s)—like used
+          in <em>Gradation</em>—or a point and a basis vector to specify a
+          whole transform: translation, rotation, and scale.)</span></p>
       <pre>Noise(0.1, Vec2(3, 5), Color(0, 0, 1), Color(1, 1, 0))</pre>
       <img src="images/20200103_Noise.png" alt="Noise texture generator (blue and yellow blobs)"
         title="Noise texture generator (blue and yellow blobs)" height="511" width="511">
