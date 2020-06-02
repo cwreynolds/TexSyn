@@ -89,8 +89,8 @@
         scale) and one by the new specification with two points. In the latter,
         the origin point is indicated with a red spot, the other point is green.
         (Note the magenta “bulb” near the red point and the green point nearby.
-        The noise is transformed to keep the two points aligned with the same
-        parts of the texture. As in the other examples.)</p>
+        The noise is transformed to keep the two points aligned with the
+        corresponding parts of the texture, as in the other examples below.)</p>
       <pre><span class="comment">// Full texture expression shown at end of this post.</span>
 s = 0.4
 Noise(s, Vec2(0, 0), gray, magenta)
@@ -125,12 +125,12 @@ Noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03), gray, magenta)</pre>
         title="Noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68), gray, magenta)" height="511"
         width="511">
       <p>...</p>
-      <pre><span class="comment">// The first texture was defined by this expression, others analogously.</span> 
+      <pre><span class="comment">// The textures above were defined by this expression. (No Spots for first one.)</span>
 Spot(p1, spot_ir, red, spot_or,
      Spot(p2, spot_ir, green, spot_or,
           SoftMatte(SoftThreshold(0.50,
                                   0.53,
-                                  Noise(p1, p2, black, white)),
+                                  <em><strong>Noise(p1, p2, black, white)</strong></em>),
                     gray,
                     magenta)))</pre>
     </div>

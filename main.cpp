@@ -2326,13 +2326,16 @@ int main(int argc, const char * argv[])
     
     // First draw old style Noise
     float baseline_scale = 0.4;
-    Noise bn1(baseline_scale, Vec2(), black, white);
-    Texture::displayAndFile(style(bn1), path + "old_Noise");
+//    Noise bn1(baseline_scale, Vec2(), black, white);
+//    Noise2 bn1(baseline_scale, Vec2(), black, white);
+    Brownian2 bn1(baseline_scale, Vec2(), black, white);
+    Texture::displayAndFile(style(bn1) ); // , path + "old_Noise");
     
     // Now draw several new style Noises, starting with equivalent to last one.
     auto two_point_noise = [&] (Vec2 p1, Vec2 p2, std::string pathname = "")
     {
-        Noise2 noise(p1, p2, black, white);
+//        Noise2 noise(p1, p2, black, white);
+        Brownian2 noise(p1, p2, black, white);
         float spot_ir = 0.02;
         float spot_or = 0.03;
         Uniform red(1, 0, 0);
@@ -2342,15 +2345,15 @@ int main(int argc, const char * argv[])
         Texture::displayAndFile(spot2, pathname);
     };
     two_point_noise(Vec2(0, 0), Vec2(baseline_scale, 0)
-                    , path + "new_Noise_1");
+                    ); // , path + "new_Noise_1");
     two_point_noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13)
-                    , path + "new_Noise_2");
+                    ); // , path + "new_Noise_2");
     two_point_noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03)
-                    , path + "new_Noise_3");
+                    ); // , path + "new_Noise_3");
     two_point_noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8)
-                    , path + "new_Noise_4");
+                    ); // , path + "new_Noise_4");
     two_point_noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68)
-                    , path + "new_Noise_5");
+                    ); // , path + "new_Noise_5");
 
     Texture::waitKey();
 

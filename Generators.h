@@ -222,64 +222,222 @@ private:
     const Texture& texture1;
 };
 
-// Perlin Noise
+//    // Perlin Noise
+//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+//    // This and other noise textures below use PerlinNoise package in Utilities.h
+//    class Noise2 : public Generator
+//    {
+//    public:
+//        Noise2(float _scale,
+//              Vec2 _center,
+//              const Texture& _texture0,
+//              const Texture& _texture1)
+//          //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//          : basis({1, 0}),
+//          //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            scale(_scale),
+//            center(_center),
+//            texture0(_texture0),
+//            texture1(_texture1)
+//        {};
+//
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        Noise2(Vec2 point_0,
+//              Vec2 point_1,
+//              const Texture& texture_0,
+//              const Texture& texture_1)
+//    //      : basis(point_1 - point_0),
+//    //        scale(basis.length()),
+//          : scale((point_1 - point_0).length()),
+//            basis((point_1 - point_0).normalize()),
+//            center (point_0),
+//            texture0(texture_0),
+//            texture1(texture_1) {}
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//
+//
+//        Color getColor(Vec2 position) const override
+//        {
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//
+//            Vec2 p = ((position - center) / scale);
+//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
+//            float noise = PerlinNoise::unitNoise2d(position);
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            return interpolate(noise,
+//                               texture0.getColor(position),
+//                               texture1.getColor(position));
+//        }
+//        // BACKWARD_COMPATIBILITY with version before inherent matting.
+//        Noise2(float a, Vec2 b, Color c, Color d)
+//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        const Vec2 basis;
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        const Texture& texture0;
+//        const Texture& texture1;
+//    };
+
+//    // Perlin Noise
+//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+//    // This and other noise textures below use PerlinNoise package in Utilities.h
+//    class Noise2 : public Generator
+//    {
+//    public:
+//        Noise2(Vec2 point_0,
+//              Vec2 point_1,
+//              const Texture& texture_0,
+//              const Texture& texture_1)
+//          : scale((point_1 - point_0).length()),
+//            basis((point_1 - point_0).normalize()),
+//            center (point_0),
+//            texture0(texture_0),
+//            texture1(texture_1) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//
+//            Vec2 p = ((position - center) / scale);
+//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
+//            float noise = PerlinNoise::unitNoise2d(position);
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            return interpolate(noise,
+//                               texture0.getColor(position),
+//                               texture1.getColor(position));
+//        }
+//        // BACKWARD_COMPATIBILITY with version before "two point" specification.
+//        Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
+//          : Noise2(b, b + Vec2(a, 0), c, d) {};
+//        // BACKWARD_COMPATIBILITY with version before inherent matting.
+//        Noise2(float a, Vec2 b, Color c, Color d)
+//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Vec2 basis;
+//        const Texture& texture0;
+//        const Texture& texture1;
+//    };
+
+//    // Perlin Noise
+//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
+//    // This and other noise textures below use PerlinNoise package in Utilities.h
+//    class Noise2 : public Generator
+//    {
+//    public:
+//        Noise2(Vec2 point_0,
+//              Vec2 point_1,
+//              const Texture& texture_0,
+//              const Texture& texture_1)
+//          : scale((point_1 - point_0).length()),
+//            basis((point_1 - point_0).normalize()),
+//            center (point_0),
+//            texture0(texture_0),
+//            texture1(texture_1) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
+//
+//    //        Vec2 p = ((position - center) / scale);
+//    //        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
+//    //        float noise = PerlinNoise::unitNoise2d(position);
+//
+//            Vec2 p = ((position - center) / scale);
+//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
+//            return interpolate(getScalerNoise(position),
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                               texture0.getColor(position),
+//                               texture1.getColor(position));
+//        }
+//
+//    //    Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
+//
+//        virtual float getScalerNoise(Vec2 transformed_position) const
+//        {
+//            return PerlinNoise::unitNoise2d(transformed_position);
+//        }
+//
+//        // BACKWARD_COMPATIBILITY with version before "two point" specification.
+//        Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
+//          : Noise2(b, b + Vec2(a, 0), c, d) {};
+//        // BACKWARD_COMPATIBILITY with version before inherent matting.
+//        Noise2(float a, Vec2 b, Color c, Color d)
+//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+//    private:
+//        const float scale;
+//        const Vec2 center;
+//        const Vec2 basis;
+//        const Texture& texture0;
+//        const Texture& texture1;
+//    };
+
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
 class Noise2 : public Generator
 {
 public:
-    Noise2(float _scale,
-          Vec2 _center,
-          const Texture& _texture0,
-          const Texture& _texture1)
-      //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-      : basis({1, 0}),
-      //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        scale(_scale),
-        center(_center),
-        texture0(_texture0),
-        texture1(_texture1)
-    {};
-    
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     Noise2(Vec2 point_0,
           Vec2 point_1,
           const Texture& texture_0,
           const Texture& texture_1)
-//      : basis(point_1 - point_0),
-//        scale(basis.length()),
       : scale((point_1 - point_0).length()),
         basis((point_1 - point_0).normalize()),
         center (point_0),
         texture0(texture_0),
         texture1(texture_1) {}
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-    
     Color getColor(Vec2 position) const override
     {
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-        
         Vec2 p = ((position - center) / scale);
         position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-        float noise = PerlinNoise::unitNoise2d(position);
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        return interpolate(noise,
+        return interpolate(getScalerNoise(position),
                            texture0.getColor(position),
                            texture1.getColor(position));
     }
+    // Get scalar noise fraction on [0, 1] for the given transformed position.
+    // Overridden by other noise-based textures to customize basic behavior.
+    virtual float getScalerNoise(Vec2 transformed_position) const
+    {
+        return PerlinNoise::unitNoise2d(transformed_position);
+    }
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+    Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Noise2(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
     Noise2(float a, Vec2 b, Color c, Color d)
       : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
 private:
     const float scale;
     const Vec2 center;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const Vec2 basis;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     const Texture& texture0;
     const Texture& texture1;
+};
+
+// TODO completely experimental!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// Brownian Noise -- multi octave fractal 1/f Perlin Noise
+class Brownian2 : public Noise2
+{
+public:
+    Brownian2(Vec2 point_0, Vec2 point_1,
+              const Texture& texture_0, const Texture& texture_1)
+      : Noise2(point_0, point_1, texture_0, texture_1) {};
+    float getScalerNoise(Vec2 transformed_position) const override
+    {
+        return PerlinNoise::brownian2d(transformed_position);
+    }
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+    Brownian2(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Brownian2(b, b + Vec2(a, 0), c, d) {};
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    Brownian2(float a, Vec2 b, Color c, Color d)
+        : Brownian2(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
