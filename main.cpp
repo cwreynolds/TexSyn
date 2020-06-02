@@ -2296,14 +2296,35 @@ int main(int argc, const char * argv[])
     Vec2 p4 = p3 + Vec2(4, 1).normalize() * 0.2;
     Uniform red(1, 0, 0);
     Uniform dark_blue(0, 0, 0.1);
-    Texture::displayAndFile(Brownian2(p1, p2, red, dark_blue));
-    Texture::displayAndFile(Brownian2(p3, p4, red, dark_blue));
-    Texture::displayAndFile(Turbulence2(p1, p2, red, dark_blue));
-    Texture::displayAndFile(Turbulence2(p3, p4, red, dark_blue));
-    Texture::displayAndFile(Furbulence2(p1, p2, red, dark_blue));
-    Texture::displayAndFile(Furbulence2(p3, p4, red, dark_blue));
-    Texture::displayAndFile(Wrapulence2(p1, p2, red, dark_blue));
-    Texture::displayAndFile(Wrapulence2(p3, p4, red, dark_blue));
+    Texture::displayAndFile(Brownian2(p1, p2, red, dark_blue)
+                            , path + "Brownian_1");
+    Texture::displayAndFile(Brownian2(p3, p4, red, dark_blue)
+                            , path + "Brownian_2");
+    Texture::displayAndFile(Turbulence2(p1, p2, red, dark_blue)
+                            , path + "Turbulence_1");
+    Texture::displayAndFile(Turbulence2(p3, p4, red, dark_blue)
+                            , path + "Turbulence_2");
+    Texture::displayAndFile(Furbulence2(p1, p2, red, dark_blue)
+                            , path + "Furbulence_1");
+    Texture::displayAndFile(Furbulence2(p3, p4, red, dark_blue)
+                            , path + "Furbulence_2");
+    Texture::displayAndFile(Wrapulence2(p1, p2, red, dark_blue)
+                            , path + "Wrapulence_1");
+    Texture::displayAndFile(Wrapulence2(p3, p4, red, dark_blue)
+                            , path + "Wrapulence_2");
+    
+    // Do not save these for doc.
+    Uniform green(0, 1, 0);
+    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.0));
+    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.2));
+    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.4));
+    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.6));
+    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.8));
+
+    Texture::displayAndFile(ColorNoise2(p1, p2, 0.6)
+                            , path + "ColorNoise_1");
+    Texture::displayAndFile(ColorNoise2(p3, p4, 0.6)
+                            , path + "ColorNoise_2");
 
     Texture::waitKey();
 

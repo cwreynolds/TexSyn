@@ -67,6 +67,56 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200602"> <a href="#20200602" class="date">June 2,
+        2020</a>
+      <h1>New “two point” specification for other noise-based textures</h1>
+      <p>Following on from <a href="#20200531">May 31</a>, I refactored the new
+        “two point” version of <em>Noise</em> to make it easy to customize
+        which scalar noise pattern to use. Then I derived the other noise
+        patterns from that, leading to less code duplication overall. First,
+        here are the other four noise patterns—<em>Brownian</em>, <em>Turbulence</em>,
+        <em> Furbulence</em>, and <em>Wrapulence</em>—each shown for two pairs
+        of points.</p>
+      <pre>p1 = Vec2(10, 3)
+p2 = p1 + Vec2(-1, 3).normalize() * 0.4
+p3 = Vec2(-1, 4)
+p4 = p3 + Vec2(4, 1).normalize() * 0.2
+red = Uniform(1, 0, 0)
+dark_blue = Uniform (0, 0, 0.1)
+<br>Brownian(p1, p2, red, dark_blue)
+Brownian(p3, p4, red, dark_blue)</pre>
+      <img src="images/20200602_Brownian_1.png" alt="Brownian(p1, p2, red, dark_blue)"
+        title="Brownian(p1, p2, red, dark_blue)" height="511" width="511"> <img
+        src="images/20200602_Brownian_2.png" alt="Brownian(p3, p4, red, dark_blue)"
+        title="Brownian(p3, p4, red, dark_blue)" height="511" width="511">
+      <pre>Turbulence(p1, p2, red, dark_blue)
+Turbulence(p3, p4, red, dark_blue)</pre>
+      <img src="images/20200602_Furbulence_1.png" alt="Turbulence(p1, p2, red, dark_blue)"
+        title="Turbulence(p1, p2, red, dark_blue)" height="511" width="511"> <img
+        src="images/20200602_Furbulence_2.png" alt="Turbulence(p3, p4, red, dark_blue)"
+        title="Turbulence(p3, p4, red, dark_blue)" height="511" width="511">
+      <pre>Furbulence(p1, p2, red, dark_blue)
+Furbulence(p3, p4, red, dark_blue)</pre>
+      <img src="images/20200602_Turbulence_1.png" alt="Furbulence(p1, p2, red, dark_blue)"
+        title="Furbulence(p1, p2, red, dark_blue)" height="511" width="511"> <img
+        src="images/20200602_Turbulence_2.png" alt="Furbulence(p3, p4, red, dark_blue)"
+        title="Furbulence(p3, p4, red, dark_blue)" height="511" width="511">
+      <pre>Wrapulence2(p1, p2, red, dark_blue)
+Wrapulence2(p3, p4, red, dark_blue)</pre>
+      <img src="images/20200602_Wrapulence_1.png" alt="Wrapulence2(p1, p2, red, dark_blue)"
+        title="Wrapulence2(p1, p2, red, dark_blue)" height="511" width="511"> <img
+        src="images/20200602_Wrapulence_2.png" alt="Wrapulence2(p3, p4, red, dark_blue)"
+        title="Wrapulence2(p3, p4, red, dark_blue)" height="511" width="511">
+      <p>In addition <em>MultiNoise</em> was updated to “two points”, which
+        look identical to the textures above. </p>
+      <p>Finally two <em>ColorNoise</em> with a third parameter of 0.6 which
+        selects a “disaligned” <em>Furbulence</em> for each primary.</p>
+      <pre>ColorNoise(p1, p2, 0.6)
+ColorNoise(p3, p4, 0.6)</pre>
+      <img src="images/20200602_ColorNoise_1.png" alt="ColorNoise(p1, p2, 0.6)"
+        title="ColorNoise(p1, p2, 0.6)" height="511" width="511"> <img src="images/20200602_ColorNoise_2.png"
+        alt="ColorNoise(p3, p4, 0.6)" title="ColorNoise(p3, p4, 0.6)" height="511"
+        width="511"> </div>
     <div class="post" id="20200531"> <a href="#20200531" class="date">May 31,
         2020</a>
       <h1>New “two point” specification for <em>Noise</em></h1>

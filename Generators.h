@@ -529,6 +529,95 @@ public:
         : Wrapulence2(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
 
+
+// MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
+// Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
+// that selects between them. (This is to allow all the variations without
+// "overwhelming" the space of generators when randomly selecting for GP. An
+// alternative would be to specify a "likeliness" weighting in the GP defs for
+// making the random selections.)
+class MultiNoise2 : public Noise2
+{
+public:
+    MultiNoise2(Vec2 point_0,
+                Vec2 point_1,
+                const Texture& texture_0,
+                const Texture& texture_1,
+                float _which)
+      : Noise2(point_0, point_1, texture_0, texture_1),
+        which(_which) {};
+    float getScalerNoise(Vec2 transformed_position) const override
+    {
+        return PerlinNoise::multiNoise2d(transformed_position, which);
+    }
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+    MultiNoise2(float a, Vec2 b, const Texture& c, const Texture& d, float e)
+      : MultiNoise2(b, b + Vec2(a, 0), c, d, e) {};
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    MultiNoise2(float a, Vec2 b, Color c, Color d, float e)
+        : MultiNoise2(a, b, disposableUniform(c), disposableUniform(d), e) {};
+private:
+    const float which;
+};
+
+// Color Noise -- RGB Perlin Noise
+class ColorNoise2 : public Noise2
+{
+public:
+    ColorNoise2(Vec2 point_0, Vec2 point_1, float _which)
+      : Noise2(point_0, point_1, *this, *this),
+//        scale(_scale),
+//        center(_center),
+        which(_which),
+        offset1(Vec2(1, 0)),
+        offset2(offset1.rotate(pi * 2 / 3)),
+        offset3(offset2.rotate(pi * 2 / 3)) {};
+    
+    Color getColor(Vec2 position) const override
+    {
+//        Vec2 p1 = ((position + offset1 - center) / scale).rotate(0.3);
+//        Vec2 p2 = ((position + offset2 - center) / scale).rotate(0.6);
+//        Vec2 p3 = ((position + offset3 - center) / scale).rotate(0.9);
+//        return Color(PerlinNoise::multiNoise2d(p1, which),
+//                     PerlinNoise::multiNoise2d(p2, which),
+//                     PerlinNoise::multiNoise2d(p3, which));
+        
+        
+        
+        Vec2 tp1 = transformIntoNoiseSpace(position).rotate(0.3);
+        Vec2 tp2 = transformIntoNoiseSpace(position).rotate(0.6);
+        Vec2 tp3 = transformIntoNoiseSpace(position).rotate(0.9);
+
+        
+        
+//        return interpolate(getScalerNoise(transformed_position),
+//                           texture0.getColor(transformed_position),
+//                           texture1.getColor(transformed_position));
+
+        return Color(PerlinNoise::multiNoise2d(tp1, which),
+                     PerlinNoise::multiNoise2d(tp2, which),
+                     PerlinNoise::multiNoise2d(tp3, which));
+
+    }
+    
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+//    ColorNoise2(float _scale, Vec2 _center, float _which)
+//      : scale(_scale),
+//        center(_center),
+//        which(_which),
+//        offset1(Vec2(1, 0)),
+//        offset2(offset1.rotate(pi * 2 / 3)),
+//        offset3(offset2.rotate(pi * 2 / 3)) {};
+
+private:
+//    const float scale;
+//    const Vec2 center;
+    const float which;
+    const Vec2 offset1;
+    const Vec2 offset2;
+    const Vec2 offset3;
+};
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Brownian Noise -- multi octave fractal 1/f Perlin Noise
