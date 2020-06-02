@@ -2237,123 +2237,73 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
-    // Experiment with new "2 point" spec for noise textures -- May 31, 2020
-    std::cout << "May 31, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200531_";
-    
-//        Uniform white(1);
-//        Uniform black(0);
-//        Uniform gray(0.4);
-//        Uniform red(1, 0, 0);
-//        Uniform green(0, 1, 0);
-//    //    Uniform magenta(0.7, 0, 0.9);
-//        Uniform magenta(0.8, 0, 1);
+//    // Experiment with new "2 point" spec for noise textures -- May 31, 2020
+//    std::cout << "May 31, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200531_";
+//
+//    Uniform white(1);
+//    Uniform black(0);
+//    Uniform gray(0.4);
+//    Uniform magenta(0.8, 0, 1);
+//
+//    // Converts monochrome noise texture to threhsholded gray/magenta style.
+//    auto style = [&](const Texture& texture) -> const SoftMatte&
+//    {
+//        // Note: "leaks" allocation of these textures. Used only in this test.
+//        auto& st = *(new SoftThreshold(0.50, 0.53, texture));
+//        return *(new SoftMatte(st, gray, magenta));
+//    };
+//
+//    // First draw old style Noise
+//    float baseline_scale = 0.4;
+//    Noise2 bn1(baseline_scale, Vec2(), black, white);
+//    Texture::displayAndFile(style(bn1) ); // , path + "old_Noise");
+//
+//    // Now draw several new style Noises, starting with equivalent to last one.
+//    auto two_point_noise = [&] (Vec2 p1, Vec2 p2, std::string pathname = "")
+//    {
+//        Noise2 noise(p1, p2, black, white);
 //        float spot_ir = 0.02;
 //        float spot_or = 0.03;
+//        Uniform red(1, 0, 0);
+//        Uniform green(0, 1, 0);
+//        Spot spot1(p2, spot_ir, green, spot_or, style(noise));
+//        Spot spot2(p1, spot_ir, red, spot_or, spot1);
+//        Texture::displayAndFile(spot2, pathname);
+//    };
+//    two_point_noise(Vec2(0, 0), Vec2(baseline_scale, 0)
+//                    ); // , path + "new_Noise_1");
+//    two_point_noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13)
+//                    ); // , path + "new_Noise_2");
+//    two_point_noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03)
+//                    ); // , path + "new_Noise_3");
+//    two_point_noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8)
+//                    ); // , path + "new_Noise_4");
+//    two_point_noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68)
+//                    ); // , path + "new_Noise_5");
 //
-//        auto style = [&](const Texture& texture) -> const SoftMatte&
-//        {
-//            return *(new SoftMatte(*(new SoftThreshold(0.50, 0.53, texture)),
-//                                   gray,
-//                                   magenta));
-//        };
-//
-//        float baseline_scale = 0.4;
-//        //TODO don't duplicate code, make utility to do this stylistic wrap:
-//        Noise bn1(baseline_scale, Vec2(), black, white);
-//    //    SoftThreshold bn2(0.50, 0.53, bn1);
-//    //    SoftMatte baseline_noise(bn2, gray, magenta);
-//    //    Texture::displayAndFile(baseline_noise);
-//
-//        Texture::displayAndFile(style(bn1));
-//
-//
-//        auto two_point_noise = [&] (Vec2 p1, Vec2 p2)
-//        {
-//    //        Noise2 n1(p1, p2, black, white);
-//    //        SoftThreshold n2(0.50, 0.53, n1);
-//    //        SoftMatte noise(n2, gray, magenta);
-//    //        Spot spot1(p2, spot_ir, red, spot_or, noise);
-//    //        Spot spot2(p1, spot_ir, green, spot_or, spot1);
-//    //        Texture::displayAndFile(spot2);
-//
-//    //            Noise2 n1(p1, p2, black, white);
-//    //    //        SoftThreshold n2(0.50, 0.53, n1);
-//    //    //        SoftMatte noise(n2, gray, magenta);
-//    //            Spot spot1(p2, spot_ir, red, spot_or, style(n1));
-//    //            Spot spot2(p1, spot_ir, green, spot_or, spot1);
-//    //            Texture::displayAndFile(spot2);
-//
-//            Noise2 noise(p1, p2, black, white);
-//            Spot spot1(p2, spot_ir, red, spot_or, style(noise));
-//            Spot spot2(p1, spot_ir, green, spot_or, spot1);
-//            Texture::displayAndFile(spot2);
-//        };
-//        two_point_noise(Vec2(0, 0), Vec2(baseline_scale, 0));
-//        two_point_noise(Vec2(-0.3, 0.7), Vec2(-0.2, 0.5));
-//        two_point_noise(Vec2(-0.3, -0.7), Vec2(0.5, -0.1));
-//    //    two_point_noise(Vec2(0, 0), Vec2(0.5, 0));
-//    //    two_point_noise(Vec2(0, 0.5), Vec2(0, -0.5));
-//    //    two_point_noise(Vec2(0, 0.1), Vec2(0, -0.1));
-//
-//    //    two_point_noise(Vec2(0.85, 0.28), Vec2(-0.85, -0.28));
-//    //    two_point_noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13));
-//
-//        two_point_noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13));
-//        two_point_noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03));
-//
-//    //    debugPrint(Vec2(3, 1).normalize() * 0.9);
-//    //    debugPrint(Vec2(3, 1).normalize() * 0.4);
-//    //    debugPrint(Vec2(3, 1).normalize() * 0.1);
-//
-//    //    Vec2(3, 1).normalize() * 0.9 = (0.853815, 0.284605)
-//    //    Vec2(3, 1).normalize() * 0.4 = (0.379473, 0.126491)
-//    //    Vec2(3, 1).normalize() * 0.1 = (0.0948683, 0.0316228)
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Uniform white(1);
-    Uniform black(0);
-    Uniform gray(0.4);
-    Uniform magenta(0.8, 0, 1);
-    
-    // Converts monochrome noise texture to threhsholded gray/magenta style.
-    auto style = [&](const Texture& texture) -> const SoftMatte&
-    {
-        // Note: "leaks" allocation of these textures. Used only in this test.
-        auto& st = *(new SoftThreshold(0.50, 0.53, texture));
-        return *(new SoftMatte(st, gray, magenta));
-    };
-    
-    // First draw old style Noise
-    float baseline_scale = 0.4;
-//    Noise bn1(baseline_scale, Vec2(), black, white);
-//    Noise2 bn1(baseline_scale, Vec2(), black, white);
-    Brownian2 bn1(baseline_scale, Vec2(), black, white);
-    Texture::displayAndFile(style(bn1) ); // , path + "old_Noise");
-    
-    // Now draw several new style Noises, starting with equivalent to last one.
-    auto two_point_noise = [&] (Vec2 p1, Vec2 p2, std::string pathname = "")
-    {
-//        Noise2 noise(p1, p2, black, white);
-        Brownian2 noise(p1, p2, black, white);
-        float spot_ir = 0.02;
-        float spot_or = 0.03;
-        Uniform red(1, 0, 0);
-        Uniform green(0, 1, 0);
-        Spot spot1(p2, spot_ir, green, spot_or, style(noise));
-        Spot spot2(p1, spot_ir, red, spot_or, spot1);
-        Texture::displayAndFile(spot2, pathname);
-    };
-    two_point_noise(Vec2(0, 0), Vec2(baseline_scale, 0)
-                    ); // , path + "new_Noise_1");
-    two_point_noise(Vec2(0.38, 0.13), Vec2(-0.38, -0.13)
-                    ); // , path + "new_Noise_2");
-    two_point_noise(Vec2(0.09, 0.03), Vec2(-0.09, -0.03)
-                    ); // , path + "new_Noise_3");
-    two_point_noise(Vec2(-0.3, -0.8), Vec2(0.2, 0.8)
-                    ); // , path + "new_Noise_4");
-    two_point_noise(Vec2(-0.3, 0.7), Vec2(-0.25, 0.68)
-                    ); // , path + "new_Noise_5");
+    // New "2 point" spec for all noise textures -- June 2, 2020
+    std::cout << "June 2, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200602_";
+
+    Vec2 p1(10, 3);
+    Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.4;
+    Vec2 p3(-1, 4);
+    Vec2 p4 = p3 + Vec2(4, 1).normalize() * 0.2;
+    Uniform red(1, 0, 0);
+    Uniform dark_blue(0, 0, 0.1);
+    Texture::displayAndFile(Brownian2(p1, p2, red, dark_blue));
+    Texture::displayAndFile(Brownian2(p3, p4, red, dark_blue));
+    Texture::displayAndFile(Turbulence2(p1, p2, red, dark_blue));
+    Texture::displayAndFile(Turbulence2(p3, p4, red, dark_blue));
+    Texture::displayAndFile(Furbulence2(p1, p2, red, dark_blue));
+    Texture::displayAndFile(Furbulence2(p3, p4, red, dark_blue));
+    Texture::displayAndFile(Wrapulence2(p1, p2, red, dark_blue));
+    Texture::displayAndFile(Wrapulence2(p3, p4, red, dark_blue));
 
     Texture::waitKey();
 

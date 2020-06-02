@@ -40,6 +40,28 @@ public:
     // 90° (π/2) rotation
     Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
     Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // experiment -- bring back version of ASAS local space transform operators
+//    Vec2 localize(Vec2 basis_x, Vec2 basis_y) const
+//    {
+//        return Vec2(dot(basis_x), dot(basis_y));
+//    }
+    
+    // "Localize" this Vec2 into a local space defined by x and y basis vectors.
+    Vec2 localize(Vec2 bx, Vec2 by) const { return Vec2(dot(bx), dot(by)); }
+    
+    // TODO add globalize while we are at it?
+    
+    Vec2 globalize(Vec2 bx, Vec2 by) const { return (bx * x()) + (by * y()); }
+
+//    Vec3 globalizeDirection (const Vec3& localDirection) const
+//    {
+//        return ((_side    * localDirection.x) +
+//                (_up      * localDirection.y) +
+//                (_forward * localDirection.z));
+//    };
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Compute a 32 bit hash value for a Vec2.
     size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
     // Angle of this vector with +Y axis.
