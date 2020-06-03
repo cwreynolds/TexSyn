@@ -36,15 +36,15 @@
             }
       .designnote { color: rgb(25%,25%,25%) }
       .novak_pad { margin-right: 105px; margin-left: 105px; }
-      <!-- --------------------------------------------------------------------------- -->
-      <div class="post" id="yyyymmdd">
-        <a href="#yyyymmdd" class="date">Month 0, 0000</a>
-        <h1>Title</h1>
-        <p>...</p>
-        <pre>x</pre>
-        <img src="images/xxx" alt="" title="" height="511" width="511">
-      </div>
-      <!-- --------------------------------------------------------------------------- -->
+    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="yyyymmdd">
+      <a href="#yyyymmdd" class="date">Month 0, 0000</a>
+      <h1>Title</h1>
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+    </div>
+    <!-- --------------------------------------------------------------------------- -->
     </style>
   </head>
   <body id="top">
@@ -67,6 +67,47 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200603"> <a href="#20200603" class="date">June 3,
+        2020</a>
+      <h1>Experimental <em>RgbBox</em> color remapping</h1>
+      <p>I had considered exposing the <code>Color::clipToUnitRGB()</code> as a
+        texture operator. It is normally used at the end of the texture
+        synthesis pipeline, just before output gamma correction. In TexSyn, RGB
+        color components are allowed to take on any floating point value, <code>Color::clipToUnitRGB()</code>
+        clips them to be non-negative, and clips positive RGB triplets, as if
+        they were a 3d ray, against the three “bright” faces of the unit color
+        cube. I speculated this sort of clipping might provide some additional
+        utility in defining textures.</p>
+      <p>I decided to try a more generalized version of this as <em>RgbBox</em>.
+        It maps the unit RGB cube to a axis-aligned “box” within the unit
+        cube. Its parameters are the min and max bounds of the box
+        for each of red, green, and blue — plus an input texture. It first does
+        the <code>clipToUnitRGB()</code> then linearly “remaps” the range of
+        each component from the interval [0, 1] to [min, max]. These examples
+        each use this <code>cn</code> texture, similar to the final example <a
+          href="#20200602">yesterday</a>.</p>
+      <pre>p1 = Vec2 p1(2, 3)
+p2 = p1 + Vec2(-1, 3).normalize() * 0.3
+cn = ColorNoise(p1, p2, 0.6)</pre>
+      <img src="images/20200603_cn.png" alt="ColorNoise(p1, p2, 0.6)" title="ColorNoise(p1, p2, 0.6)"
+        height="511" width="511">
+      <pre><span class="comment">// Here red is on[0, 0.3], green on [0.3, 0.6], and blue [0.6, 0.9].</span>
+RgbBox(0.0, 0.3,  0.3, 0.6,  0.6, 0.9,  cn)</pre>
+      <img src="images/20200603_RgbBox_1.png" alt="RgbBox(0.0, 0.3,  0.3, 0.6,  0.6, 0.9,  cn)"
+        title="RgbBox(0.0, 0.3,  0.3, 0.6,  0.6, 0.9,  cn)" height="511" width="511">
+      <pre><span class="comment">// Here red is pushed up, green is midrange, and blue unchanged.</span>
+RgbBox(0.5, 1.0,  0.2, 0.6,  0.0, 1.0,  cn)</pre>
+      <img src="images/20200603_RgbBox_2.png" alt="RgbBox(0.5, 1.0,  0.2, 0.6,  0.0, 1.0,  cn)"
+        title="RgbBox(0.5, 1.0,  0.2, 0.6,  0.0, 1.0,  cn)" height="511" width="511">
+      <pre><span class="comment">// Here red is pushed up, green even more so, and blue pushed down.</span>
+RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)</pre>
+      <img src="images/20200603_RgbBox_3.png" alt="RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)"
+        title="RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)" height="511" width="511">
+      <pre><span class="comment">// The floor of red is pushed up (to 0.2) while green and blue are squished below it.</span>
+RgbBox(0.2, 1.0,  0.0, 0.2,  0.0, 0.2,  cn)</pre>
+      <img src="images/20200603_RgbBox_4.png" alt="RgbBox(0.2, 1.0,  0.0, 0.2,  0.0, 0.2,  cn)"
+        title="RgbBox(0.2, 1.0,  0.0, 0.2,  0.0, 0.2,  cn)" height="511" width="511">
+    </div>
     <div class="post" id="20200602"> <a href="#20200602" class="date">June 2,
         2020</a>
       <h1>New “two point” specification for other noise-based textures</h1>

@@ -1232,3 +1232,43 @@ private:
     const float exponent;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO EXPERIMENTAL
+
+// Linear remap of positive unit RGB color cube to a given "box" within it.
+// Parameters are the min and max bounds of the box for each of red, green and
+// blue. So for example The clipped input color's red component is remapped from
+// the interval [0, 1] to [min_r, max_r].
+class RgbBox : public Operator
+{
+public:
+    RgbBox(float minr, float maxr,
+           float ming, float maxg,
+           float minb, float maxb,
+           const Texture& _texture)
+      : min_r(clip01(std::min(minr, maxr))),
+        max_r(clip01(std::max(minr, maxr))),
+        min_g(clip01(std::min(ming, maxg))),
+        max_g(clip01(std::max(ming, maxg))),
+        min_b(clip01(std::min(minb, maxb))),
+        max_b(clip01(std::max(minb, maxb))),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color input = texture.getColor(position).clipToUnitRGB();
+        return Color(remapInterval(input.r(), 0, 1, min_r, max_r),
+                     remapInterval(input.g(), 0, 1, min_g, max_g),
+                     remapInterval(input.b(), 0, 1, min_b, max_b));
+    }
+private:
+    const float min_r;
+    const float max_r;
+    const float min_g;
+    const float max_g;
+    const float min_b;
+    const float max_b;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

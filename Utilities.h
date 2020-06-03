@@ -62,6 +62,11 @@ inline float clip (const float x, const float min, const float max)
     return x;
 }
 
+inline float clip01 (const float x)
+{
+    return clip(x, 0, 1);
+}
+
 // Maps from 0 to 1 into a sinusoid ramp ("slow in, slow out") from 0 to 1.
 inline float sinusoid (float x)
 {
