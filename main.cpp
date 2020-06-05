@@ -2296,35 +2296,35 @@ int main(int argc, const char * argv[])
 //    Vec2 p4 = p3 + Vec2(4, 1).normalize() * 0.2;
 //    Uniform red(1, 0, 0);
 //    Uniform dark_blue(0, 0, 0.1);
-//    Texture::displayAndFile(Brownian2(p1, p2, red, dark_blue)
-//                            , path + "Brownian_1");
-//    Texture::displayAndFile(Brownian2(p3, p4, red, dark_blue)
-//                            , path + "Brownian_2");
-//    Texture::displayAndFile(Turbulence2(p1, p2, red, dark_blue)
-//                            , path + "Turbulence_1");
-//    Texture::displayAndFile(Turbulence2(p3, p4, red, dark_blue)
-//                            , path + "Turbulence_2");
-//    Texture::displayAndFile(Furbulence2(p1, p2, red, dark_blue)
-//                            , path + "Furbulence_1");
-//    Texture::displayAndFile(Furbulence2(p3, p4, red, dark_blue)
-//                            , path + "Furbulence_2");
-//    Texture::displayAndFile(Wrapulence2(p1, p2, red, dark_blue)
-//                            , path + "Wrapulence_1");
-//    Texture::displayAndFile(Wrapulence2(p3, p4, red, dark_blue)
-//                            , path + "Wrapulence_2");
+//    Texture::displayAndFile(Brownian(p1, p2, red, dark_blue)
+//                            ); // , path + "Brownian_1");
+//    Texture::displayAndFile(Brownian(p3, p4, red, dark_blue)
+//                            ); // , path + "Brownian_2");
+//    Texture::displayAndFile(Turbulence(p1, p2, red, dark_blue)
+//                            ); // , path + "Turbulence_1");
+//    Texture::displayAndFile(Turbulence(p3, p4, red, dark_blue)
+//                            ); // , path + "Turbulence_2");
+//    Texture::displayAndFile(Furbulence(p1, p2, red, dark_blue)
+//                            ); // , path + "Furbulence_1");
+//    Texture::displayAndFile(Furbulence(p3, p4, red, dark_blue)
+//                            ); // , path + "Furbulence_2");
+//    Texture::displayAndFile(Wrapulence(p1, p2, red, dark_blue)
+//                            ); // , path + "Wrapulence_1");
+//    Texture::displayAndFile(Wrapulence(p3, p4, red, dark_blue)
+//                            ); // , path + "Wrapulence_2");
 //
 //    // Do not save these for doc.
 //    Uniform green(0, 1, 0);
-//    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.0));
-//    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.2));
-//    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.4));
-//    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.6));
-//    Texture::displayAndFile(MultiNoise2(p3, p4, red, green, 0.8));
+//    Texture::displayAndFile(MultiNoise(p3, p4, red, green, 0.0));
+//    Texture::displayAndFile(MultiNoise(p3, p4, red, green, 0.2));
+//    Texture::displayAndFile(MultiNoise(p3, p4, red, green, 0.4));
+//    Texture::displayAndFile(MultiNoise(p3, p4, red, green, 0.6));
+//    Texture::displayAndFile(MultiNoise(p3, p4, red, green, 0.8));
 //
-//    Texture::displayAndFile(ColorNoise2(p1, p2, 0.6)
-//                            , path + "ColorNoise_1");
-//    Texture::displayAndFile(ColorNoise2(p3, p4, 0.6)
-//                            , path + "ColorNoise_2");
+//    Texture::displayAndFile(ColorNoise(p1, p2, 0.6)
+//                            ); // , path + "ColorNoise_1");
+//    Texture::displayAndFile(ColorNoise(p3, p4, 0.6)
+//                            ); // , path + "ColorNoise_2");
 //
 //    Texture::waitKey();
 
@@ -2333,21 +2333,21 @@ int main(int argc, const char * argv[])
     // Experimental RgbBox -- June 3, 2020
     std::cout << "June 3, 2021" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200603_";
-    
+
     Vec2 p1(2, 3);
     Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.3;
-    ColorNoise2 cn(p1, p2, 0.6);
+    ColorNoise cn(p1, p2, 0.6);
     Texture::displayAndFile(cn
-                            , path + "cn");
+                            ); // , path + "cn");
     Texture::displayAndFile(RgbBox(0.0, 0.3, 0.3, 0.6, 0.6, 0.9, cn)
-                            , path + "RgbBox_1");
+                            ); // , path + "RgbBox_1");
     Texture::displayAndFile(RgbBox(0.5, 1.0, 0.2, 0.6, 0.0, 1.0, cn)
-                            , path + "RgbBox_2");
+                            ); // , path + "RgbBox_2");
     Texture::displayAndFile(RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)
-                            , path + "RgbBox_3");
+                            ); // , path + "RgbBox_3");
     Texture::displayAndFile(RgbBox(0.2, 1.0, 0.0, 0.2, 0.0, 0.2, cn)
-                            , path + "RgbBox_4");
-    
+                            ); // , path + "RgbBox_4");
+
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

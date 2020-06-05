@@ -166,16 +166,11 @@ namespace PerlinNoise
         float octave = 1.0f;
         for (int i = 0; i < recursion_levels; i++)
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            position = disalignment_rotation(position);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             float pn = noise2d(position * octave);
             float sn = pn * 3;
             value += (sn - floor (sn)) / octave;
             octave *= 2;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             position = disalignment_rotation(position);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // TODO revisit Wrapulence clip bounds after running Release build.
         return remapIntervalClip(value, 0, 1.9, 0, 1);

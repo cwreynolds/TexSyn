@@ -1233,9 +1233,6 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO EXPERIMENTAL
-
 // Linear remap of positive unit RGB color cube to a given "box" within it.
 // Parameters are the min and max bounds of the box for each of red, green and
 // blue. So for example The clipped input color's red component is remapped from
@@ -1270,5 +1267,3 @@ private:
     const float max_b;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

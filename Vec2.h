@@ -40,14 +40,12 @@ public:
     // 90° (π/2) rotation
     Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
     Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // "Localize" this Vec2 into a local space defined by x and y basis vectors.
     Vec2 localize(Vec2 bx, Vec2 by) const { return Vec2(dot(bx), dot(by)); }
     // "Globalize" this Vec2 from local space defined by x and y basis vectors.
     // TODO This has not been tested. I cribbed localize() from OpenSteer, and
     // TODO decided to write this while I had the file open. "Might" be right.
     Vec2 globalize(Vec2 bx, Vec2 by) const { return (bx * x()) + (by * y()); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Compute a 32 bit hash value for a Vec2.
     size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
     // Angle of this vector with +Y axis.

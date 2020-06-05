@@ -187,202 +187,12 @@ private:
     const float duty_cycle;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
 class Noise : public Generator
 {
 public:
-    Noise(float _scale,
-          Vec2 _center,
-          const Texture& _texture0,
-          const Texture& _texture1)
-    :
-        scale (_scale),
-        center (_center),
-        texture0(_texture0),
-        texture1(_texture1)
-    {};
-    Color getColor(Vec2 position) const override
-    {
-        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-        return interpolate(noise,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Noise(float a, Vec2 b, Color c, Color d)
-      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-//    // Perlin Noise
-//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
-//    // This and other noise textures below use PerlinNoise package in Utilities.h
-//    class Noise2 : public Generator
-//    {
-//    public:
-//        Noise2(float _scale,
-//              Vec2 _center,
-//              const Texture& _texture0,
-//              const Texture& _texture1)
-//          //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//          : basis({1, 0}),
-//          //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            scale(_scale),
-//            center(_center),
-//            texture0(_texture0),
-//            texture1(_texture1)
-//        {};
-//
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        Noise2(Vec2 point_0,
-//              Vec2 point_1,
-//              const Texture& texture_0,
-//              const Texture& texture_1)
-//    //      : basis(point_1 - point_0),
-//    //        scale(basis.length()),
-//          : scale((point_1 - point_0).length()),
-//            basis((point_1 - point_0).normalize()),
-//            center (point_0),
-//            texture0(texture_0),
-//            texture1(texture_1) {}
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//
-//
-//        Color getColor(Vec2 position) const override
-//        {
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-//
-//            Vec2 p = ((position - center) / scale);
-//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//            float noise = PerlinNoise::unitNoise2d(position);
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            return interpolate(noise,
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-//        }
-//        // BACKWARD_COMPATIBILITY with version before inherent matting.
-//        Noise2(float a, Vec2 b, Color c, Color d)
-//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
-//    private:
-//        const float scale;
-//        const Vec2 center;
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        const Vec2 basis;
-//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        const Texture& texture0;
-//        const Texture& texture1;
-//    };
-
-//    // Perlin Noise
-//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
-//    // This and other noise textures below use PerlinNoise package in Utilities.h
-//    class Noise2 : public Generator
-//    {
-//    public:
-//        Noise2(Vec2 point_0,
-//              Vec2 point_1,
-//              const Texture& texture_0,
-//              const Texture& texture_1)
-//          : scale((point_1 - point_0).length()),
-//            basis((point_1 - point_0).normalize()),
-//            center (point_0),
-//            texture0(texture_0),
-//            texture1(texture_1) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-//
-//            Vec2 p = ((position - center) / scale);
-//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//            float noise = PerlinNoise::unitNoise2d(position);
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            return interpolate(noise,
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-//        }
-//        // BACKWARD_COMPATIBILITY with version before "two point" specification.
-//        Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
-//          : Noise2(b, b + Vec2(a, 0), c, d) {};
-//        // BACKWARD_COMPATIBILITY with version before inherent matting.
-//        Noise2(float a, Vec2 b, Color c, Color d)
-//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
-//    private:
-//        const float scale;
-//        const Vec2 center;
-//        const Vec2 basis;
-//        const Texture& texture0;
-//        const Texture& texture1;
-//    };
-
-//    // Perlin Noise
-//    // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
-//    // This and other noise textures below use PerlinNoise package in Utilities.h
-//    class Noise2 : public Generator
-//    {
-//    public:
-//        Noise2(Vec2 point_0,
-//              Vec2 point_1,
-//              const Texture& texture_0,
-//              const Texture& texture_1)
-//          : scale((point_1 - point_0).length()),
-//            basis((point_1 - point_0).normalize()),
-//            center (point_0),
-//            texture0(texture_0),
-//            texture1(texture_1) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    //        float noise = PerlinNoise::unitNoise2d((position - center) / scale);
-//
-//    //        Vec2 p = ((position - center) / scale);
-//    //        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//    //        float noise = PerlinNoise::unitNoise2d(position);
-//
-//            Vec2 p = ((position - center) / scale);
-//            position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//            return interpolate(getScalerNoise(position),
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-//        }
-//
-//    //    Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
-//
-//        virtual float getScalerNoise(Vec2 transformed_position) const
-//        {
-//            return PerlinNoise::unitNoise2d(transformed_position);
-//        }
-//
-//        // BACKWARD_COMPATIBILITY with version before "two point" specification.
-//        Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
-//          : Noise2(b, b + Vec2(a, 0), c, d) {};
-//        // BACKWARD_COMPATIBILITY with version before inherent matting.
-//        Noise2(float a, Vec2 b, Color c, Color d)
-//          : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
-//    private:
-//        const float scale;
-//        const Vec2 center;
-//        const Vec2 basis;
-//        const Texture& texture0;
-//        const Texture& texture1;
-//    };
-
-// Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
-// This and other noise textures below use PerlinNoise package in Utilities.h
-class Noise2 : public Generator
-{
-public:
-    Noise2(Vec2 point_0,
+    Noise(Vec2 point_0,
           Vec2 point_1,
           const Texture& texture_0,
           const Texture& texture_1)
@@ -393,20 +203,6 @@ public:
         texture1(texture_1) {}
     Color getColor(Vec2 position) const override
     {
-//        Vec2 p = ((position - center) / scale);
-//        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//        return interpolate(getScalerNoise(position),
-//                           texture0.getColor(position),
-//                           texture1.getColor(position));
-        
-//            Vec2 p = ((position - center) / scale);
-//    //        position = Vec2(p.dot(basis), p.dot(basis.rotate90degCCW()));
-//            position = p.localize(basis, basis.rotate90degCCW());
-//            return interpolate(getScalerNoise(position),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-
-        
         Vec2 transformed_position = transformIntoNoiseSpace(position);
         return interpolate(getScalerNoise(transformed_position),
                            texture0.getColor(transformed_position),
@@ -427,11 +223,11 @@ public:
         return rotated;
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Noise2(b, b + Vec2(a, 0), c, d) {};
+    Noise(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Noise(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Noise2(float a, Vec2 b, Color c, Color d)
-      : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+    Noise(float a, Vec2 b, Color c, Color d)
+      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
 private:
     const float scale;
     const Vec2 center;
@@ -440,95 +236,91 @@ private:
     const Texture& texture1;
 };
 
-// TODO completely experimental!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 // Brownian Noise -- multi octave fractal 1/f Perlin Noise
-class Brownian2 : public Noise2
+class Brownian : public Noise
 {
 public:
-    Brownian2(Vec2 point_0,
-              Vec2 point_1,
-              const Texture& texture_0,
-              const Texture& texture_1)
-      : Noise2(point_0, point_1, texture_0, texture_1) {};
+    Brownian(Vec2 point_0,
+             Vec2 point_1,
+             const Texture& texture_0,
+             const Texture& texture_1)
+      : Noise(point_0, point_1, texture_0, texture_1) {};
     float getScalerNoise(Vec2 transformed_position) const override
     {
         return PerlinNoise::brownian2d(transformed_position);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Brownian2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Brownian2(b, b + Vec2(a, 0), c, d) {};
+    Brownian(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Brownian(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Brownian2(float a, Vec2 b, Color c, Color d)
-        : Brownian2(a, b, disposableUniform(c), disposableUniform(d)) {};
+    Brownian(float a, Vec2 b, Color c, Color d)
+        : Brownian(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
 
 // Classic Perlin turbulence.
-class Turbulence2 : public Noise2
+class Turbulence : public Noise
 {
 public:
-    Turbulence2(Vec2 point_0,
-              Vec2 point_1,
-              const Texture& texture_0,
-              const Texture& texture_1)
-      : Noise2(point_0, point_1, texture_0, texture_1) {};
+    Turbulence(Vec2 point_0,
+               Vec2 point_1,
+               const Texture& texture_0,
+               const Texture& texture_1)
+      : Noise(point_0, point_1, texture_0, texture_1) {};
     float getScalerNoise(Vec2 transformed_position) const override
     {
         return PerlinNoise::turbulence2d(transformed_position);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Turbulence2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Turbulence2(b, b + Vec2(a, 0), c, d) {};
+    Turbulence(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Turbulence(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Turbulence2(float a, Vec2 b, Color c, Color d)
-        : Turbulence2(a, b, disposableUniform(c), disposableUniform(d)) {};
+    Turbulence(float a, Vec2 b, Color c, Color d)
+        : Turbulence(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
 
 // Furbulence: two "fold" version of Turbulence producing sharp features at
 // both low and high ends of the output range.
-class Furbulence2 : public Noise2
+class Furbulence : public Noise
 {
 public:
-    Furbulence2(Vec2 point_0,
-              Vec2 point_1,
-              const Texture& texture_0,
-              const Texture& texture_1)
-      : Noise2(point_0, point_1, texture_0, texture_1) {};
+    Furbulence(Vec2 point_0,
+               Vec2 point_1,
+               const Texture& texture_0,
+               const Texture& texture_1)
+      : Noise(point_0, point_1, texture_0, texture_1) {};
     float getScalerNoise(Vec2 transformed_position) const override
     {
         return PerlinNoise::furbulence2d(transformed_position);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Furbulence2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Furbulence2(b, b + Vec2(a, 0), c, d) {};
+    Furbulence(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Furbulence(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Furbulence2(float a, Vec2 b, Color c, Color d)
-        : Furbulence2(a, b, disposableUniform(c), disposableUniform(d)) {};
+    Furbulence(float a, Vec2 b, Color c, Color d)
+        : Furbulence(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
-
 
 // Wrapulence: another variation on turbulence(). noise() is scaled up in value,
 // then wrapped modulo [0, 1]. It has hard edge discontinuities at all scales.
-class Wrapulence2 : public Noise2
+class Wrapulence : public Noise
 {
 public:
-    Wrapulence2(Vec2 point_0,
-              Vec2 point_1,
-              const Texture& texture_0,
-              const Texture& texture_1)
-      : Noise2(point_0, point_1, texture_0, texture_1) {};
+    Wrapulence(Vec2 point_0,
+               Vec2 point_1,
+               const Texture& texture_0,
+               const Texture& texture_1)
+      : Noise(point_0, point_1, texture_0, texture_1) {};
     float getScalerNoise(Vec2 transformed_position) const override
     {
         return PerlinNoise::wrapulence2d(transformed_position);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Wrapulence2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Wrapulence2(b, b + Vec2(a, 0), c, d) {};
+    Wrapulence(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Wrapulence(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Wrapulence2(float a, Vec2 b, Color c, Color d)
-        : Wrapulence2(a, b, disposableUniform(c), disposableUniform(d)) {};
+    Wrapulence(float a, Vec2 b, Color c, Color d)
+        : Wrapulence(a, b, disposableUniform(c), disposableUniform(d)) {};
 };
-
 
 // MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
 // Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
@@ -536,272 +328,51 @@ public:
 // "overwhelming" the space of generators when randomly selecting for GP. An
 // alternative would be to specify a "likeliness" weighting in the GP defs for
 // making the random selections.)
-class MultiNoise2 : public Noise2
+class MultiNoise : public Noise
 {
 public:
-    MultiNoise2(Vec2 point_0,
-                Vec2 point_1,
-                const Texture& texture_0,
-                const Texture& texture_1,
-                float _which)
-      : Noise2(point_0, point_1, texture_0, texture_1),
+    MultiNoise(Vec2 point_0,
+               Vec2 point_1,
+               const Texture& texture_0,
+               const Texture& texture_1,
+               float _which)
+      : Noise(point_0, point_1, texture_0, texture_1),
         which(_which) {};
     float getScalerNoise(Vec2 transformed_position) const override
     {
         return PerlinNoise::multiNoise2d(transformed_position, which);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    MultiNoise2(float a, Vec2 b, const Texture& c, const Texture& d, float e)
-      : MultiNoise2(b, b + Vec2(a, 0), c, d, e) {};
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    MultiNoise2(float a, Vec2 b, Color c, Color d, float e)
-        : MultiNoise2(a, b, disposableUniform(c), disposableUniform(d), e) {};
-private:
-    const float which;
-};
-
-// Color Noise -- RGB Perlin Noise
-class ColorNoise2 : public Noise2
-{
-public:
-    ColorNoise2(Vec2 point_0, Vec2 point_1, float _which)
-      : Noise2(point_0, point_1, *this, *this),
-//        scale(_scale),
-//        center(_center),
-        which(_which),
-        offset1(Vec2(1, 0)),
-        offset2(offset1.rotate(pi * 2 / 3)),
-        offset3(offset2.rotate(pi * 2 / 3)) {};
-    
-    Color getColor(Vec2 position) const override
-    {
-//        Vec2 p1 = ((position + offset1 - center) / scale).rotate(0.3);
-//        Vec2 p2 = ((position + offset2 - center) / scale).rotate(0.6);
-//        Vec2 p3 = ((position + offset3 - center) / scale).rotate(0.9);
-//        return Color(PerlinNoise::multiNoise2d(p1, which),
-//                     PerlinNoise::multiNoise2d(p2, which),
-//                     PerlinNoise::multiNoise2d(p3, which));
-        
-        
-        
-        Vec2 tp1 = transformIntoNoiseSpace(position).rotate(0.3);
-        Vec2 tp2 = transformIntoNoiseSpace(position).rotate(0.6);
-        Vec2 tp3 = transformIntoNoiseSpace(position).rotate(0.9);
-
-        
-        
-//        return interpolate(getScalerNoise(transformed_position),
-//                           texture0.getColor(transformed_position),
-//                           texture1.getColor(transformed_position));
-
-        return Color(PerlinNoise::multiNoise2d(tp1, which),
-                     PerlinNoise::multiNoise2d(tp2, which),
-                     PerlinNoise::multiNoise2d(tp3, which));
-
-    }
-    
-    // BACKWARD_COMPATIBILITY with version before "two point" specification.
-//    ColorNoise2(float _scale, Vec2 _center, float _which)
-//      : scale(_scale),
-//        center(_center),
-//        which(_which),
-//        offset1(Vec2(1, 0)),
-//        offset2(offset1.rotate(pi * 2 / 3)),
-//        offset3(offset2.rotate(pi * 2 / 3)) {};
-
-private:
-//    const float scale;
-//    const Vec2 center;
-    const float which;
-    const Vec2 offset1;
-    const Vec2 offset2;
-    const Vec2 offset3;
-};
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// Brownian Noise -- multi octave fractal 1/f Perlin Noise
-class Brownian : public Generator
-{
-public:
-    Brownian(float _scale,
-             Vec2 _center,
-             const Texture& _texture0,
-             const Texture& _texture1)
-      : scale (_scale),
-        center (_center),
-        texture0(_texture0),
-        texture1(_texture1) {};
-    Color getColor(Vec2 position) const override
-    {
-        float noise = PerlinNoise::brownian2d((position - center) / scale);
-        return interpolate(noise,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Brownian(float a, Vec2 b, Color c, Color d)
-        : Brownian(a, b, disposableUniform(c), disposableUniform(d)) {};
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-// Classic Perlin turbulence.
-class Turbulence : public Generator
-{
-public:
-    Turbulence(float _scale,
-               Vec2 _center,
-               const Texture& _texture0,
-               const Texture& _texture1)
-      : scale (_scale),
-        center (_center),
-        texture0(_texture0),
-        texture1(_texture1) {};
-    Color getColor(Vec2 position) const override
-    {
-        float t = PerlinNoise::turbulence2d((position - center) / scale);
-        return interpolate(t,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Turbulence(float a, Vec2 b, Color c, Color d)
-        : Turbulence(a, b, disposableUniform(c), disposableUniform(d)) {};
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-// Furbulence: two "fold" version of Turbulence producing sharp features at
-// both low and high ends of the output range.
-class Furbulence : public Generator
-{
-public:
-    Furbulence(float _scale,
-               Vec2 _center,
-               const Texture& _texture0,
-               const Texture& _texture1)
-      : scale (_scale),
-        center (_center),
-        texture0(_texture0),
-        texture1(_texture1) {};
-    Color getColor(Vec2 position) const override
-    {
-        float f = PerlinNoise::furbulence2d((position - center) / scale);
-        return interpolate(f,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Furbulence(float a, Vec2 b, Color c, Color d)
-        : Furbulence(a, b, disposableUniform(c), disposableUniform(d)) {};
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-// Wrapulence: another variation on turbulence(). noise() is scaled up in value,
-// then wrapped modulo [0, 1]. It has hard edge discontinuities at all scales.
-class Wrapulence : public Generator
-{
-public:
-    Wrapulence(float _scale,
-               Vec2 _center,
-               const Texture& _texture0,
-               const Texture& _texture1)
-      : scale (_scale),
-        center (_center),
-        texture0(_texture0),
-        texture1(_texture1) {}
-    Color getColor(Vec2 position) const override
-    {
-        float w = PerlinNoise::wrapulence2d((position - center) / scale);
-        return interpolate(w,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Wrapulence(float a, Vec2 b, Color c, Color d)
-        : Wrapulence(a, b, disposableUniform(c), disposableUniform(d)) {};
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-// MultiNoise: combines five noise generators (Noise, Brownian, Turbulence,
-// Furbulence, Wrapulence) into one, with an extra float argument (on [0, 1])
-// that selects between them. (This is to allow all the variations without
-// "overwhelming" the space of generators when randomly selecting for GP. An
-// alternative would be to specify a "likeliness" weighting in the GP defs for
-// making the random selections.)
-class MultiNoise : public Generator
-{
-public:
-    MultiNoise(float _scale,
-               Vec2 _center,
-               const Texture& _texture0,
-               const Texture& _texture1,
-               float _which)
-      : scale(_scale),
-        center(_center),
-        texture0(_texture0),
-        texture1(_texture1),
-        which(_which) {};
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 adjusted = (position - center) / scale;
-        float noise = PerlinNoise::multiNoise2d(adjusted, which);
-        return interpolate(noise,
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-    }
+    MultiNoise(float a, Vec2 b, const Texture& c, const Texture& d, float e)
+      : MultiNoise(b, b + Vec2(a, 0), c, d, e) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
     MultiNoise(float a, Vec2 b, Color c, Color d, float e)
         : MultiNoise(a, b, disposableUniform(c), disposableUniform(d), e) {};
-private:
-    const float scale;
-    const Vec2 center;
-    const Texture& texture0;
-    const Texture& texture1;
     const float which;
 };
 
 // Color Noise -- RGB Perlin Noise
-// (TODO should this have a "which" parameter like MultiNoise? Maybe there
-// should be a PerlinNoise::multiNoise2d() helper function?)
-class ColorNoise : public Generator
+class ColorNoise : public MultiNoise
 {
 public:
-    ColorNoise(float _scale, Vec2 _center, float _which)
-      : scale(_scale),
-        center(_center),
-        which(_which),
+    ColorNoise(Vec2 point_0, Vec2 point_1, float _which)
+      : MultiNoise(point_0, point_1, *this, *this, _which),
         offset1(Vec2(1, 0)),
         offset2(offset1.rotate(pi * 2 / 3)),
         offset3(offset2.rotate(pi * 2 / 3)) {};
+    
     Color getColor(Vec2 position) const override
     {
-        Vec2 p1 = ((position + offset1 - center) / scale).rotate(0.3);
-        Vec2 p2 = ((position + offset2 - center) / scale).rotate(0.6);
-        Vec2 p3 = ((position + offset3 - center) / scale).rotate(0.9);
-        return Color(PerlinNoise::multiNoise2d(p1, which),
-                     PerlinNoise::multiNoise2d(p2, which),
-                     PerlinNoise::multiNoise2d(p3, which));
+        Vec2 tp1 = transformIntoNoiseSpace(position + offset1).rotate(0.3);
+        Vec2 tp2 = transformIntoNoiseSpace(position + offset2).rotate(0.6);
+        Vec2 tp3 = transformIntoNoiseSpace(position + offset3).rotate(0.9);
+        return Color(PerlinNoise::multiNoise2d(tp1, which),
+                     PerlinNoise::multiNoise2d(tp2, which),
+                     PerlinNoise::multiNoise2d(tp3, which));
     }
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+    ColorNoise(float a, Vec2 b, float c) : ColorNoise(b, b + Vec2(a, 0), c) {};
 private:
-    const float scale;
-    const Vec2 center;
-    const float which;
     const Vec2 offset1;
     const Vec2 offset2;
     const Vec2 offset3;
