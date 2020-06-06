@@ -2330,24 +2330,98 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Experimental RgbBox -- June 3, 2020
-    std::cout << "June 3, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200603_";
+//    // Experimental RgbBox -- June 3, 2020
+//    std::cout << "June 3, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200603_";
+//
+//    Vec2 p1(2, 3);
+//    Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.3;
+//    ColorNoise cn(p1, p2, 0.6);
+//    Texture::displayAndFile(cn
+//                            ); // , path + "cn");
+//    Texture::displayAndFile(RgbBox(0.0, 0.3, 0.3, 0.6, 0.6, 0.9, cn)
+//                            ); // , path + "RgbBox_1");
+//    Texture::displayAndFile(RgbBox(0.5, 1.0, 0.2, 0.6, 0.0, 1.0, cn)
+//                            ); // , path + "RgbBox_2");
+//    Texture::displayAndFile(RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)
+//                            ); // , path + "RgbBox_3");
+//    Texture::displayAndFile(RgbBox(0.2, 1.0, 0.0, 0.2, 0.0, 0.2, cn)
+//                            ); // , path + "RgbBox_4");
+//
+//    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Merge Generators.h into Operators.h -- June 5, 2020
+    std::cout << "June 5, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200605_";
 
-    Vec2 p1(2, 3);
-    Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.3;
-    ColorNoise cn(p1, p2, 0.6);
-    Texture::displayAndFile(cn
-                            ); // , path + "cn");
-    Texture::displayAndFile(RgbBox(0.0, 0.3, 0.3, 0.6, 0.6, 0.9, cn)
-                            ); // , path + "RgbBox_1");
-    Texture::displayAndFile(RgbBox(0.5, 1.0, 0.2, 0.6, 0.0, 1.0, cn)
-                            ); // , path + "RgbBox_2");
-    Texture::displayAndFile(RgbBox(0.5, 1.0, 0.7, 1.0, 0.0, 0.2, cn)
-                            ); // , path + "RgbBox_3");
-    Texture::displayAndFile(RgbBox(0.2, 1.0, 0.0, 0.2, 0.0, 0.2, cn)
-                            ); // , path + "RgbBox_4");
+    Vec2 p1(-0.1, 0);
+    Vec2 p2(+0.1, 0);
+    Uniform c1(0, 0, 1);
+    Uniform c2(0, 1, 0);
+    Uniform c3(1, 0, 0);
 
+    
+
+    Texture::displayAndFile(Gradation(p1, c1, p2, c2));
+    Texture::displayAndFile(Spot(p1, 0.1, c1, 0.2, c2));
+    Texture::displayAndFile(Grating(p1, c1, p2, c2, 1, 0.5));
+    Texture::displayAndFile(Noise(p1, p2, c1, c2));
+    Texture::displayAndFile(Brownian(p1, p2, c1, c2));
+    Texture::displayAndFile(Turbulence(p1, p2, c1, c2));
+    Texture::displayAndFile(Furbulence(p1, p2, c1, c2));
+    Texture::displayAndFile(Wrapulence(p1, p2, c1, c2));
+    Texture::displayAndFile(MultiNoise(p1, p2, c1, c2, 0.5));
+    Texture::displayAndFile(ColorNoise(p1, p2, 0.5));
+    Texture::displayAndFile(Uniform(c1));
+    Texture::displayAndFile(SoftMatte(c1, c2, c3));
+    Texture::displayAndFile(Add(c1, c2));
+    Texture::displayAndFile(Subtract(c1, c2));
+    Texture::displayAndFile(AbsDiff(c1, c2));
+    Texture::displayAndFile(Multiply(c1, c2));
+    Texture::displayAndFile(Max(c1, c2));
+    Texture::displayAndFile(Min(c1, c2));
+    Texture::displayAndFile(Scale(0.5, c1));
+    Texture::displayAndFile(Rotate(0.5, c1));
+    Texture::displayAndFile(Translate(p1, c1));
+    Texture::displayAndFile(BrightnessToHue(0.5, c1));
+    Texture::displayAndFile(Wrap(2, p1, p2, c1));
+    Texture::displayAndFile(Stretch2009(0.5, 0.5, p1, c1));
+    Texture::displayAndFile(Stretch(p1, p2, c1));
+/*
+    Texture::displayAndFile();
+    Texture::displayAndFile();
+
+    Operators.h:class StretchSpot : public Operator
+    Operators.h:class SliceGrating : public Operator
+    Operators.h:class SliceToRadial : public Operator
+    Operators.h:class SliceShear : public Operator
+    Operators.h:class MobiusTransform : public Operator
+    Operators.h:class Blur : public Operator
+    Operators.h:class Colorize : public Operator
+    Operators.h:class SoftThreshold : public Operator
+    Operators.h:class EdgeDetect : public Operator
+    Operators.h:// the strength of the edge enhancement.class EdgeEnhance : public Operator
+    Operators.h:class EdgeEnhance : public Operator
+    Operators.h:class AdjustHue : public Operator
+    Operators.h:class AdjustSaturation : public Operator
+    Operators.h:class AdjustBrightness : public Operator
+    Operators.h:class Twist : public Operator
+    Operators.h:class BrightnessWrap : public Operator
+    Operators.h:class Mirror : public Operator
+    Operators.h:class Ring : public Operator
+    Operators.h:class Row : public Operator
+    Operators.h:class ShadedSphereTest : public Operator
+    Operators.h:class Shader : public Operator
+    Operators.h:// Basic geometric framework is in base class:
+    Operators.h:class LotsOfSpotsBase : public Operator
+    Operators.h:class LotsOfSpots : public LotsOfSpotsBase
+    Operators.h:class ColoredSpots : public LotsOfSpotsBase
+    Operators.h:class LotsOfButtons : public LotsOfSpotsBase
+    Operators.h:class Gamma : public Operator
+    Operators.h:class RgbBox : public Operator
+*/
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

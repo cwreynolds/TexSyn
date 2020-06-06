@@ -67,6 +67,26 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200605"> <a href="#20200605" class="date">June 5,
+        2020</a>
+      <h1>Not-so-grand unification of <em>Generator</em> and <em>Operator</em></h1>
+      <p>As mentioned on <a href="#20191219">December 19</a>, what I later
+        called “inherent matting” (<a href="#20200514">May 14</a>) means that
+        almost all <em>Texture</em> classes now have at least one <em>Texture</em>
+        among their input parameters. (Previously, a <em>Generator</em>, like <em>Spot</em>,
+        had parameters of type float, position, and color—but not texture. Now
+        instead of an inside and outside <em>Color</em>, its parameters now
+        include an inside and and outside <em>Texture</em>.) In fact the only
+        Texture classes that now do not take a <em>Texture</em> parameter are <em>Uniform</em>
+        and <em>ColorNoise</em>.<br>
+        <br>
+        As a result, I don't think it makes sense to retain the source file <code>Generator.h</code>
+        nor its category-defining base class <em>Generator</em>. (Which class
+        was never used for anything.) So today I merged the content of <code>Generator.h</code>
+        into <code>Operator.h</code>, plus some related cleanup. One downside
+        is that <code>Operator.h</code>, which was already inconveniently long,
+        is now even longer.</p>
+    </div>
     <div class="post" id="20200603"> <a href="#20200603" class="date">June 3,
         2020</a>
       <h1>Experimental <em>RgbBox</em> color remapping</h1>
@@ -79,13 +99,12 @@
         cube. I speculated this sort of clipping might provide some additional
         utility in defining textures.</p>
       <p>I decided to try a more generalized version of this as <em>RgbBox</em>.
-        It maps the unit RGB cube to a axis-aligned “box” within the unit
-        cube. Its parameters are the min and max bounds of the box
-        for each of red, green, and blue — plus an input texture. It first does
-        the <code>clipToUnitRGB()</code> then linearly “remaps” the range of
-        each component from the interval [0, 1] to [min, max]. These examples
-        each use this <code>cn</code> texture, similar to the final example <a
-          href="#20200602">yesterday</a>.</p>
+        It maps the unit RGB cube to a axis-aligned “box” within the unit cube.
+        Its parameters are the min and max bounds of the box for each of red,
+        green, and blue — plus an input texture. It first does the <code>clipToUnitRGB()</code>
+        then linearly “remaps” the range of each component from the interval [0,
+        1] to [min, max]. These examples each use this <code>cn</code> texture,
+        similar to the final example <a href="#20200602">yesterday</a>.</p>
       <pre>p1 = Vec2 p1(2, 3)
 p2 = p1 + Vec2(-1, 3).normalize() * 0.3
 cn = ColorNoise(p1, p2, 0.6)</pre>
@@ -495,8 +514,8 @@ Noise(0.1, Vec2(), white, black)<br>Noise(0.1, Vec2(), white_cyan, black_red)</p
         references instead of <em>Color</em>s, and to “de-gamma” their
         waveform, which is to say, their basic scalar noise amplitude. The first
         results, here with <em>Noise</em>, were disappointing. Here are two
-        versions of Noise, first changed to take textures as input (“inherent
-        matting” using the same two textures introduced on <a href="#20200514">May
+        versions of <em>Noise</em>, first changed to take textures as input
+        (“inherent matting” using the same two textures introduced on <a href="#20200514">May
           14</a>), and then the same with “de-gamma” of noise amplitude:</p>
       <pre>Noise(0.2, Vec2(), white_cyan, black_red)</pre>
       <img src="images/20200520_inherent_matting.png" alt="Noise with inherent matting"
@@ -3177,7 +3196,7 @@ SoftMatte(spot(0.2),
         programmers.There is a design aesthetic (“design pattern”?) that leans
         toward minimal functionality (where a function should “do just one
         thing”) and conversely duplication should be avoided. More complicated
-        patterns arise from composing the minimal units of a library.</p>
+        functionality arise from composing the minimal units of a library.</p>
       <p>In contrast, <strong>TexSyn</strong> is intended primarily for use by
         a genetic programming system. GP is a type of automatic programming
         technique, driven by evolutionary optimization. My experience has been
@@ -3187,8 +3206,8 @@ SoftMatte(spot(0.2),
       <p>Imagine a texture generator called <em>Spot</em>, a disk of one color
         on a field of another color. A minimalist design might define a spot
         with a default diameter (say 1) at a default location (say the origin),
-        and a default coloring (a white spot on a black background). As such,
-        this minimalist <em>Spot</em> could have zero parameters. That was the
+        and default colors (a white spot on a black background). As such, this
+        minimalist <em>Spot</em> could have zero parameters. That was the
         initial approach taken in 2008 for the previous version of this library.
         Using standard techniques of composition of software operators, a
         programmer might use a <em>Scale</em> operator to adjust the spot's
