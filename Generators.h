@@ -205,8 +205,12 @@ public:
     {
         Vec2 transformed_position = transformIntoNoiseSpace(position);
         return interpolate(getScalerNoise(transformed_position),
-                           texture0.getColor(transformed_position),
-                           texture1.getColor(transformed_position));
+                           //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                           texture0.getColor(transformed_position),
+//                           texture1.getColor(transformed_position));
+                           texture0.getColor(position),
+                           texture1.getColor(position));
+                           //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Get scalar noise fraction on [0, 1] for the given transformed position.
     // Overridden by other noise-based textures to customize basic behavior.
