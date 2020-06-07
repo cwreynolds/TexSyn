@@ -23,19 +23,45 @@ void Texture::displayInWindow(int size, bool wait) const
     if (wait) waitKey();  // Wait for a keystroke in the window.
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
+//    void Texture::windowPlacementTool(cv::Mat& mat)
+//    {
+//        static int window_counter = 0;
+//        static int window_position = 0;
+//        std::string window_name = "TexSyn" + std::to_string(window_counter++);
+//        cv::namedWindow(window_name);       // Create a window for display.
+//        int tm = 23;  // TODO approximate top margin height
+//        int window_position_y = window_position + tm + mat.rows;
+//        cv::moveWindow(window_name, window_position, window_position_y);
+//        window_position += tm;
+//        cv::imshow(window_name, mat);  // Show our image inside it.
+//    }
+
 // Display cv::Mat in pop-up window. Stack diagonally from upper left.
 void Texture::windowPlacementTool(cv::Mat& mat)
 {
     static int window_counter = 0;
-    static int window_position = 0;
+//    static int window_position = 0;
+    static int window_x = 0;
+    static int window_y = 0;
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
     int tm = 23;  // TODO approximate top margin height
-    int window_position_y = window_position + tm + mat.rows;
-    cv::moveWindow(window_name, window_position, window_position_y);
-    window_position += tm;
+//    int window_position_y = window_position + tm + mat.rows;
+//    cv::moveWindow(window_name, window_position, window_position_y);
+    cv::moveWindow(window_name, window_x, window_y  + tm + mat.rows);
+//    window_position += tm;
+    window_x += tm;
+    window_y += tm;
     cv::imshow(window_name, mat);  // Show our image inside it.
+    // TODO pure hack, assumes 511x511, screen size of my MacBook Pro (Mid 2014)
+    if ((window_counter % 15) == 0) window_y =0 ;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
 // draw a round image, otherwise a square. Run parallel threads for speed.

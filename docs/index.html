@@ -344,14 +344,14 @@ Blur(0.4, grating)</pre>
     <div class="post" id="20200524"> <a href="#20200524" class="date">May 24,
         2020</a>
       <h1>Inherent matting for other noise textures</h1>
-      <p>Following on from May 20, after some intervening improvements on the
-        noise utilities, I upgraded <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>,
-        <em>Wrapulence</em>, and <em>MultiNoise</em> to use input parameters
-        that are textures rather than colors. Here are examples of <em>Noise</em>,
-        <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>, and <em>Wrapulence</em>.
-        I tested <em>MultiNoise</em> but its output is identical to the others
-        for appropriate parameters — its final parameter selects between the
-        noise types below.</p>
+      <p>Following on from <a href="#20200520">May 20</a>, after some
+        intervening improvements on the noise utilities, I upgraded <em>Brownian</em>,
+        <em>Turbulence</em>, <em>Furbulence</em>, <em>Wrapulence</em>, and <em>MultiNoise</em>
+        to use input parameters that are textures rather than colors. Here are
+        examples of <em>Noise</em>, <em>Brownian</em>, <em>Turbulence</em>, <em>Furbulence</em>,
+        and <em>Wrapulence</em>. I tested <em>MultiNoise</em> but its output
+        is identical to the others for appropriate parameters — its final
+        parameter selects between the noise types below.</p>
       <pre>Noise(0.3, Vec2(), black_red, white_cyan)
 Noise(0.3, Vec2(), yellow, red)</pre>
       <img src="images/20200524_Noise_stripes.png" alt="" title="" height="511"

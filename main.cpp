@@ -2358,52 +2358,62 @@ int main(int argc, const char * argv[])
 
     Vec2 p1(-0.1, 0);
     Vec2 p2(+0.1, 0);
-    Uniform c1(0, 0, 1);
-    Uniform c2(0, 1, 0);
-    Uniform c3(1, 0, 0);
+//    Uniform t1(0, 0, 1);
+//    Uniform t2(0, 1, 0);
+    Uniform t3(1, 0, 0);
 
-    
+    // TODO experiment
+    Uniform black(Color(0, 0, 0));
+    Uniform white(Color(1, 1, 1));
+    Uniform red(Color(1, 0, 0));
+    Uniform cyan(Color(0, 1, 1));
+    Grating white_cyan(Vec2(0, 0.2), white, Vec2(0, 0), cyan, 0.1, 0.5);
+    Grating black_red(Vec2(0.1, 0), black, Vec2(0, 0), red, 0.1, 0.5);
+    Grating& t1 = white_cyan;
+    Grating& t2 = black_red;
 
-    Texture::displayAndFile(Gradation(p1, c1, p2, c2));
-    Texture::displayAndFile(Spot(p1, 0.1, c1, 0.2, c2));
-    Texture::displayAndFile(Grating(p1, c1, p2, c2, 1, 0.5));
-    Texture::displayAndFile(Noise(p1, p2, c1, c2));
-    Texture::displayAndFile(Brownian(p1, p2, c1, c2));
-    Texture::displayAndFile(Turbulence(p1, p2, c1, c2));
-    Texture::displayAndFile(Furbulence(p1, p2, c1, c2));
-    Texture::displayAndFile(Wrapulence(p1, p2, c1, c2));
-    Texture::displayAndFile(MultiNoise(p1, p2, c1, c2, 0.5));
-    Texture::displayAndFile(ColorNoise(p1, p2, 0.5));
-    Texture::displayAndFile(Uniform(c1));
-    Texture::displayAndFile(SoftMatte(c1, c2, c3));
-    Texture::displayAndFile(Add(c1, c2));
-    Texture::displayAndFile(Subtract(c1, c2));
-    Texture::displayAndFile(AbsDiff(c1, c2));
-    Texture::displayAndFile(Multiply(c1, c2));
-    Texture::displayAndFile(Max(c1, c2));
-    Texture::displayAndFile(Min(c1, c2));
-    Texture::displayAndFile(Scale(0.5, c1));
-    Texture::displayAndFile(Rotate(0.5, c1));
-    Texture::displayAndFile(Translate(p1, c1));
-    Texture::displayAndFile(BrightnessToHue(0.5, c1));
-    Texture::displayAndFile(Wrap(2, p1, p2, c1));
-    Texture::displayAndFile(Stretch2009(0.5, 0.5, p1, c1));
-    Texture::displayAndFile(Stretch(p1, p2, c1));
-/*
-    Texture::displayAndFile();
-    Texture::displayAndFile();
+//    Texture::displayAndFile(Gradation(p1, t1, p2, t2));
+//    Texture::displayAndFile(Spot(p1, 0.1, t1, 0.2, t2));
+//    Texture::displayAndFile(Grating(p1, t1, p2, t2, 1, 0.5));
+//    Texture::displayAndFile(Noise(p1, p2, t1, t2));
+//    Texture::displayAndFile(Brownian(p1, p2, t1, t2));
+//    Texture::displayAndFile(Turbulence(p1, p2, t1, t2));
+//    Texture::displayAndFile(Furbulence(p1, p2, t1, t2));
+//    Texture::displayAndFile(Wrapulence(p1, p2, t1, t2));
+//    Texture::displayAndFile(MultiNoise(p1, p2, t1, t2, 0.5));
+//    Texture::displayAndFile(ColorNoise(p1, p2, 0.5));
+//    Texture::displayAndFile(Uniform(0.5));
+//    Texture::displayAndFile(SoftMatte(t1, t2, t3));
+//    Texture::displayAndFile(Add(t1, t2));
+//    Texture::displayAndFile(Subtract(t1, t2));
+//    Texture::displayAndFile(AbsDiff(t1, t2));
+//    Texture::displayAndFile(Multiply(t1, t2));
+//    Texture::displayAndFile(Max(t1, t2));
+//    Texture::displayAndFile(Min(t1, t2));
+//    Texture::displayAndFile(Scale(0.5, t1));
+//    Texture::displayAndFile(Rotate(0.5, t1));
+//    Texture::displayAndFile(Translate(p1, t1));
+//    Texture::displayAndFile(BrightnessToHue(0.5, t1));
+//    Texture::displayAndFile(Wrap(2, p1, p2, t1));
+//    Texture::displayAndFile(Stretch2009(0.5, 0.5, p1, t1));
+//    Texture::displayAndFile(Stretch(Vec2(2, 3), p2, t1));
+//    Texture::displayAndFile(StretchSpot(3, 0.8, p1, t1));
+//    Texture::displayAndFile(SliceGrating(Vec2(0.4, 0.6), p2, t1));
+    Texture::displayAndFile(SliceToRadial(Vec2(0.4, 0.6), p2, t1));
+    Texture::displayAndFile(SliceShear(Vec2(0.4, 0.6), p2, t1,
+                                       Vec2(0.4, 0.1), p1, t2));
+    Texture::displayAndFile(MobiusTransform(Vec2(0.4, 0.6), p1,
+                                            Vec2(0.4, 0.1), p2, t1));
+    Texture::displayAndFile(Blur(0.2, t1));
+    Texture::displayAndFile(Colorize(Vec2(0.4, 0.1), p1, t2, t1));
+    Texture::displayAndFile(SoftThreshold(0, 1, t1));
+    Texture::displayAndFile(EdgeDetect(0.1, t1));
+    Texture::displayAndFile(EdgeEnhance(0.1, 1, t1));
 
-    Operators.h:class StretchSpot : public Operator
-    Operators.h:class SliceGrating : public Operator
-    Operators.h:class SliceToRadial : public Operator
-    Operators.h:class SliceShear : public Operator
-    Operators.h:class MobiusTransform : public Operator
-    Operators.h:class Blur : public Operator
-    Operators.h:class Colorize : public Operator
-    Operators.h:class SoftThreshold : public Operator
-    Operators.h:class EdgeDetect : public Operator
-    Operators.h:// the strength of the edge enhancement.class EdgeEnhance : public Operator
-    Operators.h:class EdgeEnhance : public Operator
+    /*
+     Texture::displayAndFile();
+
+    Operators.h:class  : public Operator
     Operators.h:class AdjustHue : public Operator
     Operators.h:class AdjustSaturation : public Operator
     Operators.h:class AdjustBrightness : public Operator
@@ -2423,7 +2433,7 @@ int main(int argc, const char * argv[])
     Operators.h:class RgbBox : public Operator
 */
     Texture::waitKey();
-    
+        
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

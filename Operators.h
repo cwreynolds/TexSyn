@@ -653,7 +653,7 @@ private:
 // Enhances the edges (emphasize the high frequencies) of a given texture. Based
 // on EdgeDetect, which is based on Blur via the technique of “unsharp masking”.
 // Parameters include a filter (kernel) width, and a scale factor controlling
-// the strength of the edge enhancement.class EdgeEnhance : public Operator
+// the strength of the edge enhancement.
 class EdgeEnhance : public Operator
 {
 public:
