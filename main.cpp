@@ -2357,12 +2357,8 @@ int main(int argc, const char * argv[])
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200605_";
 
     Vec2 p1(-0.1, 0);
-    Vec2 p2(+0.1, 0);
-//    Uniform t1(0, 0, 1);
-//    Uniform t2(0, 1, 0);
-    Uniform t3(1, 0, 0);
-
-    // TODO experiment
+    Vec2 p2(0.1, 0);
+    Vec2 p3(0.4, 0.6);
     Uniform black(Color(0, 0, 0));
     Uniform white(Color(1, 1, 1));
     Uniform red(Color(1, 0, 0));
@@ -2371,10 +2367,11 @@ int main(int argc, const char * argv[])
     Grating black_red(Vec2(0.1, 0), black, Vec2(0, 0), red, 0.1, 0.5);
     Grating& t1 = white_cyan;
     Grating& t2 = black_red;
+    ColorNoise t3(p1, p3, 0.2);
 
     Texture::displayAndFile(Gradation(p1, t1, p2, t2));
     Texture::displayAndFile(Spot(p1, 0.1, t1, 0.2, t2));
-    Texture::displayAndFile(Grating(p1, t1, p2, t2, 1, 0.5));
+    Texture::displayAndFile(Grating(p1, t1, p3, t2, 1, 0.5));
     Texture::displayAndFile(Noise(p1, p2, t1, t2));
     Texture::displayAndFile(Brownian(p1, p2, t1, t2));
     Texture::displayAndFile(Turbulence(p1, p2, t1, t2));
@@ -2382,56 +2379,46 @@ int main(int argc, const char * argv[])
     Texture::displayAndFile(Wrapulence(p1, p2, t1, t2));
     Texture::displayAndFile(MultiNoise(p1, p2, t1, t2, 0.5));
     Texture::displayAndFile(ColorNoise(p1, p2, 0.5));
-//    Texture::displayAndFile(Uniform(0.5));
-//    Texture::displayAndFile(SoftMatte(t1, t2, t3));
-//    Texture::displayAndFile(Add(t1, t2));
-//    Texture::displayAndFile(Subtract(t1, t2));
-//    Texture::displayAndFile(AbsDiff(t1, t2));
-//    Texture::displayAndFile(Multiply(t1, t2));
-//    Texture::displayAndFile(Max(t1, t2));
-//    Texture::displayAndFile(Min(t1, t2));
-//    Texture::displayAndFile(Scale(0.5, t1));
-//    Texture::displayAndFile(Rotate(0.5, t1));
-//    Texture::displayAndFile(Translate(p1, t1));
-//    Texture::displayAndFile(BrightnessToHue(0.5, t1));
-//    Texture::displayAndFile(Wrap(2, p1, p2, t1));
-//    Texture::displayAndFile(Stretch2009(0.5, 0.5, p1, t1));
-//    Texture::displayAndFile(Stretch(Vec2(2, 3), p2, t1));
-//    Texture::displayAndFile(StretchSpot(3, 0.8, p1, t1));
-//    Texture::displayAndFile(SliceGrating(Vec2(0.4, 0.6), p2, t1));
-//    Texture::displayAndFile(SliceToRadial(Vec2(0.4, 0.6), p2, t1));
-//    Texture::displayAndFile(SliceShear(Vec2(0.4, 0.6), p2, t1,
-//                                       Vec2(0.4, 0.1), p1, t2));
-//    Texture::displayAndFile(MobiusTransform(Vec2(0.4, 0.6), p1,
-//                                            Vec2(0.4, 0.1), p2, t1));
-//    Texture::displayAndFile(Blur(0.2, t1));
-//    Texture::displayAndFile(Colorize(Vec2(0.4, 0.1), p1, t2, t1));
-//    Texture::displayAndFile(SoftThreshold(0, 1, t1));
-//    Texture::displayAndFile(EdgeDetect(0.1, t1));
-//    Texture::displayAndFile(EdgeEnhance(0.1, 1, t1));
+    Texture::displayAndFile(Uniform(0.5));
+    Texture::displayAndFile(SoftMatte(t1, t2, t3));
+    Texture::displayAndFile(Add(t1, t2));
+    Texture::displayAndFile(Subtract(t1, t2));
+    Texture::displayAndFile(AbsDiff(t1, t2));
+    Texture::displayAndFile(Multiply(t1, t2));
+    Texture::displayAndFile(Max(t1, t2));
+    Texture::displayAndFile(Min(t1, t2));
+    Texture::displayAndFile(Scale(0.5, t1));
+    Texture::displayAndFile(Rotate(0.5, t1));
+    Texture::displayAndFile(Translate(p1, t1));
+    Texture::displayAndFile(BrightnessToHue(0.5, t1));
+    Texture::displayAndFile(Wrap(2, p1, p2, t1));
+    Texture::displayAndFile(Stretch2009(0.5, 0.5, p1, t1));
+    Texture::displayAndFile(Stretch(Vec2(2, 3), p2, t1));
+    Texture::displayAndFile(StretchSpot(5, 1, p1, t1));
+    Texture::displayAndFile(SliceGrating(p3, p2, t1));
+    Texture::displayAndFile(SliceToRadial(p3, p2, t1));
+    Texture::displayAndFile(SliceShear(p3, p2, t1, Vec2(0.4, 0.1), p1, t2));
+    Texture::displayAndFile(MobiusTransform(p3, p1, Vec2(0.4, 0.1), p2, t1));
+    Texture::displayAndFile(Blur(0.2, t1));
+    Texture::displayAndFile(Colorize(Vec2(0.4, 0.1), p1, t2, t1));
+    Texture::displayAndFile(SoftThreshold(0, 1, t1));
+    Texture::displayAndFile(EdgeDetect(0.1, t1));
+    Texture::displayAndFile(EdgeEnhance(0.1, 1, t1));
+    Texture::displayAndFile(AdjustHue(0.25, t1));
+    Texture::displayAndFile(AdjustSaturation(0.5, t1));
+    Texture::displayAndFile(AdjustBrightness(0.5, t1));
+    Texture::displayAndFile(Twist(10, 2, p1, t1));
+    Texture::displayAndFile(BrightnessWrap(0.4, 0.6, t3));
+    Texture::displayAndFile(Mirror(p3, p2, t1));
+    Texture::displayAndFile(Ring(9, p3, p1, t1));
+    Texture::displayAndFile(Row(Vec2(0.1, 0.1), p1, t1));
+    Texture::displayAndFile(Shader(Vec3(1, 1, 1), 0.2, t1, t3));
+    Texture::displayAndFile(LotsOfSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
+    Texture::displayAndFile(ColoredSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
+    Texture::displayAndFile(LotsOfButtons(0.8,0.1,0.4,0.05,0.01,p1,t1,1,t2));
+    Texture::displayAndFile(Gamma(0.5, t3));
+    Texture::displayAndFile(RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1));
 
-    /*
-     Texture::displayAndFile();
-
-    Operators.h:class  : public Operator
-    Operators.h:class AdjustHue : public Operator
-    Operators.h:class AdjustSaturation : public Operator
-    Operators.h:class AdjustBrightness : public Operator
-    Operators.h:class Twist : public Operator
-    Operators.h:class BrightnessWrap : public Operator
-    Operators.h:class Mirror : public Operator
-    Operators.h:class Ring : public Operator
-    Operators.h:class Row : public Operator
-    Operators.h:class ShadedSphereTest : public Operator
-    Operators.h:class Shader : public Operator
-    Operators.h:// Basic geometric framework is in base class:
-    Operators.h:class LotsOfSpotsBase : public Operator
-    Operators.h:class LotsOfSpots : public LotsOfSpotsBase
-    Operators.h:class ColoredSpots : public LotsOfSpotsBase
-    Operators.h:class LotsOfButtons : public LotsOfSpotsBase
-    Operators.h:class Gamma : public Operator
-    Operators.h:class RgbBox : public Operator
-*/
     Texture::waitKey();
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

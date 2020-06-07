@@ -913,33 +913,6 @@ inline float lambertian_shading(const Vec3& surface_normal,
     return std::max(0.0f, surface_normal.dot(toward_light));
 }
 
-// TODO add doc
-// Unit vector toward (distant) light source.
-class ShadedSphereTest : public Operator
-{
-public:
-    ShadedSphereTest(Vec3 _toward_light)
-      : toward_light(_toward_light.normalize()) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color shade(0, 0, 0);
-        // position = position / 0.9;
-        float radius = position.length();
-        if (radius < 1)
-        {
-            // Unit surface normal vector:
-            float h = std::sqrt(1 - sq(radius));
-            Vec3 surface_normal(position.x(), position.y(), h);
-            // Return shaded gray value.
-            float value = lambertian_shading(surface_normal, toward_light);
-            shade = Color::gray(value);
-        }
-        return shade;
-    }
-private:
-    const Vec3 toward_light;
-};
-
 // TODO experimental
 // This Shader operator takes two input textures, one for colors and one whose
 // luminance defines a height field. For each getColor() it samples a triangle
