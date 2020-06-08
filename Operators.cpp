@@ -33,6 +33,17 @@ void Texture::diff(const Texture& t0, const Texture& t1, std::string pathname)
     Texture::displayAndFile3(t0, t1, abs_diff, pathname);
 }
 
+// BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
+// is called ONLY from constructors providing backward compatibility. The
+// tiny Uniform texture object is allowed to "memory leak" for ease of use.
+Texture& Texture::disposableUniform(Color color)
+{
+    std::cout << "Warning: creating disposableUniform" << color
+              << " for backward compatibility." << std::endl;
+    return *(new Uniform(color));
+}
+
+
 // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
 int Blur::sqrt_of_subsample_count = 11;
 
