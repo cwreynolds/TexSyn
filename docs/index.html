@@ -67,6 +67,82 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200607"> <a href="#20200607" class="date">June 7,
+        2020</a>
+      <h1>48 textures</h1>
+      <p>During the merging, rearranging, bug fixing, etc., I made a tool to
+        verify that all expected <em>Texture</em> types were defined and
+        operating as intended. I had not been keeping track, but it turns out
+        there are now 48 types of <em>Texture</em>s defined. There are
+        thumbnail images for each, and below that, the actual expressions used
+        to generate them. The bug was introduced while making the noise textures
+        use the “two point” characterization. It incorrectly applied the noise
+        pattern transformation (from two-point) to the input textures instead of
+        just the noise pattern.</p>
+      <img src="images/20200607_48_textures.png" alt="48 Textures" title="48 Textures"
+        height="700" width="700">
+      <pre><span class="comment">// These are the TexSyn expressions for those 48 textures:</span>
+Uniform(0.5)
+Spot(p1, 0.1, t1, 0.2, t2)
+Gradation(p1, t1, p2, t2)
+Grating(p1, t1, p3, t2, 1, 0.5)
+SoftMatte(t1, t2, t3)
+Add(t1, t2)
+Subtract(t1, t2)
+Multiply(t1, t2)
+Max(t1, t2)
+Min(t1, t2)
+AbsDiff(t1, t2)
+Noise(p1, p2, t1, t2)
+Brownian(p1, p2, t1, t2)
+Turbulence(p1, p2, t1, t2)
+Furbulence(p1, p2, t1, t2)
+Wrapulence(p1, p2, t1, t2)
+MultiNoise(p1, p2, t1, t2, 0.5)
+ColorNoise(p1, p2, 0.5)
+BrightnessToHue(0.5, t1)
+Wrap(2, p1, p2, t1)
+StretchSpot(5, 1, p1, t1)
+Stretch(Vec2(2, 3), p2, t1)
+SliceGrating(p3, p2, t1)
+SliceToRadial(p3, p2, t1)
+SliceShear(p3, p2, t1, Vec2(0.4, 0.1), p1, t2)
+Colorize(Vec2(1, 0.2), p1, t2, t3)
+MobiusTransform(p3, p1, Vec2(0.4, 0.1), p2, t1)
+Scale(0.5, t1)
+Rotate(0.5, t1)
+Translate(p1, t1)
+Blur(0.2, t1)
+SoftThreshold(0, 1, t1)
+EdgeDetect(0.1, t1)
+EdgeEnhance(0.1, 1, t1)
+AdjustHue(0.25, t1)
+AdjustSaturation(0.5, t1)
+AdjustBrightness(0.5, t1)
+Twist(10, 2, p1, t1)
+BrightnessWrap(0.4, 0.6, t3)
+Mirror(p3, p2, t1)
+Ring(9, p3, p1, t1)
+Row(Vec2(0.1, 0.1), p1, t1)
+Shader(Vec3(1, 1, 1), 0.2, t1, t3)
+LotsOfSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2)
+ColoredSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2)
+LotsOfButtons(0.8, 0.1, 0.4, 0.05, 0.01, p1, t1, 1, t2)
+Gamma(0.5, t3)
+RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1)
+
+<span class="comment">// Based on these variables:</span>
+p1 = Vec2(-0.1, 0)
+p2 = Vec2(0.1, 0)
+p3 = Vec2(0.4, 0.6)
+black = Uniform(Color(0, 0, 0))
+white = Uniform(Color(1, 1, 1))
+red = Uniform(Color(1, 0, 0))
+cyan = Uniform(Color(0, 1, 1))
+t1 = Grating(Vec2(0, 0.2), white, Vec2(0, 0), cyan, 0.1, 0.5)
+t2 = Grating(Vec2(0.1, 0), black, Vec2(0, 0), red, 0.1, 0.5)
+t3 = ColorNoise(p1, p3, 0.2)
+</pre> </div>
     <div class="post" id="20200605"> <a href="#20200605" class="date">June 5,
         2020</a>
       <h1>Not-so-grand unification of <em>Generator</em> and <em>Operator</em></h1>

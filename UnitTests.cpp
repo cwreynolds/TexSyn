@@ -412,7 +412,7 @@ void UnitTests::instantiateAllTextureTypes()
     do_thumbnail(SliceGrating(p3, p2, t1));
     do_thumbnail(SliceToRadial(p3, p2, t1));
     do_thumbnail(SliceShear(p3, p2, t1, Vec2(0.4, 0.1), p1, t2));
-    do_thumbnail(Colorize(Vec2(0.4, 0.1), p1, t2, t1));
+    do_thumbnail(Colorize(Vec2(1, 0.2), p1, t2, t3));
     do_thumbnail(MobiusTransform(p3, p1, Vec2(0.4, 0.1), p2, t1));
     do_thumbnail(Scale(0.5, t1));
     do_thumbnail(Rotate(0.5, t1));
