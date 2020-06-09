@@ -358,9 +358,13 @@ bool UnitTests::allTestsOK()
     return all_tests_passed;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO QQQ
-
+// This utility is intended to verify that all Texture types exist, can be
+// constructed, and produce a "reasonable" output. It is currently not used
+// anywhere except when it was called "manually" from main() on June 7, 2020
+// for testing. Note that no mechanism automatically adds clauses to this
+// function when new texture types are defined, so it needs to be updated
+// manually, which of course reduces its effectiveness for catching (e.g.)
+// accidentally deleted definitions.
 void UnitTests::instantiateAllTextureTypes()
 {
     Vec2 p1(-0.1, 0);
@@ -382,8 +386,8 @@ void UnitTests::instantiateAllTextureTypes()
     auto do_thumbnail = [&](const Texture& texture)
     {
         std::string s = path + "thumbnail_" + std::to_string(counter++);
-//        // TODO TEMP
-//        s = "";
+        // TODO TEMP
+        s = "";
         Texture::displayAndFile(texture, s, 101);
     };
 
@@ -435,58 +439,4 @@ void UnitTests::instantiateAllTextureTypes()
     do_thumbnail(LotsOfButtons(0.8, 0.1, 0.4, 0.05, 0.01, p1, t1, 1, t2));
     do_thumbnail(Gamma(0.5, t3));
     do_thumbnail(RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1));
-
-    
-    //———————————————————————————————————————————————————
-//    do_thumbnail(Gradation(p1, t1, p2, t2));
-//    do_thumbnail(Spot(p1, 0.1, t1, 0.2, t2));
-//    do_thumbnail(Grating(p1, t1, p3, t2, 1, 0.5));
-//    do_thumbnail(Noise(p1, p2, t1, t2));
-//    do_thumbnail(Brownian(p1, p2, t1, t2));
-//    do_thumbnail(Turbulence(p1, p2, t1, t2));
-//    do_thumbnail(Furbulence(p1, p2, t1, t2));
-//    do_thumbnail(Wrapulence(p1, p2, t1, t2));
-//    do_thumbnail(MultiNoise(p1, p2, t1, t2, 0.5));
-//    do_thumbnail(ColorNoise(p1, p2, 0.5));
-//    do_thumbnail(Uniform(0.5));
-//    do_thumbnail(SoftMatte(t1, t2, t3));
-//    do_thumbnail(Add(t1, t2));
-//    do_thumbnail(Subtract(t1, t2));
-//    do_thumbnail(AbsDiff(t1, t2));
-//    do_thumbnail(Multiply(t1, t2));
-//    do_thumbnail(Max(t1, t2));
-//    do_thumbnail(Min(t1, t2));
-//    do_thumbnail(Scale(0.5, t1));
-//    do_thumbnail(Rotate(0.5, t1));
-//    do_thumbnail(Translate(p1, t1));
-//    do_thumbnail(BrightnessToHue(0.5, t1));
-//    do_thumbnail(Wrap(2, p1, p2, t1));
-//    do_thumbnail(Stretch2009(0.5, 0.5, p1, t1));
-//    do_thumbnail(Stretch(Vec2(2, 3), p2, t1));
-//    do_thumbnail(StretchSpot(5, 1, p1, t1));
-//    do_thumbnail(SliceGrating(p3, p2, t1));
-//    do_thumbnail(SliceToRadial(p3, p2, t1));
-//    do_thumbnail(SliceShear(p3, p2, t1, Vec2(0.4, 0.1), p1, t2));
-//    do_thumbnail(MobiusTransform(p3, p1, Vec2(0.4, 0.1), p2, t1));
-//    do_thumbnail(Blur(0.2, t1));
-//    do_thumbnail(Colorize(Vec2(0.4, 0.1), p1, t2, t1));
-//    do_thumbnail(SoftThreshold(0, 1, t1));
-//    do_thumbnail(EdgeDetect(0.1, t1));
-//    do_thumbnail(EdgeEnhance(0.1, 1, t1));
-//    do_thumbnail(AdjustHue(0.25, t1));
-//    do_thumbnail(AdjustSaturation(0.5, t1));
-//    do_thumbnail(AdjustBrightness(0.5, t1));
-//    do_thumbnail(Twist(10, 2, p1, t1));
-//    do_thumbnail(BrightnessWrap(0.4, 0.6, t3));
-//    do_thumbnail(Mirror(p3, p2, t1));
-//    do_thumbnail(Ring(9, p3, p1, t1));
-//    do_thumbnail(Row(Vec2(0.1, 0.1), p1, t1));
-//    do_thumbnail(Shader(Vec3(1, 1, 1), 0.2, t1, t3));
-//    do_thumbnail(LotsOfSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
-//    do_thumbnail(ColoredSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
-//    do_thumbnail(LotsOfButtons(0.8,0.1,0.4,0.05,0.01,p1,t1,1,t2));
-//    do_thumbnail(Gamma(0.5, t3));
-//    do_thumbnail(RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1));
-
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

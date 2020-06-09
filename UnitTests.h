@@ -8,11 +8,10 @@
 
 #pragma once
 
-// TODO very informal so far. This function should return true:
 namespace UnitTests
 {
+    // TODO very informal so far. This function should return true:
     bool allTestsOK();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Ad hoc utility to verify all texture types build and run.
     void instantiateAllTextureTypes();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
