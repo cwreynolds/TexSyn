@@ -34,8 +34,10 @@ public:
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Utility for getColor(), optimization for alpha = 0 or 1.
-    Color interpolatePointOnTextures(float alpha, Vec2 position,
-                                     const Texture& t0, const Texture& t1);
+    Color interpolatePointOnTextures(float alpha,
+                                     Vec2 position,
+                                     const Texture& t0,
+                                     const Texture& t1) const;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Rasterize this texture into size² OpenCV image, display in pop-up window.
     void displayInWindow(int size = 511, bool wait = true) const;

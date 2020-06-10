@@ -2361,30 +2361,29 @@ int main(int argc, const char * argv[])
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // New texture interpolation utility -- June 9, 2020
-    std::cout << "June 9, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200609_";
+    // New texture interpolation utility -- June 10, 2020
+    std::cout << "June 10, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200610_";
     
-    
-//    Uniform b1(Color(0, 0, 0.5));
-//    Uniform b2(Color(0, 0, 0.2));
-//    Grating blues(Vec2(), b1, Vec2(-0.1, 0.3), b2, 0.2, 0.8);
-//    Uniform g1(Color(0, 0.5, 0));
-//    Uniform g2(Color(0, 0.2, 0));
-//    Grating greens(Vec2(), g1, Vec2(0.3, 0.1), g2, 0.2, 0.8);
-//    Add background(blues, greens);
-
-    Uniform b1(Color(0, 0, 0.8));
+    Uniform b1(Color(0, 0, 1.0));
     Uniform b2(Color(0, 0, 0.2));
     Grating blues(Vec2(), b1, Vec2(-0.03, 0.09), b2, 0.2, 0.2);
-    Uniform g1(Color(0, 0.8, 0));
-    Uniform g2(Color(0, 0.2, 0));
+    Uniform g1(Color(0, 0.7, 0));
+    Uniform g2(Color(0, 0.05, 0));
     Grating greens(Vec2(), g1, Vec2(0.03, 0.09), g2, 0.2, 0.2);
     Add background(blues, greens);
+    Blur blurred(0.1, background);
 
     Texture::displayAndFile(blues);
     Texture::displayAndFile(greens);
-    Texture::displayAndFile(background);
+    Texture::displayAndFile(background
+                            ); // , path + "background");
+    Texture::displayAndFile(blurred
+                            ); // , path + "blurred");
+    Texture::displayAndFile(Spot(Vec2(), 0.15, blurred, 0.2, background)
+                            ); // , path + "Spot");
+    Texture::displayAndFile(Spot2(Vec2(), 0.15, blurred, 0.2, background));
+
 
     Texture::waitKey();
         

@@ -67,6 +67,80 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200610"> <a href="#20200610" class="date">June 10,
+        2020</a>
+      <h1>Optimization (of questionable value) for inherent matting</h1>
+      <p>In the earlier (2008-2010) version of this library, the <em>SoftMatte</em>
+        operator performed all interpolation between textures. It had a special
+        optimization for when the “alpha” interpolation parameter was 0 or 1. In
+        those cases only one of the two textures is relevant to the result, so
+        the irrelevant texture can be completely ignored. That is, we can skip
+        computing the color of the irrelevant texture for a given pixel. This
+        matters primarily for the slow convolution-based textures: <em>Blur</em>,
+        <em>EdgeEnhance</em>, and <em>EdgeDetect</em>,</p>
+      <p>If we assume that alpha ranges uniformly over [0, 1] it would only
+        rarely take on those values. (And in fact, in TexSyn, alpha can be
+        anywhere on the range of floating point numbers: [-∞, ∞] so
+        infinitesimally often.) However the pattern generators used by <em>Spot</em>,
+        <em>Gradation</em>, and <em>Grating</em> (plus, to a lesser extent, the
+        noise textures) will “often” produce values of 0 or 1. For example <em>Spot</em>
+        is 1 inside its inner radius and 0 outside its outer radius. <em>Gradation</em>
+        is 0 or 1 everywhere except in the transition band between two
+        half-planes.</p>
+      <p>In my simple handmade examples in this document, there tend to be lots
+        of pixels where two textures are being interpolated with an alpha of 0
+        or 1. I suspect it will be much less so “in production” when genetic
+        programming is breeding textures to blend in with photographs of the
+        natural world. However since it is easy to implement, I added this
+        supposed optimization. <code>Texture::interpolatePointOnTextures()</code>—a
+        new utility to be called from various <code>getColor()</code>
+        methods—takes an alpha, a position, and two texture references. I
+        updated <em>Spot</em>, <em>Gradation</em>, and <em>Grating</em> to
+        use this utility. I should later do the same for the noise textures.</p>
+      <p>I also decided to roll back the “gamma correction and waveform
+        generators” experiment proposed on <a href="#20200518">May 18</a> (and
+        <a href="#20200510a">May 10</a>). I don't think it reliably does what I
+        hoped it would (because it de-gamma-s the waveform, not the full color
+        result) and it just seem counter to the approach: “work in linear space,
+        apply output gamma only at very end of process.”</p>
+      <p>As to the best result that this optimization might lead to, consider
+        this <code>grid</code> texture, the sum of two gratings:</p>
+      <pre>b1 = Uniform(Color(0, 0, 1.0))
+b2 = Uniform(Color(0, 0, 0.2))
+g1 = Uniform(Color(0, 0.7, 0))
+g2 = Uniform(Color(0, 0.05, 0))
+blues = Grating(Vec2(), b1, Vec2(-0.03, 0.09), b2, 0.2, 0.2)
+greens = Grating(Vec2(), g1, Vec2(0.03, 0.09), g2, 0.2, 0.2)
+grid = Add(blues, greens)</pre>
+      <img src="images/20200610_background.png" alt="" title="" height="511" width="511">
+      <p>Here is the <em>Blur</em> of <code>grid</code> with a kernel width of
+        0.1:</p>
+      <pre>blurred = Blur(0.1, grid)</pre>
+      <img src="images/20200610_blurred.png" alt="" title="" height="511" width="511">
+      <p>And here is a small <em>Spot</em> with the blurred texture inside and
+        <code>grid</code> outside. Before today's change, for each pixel
+        rendered—that is, for each call to that <em>Spot</em>'s <code>getColor()</code>—calls
+        were made to <code>getColor()</code> for both <code>blurred</code> and
+        <code>grid</code>. For all the pixels outside the spot, the color
+        returned from <code>blurred</code> is multiplied by a weight of zero.
+        With today's fix, the expensive <em>Blur</em> is only called where its
+        weight is non-zero: inside a circle of radius 0.2 around the origin. </p>
+      <p>The before and after textures are identical, but the new one was about
+        <strong>17 times faster</strong> than the old one. As described above,
+        the key ratio is not that 1:17 but rather how often that speed-up would
+        actually occur in practice.</p>
+      <pre>Spot(Vec2(), 0.15, blurred, 0.2, grid)</pre>
+      <img src="images/20200610_Spot.png" alt="" title="" height="511" width="511">
+      <p><strong>Side note:</strong> I had been planning to make this change for
+        a while, then was reminded of it by a post on LikedIn by Frank Nielsen,
+        sort of a retroactive “poster” for his 1998 paper <a href="http://www.sonycsl.co.jp/person/nielsen/PT/groupingquerying/n-grouping.ps">Grouping
+          and Querying: A Paradigm to Get Output-Sensitive Algorithms</a>.
+        Seeing that made me realize that the rendering improvement above was a
+        form of “output-sensitive algorithm” — depending not on the number of
+        pixels rendered, but on the number of them that would actually appear in
+        the output.<br>
+        &nbsp;</p>
+    </div>
     <div class="post" id="20200607"> <a href="#20200607" class="date">June 7,
         2020</a>
       <h1>48 textures</h1>
@@ -3339,5 +3413,6 @@ SoftMatte(spot(0.2),
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
+    
   </body>
 </html>

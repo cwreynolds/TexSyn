@@ -20,7 +20,7 @@
 Color Texture::interpolatePointOnTextures(float alpha,
                                           Vec2 position,
                                           const Texture& t0,
-                                          const Texture& t1)
+                                          const Texture& t1) const
 {
     return ((alpha == 0) ?
             // For alpha==0 evaluate only t0.
