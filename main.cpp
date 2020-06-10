@@ -7,7 +7,6 @@
 //
 
 #include "Texture.h"
-#include "Generators.h"
 #include "Operators.h"
 #include "UnitTests.h"
 #include "Utilities.h"
@@ -2352,12 +2351,41 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Merge Generators.h into Operators.h -- June 7, 2020
-    std::cout << "June 7, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200607_";
-
-    UnitTests::instantiateAllTextureTypes();
+//    // Merge Generators.h into Operators.h -- June 7, 2020
+//    std::cout << "June 7, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200607_";
+//
+//    UnitTests::instantiateAllTextureTypes();
+//
+//    Texture::waitKey();
+        
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // New texture interpolation utility -- June 9, 2020
+    std::cout << "June 9, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200609_";
+    
+    
+//    Uniform b1(Color(0, 0, 0.5));
+//    Uniform b2(Color(0, 0, 0.2));
+//    Grating blues(Vec2(), b1, Vec2(-0.1, 0.3), b2, 0.2, 0.8);
+//    Uniform g1(Color(0, 0.5, 0));
+//    Uniform g2(Color(0, 0.2, 0));
+//    Grating greens(Vec2(), g1, Vec2(0.3, 0.1), g2, 0.2, 0.8);
+//    Add background(blues, greens);
+
+    Uniform b1(Color(0, 0, 0.8));
+    Uniform b2(Color(0, 0, 0.2));
+    Grating blues(Vec2(), b1, Vec2(-0.03, 0.09), b2, 0.2, 0.2);
+    Uniform g1(Color(0, 0.8, 0));
+    Uniform g2(Color(0, 0.2, 0));
+    Grating greens(Vec2(), g1, Vec2(0.03, 0.09), g2, 0.2, 0.2);
+    Add background(blues, greens);
+
+    Texture::displayAndFile(blues);
+    Texture::displayAndFile(greens);
+    Texture::displayAndFile(background);
+
     Texture::waitKey();
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

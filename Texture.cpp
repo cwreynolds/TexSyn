@@ -15,6 +15,25 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Utility for getColor(), optimization for alpha = 0 or 1.
+Color Texture::interpolatePointOnTextures(float alpha,
+                                          Vec2 position,
+                                          const Texture& t0,
+                                          const Texture& t1)
+{
+    return ((alpha == 0) ?
+            // For alpha==0 evaluate only t0.
+            t0.getColor(position) :
+            ((alpha == 1) ?
+             // For alpha==1 evaluate only t1.
+             t1.getColor(position) :
+             // Otherwise evaluate both and interpolate between them.
+             interpolate(alpha, t0.getColor(position), t1.getColor(position))));
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 // Rasterize this texture into size² OpenCV image, display in pop-up window.
 void Texture::displayInWindow(int size, bool wait) const
 {
