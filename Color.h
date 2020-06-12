@@ -27,11 +27,12 @@ public:
         return *this;
     }
     void setRGB(float r, float g, float b) { red_ = r; green_ = g; blue_ = b; }
-    // Equality:
+    // Equality, inequality:
     bool operator==(const Color& c) const
     {
         return ((r() == c.r()) && (g() == c.g()) && (b() == c.b()));
     }
+    bool operator!=(const Color& c) const { return !(*this == c); }
     // Luma (relative luminance?) see https://en.wikipedia.org/wiki/Luma_(video)
     float luminance() const {return 0.2126 * r() + 0.7152 * g() + 0.0722 * b();}
     // TODO still thinking about this API and these names:
