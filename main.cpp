@@ -2361,29 +2361,69 @@ int main(int argc, const char * argv[])
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // New texture interpolation utility -- June 10, 2020
-    std::cout << "June 10, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200610_";
+//    // New texture interpolation utility -- June 10, 2020
+//    std::cout << "June 10, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200610_";
+//
+//    Uniform b1(Color(0, 0, 1.0));
+//    Uniform b2(Color(0, 0, 0.2));
+//    Grating blues(Vec2(), b1, Vec2(-0.03, 0.09), b2, 0.2, 0.2);
+//    Uniform g1(Color(0, 0.7, 0));
+//    Uniform g2(Color(0, 0.05, 0));
+//    Grating greens(Vec2(), g1, Vec2(0.03, 0.09), g2, 0.2, 0.2);
+//    Add background(blues, greens);
+//    Blur blurred(0.1, background);
+//
+//    Texture::displayAndFile(blues);
+//    Texture::displayAndFile(greens);
+//    Texture::displayAndFile(background
+//                            ); // , path + "background");
+//    Texture::displayAndFile(blurred
+//                            ); // , path + "blurred");
+//    Texture::displayAndFile(Spot(Vec2(), 0.15, blurred, 0.2, background)
+//                            ); // , path + "Spot");
+//    Texture::displayAndFile(Spot2(Vec2(), 0.15, blurred, 0.2, background));
+//
+//    Texture::waitKey();
+        
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Uniform b1(Color(0, 0, 1.0));
-    Uniform b2(Color(0, 0, 0.2));
-    Grating blues(Vec2(), b1, Vec2(-0.03, 0.09), b2, 0.2, 0.2);
-    Uniform g1(Color(0, 0.7, 0));
-    Uniform g2(Color(0, 0.05, 0));
-    Grating greens(Vec2(), g1, Vec2(0.03, 0.09), g2, 0.2, 0.2);
-    Add background(blues, greens);
-    Blur blurred(0.1, background);
+    // New texture interpolation utility -- June 11, 2020
+    std::cout << "June 101, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200611_";
+        
+    Uniform white(1, 1, 1);
+    Uniform black(0, 0, 0);
+    Uniform red(1, 0, 0);
+    Uniform blue(0, 0, 1);
+    Uniform green(0, 1, 0);
+    
+    Noise noise1(Vec2(), Vec2(0.1, 0.2), red, blue);
+    Brownian noise2(Vec2(), Vec2(0.1, 0.2), blue, green);
 
-    Texture::displayAndFile(blues);
-    Texture::displayAndFile(greens);
-    Texture::displayAndFile(background
-                            ); // , path + "background");
-    Texture::displayAndFile(blurred
-                            ); // , path + "blurred");
-    Texture::displayAndFile(Spot(Vec2(), 0.15, blurred, 0.2, background)
-                            ); // , path + "Spot");
-    Texture::displayAndFile(Spot2(Vec2(), 0.15, blurred, 0.2, background));
 
+    // FORGET ALL THIS:
+/*
+    // AHA! this one has mismatched pixels.
+    Grating grate(Vec2(), white, Vec2(0.1, 0.2), black, 0.5, 0.5);
+    
+//    // ...what about this? (yes)
+//    Grating grate(Vec2(), w, Vec2(0.1, 0.2), b, 0, 0.5);
+
+//    // While this one does not:
+//    Grating grate(Vec2(), w, Vec2(0.1, 0.2), b, 1, 0.5);
+    
+    Texture::diff(SoftMatte(grate, noise1, noise2),
+                  SoftMatte2(grate, noise1, noise2)
+                  ); // , path + "a_few_bad_pixels");
+*/
+    
+    // THIS has even more mismatches:
+    Texture::diff(SoftMatte(white, noise1, noise2),
+                  SoftMatte2(white, noise1, noise2));
+    // none here:
+//    Texture::diff(SoftMatte(black, noise1, noise2),
+//                  SoftMatte2(black, noise1, noise2));
 
     Texture::waitKey();
         

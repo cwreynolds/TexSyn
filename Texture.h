@@ -79,10 +79,14 @@ public:
     // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
     static void rasterizeSquare(int size, PixelFunction pixel_function);
     static void rasterizeDisk(int size, PixelFunction pixel_function);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Compare textures, print stats, optional file, display inputs and AbsDiff.
-    static void diff(const Texture& t0,
-                     const Texture& t1,
-                     std::string pathname = "");
+//    static void diff(const Texture& t0,
+//                     const Texture& t1,
+//                     std::string pathname = "");
+    static void diff(const Texture& t0, const Texture& t1, std::string pathname);
+    static void diff(const Texture& t0, const Texture& t1) { diff(t0, t1, ""); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Combines display on screen and writing file, but primary benefit is that
     // this allows writing an arbitrarily nested expression of TexSyn
     // constructors, whose lifetime extends across both operations.

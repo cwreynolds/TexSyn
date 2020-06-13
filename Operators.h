@@ -214,6 +214,7 @@ public:
 //      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
     Color getColor(Vec2 position) const override
     {
+        // TODO isn't this handled inside interpolate these days?
         if (distance == 0)
         {
             return interpolate(0.5,
@@ -304,9 +305,43 @@ public:
         : matte(_matte), texture0(_texture0), texture1(_texture1) {}
     Color getColor(Vec2 position) const override
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return interpolate(matte.getColor(position).luminance(),
                            texture0.getColor(position),
                            texture1.getColor(position));
+        
+//        return interpolatePointOnTextures(matte.getColor(position).luminance(),
+//                                          position,
+//                                          texture0,
+//                                          texture1);
+        //QQQ
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+private:
+    const Texture& matte;
+    const Texture& texture0;
+    const Texture& texture1;
+};
+class SoftMatte2 : public Texture
+{
+public:
+    SoftMatte2(const Texture& _matte,
+              const Texture& _texture0,
+              const Texture& _texture1)
+        : matte(_matte), texture0(_texture0), texture1(_texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        return interpolate(matte.getColor(position).luminance(),
+//                           texture0.getColor(position),
+//                           texture1.getColor(position));
+        
+        return interpolatePointOnTextures(matte.getColor(position).luminance(),
+                                          position,
+                                          texture0,
+                                          texture1);
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
     const Texture& matte;
@@ -407,9 +442,20 @@ public:
     {
         Color diff = texture0.getColor(position) - texture1.getColor(position);
         // TODO define overloat of std::abs() for Color?
-        return Color(std::abs(diff.r()),
-                     std::abs(diff.g()),
-                     std::abs(diff.b()));
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        return Color(std::abs(diff.r()),
+//                     std::abs(diff.g()),
+//                     std::abs(diff.b()));
+        
+        Color black(0,0,0);
+        Color white(1,1,1);
+        Vec2 first(-0.847059, 0.14902);
+        float half_pixel = 1.0 / 511;
+        if (withinEpsilon(position, first, half_pixel)) debugPrint("Hello!");
+//        if (diff != black) debugPrint(position);
+        
+        return ((diff == black) ? black : white);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
     const Texture& texture0;
