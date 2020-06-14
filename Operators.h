@@ -24,8 +24,6 @@ private:
     const Color color;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // A circular spot, centered at a given point, with two radii. Within an inner
 // radius it is colored according to one input texture. Beyond an outer radius
 // it is uniformly colored according a second input texture. Between the two
@@ -38,67 +36,10 @@ public:
          float inner_radius_, const Texture& inner_texture_,
          float outer_radius_, const Texture& outer_texture_)
       : center(center_),
-        inner_radius(std::min(inner_radius_, outer_radius_)),
-        inner_texture(inner_texture_),
-        outer_radius(std::max(inner_radius_, outer_radius_)),
-        outer_texture(outer_texture_)
-    {
-        assert(inner_radius >= 0);
-        assert(outer_radius >= 0);
-        assert(outer_radius >= inner_radius);
-    }
-    // BACKWARD_COMPATIBILITY for version before inherent matting.
-    Spot(Vec2 a, float b, Color c, float d, Color e)
-      : Spot(a, b, disposableUniform(c), d, disposableUniform(e)){}
-    Color getColor(Vec2 position) const override
-    {
-        // Distance from sample position to spot center.
-        float d = (position - center).length();
-        // Fraction for interpolation: 0 inside, 1 outside, ramp between.
-        float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
-        // Sinusoidal interpolation between inner and outer colors.
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        return interpolate(deGamma(sinusoid(f)),
-        return interpolate(sinusoid(f),
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-                           inner_texture.getColor(position),
-                           outer_texture.getColor(position));
-    }
-private:
-    const Vec2 center;
-    const float inner_radius;
-    const float outer_radius;
-    const Texture& inner_texture;
-    const Texture& outer_texture;
-};
-
-// A circular spot, centered at a given point, with two radii. Within an inner
-// radius it is colored according to one input texture. Beyond an outer radius
-// it is uniformly colored according a second input texture. Between the two
-// radii, there is a sinusoid transition from one texture to the other.
-// (Reverses radii if they are out of order.)
-class Spot2 : public Texture
-{
-public:
-    Spot2(Vec2 center_,
-         float inner_radius_, const Texture& inner_texture_,
-         float outer_radius_, const Texture& outer_texture_)
-      : center(center_),
-//        inner_radius(std::min(inner_radius_, outer_radius_)),
         inner_radius(std::max(0.0f, std::min(inner_radius_, outer_radius_))),
         inner_texture(inner_texture_),
-//        outer_radius(std::max(inner_radius_, outer_radius_)),
         outer_radius(std::max(0.0f, std::max(inner_radius_, outer_radius_))),
-//        outer_texture(outer_texture_)
         outer_texture(outer_texture_) {}
-//    {
-//        assert(inner_radius >= 0);
-//        assert(outer_radius >= 0);
-//        assert(outer_radius >= inner_radius);
-//    }
-//    // BACKWARD_COMPATIBILITY for version before inherent matting.
-//    Spot2(Vec2 a, float b, Color c, float d, Color e)
-//      : Spot(a, b, disposableUniform(c), d, disposableUniform(e)){}
     Color getColor(Vec2 position) const override
     {
         // Distance from sample position to spot center.
@@ -106,19 +47,12 @@ public:
         // Fraction for interpolation: 0 inside, 1 outside, ramp between.
         float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
         // Sinusoidal interpolation between inner and outer colors.
-//        return interpolate(deGamma(sinusoid(f)),
-//                           inner_texture.getColor(position),
-//                           outer_texture.getColor(position));
-//        return interpolatePointOnTextures(deGamma(sinusoid(f)),
-//                                          position,
-//                                          inner_texture,
-//                                          outer_texture);
         return interpolatePointOnTextures(sinusoid(f), position,
                                           inner_texture, outer_texture);
     }
     // BACKWARD_COMPATIBILITY for version before inherent matting.
-    Spot2(Vec2 a, float b, Color c, float d, Color e)
-      : Spot2(a, b, disposableUniform(c), d, disposableUniform(e)){}
+    Spot(Vec2 a, float b, Color c, float d, Color e)
+      : Spot(a, b, disposableUniform(c), d, disposableUniform(e)){}
 private:
     const Vec2 center;
     const float inner_radius;
@@ -126,8 +60,6 @@ private:
     const Texture& inner_texture;
     const Texture& outer_texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Gradation between two textures with arbitrary position, width, and
 // orientation. The arguments are two points, defining a line segment, and a
@@ -144,9 +76,6 @@ public:
         origin(point_0),
         distance((point_1 - point_0).length()),
         basis((point_1 - point_0) / distance) {}
-//    // BACKWARD_COMPATIBILITY for version before inherent matting.
-//    Gradation(Vec2 a, Color b, Vec2 c, Color d)
-//      : Gradation(a, disposableUniform(b), c, disposableUniform(d)){}
     Color getColor(Vec2 position) const override
     {
         // TODO isn't this handled inside interpolate these days?
@@ -161,18 +90,10 @@ public:
             Vec2 offset = position - origin;
             float projection = basis.dot(offset);
             float relative = remapIntervalClip(projection, 0, distance, 0, 1);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            return interpolate(deGamma(sinusoid(relative)),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-
-//            return interpolate(sinusoid(relative),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-
-            return interpolatePointOnTextures(sinusoid(relative), position,
-                                              texture0, texture1);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            return interpolatePointOnTextures(sinusoid(relative),
+                                              position,
+                                              texture0,
+                                              texture1);
         }
     }
     // BACKWARD_COMPATIBILITY for version before inherent matting.
@@ -207,11 +128,6 @@ public:
         basis((point_1 - point_0) / distance),
         softness(clip(softness_, 0, 1)),
         duty_cycle(clip(duty_cycle_, 0, 1)) {}
-//    // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
-//    Grating(Vec2 a, Color b, Vec2 c, Color d, float e)
-//      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
-//    Grating(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
-//      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
     Color getColor(Vec2 position) const override
     {
         // TODO isn't this handled inside interpolate these days?
@@ -227,25 +143,10 @@ public:
             float projection = basis.dot(offset);
             // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
             float unit_modulo = fmod_floor(projection, distance) / distance;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // It is adjusted for "duty cycle" and fed into "soft edge square
-//            // wave" generator, finally de-gamma-ed to preserve equal stripe
-//            // width (assuming duty-cycle = 0.5).
-//            return interpolate(deGamma(softSquareWave(dutyCycle(unit_modulo))),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-//
-//            // Adjust for "duty cycle" then generate "soft-edge square wave".
-//            return interpolate(softSquareWave(dutyCycle(unit_modulo)),
-//                               texture0.getColor(position),
-//                               texture1.getColor(position));
-            
             // Adjust for "duty cycle" then then for "soft-edge square wave".
             float alpha = softSquareWave(dutyCycle(unit_modulo));
             return interpolatePointOnTextures(alpha, position,
                                               texture0, texture1);
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
     }
     // Defines a "square wave with soft edges". When softness is 0 it is a
@@ -293,9 +194,6 @@ private:
     const float duty_cycle;
 };
 
-// Use a given "matte" texture to combine two other textures. The luminance of
-// the matte at each color sample is used as the interpolation fraction between
-// the corresponding samples of the other textures.
 class SoftMatte : public Texture
 {
 public:
@@ -305,43 +203,10 @@ public:
         : matte(_matte), texture0(_texture0), texture1(_texture1) {}
     Color getColor(Vec2 position) const override
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return interpolate(matte.getColor(position).luminance(),
-                           texture0.getColor(position),
-                           texture1.getColor(position));
-        
-//        return interpolatePointOnTextures(matte.getColor(position).luminance(),
-//                                          position,
-//                                          texture0,
-//                                          texture1);
-        //QQQ
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    }
-private:
-    const Texture& matte;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-class SoftMatte2 : public Texture
-{
-public:
-    SoftMatte2(const Texture& _matte,
-              const Texture& _texture0,
-              const Texture& _texture1)
-        : matte(_matte), texture0(_texture0), texture1(_texture1) {}
-    Color getColor(Vec2 position) const override
-    {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return interpolate(matte.getColor(position).luminance(),
-//                           texture0.getColor(position),
-//                           texture1.getColor(position));
-        
         return interpolatePointOnTextures(matte.getColor(position).luminance(),
                                           position,
                                           texture0,
                                           texture1);
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
     const Texture& matte;
@@ -441,21 +306,10 @@ public:
     Color getColor(Vec2 position) const override
     {
         Color diff = texture0.getColor(position) - texture1.getColor(position);
-        // TODO define overloat of std::abs() for Color?
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        return Color(std::abs(diff.r()),
-//                     std::abs(diff.g()),
-//                     std::abs(diff.b()));
-        
-        Color black(0,0,0);
-        Color white(1,1,1);
-        Vec2 first(-0.847059, 0.14902);
-        float half_pixel = 1.0 / 511;
-        if (withinEpsilon(position, first, half_pixel)) debugPrint("Hello!");
-//        if (diff != black) debugPrint(position);
-        
-        return ((diff == black) ? black : white);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO define overload of std::abs() for Color?
+        return Color(std::abs(diff.r()),
+                     std::abs(diff.g()),
+                     std::abs(diff.b()));
     }
 private:
     const Texture& texture0;

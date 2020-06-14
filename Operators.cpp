@@ -19,9 +19,7 @@ void Texture::diff(const Texture& t0, const Texture& t1, std::string pathname)
     AbsDiff abs_diff(t0, t1);
     int pixel_count = 0;
     Color total_color(0, 0, 0);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int mismatch_count = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int size = 511;
     Texture::rasterizeDisk(size,
                            [&](int i, int j, Vec2 position)
@@ -29,16 +27,12 @@ void Texture::diff(const Texture& t0, const Texture& t1, std::string pathname)
                                Color diff = abs_diff.getColor(position);
                                total_color += diff;
                                pixel_count++;
-                               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                if (diff != Color()) mismatch_count++;
-                               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                            });
     debugPrint(pixel_count);
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     debugPrint(mismatch_count);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Texture::displayAndFile3(t0, t1, abs_diff, pathname);
 }
 

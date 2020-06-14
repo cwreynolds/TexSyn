@@ -2388,39 +2388,53 @@ int main(int argc, const char * argv[])
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // New texture interpolation utility -- June 13, 2020
-    std::cout << "June 13, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200613_";
+//    // New texture interpolation utility -- June 13, 2020
+//    std::cout << "June 13, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200613_";
+//
+//    Vec2 p1(0, 0);
+//    Vec2 p2(0.1, 0.2);
+//    Uniform red(1, 0, 0);
+//    Uniform blue(0, 0, 1);
+//    Uniform green(0, 1, 0);
+//    Uniform white(1, 1, 1);
+//    Uniform black(0, 0, 0);
+//    Noise noise1(p1, p2, red, blue);
+//    Brownian noise2(p1, p2, blue, green);
+//    Grating grate(p1, white, p2, black, 0.5, 0.5);
+//
+//    // original test
+//    Texture::diff(SoftMatte(grate, noise1, noise2),
+//                  SoftMatte2(grate, noise1, noise2)
+//                  ); // , path + "a_few_bad_pixels");
+//
+//    // simplified test
+//    Texture::diff(SoftMatte(white, noise1, noise2),
+//                  SoftMatte2(white, noise1, noise2)
+//                  ); // , path + "show_mismatches");
+//
+//    Texture::waitKey();
         
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // new interpolate(), clean up -- June 14, 2020
+    std::cout << "June 14, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200614_";
+
+    Vec2 p1(0, 0);
+    Vec2 p2(0.1, 0.2);
     Uniform red(1, 0, 0);
     Uniform blue(0, 0, 1);
     Uniform green(0, 1, 0);
     Uniform white(1, 1, 1);
     Uniform black(0, 0, 0);
+    Noise noise1(p1, p2, red, blue);
+    Brownian noise2(p1, p2, blue, green);
+    Grating grate(p1, white, p2, black, 0.5, 0.5);
 
-    Noise noise1(Vec2(), Vec2(0.1, 0.2), red, blue);
-    Brownian noise2(Vec2(), Vec2(0.1, 0.2), blue, green);
+    Texture::diff(Brownian(p1, p2, white, green),
+                  Brownian(p1, p2 * 1.1, white, green));
 
-/*
-    // FORGET ALL THIS:
-    // AHA! this one has mismatched pixels.
-    Grating grate(Vec2(), white, Vec2(0.1, 0.2), black, 0.5, 0.5);
-//    // ...what about this? (yes)
-//    Grating grate(Vec2(), w, Vec2(0.1, 0.2), b, 0, 0.5);
-//    // While this one does not:
-//    Grating grate(Vec2(), w, Vec2(0.1, 0.2), b, 1, 0.5);
-    Texture::diff(SoftMatte(grate, noise1, noise2),
-                  SoftMatte2(grate, noise1, noise2)
-                  ); // , path + "a_few_bad_pixels");
-*/
-    
-    // THIS has even more mismatches:
-    Texture::diff(SoftMatte(white, noise1, noise2),
-                  SoftMatte2(white, noise1, noise2)
-                  ); // , path + "show_mismatches");
-    
-    debugPrint(3.0f == interpolate(0.0f, 3.0f, 5.0f));
-    debugPrint(5.0f == interpolate(1.0f, 3.0f, 5.0f));
 
     Texture::waitKey();
         
