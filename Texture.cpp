@@ -16,20 +16,75 @@
 #pragma clang diagnostic pop
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Utility for getColor(), optimization for alpha = 0 or 1.
+
+//Color Texture::interpolatePointOnTextures(float alpha,
+//                                          Vec2 position,
+//                                          const Texture& t0,
+//                                          const Texture& t1) const
+//{
+//    return ((alpha == 0) ?
+//            // For alpha==0 evaluate only t0.
+//            t0.getColor(position) :
+//            ((alpha == 1) ?
+//             // For alpha==1 evaluate only t1.
+//             t1.getColor(position) :
+//             // Otherwise evaluate both and interpolate between them.
+//             interpolate(alpha, t0.getColor(position), t1.getColor(position))));
+//}
+
 Color Texture::interpolatePointOnTextures(float alpha,
                                           Vec2 position,
                                           const Texture& t0,
                                           const Texture& t1) const
 {
-    return ((alpha == 0) ?
-            // For alpha==0 evaluate only t0.
-            t0.getColor(position) :
-            ((alpha == 1) ?
-             // For alpha==1 evaluate only t1.
-             t1.getColor(position) :
-             // Otherwise evaluate both and interpolate between them.
-             interpolate(alpha, t0.getColor(position), t1.getColor(position))));
+    // old way
+    Color o = interpolate(alpha,
+                          t0.getColor(position),
+                          t1.getColor(position));
+    
+    // new way
+    Color n = ((alpha == 0) ?
+               // For alpha==0 evaluate only t0.
+               t0.getColor(position) :
+               ((alpha == 1) ?
+                // For alpha==1 evaluate only t1.
+                t1.getColor(position) :
+                // Otherwise evaluate both and interpolate between them.
+                interpolate(alpha,
+                            t0.getColor(position),
+                            t1.getColor(position))));
+
+//        // newER way
+//        Color c0(0, 0, 0);
+//        Color c1(0, 0, 0);
+//    //    Color c0(1, 1, 1);
+//    //    Color c1(1, 1, 1);
+//    //    if (alpha != 1) c0 = t0.getColor(position);
+//    //    if (alpha != 0) c1 = t1.getColor(position);
+//
+//        if (alpha != 1) c0 = t0.getColor(position);
+//        if (alpha != 0) c1 = t1.getColor(position); else c1 = c0;
+//        if (alpha == 1) c0 = c1;
+//
+//        Color n = interpolate(alpha, c0, c1);
+
+    if (o != n)
+    {
+        grabPrintLock();
+        std::cout << "- - - - - - - - - - - - - - -" << std::endl;
+        debugPrint(o);
+        debugPrint(n);
+        debugPrint(n - o);
+        debugPrint(alpha > 1);
+        debugPrint(alpha < 1);
+        debugPrint(std::numeric_limits<float>::min());
+        debugPrint(std::numeric_limits<float>::epsilon());
+        debugPrint(std::numeric_limits<float>::lowest());
+    }
+    
+    return n;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

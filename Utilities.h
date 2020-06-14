@@ -19,14 +19,18 @@ class Vec2;
 
 // for debugging: prints one line with a given C expression, an equals sign,
 // and the value of the expression.  For example "angle = 35.6"
-#define debugPrint(e) { grabPrintLock() debugPrintNL(e); }
+#define debugPrint(e) { grabPrintLock(); debugPrintNL(e); }
 
 // Original (circa 2002) "non locking" version, in case it is ever useful.
 #define debugPrintNL(e) (std::cout << #e" = " << (e) << std::endl << std::flush)
 
 // Global mutex to allow synchronizing console output from parallel threads
-static std::mutex print_mutex_;
-#define grabPrintLock() std::lock_guard<std::mutex> print_lock_(print_mutex_);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//static std::mutex print_mutex_;
+//#define grabPrintLock() std::lock_guard<std::mutex> print_lock_(print_mutex_);
+static std::recursive_mutex print_mutex_;
+#define grabPrintLock() std::lock_guard<std::recursive_mutex> pl_(print_mutex_);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Just for convenience in hand-written prototypes and tests:
 const float pi = M_PI;
@@ -47,7 +51,10 @@ float frandom2(float lowerBound, float upperBound);
 template<typename F,typename T>
 T interpolate(const F& alpha, const T& x0, const T& x1)
 {
-    return x0 + ((x1 - x0) * alpha);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    return x0 + ((x1 - x0) * alpha);
+    return (x0 * (1 - alpha)) + (x1 * alpha);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // True when x is between given bounds (low ≤ x ≤ high)
