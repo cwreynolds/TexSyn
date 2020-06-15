@@ -15,14 +15,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
-// Utility for getColor(), optimization for alpha = 0 or 1.
-Color Texture::interpolatePointOnTextures(float alpha,
-                                          Vec2 position,
-                                          const Texture& t0,
-                                          const Texture& t1) const
-{
-    return interpolatePointOnTextures(alpha, position, position, t0, t1);
-}
+// Utility for getColor(), special-cased for when alpha is 0 or 1.
 Color Texture::interpolatePointOnTextures(float alpha,
                                           Vec2 position0,
                                           Vec2 position1,

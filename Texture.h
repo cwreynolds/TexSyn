@@ -32,9 +32,7 @@ public:
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
-    // Utility for getColor(), optimization for alpha = 0 or 1.
-    Color interpolatePointOnTextures(float alpha, Vec2 position,
-                                     const Texture& t0, const Texture& t1) const;
+    // Utility for getColor(), special-cased for when alpha is 0 or 1.
     Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
                                      const Texture& t0, const Texture& t1) const;
     // Rasterize this texture into size² OpenCV image, display in pop-up window.

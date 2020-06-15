@@ -47,7 +47,7 @@ public:
         // Fraction for interpolation: 0 inside, 1 outside, ramp between.
         float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
         // Sinusoidal interpolation between inner and outer colors.
-        return interpolatePointOnTextures(sinusoid(f), position,
+        return interpolatePointOnTextures(sinusoid(f), position, position,
                                           inner_texture, outer_texture);
     }
     // BACKWARD_COMPATIBILITY for version before inherent matting.
@@ -91,6 +91,7 @@ public:
             float projection = basis.dot(offset);
             float relative = remapIntervalClip(projection, 0, distance, 0, 1);
             return interpolatePointOnTextures(sinusoid(relative),
+                                              position,
                                               position,
                                               texture0,
                                               texture1);
@@ -145,7 +146,8 @@ public:
             float unit_modulo = fmod_floor(projection, distance) / distance;
             // Adjust for "duty cycle" then then for "soft-edge square wave".
             float alpha = softSquareWave(dutyCycle(unit_modulo));
-            return interpolatePointOnTextures(alpha, position,
+            return interpolatePointOnTextures(alpha,
+                                              position, position,
                                               texture0, texture1);
         }
     }
@@ -204,9 +206,8 @@ public:
     Color getColor(Vec2 position) const override
     {
         return interpolatePointOnTextures(matte.getColor(position).luminance(),
-                                          position,
-                                          texture0,
-                                          texture1);
+                                          position, position,
+                                          texture0, texture1);
     }
 private:
     const Texture& matte;
@@ -332,8 +333,10 @@ public:
         texture1(texture_1) {}
     Color getColor(Vec2 position) const override
     {
-        float alpha = getScalerNoise(transformIntoNoiseSpace(position));
-        return interpolatePointOnTextures(alpha, position, texture0, texture1);
+        float blend = getScalerNoise(transformIntoNoiseSpace(position));
+        return interpolatePointOnTextures(blend,
+                                          position, position,
+                                          texture0, texture1);
     }
     // Get scalar noise fraction on [0, 1] for the given transformed position.
     // Overridden by other noise-based textures to customize basic behavior.
@@ -1411,9 +1414,8 @@ public:
     {
         DiskAndSoft das = getSpot(position);
         return interpolatePointOnTextures(das.second,
-                                          position,
-                                          background_texture,
-                                          spot_texture);
+                                          position, position,
+                                          background_texture, spot_texture);
     }
 private:
     const Texture& spot_texture;
@@ -1486,16 +1488,13 @@ public:
         DiskAndSoft das = getSpot(position);
         float matte = das.second;
         Vec2 spot_center = das.first.position;
-        float spot_radius = das.first.radius;
-        float dist_from_spot = (position - spot_center).length();
         Vec2 rotated = (position - spot_center).rotate(das.first.angle);
         Vec2 button_sample_point = button_center + rotated;
-        Color background_color = background_texture.getColor(position);
-        return (dist_from_spot > spot_radius ?
-                background_color :
-                interpolate(matte,
-                            background_color,
-                            button_texture.getColor(button_sample_point)));
+        return interpolatePointOnTextures(matte,
+                                          position,
+                                          button_sample_point,
+                                          background_texture,
+                                          button_texture);
     }
 private:
     const Vec2 button_center;
