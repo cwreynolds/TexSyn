@@ -2432,9 +2432,24 @@ int main(int argc, const char * argv[])
     Brownian noise2(p1, p2, blue, green);
     Grating grate(p1, white, p2, black, 0.5, 0.5);
 
-    Texture::diff(Brownian(p1, p2, white, green),
-                  Brownian(p1, p2 * 1.1, white, green));
+    //Texture::diff(Brownian(p1, p2, white, green),
+    //              Brownian(p1, p2 * 1.1, white, green));
 
+    //Texture::diff(Noise(p1, p2 * 5, white, green),
+    //              Noise2(p1, p2 * 5, white, green));
+
+    Grating bg(p1, blue, p2, green, 1, 0.5);
+    //Texture::diff(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+    //                          Blur(0.2, bg), white),
+    //              LotsOfSpots2(0.8, 0.05, 0.3, 0.05, 0.02,
+    //                           Blur(0.2, bg), white));
+
+    Texture::displayAndFile(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+                                        Blur(0.2, bg), white));
+    Texture::displayAndFile(ColoredSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+                                         Blur(0.2, bg), white));
+    Texture::displayAndFile(LotsOfButtons(0.8, 0.05, 0.3, 0.05, 0.02,
+                                          Vec2(), Blur(0.2, bg), 1, white));
 
     Texture::waitKey();
         

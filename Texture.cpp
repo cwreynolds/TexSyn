@@ -21,16 +21,25 @@ Color Texture::interpolatePointOnTextures(float alpha,
                                           const Texture& t0,
                                           const Texture& t1) const
 {
+    return interpolatePointOnTextures(alpha, position, position, t0, t1);
+}
+Color Texture::interpolatePointOnTextures(float alpha,
+                                          Vec2 position0,
+                                          Vec2 position1,
+                                          const Texture& t0,
+                                          const Texture& t1) const
+{
     return ((alpha == 0) ?
             // For alpha==0 evaluate only t0.
-            t0.getColor(position) :
+            t0.getColor(position0) :
             ((alpha == 1) ?
              // For alpha==1 evaluate only t1.
-             t1.getColor(position) :
+             t1.getColor(position1) :
              // Otherwise evaluate both and interpolate between them.
-             interpolate(alpha, t0.getColor(position), t1.getColor(position))));
+             interpolate(alpha,
+                         t0.getColor(position0),
+                         t1.getColor(position1))));
 }
-
 
 // Rasterize this texture into size² OpenCV image, display in pop-up window.
 void Texture::displayInWindow(int size, bool wait) const

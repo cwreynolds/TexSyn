@@ -332,9 +332,8 @@ public:
         texture1(texture_1) {}
     Color getColor(Vec2 position) const override
     {
-        return interpolate(getScalerNoise(transformIntoNoiseSpace(position)),
-                           texture0.getColor(position),
-                           texture1.getColor(position));
+        float alpha = getScalerNoise(transformIntoNoiseSpace(position));
+        return interpolatePointOnTextures(alpha, position, texture0, texture1);
     }
     // Get scalar noise fraction on [0, 1] for the given transformed position.
     // Overridden by other noise-based textures to customize basic behavior.
@@ -602,7 +601,7 @@ public:
     // maps from relative radius to magnification multiplier between 0 and 1
     float remapper(float rr) const
     {
-        return interpolate(interpolate (rr, rr, sinusoid (rr)),
+        return interpolate(interpolate(rr, rr, sinusoid (rr)),
                            ((center_magnification > 1) ?
                             (1 / center_magnification) :
                             center_magnification),
@@ -1411,9 +1410,10 @@ public:
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);
-        return interpolate(das.second,
-                           background_texture.getColor(position),
-                           spot_texture.getColor(position));
+        return interpolatePointOnTextures(das.second,
+                                          position,
+                                          background_texture,
+                                          spot_texture);
     }
 private:
     const Texture& spot_texture;
@@ -1442,9 +1442,11 @@ public:
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);
-        return interpolate(das.second,
-                           background_texture.getColor(position),
-                           color_texture.getColor(das.first.position));
+        return interpolatePointOnTextures(das.second,
+                                          position,
+                                          das.first.position,
+                                          background_texture,
+                                          color_texture);
     }
 private:
     const Texture& background_texture;
