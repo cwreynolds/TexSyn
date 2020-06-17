@@ -2417,46 +2417,74 @@ int main(int argc, const char * argv[])
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // new interpolate(), clean up -- June 14, 2020
-    std::cout << "June 14, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200614_";
-
-    Vec2 p1(0, 0);
-    Vec2 p2(0.1, 0.2);
-    Uniform red(1, 0, 0);
-    Uniform blue(0, 0, 1);
-    Uniform green(0, 1, 0);
-    Uniform white(1, 1, 1);
-    Uniform black(0, 0, 0);
-    Noise noise1(p1, p2, red, blue);
-    Brownian noise2(p1, p2, blue, green);
-    Grating grate(p1, white, p2, black, 0.5, 0.5);
-    Grating bg(p1, blue, p2, green, 1, 0.5);
-
-    //Texture::diff(Brownian(p1, p2, white, green),
-    //              Brownian(p1, p2 * 1.1, white, green));
-    //Texture::diff(Noise(p1, p2 * 5, white, green),
-    //              Noise2(p1, p2 * 5, white, green));
-
-    //Texture::diff(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
-    //                          Blur(0.2, bg), white),
-    //              LotsOfSpots2(0.8, 0.05, 0.3, 0.05, 0.02,
-    //                           Blur(0.2, bg), white));
-
-    Texture::displayAndFile(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
-                                        Blur(0.2, bg), white));
-    Texture::displayAndFile(ColoredSpots(0.8, 0.05, 0.3, 0.05, 0.02,
-                                         Blur(0.2, bg), white));
-    Texture::displayAndFile(LotsOfButtons(0.8, 0.05, 0.3, 0.05, 0.02,
-                                          Vec2(), Blur(0.2, bg), 1, white));
-    
-    //Texture::diff(LotsOfButtonsOld(0.8, 0.05, 0.3, 0.05, 0.02,
-    //                               Vec2(), Blur(0.2, bg), 1, white),
-    //              LotsOfButtons   (0.8, 0.05, 0.3, 0.05, 0.02,
-    //                               Vec2(), Blur(0.2, bg), 1, white));
-
-    Texture::waitKey();
+//    // new interpolate(), clean up -- June 14, 2020
+//    std::cout << "June 14, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200614_";
+//
+//    Vec2 p1(0, 0);
+//    Vec2 p2(0.1, 0.2);
+//    Uniform red(1, 0, 0);
+//    Uniform blue(0, 0, 1);
+//    Uniform green(0, 1, 0);
+//    Uniform white(1, 1, 1);
+//    Uniform black(0, 0, 0);
+//    Noise noise1(p1, p2, red, blue);
+//    Brownian noise2(p1, p2, blue, green);
+//    Grating grate(p1, white, p2, black, 0.5, 0.5);
+//    Grating bg(p1, blue, p2, green, 1, 0.5);
+//
+//    //Texture::diff(Brownian(p1, p2, white, green),
+//    //              Brownian(p1, p2 * 1.1, white, green));
+//    //Texture::diff(Noise(p1, p2 * 5, white, green),
+//    //              Noise2(p1, p2 * 5, white, green));
+//
+//    //Texture::diff(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+//    //                          Blur(0.2, bg), white),
+//    //              LotsOfSpots2(0.8, 0.05, 0.3, 0.05, 0.02,
+//    //                           Blur(0.2, bg), white));
+//
+//    Texture::displayAndFile(LotsOfSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+//                                        Blur(0.2, bg), white));
+//    Texture::displayAndFile(ColoredSpots(0.8, 0.05, 0.3, 0.05, 0.02,
+//                                         Blur(0.2, bg), white));
+//    Texture::displayAndFile(LotsOfButtons(0.8, 0.05, 0.3, 0.05, 0.02,
+//                                          Vec2(), Blur(0.2, bg), 1, white));
+//
+//    //Texture::diff(LotsOfButtonsOld(0.8, 0.05, 0.3, 0.05, 0.02,
+//    //                               Vec2(), Blur(0.2, bg), 1, white),
+//    //              LotsOfButtons   (0.8, 0.05, 0.3, 0.05, 0.02,
+//    //                               Vec2(), Blur(0.2, bg), 1, white));
+//
+//    Texture::waitKey();
         
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototyping COTS maps -- June 16, 2020
+    std::cout << "June 16, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200616_";
+    
+    float s = 0.4;
+    float v = s * 0.8;
+    float th = s * 2.0;
+    float bh = s * 0.6;
+    float mv = -0.1;
+    Vec2 a(-th, mv + v);
+    Vec2 b(+th, mv + v);
+    Vec2 c(+bh, mv - v);
+    Vec2 d(-bh, mv - v);
+
+    CotsMap cots(a, b, c, d, Uniform(0.5));
+
+    float r1 = 0.04;
+    float r2 = 0.05;
+    Texture::displayAndFile(Spot(a, r1, Uniform(1, 0, 0), r2,
+                                 Spot(b, r1, Uniform(1, 1, 0), r2,
+                                      Spot(c, r1, Uniform(0, 1, 0), r2,
+                                           Spot(d, r1, Uniform(0, 0, 1), r2,
+                                                cots)))));
+    
+    Texture::waitKey();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

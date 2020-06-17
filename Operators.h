@@ -9,6 +9,9 @@
 #pragma once
 #include "Texture.h"
 #include "Disk.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include "COTS.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Minimal texture, a uniform color everywhere on the texture plane. Its only
 // parameter is that color. As a convenience for hand written code, also can be
@@ -1559,3 +1562,26 @@ private:
     const float max_b;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class CotsMap : public Texture
+{
+public:
+    CotsMap(Vec2 A, Vec2 B, Vec2 C, Vec2 D, const Texture& _texture)
+      : cots_map(A, B, C, D),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 ip = cots_map.Inverse(position);
+        
+        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
+                Color(1, 1, 1) :
+                Color() );
+    }
+private:
+    const COTS cots_map;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

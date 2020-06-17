@@ -30,6 +30,7 @@
 
 class COTS
 {
+public:
     COTS() {}
     COTS(Vec2 a, Vec2 b, Vec2 c, Vec2 d) : a_(a), b_(b), c_(c), d_(d)
     {
@@ -66,6 +67,13 @@ class COTS
         f_ = SpiralCenter(au, mu, getA(), getD());
         av = spiralAngle(getA(), getD(), getB(), getC());
         mv = spiralScale(getA(), getD(), getB(), getC());
+        
+        std::cout << "COTS::updateParameters(): " << std::endl;
+        debugPrint(au);
+        debugPrint(mu);
+        debugPrint(av);
+        debugPrint(mv);
+        debugPrint (f_);
     }
     
     //---------------------------------------------------------------
@@ -73,19 +81,19 @@ class COTS
     
     // dot(U,V): U*V (dot product U*V)
 //    float dot(vec U, vec V) {return U.x*V.x+U.y*V.y; }
-    float dot(Vec2 U, Vec2 V) {return U.dot(V); }
+    float dot(Vec2 U, Vec2 V) const {return U.dot(V); }
 
     // det | U V | = scalar cross UxV
 //    float det(vec U, vec V) {return dot(R(U),V); }
-    float det(Vec2 U, Vec2 V) {return dot(R(U),V); }
+    float det(Vec2 U, Vec2 V) const {return dot(R(U),V); }
 
     // angle <U,V> (between -PI and PI)
 //    float angle (vec U, vec V) {return atan2(det(U,V),dot(U,V)); };
-    float angle(Vec2 U, Vec2 V) { return atan2(det(U,V),dot(U,V)); };
+    float angle(Vec2 U, Vec2 V) const { return atan2(det(U,V),dot(U,V)); };
     
     // V turned right 90 degrees (as seen on screen)
     //    vec R(vec V) {return new vec(-V.y,V.x);};
-    Vec2 R(Vec2 V) { return V.rotate90degCCW(); }
+    Vec2 R(Vec2 V) const { return V.rotate90degCCW(); }
     
 //    // measure
 //    // ||AB|| (Distance)
@@ -95,7 +103,7 @@ class COTS
 
     // measure
     // ||AB|| (Distance)
-    float d(Vec2 P, Vec2 Q) { return (Q - P).length(); }
+    float d(Vec2 P, Vec2 Q) const { return (Q - P).length(); }
 
     //---------------------------------------------------------------
 
@@ -136,7 +144,7 @@ class COTS
         Vec2 A1A0 = A0 - A1;
         Vec2 V(dot(W, A1A0), det(W, A1A0));
 //        return P(A0, 1./d, V);
-        return A0 + (V * 1./d);
+        return A0 + (V / d);
     }
 
 //    // sV
@@ -147,6 +155,134 @@ class COTS
 //    vec V(pt P, pt Q) {return new vec(Q.x-P.x,Q.y-P.y);};
 //    // PQ (make vector Q-P from P to Q
     
+    
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    // TODO use these as guides for indexing into input Texture
+    // void showCheckerboard()
+    // void showTextured()
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    
+    // TODO I hope this is the inverse transform, like from a mouse position to COTS map U,V?
+/*
+  pt Inverse(pt M)
+    {
+    pt Mi;
+    float x, y;
+    int lineShift=0;
+    float amin = min(min(0.0,au+av),min(au,av));
+    float amax = max(max(0.0,au+av),max(au,av));
+    float mmin = min(min(1.0,mu*mv),min(mu,mv));
+    float mmax = max(max(1.0,mu*mv),max(mu,mv));
+    float pm = d(F,M)/d(F,A);
+    float pa = angle(V(F,A),V(F,M));
+    for(int i=-2; i<=2; i++)
+      {
+      float ppa = pa +TWO_PI*i;
+      Mi =  MapInv(ppa, pm, F, A,  au,  mu,  av,  mv);
+      x = Mi.x; y=Mi.y;
+      if(amin<ppa && ppa<amax && mmin<pm && 0<=x && x<=1 && 0<=y && y<=1 )
+        {
+        return Mi;
+        }
+      }
+    return MapInv(pa, pm, F, A,  au,  mu,  av,  mv);
+    }
+...
+ 
+ ************************* Bi-Spiral MAP **********************************
+ pt Map(float u, float v, pt F, pt A, float au, float mu, float av, float mv)
+   {
+   return spiralPt(spiralPt(A,F,mu,au,u),F,mv,av,v);
+   }
+ 
+ pt Map(pt P, pt F, pt A, float au, float mu, float av, float mv)
+   {
+   return spiralPt(spiralPt(A,F,mu,au,P.x),F,mv,av,P.y);
+   }
+ 
+ pt MapInv(pt M, pt F, pt A, float au, float mu, float av, float mv)
+   {
+   float a = angle(V(F,A),V(F,M));
+   float m = d(F,M)/d(F,A);
+   float u = (log(m)*av-log(mv)*a) / (log(mu)*av-log(mv)*au);
+   float v = (a-u*au)/av;
+   return P(u,v);
+   }
+   
+ pt MapInv(float a, float m, pt F, pt A, float au, float mu, float av, float mv)
+   {
+   float u = (log(m)*av-log(mv)*a) / (log(mu)*av-log(mv)*au);
+   float v = (a-u*au)/av;
+   return P(u,v);
+   }
+ */
+    
+//    // PQ (make vector Q-P from P to Q
+//    vec V(pt P, pt Q) {return new vec(Q.x-P.x,Q.y-P.y);};
+    Vec2 V(Vec2 P, Vec2 Q) const { return Q - P; }
+    
+//    pt Inverse(pt M)
+    Vec2 Inverse(Vec2 M) const
+    {
+//        pt Mi;
+        Vec2 Mi;
+        
+        float x, y;
+        
+        // TODO deleted because my compiler says it is unused.
+//        int lineShift=0;
+        
+//        float amin = min(min(0.0,au+av),min(au,av));
+//        float amax = max(max(0.0,au+av),max(au,av));
+//        float mmin = min(min(1.0,mu*mv),min(mu,mv));
+//        float mmax = max(max(1.0,mu*mv),max(mu,mv));
+        float amin = std::min(std::min(0.0f, au+av), std::min(au, av));
+        float amax = std::max(std::max(0.0f, au+av), std::max(au, av));
+        float mmin = std::min(std::min(1.0f, mu*mv), std::min(mu, mv));
+        // TODO deleted because my compiler says it is unused.
+//        float mmax = std::max(std::max(1.0f, mu*mv), std::max(mu, mv));
+
+//        float pm = d(F,M)/d(F,A);
+        float pm = d(getF(), M) / d(getF(), getA());
+
+//        float pa = angle(V(F,A),V(F,M));
+        float pa = angle(V(getF(), getA()), V(getF(), M));
+
+        for(int i=-2; i<=2; i++)
+        {
+//            float ppa = pa +TWO_PI*i;
+            float ppa = pa + (2 * pi * i);
+            
+//            Mi =  MapInv(ppa, pm, F, A,  au,  mu,  av,  mv);
+            Mi =  MapInv(ppa, pm, getF(), getA(), au,  mu,  av,  mv);
+
+//            x = Mi.x; y=Mi.y;
+            x = Mi.x(); y = Mi.y();
+
+            if(amin<ppa && ppa<amax && mmin<pm && 0<=x && x<=1 && 0<=y && y<=1 )
+            {
+                return Mi;
+            }
+        }
+//        return MapInv(pa, pm, F, A,  au,  mu,  av,  mv);
+        return MapInv(pa, pm, getF(), getA(),  au,  mu,  av,  mv);
+    }
+
+    
+//    pt MapInv(float a, float m, pt F, pt A, float au, float mu, float av, float mv)
+    Vec2 MapInv(float a, float m,
+                Vec2 F, Vec2 A,
+                float au, float mu,
+                float av, float mv) const
+    {
+        float u = (log(m)*av-log(mv)*a) / (log(mu)*av-log(mv)*au);
+        float v = (a-u*au)/av;
+//        return P(u,v);
+        return Vec2(u, v);
+    }
+
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 private:
     
     // Four corners of the the map's curved "rectangle" region R
