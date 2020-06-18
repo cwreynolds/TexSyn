@@ -67,6 +67,57 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="20200617"> <a href="#20200617" class="date">June 17,
+        2020</a>
+      <h1>Prototype COTS maps</h1>
+      <p>Shortly after adding <em>MobiusTransform</em> on <a href="#20200128">January
+          28</a>, I got email listing the papers in the next edition of <strong>ACM
+          Transactions on Graphics</strong>. I saw one that seemed related to
+        the Möbius transformation: <a href="https://doi.org/10.1145/3267346">Corner-operated
+          Tran-similar (COTS) Maps, Patterns, and Lattices</a> by <a href="https://www.cc.gatech.edu/%7Ejarek/">Jarek
+          Rossignac</a>. He patiently answered my questions and told me sample
+        code was forthcoming (now
+        <meta charset="utf-8">
+        <a href="https://github.com/jarek-rossignac/COTS">here</a>, in the form
+        of a interactive demo).</p>
+      <p>These COTS transformations define a mapping from the real plane ℝ² onto
+        itself. This is exactly the property that “warping” operators in TexSyn
+        need. COTS maps are described as 2d “curvilinear rectangles” bounded by
+        four log-spiral edges which can be specified, and directly manipulated,
+        using four control points at the “corners.” COTS maps have several other
+        useful properties, which are described in Jarek's paper and interactive
+        demo. This is Figure 1 of the paper, “Examples of the 4DoF
+        distortion-space of the COTS map”:</p>
+      <img src="images/20200617_COTS_fig_1.jpg" alt="" title="" height="582" width="1000">
+      <p>Jarek's code was written in the <a href="https://processing.org/">Processing</a>
+        language. I took a portion of the code, converting it to c++ and
+        changing it to use TexSyn's <em>Vec2</em> class in place of its own. I
+        defined a prototype <em>CotsMap</em> texture operator to show which
+        points are inside the rectangle. This shows the first test, an image of
+        the unit square under a COTS transform defined by the four highlighted
+        corners:</p>
+      <img src="images/20200617_COTS_in_or_out.png" alt="" title="" height="511"
+        width="511">
+      <p>Here the “local space” of the unit square is procedurally colored using
+        HSV so hue varies across <em>x</em>, saturation varies along <em>y</em>,
+        and value is 0.5:</p>
+      <img src="images/20200617_COTS_UV_to_HS_inside.png" alt="" title="" height="511"
+        width="511">
+      <p>This is the same COTS transform, without testing for the unit square.
+        Here each (per pixel) sample point is pass through the inverse COTS map,
+        so defining the pattern everywhere on the texture plane:</p>
+      <img src="images/20200617_COTS_UV_to_HS.png" alt="" title="" height="511"
+        width="511">
+      <p>Two more versions of the same COTS maps, now operating in the TexSyn
+        fashion, warping procedurally defined textures, a pair of crossed
+        Gratings and a Furbulence noise pattern. With this choice of corners,
+        the <em>CotsMap</em> texture operator is behaving rather like the Wrap
+        operator ():</p>
+      <img src="images/20200617_COTS_grid.png" alt="" title="" height="511" width="511">
+      <img src="images/20200617_COTS_noise.png" alt="" title="" height="511" width="511">
+    </div>
+    <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="20200614"> <a href="#20200614" class="date">June 14,
         2020</a>
       <h1>Refactor <code>interpolate</code> — floating point versus math</h1>

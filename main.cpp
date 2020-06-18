@@ -2459,9 +2459,9 @@ int main(int argc, const char * argv[])
         
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototyping COTS maps -- June 16, 2020
-    std::cout << "June 16, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200616_";
+    // Prototyping COTS maps -- June 17, 2020
+    std::cout << "June 17, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200617_";
     
     float s = 0.4;
     float v = s * 0.8;
@@ -2475,13 +2475,62 @@ int main(int argc, const char * argv[])
 
     CotsMap cots(a, b, c, d, Uniform(0.5));
 
-    float r1 = 0.04;
-    float r2 = 0.05;
-    Texture::displayAndFile(Spot(a, r1, Uniform(1, 0, 0), r2,
-                                 Spot(b, r1, Uniform(1, 1, 0), r2,
-                                      Spot(c, r1, Uniform(0, 1, 0), r2,
-                                           Spot(d, r1, Uniform(0, 0, 1), r2,
-                                                cots)))));
+    float r1 = 0.03;
+    float r2 = 0.04;
+    float rs = 0.005;
+    Uniform white(1);
+    Uniform black(0);
+    Uniform red(1, 0, 0);
+    Uniform yellow(1, 1, 0);
+    Uniform green(0, 1, 0);
+    Uniform cyan(0, 1, 1);
+    Uniform blue(0, 0, 1);
+
+    Spot spot1(Vec2(), r1 - rs, white, r1, black);
+    Spot spot2(Vec2(), r2 - rs, white, r2, black);
+    Subtract sub(spot1, spot2);
+    Add ring(white, sub);
+    
+    auto show_corners = [&](const Texture& t, const std::string& s)
+    {
+        Texture::displayAndFile
+        (SoftMatte(Translate(a, ring), red,
+                   SoftMatte(Translate(b, ring), yellow,
+                             SoftMatte(Translate(c, ring), green,
+                                       SoftMatte(Translate(d, ring), blue, t)))),
+         s);
+    };
+
+    //show_corners(SoftMatte(Translate(a, ring),
+    //                       red,
+    //                       SoftMatte(Translate(b, ring),
+    //                                 yellow,
+    //                                 SoftMatte(Translate(c, ring),
+    //                                           green,
+    //                                           SoftMatte(Translate(d, ring),
+    //                                                     blue, cots)))),
+    //             //, path + "COTS_UV_to_HS");
+    //             //, path + "COTS_UV_to_HS_inside");
+    //             //, path + "COTS_in_or_out");
+    //             "");
+    
+    
+    show_corners(CotsMap(a, b, c, d,
+                         Furbulence(Vec2(1, 3),
+                                    Vec2(1.1, 3.1),
+                                    Uniform(0.3, 0, 0),
+                                    Uniform(0, 0.5, 1))),
+                 path + "COTS_noise");
+
+//    Grating grate1(Vec2(-0.05, 0), cyan, Vec2(+0.05, 0), white, 0.5, 0.5);
+    Uniform dark_cyan(0, 0.5, 0.5);
+    Uniform gray(0.6);
+    Grating grate1(Vec2(-0.05, 0), dark_cyan, Vec2(+0.05, 0), gray, 0.5, 0.5);
+    Grating grate2(Vec2(0, -0.1), black, Vec2(0, 0.1), white, 0.3, 0.1);
+    Multiply cwb_grid(grate1, grate2);
+    show_corners(CotsMap(a, b, c, d, cwb_grid),
+                 path + "COTS_grid");
+
     
     Texture::waitKey();
 

@@ -1575,9 +1575,21 @@ public:
     {
         Vec2 ip = cots_map.Inverse(position);
         
-        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
-                Color(1, 1, 1) :
-                Color() );
+//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
+//                Color(1, 1, 1) :
+//                Color(0, 0, 0) );
+        
+//        float r, g, b;
+//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);
+//        return Color(r, g, b);
+        
+//        float r, g, b;
+//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);
+//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
+//                Color(r, g, b) :
+//                Color(0, 0, 0) );
+
+        return texture.getColor(ip);
     }
 private:
     const COTS cots_map;
