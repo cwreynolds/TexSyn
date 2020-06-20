@@ -1589,7 +1589,10 @@ public:
 //                Color(r, g, b) :
 //                Color(0, 0, 0) );
 
-        return texture.getColor(ip);
+//        return texture.getColor(ip);
+        
+        Color c = texture.getColor(ip);
+        return c * ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ? 1 : 0.5);
     }
 private:
     const COTS cots_map;

@@ -69,6 +69,10 @@ public:
         mv = spiralScale(getA(), getD(), getB(), getC());
         
         std::cout << "COTS::updateParameters(): " << std::endl;
+        debugPrint(getA());
+        debugPrint(getB());
+        debugPrint(getC());
+        debugPrint(getD());
         debugPrint(au);
         debugPrint(mu);
         debugPrint(av);
