@@ -34,7 +34,9 @@ public:
     COTS() {}
     COTS(Vec2 a, Vec2 b, Vec2 c, Vec2 d) : a_(a), b_(b), c_(c), d_(d)
     {
-        updateParameters();
+        // TODO temp test on Jun 20
+//        updateParameters();
+        COTSupdateMap(getA(), getB(), getC(), getD(), n);
     }
 
     // get/set methods for corners (A, B, C, D)
@@ -286,6 +288,91 @@ public:
     }
 
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    
+    /*
+     
+    // recomputes COTS parameter, selecting angle branchings that minimize pops
+   void COTSupdateMap(pt A1, pt B1, pt C1, pt D1, int np)
+     {
+     n=np;
+     A=P(A1);  B=P(B1);  C=P(C1);  D=P(D1);
+     mu = spiralScale(A,B,D,C);
+     mv = spiralScale(A,D,B,C);
+     float pau=au, pav=av; // previous angles
+     float aun = spiralAngle(A,B,D,C), avn = spiralAngle(A,D,B,C); // new values
+ 
+     float aue = aun-au; // u difference
+     if(abs(aue+TWO_PI)<abs(aue)) aue+=TWO_PI;
+     if(abs(aue-TWO_PI)<abs(aue)) aue-=TWO_PI;
+     if(abs(aue+TWO_PI)<abs(aue)) aue+=TWO_PI;
+     if(abs(aue-TWO_PI)<abs(aue)) aue-=TWO_PI;
+      
+     float ave = avn-av; // v difference
+     if(abs(ave+TWO_PI)<abs(ave)) ave+=TWO_PI;
+     if(abs(ave-TWO_PI)<abs(ave)) ave-=TWO_PI;
+     if(abs(ave+TWO_PI)<abs(ave)) ave+=TWO_PI;
+     if(abs(ave-TWO_PI)<abs(ave)) ave-=TWO_PI;
+ 
+     if(resetBranching) {au=aun; av=avn; resetBranching=false;}
+     else {au=pau+aue; av=pav+ave;}
+ 
+     F = SpiralCenter(au,mu,A,D);
+     }
+     */
+    
+    
+    // recomputes COTS parameter, selecting angle branchings that minimize pops
+//    void COTSupdateMap(pt A1, pt B1, pt C1, pt D1, int np)
+    void COTSupdateMap(Vec2 A1, Vec2 B1, Vec2 C1, Vec2 D1, int np)
+    {
+        n=np;
+        
+//        A=P(A1);  B=P(B1);  C=P(C1);  D=P(D1);
+        setA(A1);
+        setB(B1);
+        setC(C1);
+        setD(D1);
+
+//        mu = spiralScale(A,B,D,C);
+//        mv = spiralScale(A,D,B,C);
+        mu = spiralScale(getA(), getB(), getD(), getC());
+        mv = spiralScale(getA(), getD(), getB(), getC());
+
+        float pau=au, pav=av; // previous angles
+        
+        // new values
+//        float aun = spiralAngle(A,B,D,C), avn = spiralAngle(A,D,B,C);
+        float aun = spiralAngle(getA(), getB(), getD(), getC());
+        float avn = spiralAngle(getA(), getD(), getB(), getC());
+        
+        float aue = aun-au; // u difference
+        
+        // TODO cleanup
+        float TWO_PI = 2 * pi;
+        
+        if(abs(aue+TWO_PI)<abs(aue)) aue+=TWO_PI;
+        if(abs(aue-TWO_PI)<abs(aue)) aue-=TWO_PI;
+        if(abs(aue+TWO_PI)<abs(aue)) aue+=TWO_PI;
+        if(abs(aue-TWO_PI)<abs(aue)) aue-=TWO_PI;
+        
+        float ave = avn-av; // v difference
+        if(abs(ave+TWO_PI)<abs(ave)) ave+=TWO_PI;
+        if(abs(ave-TWO_PI)<abs(ave)) ave-=TWO_PI;
+        if(abs(ave+TWO_PI)<abs(ave)) ave+=TWO_PI;
+        if(abs(ave-TWO_PI)<abs(ave)) ave-=TWO_PI;
+        
+        // TODO a global flag set in GUI.pde, for now assume it is cleared.
+        bool resetBranching = false;
+
+        if(resetBranching) {au=aun; av=avn; resetBranching=false;}
+        else {au=pau+aue; av=pav+ave;}
+        
+//        F = SpiralCenter(au,mu,A,D);
+        f_ = SpiralCenter(au, mu, getA(), getD());
+    }
+
+    
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 private:
     
@@ -295,6 +382,7 @@ private:
     Vec2 c_;
     Vec2 d_;
     
+    // TODO needs a setF()
     Vec2 f_;                               // fixed point of quad
 
 

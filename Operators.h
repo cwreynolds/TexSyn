@@ -1573,7 +1573,7 @@ public:
         texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
-        Vec2 ip = cots_map.Inverse(position);
+//        Vec2 ip = cots_map.Inverse(position);
         
 //        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
 //                Color(1, 1, 1) :
@@ -1591,8 +1591,10 @@ public:
 
 //        return texture.getColor(ip);
         
-        Color c = texture.getColor(ip);
-        return c * ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ? 1 : 0.5);
+//        Color c = texture.getColor(ip);
+//        return c * ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ? 1 : 0.5);
+
+        return texture.getColor(cots_map.Inverse(position));
     }
 private:
     const COTS cots_map;

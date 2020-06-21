@@ -2536,164 +2536,259 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // More COTS maps -- June 18, 2020
-    std::cout << "June 18, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200618_";
+//    // More COTS maps -- June 18, 2020
+//    std::cout << "June 18, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200618_";
+//
+//    Uniform red(1, 0, 0);
+//    Uniform yellow(1, 1, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform cyan(0, 1, 1);
+//    Uniform blue(0, 0, 1);
+//    Uniform white(1);
+//    Uniform black(0);
+//
+//    float r1 = 0.03;
+//    float r2 = 0.04;
+//    float rd = 0.005;
+//    Spot spot1(Vec2(), r1 - rd, white, r1, black);
+//    Spot spot2(Vec2(), r2 - rd, white, r2, black);
+//    Subtract sub(spot1, spot2);
+//    Add ring(white, sub);
+//
+//    auto annote_cots = [&](Vec2 a, Vec2 b, Vec2 c, Vec2 d,
+//                           const Texture& t, const std::string& s = "")
+//    {
+//        Texture::displayAndFile
+//        (SoftMatte(Translate(a, ring), red,
+//                   SoftMatte(Translate(b, ring), yellow,
+//                             SoftMatte(Translate(c, ring), green,
+//                                       SoftMatte(Translate(d, ring),
+//                                                 blue,
+//                                                 CotsMap(a, b, c, d, t))))),
+//         s);
+//    };
+//
+//    Uniform dark_cyan(0, 0.5, 0.5);
+//    Uniform gray(0.6);
+//    Grating grate1(Vec2(-0.05, 0), dark_cyan, Vec2(+0.05, 0), gray, 0.5, 0.5);
+//    Grating grate2(Vec2(0, -0.1), black, Vec2(0, 0.1), white, 0.3, 0.1);
+//    Multiply cwb_grid(grate1, grate2);
+//
+//
+//    //int corner_count = 0;
+//    //RandomSequence rs(229783476586);
+//    //auto rc = [&]()
+//    //{
+//    //    Vec2 r = rs.randomUnitVector();
+//    //    r = r * rs.frandom2(0.4, 0.9);
+//    //    std::cout << corner_count++ << ": " << r << std::endl;
+//    //    return r;
+//    //};
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//
+//
+//    //    // TODO both of these come out all black
+//    //    annote_cots(Vec2(-0.3, -0.2),
+//    //                Vec2(-0.4, -0.5),
+//    //                Vec2(0.6, 0.6),
+//    //                Vec2(-0.4, -0.5),
+//    //                cwb_grid);
+//    //    annote_cots(Vec2(0.2, 0.2),
+//    //                Vec2(),
+//    //                Vec2(0.7, 0.7),
+//    //                Vec2(),
+//    //                cwb_grid);
+//    //
+//    //    annote_cots(Vec2(0.2, 0.2),
+//    //                Vec2(0.5, -0.5),
+//    //                Vec2(0.7, 0.7),
+//    //                Vec2(),
+//    //                cwb_grid);
+//
+//    auto cots_corner = [&](float x, float y)
+//    {
+//        // normalize and flip from Jarek's app
+//        float scale = 800;
+//        x /= scale;
+//        y /= scale;
+//        y = 1 - y;
+//
+//        // recenter on TexSyn's unit radius disk.
+//        x *= 2;
+//        y *= 2;
+//        x -= 1;
+//        y -= 1;
+//        return Vec2(x, y);
+//    };
+//
+//    path = "/Users/cwr/Desktop/TexSyn_temp/20200619_";
+//
+//    //// interactive edit
+//    //annote_cots(cots_corner(396.80453, 55.000206),
+//    //            cots_corner(378.0904, 773.7115),
+//    //            cots_corner(393.3884, 575.8651),
+//    //            cots_corner(413.66867, 773.59265),
+//    //            cwb_grid
+//    //            ); // , path + "test1");
+//    //
+//    //// tweaked
+//    //annote_cots(cots_corner(400, 55.000206),
+//    //            cots_corner(400, 770),
+//    //            cots_corner(393.3884, 575.8651),
+//    //            cots_corner(400, 770),
+//    //            cwb_grid
+//    //            ); // , path + "test2");
+//    //
+//    //annote_cots(cots_corner(400, 55.000206),
+//    //            cots_corner(400, 770),
+//    //            cots_corner(393.3884, 575.8651),
+//    //            cots_corner(401, 770),
+//    //            cwb_grid
+//    //            ); // , path + "test3");
+//    //
+//    //annote_cots(cots_corner(400, 55.000206),
+//    //            cots_corner(400, 770),
+//    //            cots_corner(400, 575.8651),
+//    //            cots_corner(401, 770),
+//    //            cwb_grid
+//    //            ); // , path + "test4");
+//    //
+//    //
+//    //// Saturday Jun 20
+//    //annote_cots(cots_corner(80.565414, 275.3029),
+//    //            cots_corner(386.30826, 331.97156),
+//    //            cots_corner(431.36285, 552.3875),
+//    //            cots_corner(589.4879, 649.52625),
+//    //            cwb_grid);
+//    //annote_cots(cots_corner(400, 55.000206),
+//    //            cots_corner(400, 770),
+//    //            cots_corner(400, 575.8651),
+//    //            cots_corner(400.1, 770),
+//    //            cwb_grid);
+//
+//    int corner_count = 0;
+//    //    RandomSequence rs(8475473559);
+//    //    RandomSequence rs(939588689);
+//    RandomSequence rs(29475656839);
+//    auto rc = [&]()
+//    {
+//        Vec2 r = rs.randomUnitVector();
+//        r = r * rs.frandom2(0.4, 0.9);
+//        std::cout << corner_count++ << ": " << r << std::endl;
+//        return r;
+//    };
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//    //    annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
+//
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//    Texture::displayAndFile(CotsMap(rc(), rc(), rc(), rc(),
+//                                    CotsMap(rc(), rc(), rc(), rc(), cwb_grid)));
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Uniform red(1, 0, 0);
-    Uniform yellow(1, 1, 0);
-    Uniform green(0, 1, 0);
-    Uniform cyan(0, 1, 1);
-    Uniform blue(0, 0, 1);
-    Uniform white(1);
+    // More COTS maps -- June 20, 2020
+    std::cout << "June 20, 2021" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200620_";
+    
     Uniform black(0);
-    
-    float r1 = 0.03;
-    float r2 = 0.04;
-    float rd = 0.005;
-    Spot spot1(Vec2(), r1 - rd, white, r1, black);
-    Spot spot2(Vec2(), r2 - rd, white, r2, black);
-    Subtract sub(spot1, spot2);
-    Add ring(white, sub);
+    Uniform white(1);
+    Uniform gray(0.5);
+    Uniform blue(0, 0, 1);
+    Uniform green(0, 1, 0);
+    Uniform yellow(1, 1, 0);
+    Uniform magenta(1, 0, 1);
+    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black);
+    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 1);
+    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 1);
+    Add bg_grid(grate0, grate1);
+    LotsOfSpots mg_los(0.8, 0.05, 0.05, 0.01, 0.02, magenta, gray);
 
-    auto annote_cots = [&](Vec2 a, Vec2 b, Vec2 c, Vec2 d,
-                           const Texture& t, const std::string& s = "")
-    {
-        Texture::displayAndFile
-        (SoftMatte(Translate(a, ring), red,
-                   SoftMatte(Translate(b, ring), yellow,
-                             SoftMatte(Translate(c, ring), green,
-                                       SoftMatte(Translate(d, ring),
-                                                 blue,
-                                                 CotsMap(a, b, c, d, t))))),
-         s);
-    };
-
-    Uniform dark_cyan(0, 0.5, 0.5);
-    Uniform gray(0.6);
-    Grating grate1(Vec2(-0.05, 0), dark_cyan, Vec2(+0.05, 0), gray, 0.5, 0.5);
-    Grating grate2(Vec2(0, -0.1), black, Vec2(0, 0.1), white, 0.3, 0.1);
-    Multiply cwb_grid(grate1, grate2);
-    
-    
-    //int corner_count = 0;
-    //RandomSequence rs(229783476586);
-    //auto rc = [&]()
-    //{
-    //    Vec2 r = rs.randomUnitVector();
-    //    r = r * rs.frandom2(0.4, 0.9);
-    //    std::cout << corner_count++ << ": " << r << std::endl;
-    //    return r;
-    //};
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-    //annote_cots(rc(), rc(), rc(), rc(), cwb_grid);
-
-    
-    //    // TODO both of these come out all black
-    //    annote_cots(Vec2(-0.3, -0.2),
-    //                Vec2(-0.4, -0.5),
-    //                Vec2(0.6, 0.6),
-    //                Vec2(-0.4, -0.5),
-    //                cwb_grid);
-    //    annote_cots(Vec2(0.2, 0.2),
-    //                Vec2(),
-    //                Vec2(0.7, 0.7),
-    //                Vec2(),
-    //                cwb_grid);
-    //
-    //    annote_cots(Vec2(0.2, 0.2),
-    //                Vec2(0.5, -0.5),
-    //                Vec2(0.7, 0.7),
-    //                Vec2(),
-    //                cwb_grid);
-    
-    auto cots_corner = [&](float x, float y)
-    {
-        // normalize and flip from Jarek's app
-        float scale = 800;
-        x /= scale;
-        y /= scale;
-        y = 1 - y;
-        
-        // recenter on TexSyn's unit radius disk.
-        x *= 2;
-        y *= 2;
-        x -= 1;
-        y -= 1;
-        return Vec2(x, y);
-    };
-    
-    path = "/Users/cwr/Desktop/TexSyn_temp/20200619_";
-
-    // interactive edit
-    annote_cots(cots_corner(396.80453, 55.000206),
-                cots_corner(378.0904, 773.7115),
-                cots_corner(393.3884, 575.8651),
-                cots_corner(413.66867, 773.59265),
-                cwb_grid
-                ); // , path + "test1");
-    
-    // tweaked
-//    annote_cots(cots_corner(396.80453, 55.000206),
-//                cots_corner(400, 770),
-//                cots_corner(393.3884, 575.8651),
-//                cots_corner(400, 770),
-//                cwb_grid);
-//    annote_cots(cots_corner(396.80453, 55.000206),
-//                cots_corner(400, 770),
-//                cots_corner(393.3884, 575.8651),
-//                cots_corner(401, 770),
-//                cwb_grid);
-
-//    annote_cots(cots_corner(400, 55),
-//                cots_corner(400, 770),
-//                cots_corner(400, 575),
-//                cots_corner(400, 770),
-//                cwb_grid);
-//    annote_cots(cots_corner(400, 55),
-//                cots_corner(400, 770),
-//                cots_corner(400, 575),
-//                cots_corner(401, 770),
-//                cwb_grid);
-
-//    annote_cots(cots_corner(400, 55.000206),
-//                cots_corner(400, 770),
-//                cots_corner(393.3884, 575.8651),
-//                cots_corner(400, 770),
-//                cwb_grid);
-//    annote_cots(cots_corner(400, 55.000206),
-//                cots_corner(400, 770),
-//                cots_corner(393.3884, 575.8651),
-//                cots_corner(401, 770),
-//                cwb_grid);
-
-    annote_cots(cots_corner(400, 55.000206),
-                cots_corner(400, 770),
-//                cots_corner(400, 575.8651),
-                cots_corner(393.3884, 575.8651),
-                cots_corner(400, 770),
-                cwb_grid
-                ); // , path + "test2");
-    
-    annote_cots(cots_corner(400, 55.000206),
-                cots_corner(400, 770),
-                cots_corner(393.3884, 575.8651),
-                cots_corner(401, 770),
-                cwb_grid
-                ); // , path + "test3");
-
-    annote_cots(cots_corner(400, 55.000206),
-                cots_corner(400, 770),
-                cots_corner(400, 575.8651),
-                cots_corner(401, 770),
-                cwb_grid
-                ); // , path + "test4");
+    Texture::displayAndFile(by_noise
+                            ); // , path + "noise0");
+    Texture::displayAndFile(CotsMap(Vec2(-0.4, -0.5),
+                                    Vec2(-0.5, -0.4),
+                                    Vec2(+0.2, +0.8),
+                                    Vec2(+0.8, -0.2),
+                                    by_noise)
+                            ); // , path + "noise1");
+    Texture::displayAndFile(bg_grid
+                            ); // , path + "grid0");
+    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.6),
+                                    Vec2(+0.7, +0.2),
+                                    Vec2(-0.5, +0.9),
+                                    Vec2(-0.8, -0.5),
+                                    bg_grid)
+                            ); // , path + "grid1");
+    Texture::displayAndFile(mg_los
+                            ); // , path + "los0");
+    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.2),
+                                    Vec2(+0.7, +0.8),
+                                    Vec2(-0.3, +0.4),
+                                    Vec2(-0.5, -0.6),
+                                    CotsMap(Vec2(-0.4, -0.5),
+                                            Vec2(-0.5, -0.4),
+                                            Vec2(+0.2, +0.8),
+                                            Vec2(+0.8, -0.2),
+                                            mg_los))
+                            ); // , path + "los1");
+    Texture::displayAndFile(CotsMap(Vec2(+0.2, +0.1),
+                                    Vec2(+0.4, +0.7),
+                                    Vec2(+0.5, +0.6),
+                                    Vec2(+0.7, +0.4),
+                                    CotsMap(Vec2(-0.7, -0.2),
+                                            Vec2(-0.5, -0.4),
+                                            Vec2(-0.6, -0.3),
+                                            Vec2(-0.1, -0.6),
+                                            mg_los))
+                            ); // , path + "los2");
+    Texture::displayAndFile(CotsMap(Vec2(+0.6, +0.0),
+                                    Vec2(+0.2, +0.8),
+                                    Vec2(+0.7, +0.4),
+                                    Vec2(+0.8, +0.6),
+                                    CotsMap(Vec2(-0.6, -0.2),
+                                            Vec2(-0.3, -0.3),
+                                            Vec2(-0.2, -0.5),
+                                            Vec2(-0.7, -0.6),
+                                            mg_los))
+                            ); // , path + "los3");
 
     Texture::waitKey();
 
