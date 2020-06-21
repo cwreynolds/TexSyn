@@ -1563,8 +1563,10 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+// Image warp via Jarek Rossignac's 2020 “Corner-operated Tran-similar (COTS)
+// Maps, Patterns, and Lattices”. See COTS.h for full citation and more details.
+// The four Vec2 parameters specify the corners onto which the input texture's
+// unit square will be projected.
 class CotsMap : public Texture
 {
 public:
@@ -1573,32 +1575,9 @@ public:
         texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
-//        Vec2 ip = cots_map.Inverse(position);
-        
-//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
-//                Color(1, 1, 1) :
-//                Color(0, 0, 0) );
-        
-//        float r, g, b;
-//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);
-//        return Color(r, g, b);
-        
-//        float r, g, b;
-//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);
-//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?
-//                Color(r, g, b) :
-//                Color(0, 0, 0) );
-
-//        return texture.getColor(ip);
-        
-//        Color c = texture.getColor(ip);
-//        return c * ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ? 1 : 0.5);
-
         return texture.getColor(cots_map.Inverse(position));
     }
 private:
     const COTS cots_map;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
