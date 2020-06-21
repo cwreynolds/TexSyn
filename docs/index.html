@@ -70,16 +70,16 @@
     <div class="post" id="20200620"> <a href="#20200620" class="date">June 20,
         2020</a>
       <h1><em>CotsMap</em> operator</h1>
-      <p>After testing of the underlying code from Jarek Rossignac, these are
-        example textures made with the new <em>CotsMap</em> operator. Its
-        parameters are four <em>Vec2</em>s and an input <em>Texture</em>. The
-        <em>Vec2</em>s are the four control points: positions to
-        where the corners of the image of the unit square will be deformed. For
-        example, this COTS map provides a sharp non-linear contraction in the
-        lower left with a slight radial curvature:</p>
+      <p>After rewriting and testing the underlying code from Jarek Rossignac,
+        these are example textures made with the new <em>CotsMap</em> operator.
+        Its parameters are four <em>Vec2</em>s and an input <em>Texture</em>.
+        The <em>Vec2</em>s are the four control points: positions to where the
+        corners of the image of the unit square will be deformed. For example,
+        this COTS map provides a sharp non-linear contraction in the lower left
+        with a slight radial curvature:</p>
       <pre>black = Uniform(0)
 yellow = Uniform(1, 1, 0)
-by_noise = Wrapulence(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black)<br><br>CotsMap(Vec2(-0.4, -0.5), Vec2(-0.5, -0.4), Vec2(+0.2, +0.8), Vec2(+0.8, -0.2), by_noise)</pre>
+by_noise = Wrapulence(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow)<br><br>CotsMap(Vec2(-0.4, -0.5), Vec2(-0.5, -0.4), Vec2(+0.2, +0.8), Vec2(+0.8, -0.2), by_noise)</pre>
       <img src="images/20200620_noise0.png" alt="by_noise" title="by_noise" height="511"
         width="511"> <img src="images/20200620_noise1.png" alt="CotsMap(..., by_noise)"
         title="CotsMap(..., by_noise)" height="511" width="511">
@@ -87,8 +87,8 @@ by_noise = Wrapulence(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black)<br><br>CotsMap(
       <pre>gray = Uniform(0.5)
 blue = Uniform(0, 0, 1)
 green = Uniform(0, 1, 0)
-grate0 = Grating(Vec2(), blue, Vec2(0.1, 0), gray, 1, 1)
-grate1 = Grating(Vec2(), green, Vec2(0, 0.1), gray, 1, 1)
+grate0 = Grating(Vec2(), blue, Vec2(0.1, 0), gray, 1, 0.5)
+grate1 = Grating(Vec2(), green, Vec2(0, 0.1), gray, 1, 0.5)
 bg_grid = Add(grate0, grate1)
 <br>CotsMap(Vec2(+0.1, -0.6), Vec2(+0.7, +0.2), Vec2(-0.5, +0.9), Vec2(-0.8, -0.5), bg_grid)</pre>
       <img src="images/20200620_grid0.png" alt="bg_grid" title="bg_grid" height="511"
@@ -114,8 +114,7 @@ CotsMap(Vec2(+0.1, -0.2), Vec2(+0.7, +0.8), Vec2(-0.3, +0.4), Vec2(-0.5, -0.6),
       <img src="images/20200620_los2.png" alt="CotsMap(..., CotsMap(..., mg_los)) 2"
         title="CotsMap(..., CotsMap(..., mg_los)) 2" height="511" width="511"> <img
         src="images/20200620_los3.png" alt="CotsMap(..., CotsMap(..., mg_los)) 3"
-        title="CotsMap(..., CotsMap(..., mg_los)) 3" height="511" width="511">
-    </div>
+        title="CotsMap(..., CotsMap(..., mg_los)) 3" height="511" width="511"> </div>
     <div class="post" id="20200617"> <a href="#20200617" class="date">June 17,
         2020</a>
       <h1>Prototype COTS maps</h1>

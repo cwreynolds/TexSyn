@@ -2735,9 +2735,12 @@ int main(int argc, const char * argv[])
     Uniform green(0, 1, 0);
     Uniform yellow(1, 1, 0);
     Uniform magenta(1, 0, 1);
-    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black);
-    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 1);
-    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 1);
+//    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black);
+//    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 1);
+//    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 1);
+    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow);
+    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 0.5);
+    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 0.5);
     Add bg_grid(grate0, grate1);
     LotsOfSpots mg_los(0.8, 0.05, 0.05, 0.01, 0.02, magenta, gray);
 
