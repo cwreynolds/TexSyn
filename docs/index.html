@@ -70,13 +70,13 @@
     <div class="post" id="20200620"> <a href="#20200620" class="date">June 20,
         2020</a>
       <h1><em>CotsMap</em> operator</h1>
-      <p>After rewriting and testing the underlying code from Jarek
-        Rossignac, these are example textures made with the new <em>CotsMap</em>
-        operator. Its parameters are four <em>Vec2</em>s and an input <em>Texture</em>.
+      <p>After rewriting and testing the underlying code from Jarek Rossignac,
+        these are example textures made with the new <em>CotsMap</em> operator.
+        Its parameters are four <em>Vec2</em>s and an input <em>Texture</em>.
         The <em>Vec2</em>s are the four control points: positions to where the
-        corners of the image of the unit square will be deformed. For example,
-        this COTS map provides a sharp non-linear contraction in the lower left
-        with a slight radial curvature:</p>
+        corners of the input unit square will be deformed. For example, this
+        COTS map provides a sharp non-linear contraction in the lower left with
+        a slight radial curvature:</p>
       <pre>black = Uniform(0)
 yellow = Uniform(1, 1, 0)
 by_noise = Wrapulence(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow)<br><br>CotsMap(Vec2(-0.4, -0.5), Vec2(-0.5, -0.4), Vec2(+0.2, +0.8), Vec2(+0.8, -0.2), by_noise)</pre>
@@ -104,7 +104,8 @@ CotsMap(Vec2(+0.1, -0.2), Vec2(+0.7, +0.8), Vec2(-0.3, +0.4), Vec2(-0.5, -0.6),
                 mg_los))</pre>
       <img src="images/20200620_los0.png" alt="mg_los" title="mg_los" height="511"
         width="511"> <img src="images/20200620_los1.png" alt="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 1"
-        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 1" height="511" width="511">
+        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 1" height="511"
+        width="511">
       <p>And two more variations on this theme:</p>
       <pre>CotsMap(Vec2(+0.2, +0.1), Vec2(+0.4, +0.7), Vec2(+0.5, +0.6), Vec2(+0.7, +0.4),
         CotsMap(Vec2(-0.7, -0.2), Vec2(-0.5, -0.4), Vec2(-0.6, -0.3), Vec2(-0.1, -0.6),
@@ -112,9 +113,10 @@ CotsMap(Vec2(+0.1, -0.2), Vec2(+0.7, +0.8), Vec2(-0.3, +0.4), Vec2(-0.5, -0.6),
         CotsMap(Vec2(-0.6, -0.2), Vec2(-0.3, -0.3), Vec2(-0.2, -0.5), Vec2(-0.7, -0.6),
                 mg_los))</pre>
       <img src="images/20200620_los2.png" alt="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 2"
-        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 2" height="511" width="511"> <img
-        src="images/20200620_los3.png" alt="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 3"
-        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 3" height="511" width="511"> </div>
+        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 2" height="511"
+        width="511"> <img src="images/20200620_los3.png" alt="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 3"
+        title="CotsMap(a, b, c, d, CotsMap(e, f, g, h, mg_los)) 3" height="511"
+        width="511"> </div>
     <div class="post" id="20200617"> <a href="#20200617" class="date">June 17,
         2020</a>
       <h1>Prototype COTS maps</h1>
@@ -144,7 +146,7 @@ CotsMap(Vec2(+0.1, -0.2), Vec2(+0.7, +0.8), Vec2(-0.3, +0.4), Vec2(-0.5, -0.6),
       <p>The demo code was written in the <a href="https://processing.org/">Processing</a>
         language. I took a portion of it, converting it to c++, and changing it
         to use TexSyn's <em>Vec2</em> class in place of its own. I defined a
-        prototype <em>CotsMap</em> texture operator, iniitally just to test the
+        prototype <em>CotsMap</em> texture operator, initially just to test the
         geometric code, by showing which points are inside the rectangle. This
         shows the first test, an image of the unit square under a COTS transform
         defined by the four highlighted corners:</p>
@@ -946,7 +948,7 @@ black_red = Grating(Vec2(0.1, 0), black, Vec2(0, 0), red, 0.1, 0.5)
         compatibility constructors—is a new function <code>Texture::disposableUniform(color)</code>.
         This returns a const reference to a new instance of the tiny <em>Uniform</em>
         color texture. These need to persist as long as the main texture,&nbsp;
-        There are various was to do this, I chose to use the “leak” form of
+        There are various ways to do this, I chose to use the “leak” form of
         memory management. (A handful of these tiny objects might get allocated
         during testing, they are not freed until the end of the run.) All code
         related to this idea is marked with a comment containing the string <code>BACKWARD_COMPATIBILITY</code>.
@@ -1073,7 +1075,7 @@ white_cyan = Grating(Vec2(0, 0.2), Color(1, 1, 1), Vec2(0, 0), Color(0, 1, 1), 0
         document) to produce the same result. So in addition to adding the <code>margin</code>
         parameter and functionality, I also provided stubs for the old versions
         without <code>margin</code>, so those should continue to work.</p>
-      <p>The “margin” is used to established an invisible boundary around each
+      <p>The “margin” is used to establish an invisible boundary around each
         spot. Its “radius for placement” is its “radius for display” plus <code>margin</code>.
         The three texture operators (<em>LotsOfSpots</em>, <em>ColoredSpots</em>,
         and <em>LotsOfButtons</em>) had four parameters in common used by the
