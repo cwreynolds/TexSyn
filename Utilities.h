@@ -96,8 +96,8 @@ inline float remapInterval(float x,
         // Interpolate relative to output interval.
         return interpolate(relative, out0, out1);
     }
-    // Otherwise treat as step function.
-    return (x <= in0) ? out0 : out1;
+    // Otherwise blend halfway between outputs.
+    return interpolate(0.5, out0, out1);
 }
 
 // Like remapInterval but the result is clipped to remain between out0 and out1

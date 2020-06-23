@@ -9,9 +9,7 @@
 #pragma once
 #include "Texture.h"
 #include "Disk.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include "COTS.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Minimal texture, a uniform color everywhere on the texture plane. Its only
 // parameter is that color. As a convenience for hand written code, also can be
@@ -81,24 +79,14 @@ public:
         basis((point_1 - point_0) / distance) {}
     Color getColor(Vec2 position) const override
     {
-        // TODO isn't this handled inside interpolate these days?
-        if (distance == 0)
-        {
-            return interpolate(0.5,
-                               texture0.getColor(position),
-                               texture1.getColor(position));
-        }
-        else
-        {
-            Vec2 offset = position - origin;
-            float projection = basis.dot(offset);
-            float relative = remapIntervalClip(projection, 0, distance, 0, 1);
-            return interpolatePointOnTextures(sinusoid(relative),
-                                              position,
-                                              position,
-                                              texture0,
-                                              texture1);
-        }
+        Vec2 offset = position - origin;
+        float projection = basis.dot(offset);
+        float relative = remapIntervalClip(projection, 0, distance, 0, 1);
+        return interpolatePointOnTextures(sinusoid(relative),
+                                          position,
+                                          position,
+                                          texture0,
+                                          texture1);
     }
     // BACKWARD_COMPATIBILITY for version before inherent matting.
     Gradation(Vec2 a, Color b, Vec2 c, Color d)
@@ -134,25 +122,16 @@ public:
         duty_cycle(clip(duty_cycle_, 0, 1)) {}
     Color getColor(Vec2 position) const override
     {
-        // TODO isn't this handled inside interpolate these days?
-        if (distance == 0)
-        {
-            return interpolate(0.5,
-                               texture0.getColor(position),
-                               texture1.getColor(position));
-        }
-        else
-        {
-            Vec2 offset = position - origin;
-            float projection = basis.dot(offset);
-            // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-            float unit_modulo = fmod_floor(projection, distance) / distance;
-            // Adjust for "duty cycle" then then for "soft-edge square wave".
-            float alpha = softSquareWave(dutyCycle(unit_modulo));
-            return interpolatePointOnTextures(alpha,
-                                              position, position,
-                                              texture0, texture1);
-        }
+        Vec2 offset = position - origin;
+        float projection = basis.dot(offset);
+        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
+        float unit_modulo = fmod_floor(projection, distance) / distance;
+        // Adjust for "duty cycle" then then for "soft-edge square wave".
+        float alpha = softSquareWave(dutyCycle(unit_modulo));
+        if (distance == 0) alpha = 0.5;
+        return interpolatePointOnTextures(alpha,
+                                          position, position,
+                                          texture0, texture1);
     }
     // Defines a "square wave with soft edges". When softness is 0 it is a
     // square wave. When softness is 1 it is a sinusoid.
@@ -337,6 +316,7 @@ public:
     Color getColor(Vec2 position) const override
     {
         float blend = getScalerNoise(transformIntoNoiseSpace(position));
+        if (scale == 0) blend = 0.5;
         return interpolatePointOnTextures(blend,
                                           position, position,
                                           texture0, texture1);

@@ -2724,74 +2724,106 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // More COTS maps -- June 20, 2020
-    std::cout << "June 20, 2021" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200620_";
-    
-    Uniform black(0);
-    Uniform white(1);
-    Uniform gray(0.5);
-    Uniform blue(0, 0, 1);
-    Uniform green(0, 1, 0);
-    Uniform yellow(1, 1, 0);
-    Uniform magenta(1, 0, 1);
-//    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), yellow, black);
-//    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 1);
-//    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 1);
-    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow);
-    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 0.5);
-    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 0.5);
-    Add bg_grid(grate0, grate1);
-    LotsOfSpots mg_los(0.8, 0.05, 0.05, 0.01, 0.02, magenta, gray);
+//    // More COTS maps -- June 20, 2020
+//    std::cout << "June 20, 2021" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200620_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Uniform gray(0.5);
+//    Uniform blue(0, 0, 1);
+//    Uniform green(0, 1, 0);
+//    Uniform yellow(1, 1, 0);
+//    Uniform magenta(1, 0, 1);
+//    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow);
+//    Grating grate0(Vec2(), blue, Vec2(0.1, 0), gray, 1, 0.5);
+//    Grating grate1(Vec2(), green, Vec2(0, 0.1), gray, 1, 0.5);
+//    Add bg_grid(grate0, grate1);
+//    LotsOfSpots mg_los(0.8, 0.05, 0.05, 0.01, 0.02, magenta, gray);
+//
+//    Texture::displayAndFile(by_noise
+//                            ); // , path + "noise0");
+//    Texture::displayAndFile(CotsMap(Vec2(-0.4, -0.5),
+//                                    Vec2(-0.5, -0.4),
+//                                    Vec2(+0.2, +0.8),
+//                                    Vec2(+0.8, -0.2),
+//                                    by_noise)
+//                            ); // , path + "noise1");
+//    Texture::displayAndFile(bg_grid
+//                            ); // , path + "grid0");
+//    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.6),
+//                                    Vec2(+0.7, +0.2),
+//                                    Vec2(-0.5, +0.9),
+//                                    Vec2(-0.8, -0.5),
+//                                    bg_grid)
+//                            ); // , path + "grid1");
+//    Texture::displayAndFile(mg_los
+//                            ); // , path + "los0");
+//    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.2),
+//                                    Vec2(+0.7, +0.8),
+//                                    Vec2(-0.3, +0.4),
+//                                    Vec2(-0.5, -0.6),
+//                                    CotsMap(Vec2(-0.4, -0.5),
+//                                            Vec2(-0.5, -0.4),
+//                                            Vec2(+0.2, +0.8),
+//                                            Vec2(+0.8, -0.2),
+//                                            mg_los))
+//                            ); // , path + "los1");
+//    Texture::displayAndFile(CotsMap(Vec2(+0.2, +0.1),
+//                                    Vec2(+0.4, +0.7),
+//                                    Vec2(+0.5, +0.6),
+//                                    Vec2(+0.7, +0.4),
+//                                    CotsMap(Vec2(-0.7, -0.2),
+//                                            Vec2(-0.5, -0.4),
+//                                            Vec2(-0.6, -0.3),
+//                                            Vec2(-0.1, -0.6),
+//                                            mg_los))
+//                            ); // , path + "los2");
+//    Texture::displayAndFile(CotsMap(Vec2(+0.6, +0.0),
+//                                    Vec2(+0.2, +0.8),
+//                                    Vec2(+0.7, +0.4),
+//                                    Vec2(+0.8, +0.6),
+//                                    CotsMap(Vec2(-0.6, -0.2),
+//                                            Vec2(-0.3, -0.3),
+//                                            Vec2(-0.2, -0.5),
+//                                            Vec2(-0.7, -0.6),
+//                                            mg_los))
+//                            ); // , path + "los3");
+//
+//    Texture::waitKey();
 
-    Texture::displayAndFile(by_noise
-                            ); // , path + "noise0");
-    Texture::displayAndFile(CotsMap(Vec2(-0.4, -0.5),
-                                    Vec2(-0.5, -0.4),
-                                    Vec2(+0.2, +0.8),
-                                    Vec2(+0.8, -0.2),
-                                    by_noise)
-                            ); // , path + "noise1");
-    Texture::displayAndFile(bg_grid
-                            ); // , path + "grid0");
-    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.6),
-                                    Vec2(+0.7, +0.2),
-                                    Vec2(-0.5, +0.9),
-                                    Vec2(-0.8, -0.5),
-                                    bg_grid)
-                            ); // , path + "grid1");
-    Texture::displayAndFile(mg_los
-                            ); // , path + "los0");
-    Texture::displayAndFile(CotsMap(Vec2(+0.1, -0.2),
-                                    Vec2(+0.7, +0.8),
-                                    Vec2(-0.3, +0.4),
-                                    Vec2(-0.5, -0.6),
-                                    CotsMap(Vec2(-0.4, -0.5),
-                                            Vec2(-0.5, -0.4),
-                                            Vec2(+0.2, +0.8),
-                                            Vec2(+0.8, -0.2),
-                                            mg_los))
-                            ); // , path + "los1");
-    Texture::displayAndFile(CotsMap(Vec2(+0.2, +0.1),
-                                    Vec2(+0.4, +0.7),
-                                    Vec2(+0.5, +0.6),
-                                    Vec2(+0.7, +0.4),
-                                    CotsMap(Vec2(-0.7, -0.2),
-                                            Vec2(-0.5, -0.4),
-                                            Vec2(-0.6, -0.3),
-                                            Vec2(-0.1, -0.6),
-                                            mg_los))
-                            ); // , path + "los2");
-    Texture::displayAndFile(CotsMap(Vec2(+0.6, +0.0),
-                                    Vec2(+0.2, +0.8),
-                                    Vec2(+0.7, +0.4),
-                                    Vec2(+0.8, +0.6),
-                                    CotsMap(Vec2(-0.6, -0.2),
-                                            Vec2(-0.3, -0.3),
-                                            Vec2(-0.2, -0.5),
-                                            Vec2(-0.7, -0.6),
-                                            mg_los))
-                            ); // , path + "los3");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    
+    // More COTS maps -- June 22, 2020
+    std::cout << "June 22, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200622_";
+    
+    Vec2 p0(0, 0);
+    Vec2 p1(0.1, 0.1);
+    Vec2 p2(-0.1, -0.1);
+    Uniform black(0);
+    Uniform cyan(0, 1, 1);
+    Uniform magenta(1, 0, 1);
+    Grating grate_c(Vec2(), cyan, Vec2(0.1, 0), black, 0.2, 0.5);
+    Grating grate_m(Vec2(), magenta, Vec2(0.1, 0), black, 0.2, 0.5);
+
+    Texture::displayAndFile(Gradation(p0, cyan, p0, magenta)
+                            ); // , path + "degenerate_0");
+    Texture::displayAndFile(Gradation(p1, cyan, p2, magenta)
+                            ); // , path + "degenerate_1");
+    Texture::displayAndFile(Gradation(p0, grate_c, p0, grate_m)
+                            ); // , path + "degenerate_2");
+    Texture::displayAndFile(Gradation(p1, grate_c, p2, grate_m)
+                            ); // , path + "degenerate_3");
+    Texture::displayAndFile(Grating(p0, cyan, p0, magenta, 0.5, 0.5)
+                            ); // , path + "degenerate_4");
+    Texture::displayAndFile(Grating(p1, cyan, p2, magenta, 0.5, 0.5)
+                            ); // , path + "degenerate_5");
+    Texture::displayAndFile(Turbulence(p0, p0, grate_c, grate_m)
+                            ); // , path + "degenerate_6");
+    Texture::displayAndFile(Turbulence(p1, p2, grate_c, grate_m)
+                            ); // , path + "degenerate_7");
 
     Texture::waitKey();
 

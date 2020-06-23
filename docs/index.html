@@ -67,6 +67,59 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200622"> <a href="#20200622" class="date">June 22,
+        2020</a>
+      <h1>Degenerate “two point” spaces</h1>
+      <p>Several texture operators have two <em>Vec2</em> point parameters to
+        define a local 2d coordinate space (scale, rotation, translation).
+        Originally <em>Gradation</em> and <em>Grating</em> used this approach.
+        Then (starting <a href="#20200531">May 31</a>) the noise textures were
+        changed to use this same “two point” approach. </p>
+      <p>However, if the two points happen to be identical, the space will have
+        zero scale and an undefined orientation. Generally this would lead to an
+        arbitrary result, often a blend fraction of zero, so passing through the
+        first texture parameter and ignoring the other. In the cases of <em>Gradation</em>
+        and <em>Grating</em> I originally decided to define the result as an
+        blend of the two inputs (a uniform blend fraction of 0.5). Today I
+        cleaned up the handling of this in <em>Gradation</em> and <em>Grating</em>
+        x, then changed the base <em>Noise</em> operator to follow the same
+        convention for all noise textures. In each pair below, the first texture
+        has a space defined by two identical points (<code>p0</code>), and the
+        second texture has a space defined by two distinct points (<code>p1</code>
+        and <code>p2</code>).</p>
+      <pre>p0 = Vec2(0, 0)
+p1 = Vec2(0.1, 0.1)
+p2 = Vec2(-0.1, -0.1)
+black = Uniform(0)
+cyan = Uniform(0, 1, 1)
+magenta = Uniform(1, 0, 1)
+
+Gradation(p0, cyan, p0, magenta)
+Gradation(p1, cyan, p2, magenta)</pre>
+      <img src="images/20200622_degenerate_0.png" alt="Gradation(p0, cyan, p0, magenta)"
+        title="Gradation(p0, cyan, p0, magenta)" height="511" width="511"> <img
+        src="images/20200622_degenerate_1.png" alt="Gradation(p1, cyan, p2, magenta)"
+        title="Gradation(p1, cyan, p2, magenta)" height="511" width="511">
+      <pre>Grating(p0, cyan, p0, magenta, 0.5, 0.5)
+Grating(p1, cyan, p2, magenta, 0.5, 0.5)</pre>
+      <img src="images/20200622_degenerate_4.png" alt="Grating(p0, cyan, p0, magenta, 0.5, 0.5)"
+        title="Grating(p0, cyan, p0, magenta, 0.5, 0.5)" height="511" width="511">
+      <img src="images/20200622_degenerate_5.png" alt="Grating(p1, cyan, p2, magenta, 0.5, 0.5)"
+        title="Grating(p1, cyan, p2, magenta, 0.5, 0.5)" height="511" width="511">
+      <pre>grate_c = Grating(Vec2(), cyan, Vec2(0.1, 0), black, 0.2, 0.5)
+grate_m = Grating(Vec2(), magenta, Vec2(0.1, 0), black, 0.2, 0.5)<br>
+Gradation(p0, grate_c, p0, grate_m)
+Gradation(p1, grate_c, p2, grate_m)</pre>
+      <img src="images/20200622_degenerate_2.png" alt="Gradation(p0, grate_c, p0, grate_m)"
+        title="Gradation(p0, grate_c, p0, grate_m)" height="511" width="511"> <img
+        src="images/20200622_degenerate_3.png" alt="Gradation(p1, grate_c, p2, grate_m)"
+        title="Gradation(p1, grate_c, p2, grate_m)" height="511" width="511">
+      <pre>Turbulence(p0, p0, grate_c, grate_m)
+Turbulence(p1, p2, grate_c, grate_m)</pre>
+      <img src="images/20200622_degenerate_6.png" alt="Turbulence(p0, p0, grate_c, grate_m)"
+        title="Turbulence(p0, p0, grate_c, grate_m)" height="511" width="511"> <img
+        src="images/20200622_degenerate_7.png" alt="Turbulence(p1, p2, grate_c, grate_m)"
+        title="Turbulence(p1, p2, grate_c, grate_m)" height="511" width="511"> </div>
     <div class="post" id="20200620"> <a href="#20200620" class="date">June 20,
         2020</a>
       <h1><em>CotsMap</em> operator</h1>
