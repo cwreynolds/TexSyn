@@ -78,20 +78,6 @@ Color Color::operator*(float s) const
 #define assert_Not_A_Not_A_Number(x) assert(!std::isnan (x))
 #define assert_Valid_Float(x) assert(!(std::isnan(x)||std::isinf(x)))
 
-// using the basic x-floor(x) for very small negative value produces 1 rather than 0
-//
-// XXX20091121 experiment
-// a = -1.98682e-08
-// floor(a) = -1
-// a-floor(a) = 1
-//
-inline float wellBehavedFractionalPart (float x)
-{
-    x = x - floor(x);
-    return x - floor(x);
-}
-
-
 // Transform color space from "Red Green Blue" to "Hue Saturation Value"
 //
 // Method due to Alvy Ray Smith, while at NYIT, first published in 1978.
@@ -186,12 +172,7 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
 void Color::convertHSVtoRGB(float h, float s, float v,
                             float& R, float& G, float& B)
 {
-    // XXX20091119 oops found a bug for HSV=111 (instead wrap H around to 0)
-    //    const float H = h * 360.0f;
-    // XXX20091121 now I got a bug here because an H slightly above 1 was pass in from BrightnessToHue
-    //    const float H = (h == 1.0f) ? 0.0f : h * 360.0f;
-    //    const float H = (h - floor (h)) * 360.0f; // XXX20091121 experiment
-    const float H = wellBehavedFractionalPart(h) * 360.0f; // XXX20091121 experiment
+    const float H = fmod_floor(h, 1) * 360;
     const float S = s;
     const float V = v;
     if( V == 0 )

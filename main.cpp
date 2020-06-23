@@ -2794,38 +2794,68 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    
-    // More COTS maps -- June 22, 2020
-    std::cout << "June 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200622_";
-    
-    Vec2 p0(0, 0);
-    Vec2 p1(0.1, 0.1);
-    Vec2 p2(-0.1, -0.1);
-    Uniform black(0);
-    Uniform cyan(0, 1, 1);
-    Uniform magenta(1, 0, 1);
-    Grating grate_c(Vec2(), cyan, Vec2(0.1, 0), black, 0.2, 0.5);
-    Grating grate_m(Vec2(), magenta, Vec2(0.1, 0), black, 0.2, 0.5);
+//    // More COTS maps -- June 22, 2020
+//    std::cout << "June 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200622_";
+//
+//    Vec2 p0(0, 0);
+//    Vec2 p1(0.1, 0.1);
+//    Vec2 p2(-0.1, -0.1);
+//    Uniform black(0);
+//    Uniform cyan(0, 1, 1);
+//    Uniform magenta(1, 0, 1);
+//    Grating grate_c(Vec2(), cyan, Vec2(0.1, 0), black, 0.2, 0.5);
+//    Grating grate_m(Vec2(), magenta, Vec2(0.1, 0), black, 0.2, 0.5);
+//
+//    Texture::displayAndFile(Gradation(p0, cyan, p0, magenta)
+//                            ); // , path + "degenerate_0");
+//    Texture::displayAndFile(Gradation(p1, cyan, p2, magenta)
+//                            ); // , path + "degenerate_1");
+//    Texture::displayAndFile(Gradation(p0, grate_c, p0, grate_m)
+//                            ); // , path + "degenerate_2");
+//    Texture::displayAndFile(Gradation(p1, grate_c, p2, grate_m)
+//                            ); // , path + "degenerate_3");
+//    Texture::displayAndFile(Grating(p0, cyan, p0, magenta, 0.5, 0.5)
+//                            ); // , path + "degenerate_4");
+//    Texture::displayAndFile(Grating(p1, cyan, p2, magenta, 0.5, 0.5)
+//                            ); // , path + "degenerate_5");
+//    Texture::displayAndFile(Turbulence(p0, p0, grate_c, grate_m)
+//                            ); // , path + "degenerate_6");
+//    Texture::displayAndFile(Turbulence(p1, p2, grate_c, grate_m)
+//                            ); // , path + "degenerate_7");
+//
+//    Texture::waitKey();
 
-    Texture::displayAndFile(Gradation(p0, cyan, p0, magenta)
-                            ); // , path + "degenerate_0");
-    Texture::displayAndFile(Gradation(p1, cyan, p2, magenta)
-                            ); // , path + "degenerate_1");
-    Texture::displayAndFile(Gradation(p0, grate_c, p0, grate_m)
-                            ); // , path + "degenerate_2");
-    Texture::displayAndFile(Gradation(p1, grate_c, p2, grate_m)
-                            ); // , path + "degenerate_3");
-    Texture::displayAndFile(Grating(p0, cyan, p0, magenta, 0.5, 0.5)
-                            ); // , path + "degenerate_4");
-    Texture::displayAndFile(Grating(p1, cyan, p2, magenta, 0.5, 0.5)
-                            ); // , path + "degenerate_5");
-    Texture::displayAndFile(Turbulence(p0, p0, grate_c, grate_m)
-                            ); // , path + "degenerate_6");
-    Texture::displayAndFile(Turbulence(p1, p2, grate_c, grate_m)
-                            ); // , path + "degenerate_7");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Replace wellBehavedFractionalPart(), "temp" from 2009! -- June 23, 2020
+    std::cout << "June 23, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200623_";
+    
+    
+    // using the basic x-floor(x) for very small negative value produces 1 rather than 0
+    // XXX20091121 experiment
+    // a = -1.98682e-08
+    // floor(a) = -1
+    // a-floor(a) = 1
+    float a = -1.98682e-08;
+    debugPrint(a);
+    //debugPrint(floor(a));
+    //debugPrint(a-floor(a));
+    float b = -0.1;
+    debugPrint(b);
 
-    Texture::waitKey();
+    debugPrint(fmod_floor(a, 1));
+    debugPrint(fmod_floor(1 + a, 1));
+    debugPrint(fmod_floor(1 - a, 1));
+
+    debugPrint(fmod_floor(b, 1));
+    debugPrint(fmod_floor(1 + b, 1));
+    debugPrint(fmod_floor(1 - b, 1));
+    
+    UnitTests::allTestsOK();
+
+    //Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
