@@ -67,6 +67,43 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200624"> <a href="#20200624" class="date">June 24,
+        2020</a>
+      <h1>Adjust output range of fractal textures</h1>
+      <p>Yesterday I ran TexSyn's unit tests for the first time in several
+        months. All but one passed. I disabled the failing test (<code>operators_minimal_test</code>)
+        but will return to it soon. I suspect it may be a gamma related issue.</p>
+      <p>One lingering problem with the tests was that one of them (<code>noise_ranges</code>)
+        was quite slow because it ran a million tests on each of the six noise
+        generator utilities. Yes, that seems like a lot, and my plan today was
+        that “now that noise output range is all fixed” (see <a href="#20200521">May
+          21</a>, <a href="#20200522">22</a>, and <a href="#20200523">23</a>)
+        I could just reduce that to something robust but not ridiculous. When I
+        did, the unit test started failing.</p>
+      <p>Because the unit test is randomly sampling a random pattern, the bounds
+        of the output range tend to grow as more and more samples are collected.
+        That was how I originally got to such a ridiculous number of samples.
+        Today I decided I would rather clip off those “one in a million”
+        (litteraly) extreme values. I found that each of the fractal noise
+        generators (brownian, turbulence, furbulence, and wrapulence) already
+        had clipping remappers on their output, so it was just a matter of
+        tweaking the “trim pots” for the output level. This effectively
+        “tightened” the bounds of raw noise that get mapped to the nominal
+        output range [0, 1].</p>
+      <p>The upshot is that now the unit tests run very fast, and the fractal
+        noise textures have slightly more contrast. This is the sort of
+        not-backward-compatibility I have tried to avoid, but I think this is
+        such a subtle change I am willing to live with it. Here are two textures
+        from recent posts in this document (see <a href="#20200620">June 20</a>
+        and <a href="#20200603">June 3</a>) before this change on the left,
+        after this change on the right:</p>
+      <img src="images/20200620_noise0.png" alt="by_noise before today's change"
+        title="by_noise before today's change" height="511" width="511"> <img src="images/20200624_Wrapulence.png"
+        alt="" title="" height="511" width="511"> <br>
+      <img src="images/20200603_cn.png" alt="" title="" height="511" width="511">
+      <img src="images/20200624_ColorNoise.png" alt="cn after today's slight contrast increase"
+        title="cn after today's slight contrast increase" height="511" width="511">
+    </div>
     <div class="post" id="20200622"> <a href="#20200622" class="date">June 22,
         2020</a>
       <h1>Degenerate “two point” spaces</h1>

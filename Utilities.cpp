@@ -123,7 +123,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        return remapIntervalClip(value, 0, 1.5, 0, 1);
+        return remapIntervalClip(value, 0.1, 1.5, 0, 1);
     }
 
     // Brownian Noise, fractal 1/f Perlin noise, output range on [0, 1].
@@ -137,7 +137,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        return remapIntervalClip(value, -1.4, 1.4, 0, 1);
+        return remapIntervalClip(value, -1.3, 1.3, 0, 1);
     }
 
     // Furbulence: two "fold" version of Turbulence producing sharp features at
@@ -153,8 +153,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        // TODO revisit Furbulence clip bounds after running Release build.
-        return remapIntervalClip(value, 0.07, 1.9, 0, 1);
+        return remapIntervalClip(value, 0.15, 1.8, 0, 1);
     }
 
     // Wrapulence: another variation on turbulence(). noise() is scaled up in
@@ -172,8 +171,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        // TODO revisit Wrapulence clip bounds after running Release build.
-        return remapIntervalClip(value, 0, 1.9, 0, 1);
+        return remapIntervalClip(value, 0.11, 1.8, 0, 1);
     }
 
     // Returns result of one of the noise functions (unitNoise2d, turbulence2d,
@@ -198,22 +196,18 @@ namespace PerlinNoise
     {
         float max_range = -std::numeric_limits<float>::infinity();
         float min_range = +std::numeric_limits<float>::infinity();
-        float steps = 1000;
-        float magnify = 50;
-        for (int i = -steps / 2; i < steps / 2; i++)
+        float measurements = 10000;
+        for (int i = 0; i < measurements; i ++)
         {
-            for (int j = -steps / 2; j < steps / 2; j++)
-            {
-                Vec2 v((i * magnify) / (steps / 2),
-                       (j * magnify) / (steps / 2));
-                float noise = noise_func(v);
-                if (max_range < noise) max_range = noise;
-                if (min_range > noise) min_range = noise;
-            }
+            float diameter = 200;
+            Vec2 v = Vec2::randomPointInUnitDiameterCircle() * diameter;
+            float noise = noise_func(v);
+            if (max_range < noise) max_range = noise;
+            if (min_range > noise) min_range = noise;
         }
-        debugPrint(min_range);
-        debugPrint(max_range);
-        std::cout << std::endl;
+        std::cout << "measure_range: ";
+        std::cout << "min_range = " << min_range << ", ";
+        std::cout << "max_range = " << max_range << std::endl;
         return std::pair<float, float>(min_range, max_range);
     }
 
