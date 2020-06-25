@@ -191,7 +191,9 @@ bool UnitTests::allTestsOK()
         Vec2 point2(0.8, 0.8);
         Color color1(1, 0, 1);
         Color color2(0, 1, 1);
-        Gradation graduation(point1, color1, point2, color2);
+        Uniform uniform1(color1);
+        Uniform uniform2(color2);
+        Gradation graduation(point1, uniform1, point2, uniform2);
         Vec2 midpoint = interpolate(0.5, point1, point2);
         Color midcolor = interpolate(0.5, color1, color2);
         float e = 0.00001;
@@ -224,7 +226,9 @@ bool UnitTests::allTestsOK()
         float outer_radius = 0.3;
         Color inner_color(1, 1, 0);
         Color outer_color(0, 1, 0);
-        Spot spot(center, inner_radius, inner_color, outer_radius, outer_color);
+        Uniform uniform_ic(inner_color);
+        Uniform uniform_oc(outer_color);
+        Spot spot(center, inner_radius, uniform_ic, outer_radius, uniform_oc);
         Color midcolor = interpolate(0.5, inner_color, outer_color);
         float midradius = (inner_radius + outer_radius) / 2;
         Vec2 midpoint = center + (Vec2(1, 0) * midradius);
@@ -259,7 +263,9 @@ bool UnitTests::allTestsOK()
                         Vec2 p2 = Vec2::randomPointInUnitDiameterCircle();
                         Color c1 = Color::randomUnitRGB();
                         Color c2 = Color::randomUnitRGB();
-                        Grating grating(p1, c1, p2, c2, frandom01());
+                        Uniform u1(c1);
+                        Uniform u2(c2);
+                        Grating grating(p1, u1, p2, u2, frandom01(), 0.5);
                         // Pick a random point between p1 and p2.
                         Vec2 between = interpolate(frandom01(), p1, p2);
                         // Pick another point along the line p1,p2 which is
@@ -325,6 +331,9 @@ bool UnitTests::allTestsOK()
         {
             std::pair<float, float> min_max =
                 PerlinNoise::measure_range(noise_function);
+            // std::cout << "noise_ranges: ";
+            // std::cout << "min_range = " << min_max.first << ", ";
+            // std::cout << "max_range = " << min_max.second << std::endl;
             return ((min_max.first <= min_threshold) &&
                     (min_max.second >= max_threshold));
         };

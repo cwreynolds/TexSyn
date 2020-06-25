@@ -153,7 +153,7 @@ namespace PerlinNoise
             octave *= 2;
             position = disalignment_rotation(position);
         }
-        return remapIntervalClip(value, 0.15, 1.8, 0, 1);
+        return remapIntervalClip(value, 0.16, 1.8, 0, 1);
     }
 
     // Wrapulence: another variation on turbulence(). noise() is scaled up in
@@ -205,9 +205,6 @@ namespace PerlinNoise
             if (max_range < noise) max_range = noise;
             if (min_range > noise) min_range = noise;
         }
-        std::cout << "measure_range: ";
-        std::cout << "min_range = " << min_range << ", ";
-        std::cout << "max_range = " << max_range << std::endl;
         return std::pair<float, float>(min_range, max_range);
     }
 

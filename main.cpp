@@ -11,11 +11,10 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 
-bool run_unit_tests = false;
+bool run_unit_tests = true;
 
 int main(int argc, const char * argv[])
 {
-    // TODO TEMP run unit tests
     if (run_unit_tests) UnitTests::allTestsOK();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2858,20 +2857,31 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Unit test "noise_ranges" faster, retune nosie ranges -- June 24, 2020
-    std::cout << "June 24, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200624_";
+//    // Unit test "noise_ranges" faster, re-tune ranges -- June 24, 2020
+
+//    std::cout << "June 24, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200624_";
+//
+//    Uniform black(0);
+//    Uniform yellow(1, 1, 0);
+//    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow);
+//    Texture::displayAndFile(by_noise
+//                            , path + "Wrapulence");
+//    Vec2 p1(2, 3);
+//    Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.3;
+//    Texture::displayAndFile(ColorNoise(p1, p2, 0.6)
+//                            , path + "ColorNoise");
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Uniform black(0);
-    Uniform yellow(1, 1, 0);
-    Wrapulence by_noise(Vec2(2, 3), Vec2(2.5, 3.5), black, yellow);
-    Texture::displayAndFile(by_noise
-                            , path + "Wrapulence");
-    Vec2 p1(2, 3);
-    Vec2 p2 = p1 + Vec2(-1, 3).normalize() * 0.3;
-    Texture::displayAndFile(ColorNoise(p1, p2, 0.6)
-                            , path + "ColorNoise");
-    Texture::waitKey();
+    // E -- June 25, 2020
+    std::cout << "June 25, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200625_";
+    
+    UnitTests::allTestsOK();
+    
+    // Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
