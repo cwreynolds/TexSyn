@@ -26,27 +26,36 @@
 bool UnitTests::allTestsOK()
 {
     auto start_time = std::chrono::high_resolution_clock::now();
-    bool utilities = (withinEpsilon(1.1, 1.2, 0.2) &&
-                      withinEpsilon(-1.1, -1.2, 0.2) &&
-                      !withinEpsilon(1.1, 1.2, 0.01) &&
-                      (sq(2) == 4) &&
-                      (interpolate(0.1, 0, 10) == 1) &&
-                      (interpolate(0.1, 0, -10) == -1) &&
-                      (clip(2, 1, 3) == 2) &&
-                      (clip(0, 1, 2) == 1) &&
-                      (clip(3, 1, 2) == 2) &&
-                      (clip(0, 1, 1) == 1) &&
-                      (clip(3, 1, 1) == 1) &&
-                      (sinusoid(0) == 0) &&
-                      (sinusoid(0.25) < 0.25) &&
-                      (sinusoid(0.5) == 0.5) &&
-                      (sinusoid(0.75) > 0.75) &&
-                      (sinusoid(1) == 1) &&
-                      (remapInterval(1.5, 1, 2, 20, 30) == 25) &&
-                      (remapInterval(2, 1, 4, 10, 40) == 20) &&
-                      (remapIntervalClip(5, 1, 4, 10, 40)) == 40 &&
-                      !std::isnan(remapInterval(1, 1, 1, 2, 3)) &&
-                      !std::isnan(remapIntervalClip(1, 1, 1, 2, 3)));
+    bool utilities = []()
+    {
+        float e = 0.00000001;
+        return(withinEpsilon(1.1, 1.2, 0.2) &&
+               withinEpsilon(-1.1, -1.2, 0.2) &&
+               !withinEpsilon(1.1, 1.2, 0.01) &&
+               (sq(2) == 4) &&
+               (interpolate(0.1, 0, 10) == 1) &&
+               (interpolate(0.1, 0, -10) == -1) &&
+               (clip(2, 1, 3) == 2) &&
+               (clip(0, 1, 2) == 1) &&
+               (clip(3, 1, 2) == 2) &&
+               (clip(0, 1, 1) == 1) &&
+               (clip(3, 1, 1) == 1) &&
+               (sinusoid(0) == 0) &&
+               (sinusoid(0.25) < 0.25) &&
+               (sinusoid(0.5) == 0.5) &&
+               (sinusoid(0.75) > 0.75) &&
+               (sinusoid(1) == 1) &&
+               (remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+               (remapInterval(2, 1, 4, 10, 40) == 20) &&
+               (remapIntervalClip(5, 1, 4, 10, 40)) == 40 &&
+               !std::isnan(remapInterval(1, 1, 1, 2, 3)) &&
+               !std::isnan(remapIntervalClip(1, 1, 1, 2, 3)) &&
+               withinEpsilon(fmod_floor(1, 1.23), 1, e) &&
+               withinEpsilon(fmod_floor(2, 1.23), 0.77, e) &&
+               withinEpsilon(fmod_floor(-1, 1.23), 0.23, e) &&
+               withinEpsilon(fmod_floor(-2, 1.23), 0.46, e) &&
+               withinEpsilon(fmod_floor(1.23, 1.23), 0, e));
+    };
     // Tests for Color class.
     bool color_constructors = ((Color().r() == 0) &&
                                (Color().g() == 0) &&
