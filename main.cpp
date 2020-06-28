@@ -2885,13 +2885,13 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // fmod_floor UnitTests -- June 26, 2020
-    std::cout << "June 25, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200625_";
-    
-    UnitTests::allTestsOK();
-    
-    // Texture::waitKey();
+//    // fmod_floor UnitTests -- June 26, 2020
+//    std::cout << "June 25, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200625_";
+//    
+//    UnitTests::allTestsOK();
+//    
+//    // Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

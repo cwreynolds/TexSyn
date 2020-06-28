@@ -187,9 +187,11 @@ Complex inverse_mobius_transform(Complex z,
 // After the block containing the Timer construction it prints:
 //    foo elapsed time: 1.86984 seconds
 // Added parameter to customize " elapsed time: " to any string including none:
-//        Timer timer("  Run time for unit test suite: ", "");
+//        Timer timer("Run time for unit test suite: ", "");
 // prints:
 //    Run time for unit test suite: 0.0301787 seconds
+//
+// TODO: perhaps customize message with a message_printing function pointer?
 //
 class Timer
 {
