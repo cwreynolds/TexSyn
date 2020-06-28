@@ -11,7 +11,6 @@
 #include "UnitTests.h"
 #include "Utilities.h"
 #include "Vec2.h"
-#include <chrono>  // for high_resolution_clock
 
 // Used only in allTestsOK()
 #define logAndTally(e)                       \
@@ -25,7 +24,7 @@
 
 bool UnitTests::allTestsOK()
 {
-    auto start_time = std::chrono::high_resolution_clock::now();
+    Timer timer("  Run time for unit test suite: ", "");
     bool utilities = []()
     {
         float e = 0.00000001;
@@ -378,10 +377,6 @@ bool UnitTests::allTestsOK()
     logAndTally(noise_ranges);
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
-    auto end_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed_time = end_time - start_time;
-    std::cout << "  (Elapsed time: " << elapsed_time.count() << " seconds)";
-    std::cout << std::endl << std::endl;
     return all_tests_passed;
 }
 

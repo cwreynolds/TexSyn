@@ -186,23 +186,32 @@ Complex inverse_mobius_transform(Complex z,
 //    }
 // After the block containing the Timer construction it prints:
 //    foo elapsed time: 1.86984 seconds
+// Added parameter to customize " elapsed time: " to any string including none:
+//        Timer timer("  Run time for unit test suite: ", "");
+// prints:
+//    Run time for unit test suite: 0.0301787 seconds
 //
 class Timer
 {
 public:
     Timer(const std::string& description)
       : description_(description),
-        start_time_(std::chrono::high_resolution_clock::now())
-    {}
+        elasped_time_(" elapsed time: "),
+        start_time_(std::chrono::high_resolution_clock::now()) {}
+    Timer(const std::string& description, const std::string& elasped_time)
+      : description_(description),
+        elasped_time_(elasped_time),
+        start_time_(std::chrono::high_resolution_clock::now()) {}
     ~Timer()
     {
         auto finish_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = finish_time - start_time_;
-        std::cout << description_ << " elapsed time: " << elapsed.count();
+        std::cout << description_ << elasped_time_ << elapsed.count();
         std::cout << " seconds" << std::endl;
     }
 private:
     const std::string description_;
+    const std::string elasped_time_;
     const std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
 };
 
