@@ -318,39 +318,56 @@ bool grating_test()
             }());
 }
 
-// TODO temporarily disable on June 23, 2020. Perhaps gamma is breaking it?
+// TODO "subtest"
+#define st(e)                         \
+[&]()                                 \
+{                                     \
+    bool _e_ok = (e);                 \
+    if (!_e_ok)                       \
+    {                                 \
+        std::cout << "fail: " << #e;  \
+        std::cout << std::endl;       \
+    }                                 \
+    return _e_ok;                     \
+}()
+
 bool operators_minimal_test()
 {
     float e = 0.000001;
     Color black(0, 0, 0);
     Color white(1, 1, 1);
     Color gray(0.5, 0.5, 0.5);
-    Gradation bt(Vec2(0, 0), black, Vec2(0, 0), black);  // black texture
-    Gradation gt(Vec2(0, 0), gray,  Vec2(0, 0), gray);   // gray texture
-    Gradation wt(Vec2(0, 0), white, Vec2(0, 0), white);  // white texture
+    Uniform bt(black);  // black texture
+    Uniform gt(gray);   // gray texture
+    Uniform wt(white);  // white texture
     Max mx(bt, wt);
     Min mn(bt, wt);
     Add ad(wt, gt);
     Subtract s1(wt, gt);
     Subtract s2(bt, gt);
-    Spot sp(Vec2(0, 0), 0.5, white, 0.5, black);
+    float ri = 0.2;  // spot radius inner
+    float ro = 0.8;  // spot radius outer
+    Spot sp(Vec2(0, 0), ri, wt, ro, bt);
     SoftMatte sm(sp, bt, wt);
     return ([&]()
             {
                 bool all_ok = true;
                 for (int i = 0; i < 1000; i++) // try 1000 times
                 {
-                    Vec2 r_pos = Vec2::randomPointInUnitDiameterCircle();
-                    Color sm_color = r_pos.length() < 0.5 ? white : black;
+                    Vec2 r_pos = Vec2::randomPointInUnitDiameterCircle() * 2;
+                    float r = r_pos.length();
+                    float r_remap = remapIntervalClip(r, ri, ro, 0, 1);
+                    float spot_profile = sinusoid(r_remap);
+                    Color sm_color = interpolate(spot_profile, white, black);
                     bool ok =
-                    (withinEpsilon(bt.getColor(r_pos), black, e) &&
-                     withinEpsilon(wt.getColor(r_pos), white, e) &&
-                     withinEpsilon(mx.getColor(r_pos), white, e) &&
-                     withinEpsilon(mn.getColor(r_pos), black, e) &&
-                     withinEpsilon(ad.getColor(r_pos), white + gray, e) &&
-                     withinEpsilon(s1.getColor(r_pos), white - gray, e) &&
-                     withinEpsilon(s2.getColor(r_pos), black - gray, e) &&
-                     withinEpsilon(sm.getColor(r_pos), sm_color, e));
+                    (st(withinEpsilon(bt.getColor(r_pos), black, e)) &&
+                     st(withinEpsilon(wt.getColor(r_pos), white, e)) &&
+                     st(withinEpsilon(mx.getColor(r_pos), white, e)) &&
+                     st(withinEpsilon(mn.getColor(r_pos), black, e)) &&
+                     st(withinEpsilon(ad.getColor(r_pos), white + gray, e)) &&
+                     st(withinEpsilon(s1.getColor(r_pos), white - gray, e)) &&
+                     st(withinEpsilon(s2.getColor(r_pos), black - gray, e)) &&
+                     st(withinEpsilon(sm.getColor(r_pos), sm_color, e)));
                     if (!ok) all_ok = false;
                 }
                 return all_ok;
@@ -381,11 +398,12 @@ bool noise_ranges()
 // Used only in UnitTests::allTestsOK()
 #define logAndTally(e)                       \
 {                                            \
+    bool _e_ok = e();                        \
     std::cout << "\t";                       \
-    std::cout << ((e()) ? "pass" : "FAIL");  \
+    std::cout << (_e_ok ? "pass" : "FAIL");  \
     std::cout << " " << #e;                  \
     std::cout << std::endl << std::flush;    \
-    if (!e) all_tests_passed = false;        \
+    if (!_e_ok) all_tests_passed = false;    \
 }
 
 bool UnitTests::allTestsOK()
@@ -410,8 +428,7 @@ bool UnitTests::allTestsOK()
     logAndTally(gradation_test);
     logAndTally(spot_test);
     logAndTally(grating_test);
-    // TODO temporarily disable on June 23, 2020. Perhaps gamma is breaking it?
-    // logAndTally(operators_minimal_test);
+    logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
