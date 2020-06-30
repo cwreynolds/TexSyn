@@ -114,11 +114,11 @@ bool color_hsv()
     Color::convertHSVtoRGB(0, 0, 0, r0, g0, b0);
     Color::convertRGBtoHSV(r0, g0, b0, h0, s0, v0);
     bool randoms_ok = true;
+    RandomSequence rs(38284732);
     for (int i = 0; i < 10000; i++)
     {
-        randoms_ok = randoms_ok && from_rgb_to_hsv_to_rgb(frandom01(),
-                                                          frandom01(),
-                                                          frandom01());
+        Color c = rs.randomUnitRGB();
+        randoms_ok = randoms_ok && from_rgb_to_hsv_to_rgb(c.r(), c.g(), c.b());
     }
     return (from_rgb_to_hsv_to_rgb(0.0, 0.0, 0.0) &&
             from_rgb_to_hsv_to_rgb(1.0, 1.0, 1.0) &&
@@ -137,9 +137,10 @@ bool color_clip()
 {
     float e = 0.000001;
     bool all_ok = true;
+    RandomSequence rs(66426174);
     for (int i = 0; i < 1000; i ++)
     {
-        Color a(frandom2(-1, +10), frandom2(-1, +10), frandom2(-1, +10));
+        Color a(rs.frandom2(-1, 10), rs.frandom2(-1, 10), rs.frandom2(-1, 10));
         Color b = a.clipToUnitRGB();
         bool in_range = ((b.r() >= 0) && (b.g() >= 0) && (b.b() >= 0) &&
                          (b.r() <= 1) && (b.g() <= 1) && (b.b() <= 1));
@@ -194,8 +195,9 @@ bool vec2_basic_operators()
 bool vec2_random_point()
 {
     bool all_ok = true;
+    RandomSequence rs(23807653);
     for (int i = 0; i < 1000; i ++)
-        if (Vec2::randomPointInUnitDiameterCircle().length() > 0.5)
+        if (rs.randomPointInUnitDiameterCircle().length() > 0.5)
             all_ok = false;
     return all_ok;
 }
@@ -203,9 +205,10 @@ bool vec2_random_point()
 bool vec2_rotate()
 {
     bool all_ok = true;
+    RandomSequence rs(85085172);
     for (int i = 0; i < 100; i ++)
     {
-        float angle = frandom2(-60, +60);  // In radians, to test large angles.
+        float angle = rs.frandom2(-60, +60);  // In radians, tests large angles.
         float cos = std::cos(angle);
         float sin = std::sin(angle);
         Vec2 v = Vec2(1, 0).rotate(angle);
@@ -226,10 +229,11 @@ bool gradation_test()
     Vec2 midpoint = interpolate(0.5, point1, point2);
     Color midcolor = interpolate(0.5, color1, color2);
     float e = 0.00001;
+    RandomSequence rs(38336022);
     auto off_axis_sample = [&](float f)
     {
         Vec2 on_axis = interpolate(f, point1, point2);
-        Vec2 off_axis = Vec2(-1, 1) * frandom2(-10, 10);
+        Vec2 off_axis = Vec2(-1, 1) * rs.frandom2(-10, 10);
         // TODO maybe instead of predicting what color we expect to find
         // (which requires internal knowledge of the texure) maybe compare
         // two samples, say from plus and minus off_axis.
@@ -263,6 +267,7 @@ bool spot_test()
     float midradius = (inner_radius + outer_radius) / 2;
     Vec2 midpoint = center + (Vec2(1, 0) * midradius);
     float e = 0.000001;
+    RandomSequence rs(64577036);
     return ((spot.getColor(center) == inner_color) &&
             (spot.getColor(midpoint * 2) == outer_color) &&
             withinEpsilon(spot.getColor(midpoint), midcolor, e) &&
@@ -271,9 +276,9 @@ bool spot_test()
                 {
                     // Two random vectors, with the same random radius in
                     // transition zone, should have the same color.
-                    float r_radius = frandom2(inner_radius, outer_radius);
-                    Vec2 rv1 = Vec2::randomUnitVector() * r_radius;
-                    Vec2 rv2 = Vec2::randomUnitVector() * r_radius;
+                    float r_radius = rs.frandom2(inner_radius, outer_radius);
+                    Vec2 rv1 = rs.randomUnitVector() * r_radius;
+                    Vec2 rv2 = rs.randomUnitVector() * r_radius;
                     Color color1 = spot.getColor(center + rv1);
                     Color color2 = spot.getColor(center + rv2);
                     if (!withinEpsilon(color1, color2, e)) return false;
@@ -285,24 +290,25 @@ bool spot_test()
 bool grating_test()
 {
     float e = 0.0001;
+    RandomSequence rs(9635451);
     return ([&]()
             {
                 for (int i = 0; i < 100; i++) // try 100 times
                 {
                     // Define a random Grating
-                    Vec2 p1 = Vec2::randomPointInUnitDiameterCircle();
-                    Vec2 p2 = Vec2::randomPointInUnitDiameterCircle();
-                    Color c1 = Color::randomUnitRGB();
-                    Color c2 = Color::randomUnitRGB();
+                    Vec2 p1 = rs.randomPointInUnitDiameterCircle();
+                    Vec2 p2 = rs.randomPointInUnitDiameterCircle();
+                    Color c1 = rs.randomUnitRGB();
+                    Color c2 = rs.randomUnitRGB();
                     Uniform u1(c1);
                     Uniform u2(c2);
-                    Grating grating(p1, u1, p2, u2, frandom01(), 0.5);
+                    Grating grating(p1, u1, p2, u2, rs.frandom01(), 0.5);
                     // Pick a random point between p1 and p2.
-                    Vec2 between = interpolate(frandom01(), p1, p2);
+                    Vec2 between = interpolate(rs.frandom01(), p1, p2);
                     // Pick another point along the line p1,p2 which is
                     // some random integer multiple of offset away.
                     Vec2 offset = p2 - p1;
-                    Vec2 other = between + (offset * int(frandom2(-5, 5)));
+                    Vec2 other = between + (offset * int(rs.frandom2(-5, 5)));
                     // Read back colors from midpoint, between, and other.
                     Color gc_midpoint = grating.getColor((p1 + p2) / 2);
                     Color gc_between = grating.getColor(between);
@@ -349,12 +355,13 @@ bool operators_minimal_test()
     float ro = 0.8;  // spot radius outer
     Spot sp(Vec2(0, 0), ri, wt, ro, bt);
     SoftMatte sm(sp, bt, wt);
+    RandomSequence rs(59049567);
     return ([&]()
             {
                 bool all_ok = true;
                 for (int i = 0; i < 1000; i++) // try 1000 times
                 {
-                    Vec2 r_pos = Vec2::randomPointInUnitDiameterCircle() * 2;
+                    Vec2 r_pos = rs.randomPointInUnitDiameterCircle() * 2;
                     float r = r_pos.length();
                     float r_remap = remapIntervalClip(r, ri, ro, 0, 1);
                     float spot_profile = sinusoid(r_remap);

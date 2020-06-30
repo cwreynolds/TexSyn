@@ -16,6 +16,7 @@
 #include <vector>
 #include <chrono>
 class Vec2;
+class Color;
 
 // for debugging: prints one line with a given C expression, an equals sign,
 // and the value of the expression.  For example "angle = 35.6"
@@ -257,6 +258,8 @@ public:
     // "attractive nuisance" of random utilities which are non-repeatable.
     Vec2 randomPointInUnitDiameterCircle();
     Vec2 randomUnitVector();
+    // TODO moved from Color class to here on June 30, 2020:
+    Color randomUnitRGB();
 private:
     uint32_t state_;
 };

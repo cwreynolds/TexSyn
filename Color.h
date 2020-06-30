@@ -65,8 +65,6 @@ public:
     Color clipToUnitRGB() const;
     // Exponentiate the RGB components by given gamma value ("exponent")
     Color gamma(float g) const;
-    // Random color uniformly distributed across the unit RGB cube.
-    static Color randomUnitRGB();
     static Color gray(float value) { return { value, value, value }; }
     // Accessors:
     float red() const { return red_; }

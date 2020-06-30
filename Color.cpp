@@ -241,8 +241,10 @@ Color Color::gamma(float exponent) const
                  pow(std::max(b(), 0.0f), exponent));
 }
 
-// Random color uniformly distributed across the unit RGB cube.
-Color Color::randomUnitRGB()
+// TODO experimental version in RandomSequence instead of in Color.
+//
+// Random color, uniformly distributed across the unit RGB cube.
+Color RandomSequence::randomUnitRGB()
 {
     return Color(frandom01(), frandom01(), frandom01());
 }
