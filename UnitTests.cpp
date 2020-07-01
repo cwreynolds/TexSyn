@@ -18,61 +18,86 @@
 #include "Utilities.h"
 #include "Vec2.h"
 
+//    #define st(e)                         \
+//    [&]()                                 \
+//    {                                     \
+//        bool _e_ok = (e);                 \
+//        if (!_e_ok)                       \
+//        {                                 \
+//            std::cout << "fail: " << #e;  \
+//            std::cout << std::endl;       \
+//        }                                 \
+//        return _e_ok;                     \
+//    }()
+
+
+// This "sub-test" wrapper macro just returns the value of the given expression
+// "e". If the value is NOT TRUE, the st() macro will also log the specific
+// failing sub-test expression ("e") to aid in debugging. Unit test functions
+// generally run several sub-tests ANDing the results together.
+#define st(e) [&]()                                        \
+{                                                          \
+    bool _e_ok = (e);                                      \
+    if (!_e_ok) std::cout << "fail: " << #e << std::endl;  \
+    return _e_ok;                                          \
+}()
+
 // Tests Utilities.h.
 bool utilities()
 {
     float e = 0.0000001;
-    return (withinEpsilon(1.1, 1.2, 0.2) &&
-            withinEpsilon(-1.1, -1.2, 0.2) &&
-            !withinEpsilon(1.1, 1.2, 0.01) &&
-            (sq(2) == 4) &&
-            (interpolate(0.1, 0, 10) == 1) &&
-            (interpolate(0.1, 0, -10) == -1) &&
-            (clip(2, 1, 3) == 2) &&
-            (clip(0, 1, 2) == 1) &&
-            (clip(3, 1, 2) == 2) &&
-            (clip(0, 1, 1) == 1) &&
-            (clip(3, 1, 1) == 1) &&
-            (sinusoid(0) == 0) &&
-            (sinusoid(0.25) < 0.25) &&
-            (sinusoid(0.5) == 0.5) &&
-            (sinusoid(0.75) > 0.75) &&
-            (sinusoid(1) == 1) &&
-            (remapInterval(1.5, 1, 2, 20, 30) == 25) &&
-            (remapInterval(2, 1, 4, 10, 40) == 20) &&
-            (remapIntervalClip(5, 1, 4, 10, 40)) == 40 &&
-            !std::isnan(remapInterval(1, 1, 1, 2, 3)) &&
-            !std::isnan(remapIntervalClip(1, 1, 1, 2, 3)) &&
-            withinEpsilon(fmod_floor(1, 1.23), 1, e) &&
-            withinEpsilon(fmod_floor(2, 1.23), 0.77, e) &&
-            withinEpsilon(fmod_floor(-1, 1.23), 0.23, e) &&
-            withinEpsilon(fmod_floor(-2, 1.23), 0.46, e) &&
-            withinEpsilon(fmod_floor(1.23, 1.23), 0, e));
+    return (st(withinEpsilon(1.1, 1.2, 0.2)) &&
+            st(withinEpsilon(-1.1, -1.2, 0.2)) &&
+            st(!withinEpsilon(1.1, 1.2, 0.01)) &&
+            st(sq(2) == 4) &&
+            st(interpolate(0.1, 0, 10) == 1) &&
+            st(interpolate(0.1, 0, -10) == -1) &&
+            st(clip(2, 1, 3) == 2) &&
+            st(clip(0, 1, 2) == 1) &&
+            st(clip(3, 1, 2) == 2) &&
+            st(clip(0, 1, 1) == 1) &&
+            st(clip(3, 1, 1) == 1) &&
+            st(sinusoid(0) == 0) &&
+            st(sinusoid(0.25) < 0.25) &&
+            st(sinusoid(0.5) == 0.5) &&
+            st(sinusoid(0.75) > 0.75) &&
+            st(sinusoid(1) == 1) &&
+            st(remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+            st(remapInterval(2, 1, 4, 10, 40) == 20) &&
+            st(remapIntervalClip(5, 1, 4, 10, 40) == 40) &&
+            st(!std::isnan(remapInterval(1, 1, 1, 2, 3))) &&
+            st(!std::isnan(remapIntervalClip(1, 1, 1, 2, 3))) &&
+            st(withinEpsilon(fmod_floor(1, 1.23), 1, e)) &&
+            st(withinEpsilon(fmod_floor(2, 1.23), 0.77, e)) &&
+            st(withinEpsilon(fmod_floor(-1, 1.23), 0.23, e)) &&
+            st(withinEpsilon(fmod_floor(-2, 1.23), 0.46, e)) &&
+            st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)));
 };
 
 // Tests for Color class.
 bool color_constructors()
 {
-    return ((Color().r() == 0) &&
-            (Color().g() == 0) &&
-            (Color().b() == 0) &&
-            (Color(1, 2, 3).r() == 1) &&
-            (Color(1, 2, 3).g() == 2) &&
-            (Color(1, 2, 3).b() == 3));
+    return (st(Color().r() == 0) &&
+            st(Color().g() == 0) &&
+            st(Color().b() == 0) &&
+            st(Color(1, 2, 3).r() == 1) &&
+            st(Color(1, 2, 3).g() == 2) &&
+            st(Color(1, 2, 3).b() == 3));
 }
 
 bool color_equality()
 {
-    return ((Color() == Color()) && (Color(1, 2, 3) == Color(1, 2, 3)));
+    return (st(Color() == Color()) &&
+            st(Color(1, 2, 3) == Color(1, 2, 3)));
 }
 
 bool color_assignment()
 {
     Color ca1 = Color();
     Color ca2 = Color(1, 2, 3);
-    return ((ca1 == Color()) &&
-            (ca2 == Color(1, 2, 3)) &&
-            (ca2 == (ca2 = Color(1, 2, 3))));
+    return (st(ca1 == Color()) &&
+            st(ca2 == Color(1, 2, 3)) &&
+            st(ca2 == (ca2 = Color(1, 2, 3))));
 }
 
 bool color_basic_operators()
@@ -80,18 +105,18 @@ bool color_basic_operators()
     float e = 0.000001;
     Color wec1(0.1, 0.2, 0.3);
     Color wec2(0.1, 0.2, 0.3 + (e / 2));
-    return ((withinEpsilon(wec1, wec2, e)) &&
-            (withinEpsilon(wec2, wec1, e)));
+    return (st(withinEpsilon(wec1, wec2, e)) &&
+            st(withinEpsilon(wec2, wec1, e)));
 }
 
 bool color_luminance()
 {
     float e = 0.000001;
-    return (withinEpsilon(Color(       ).luminance(), 0,      e) &&
-            withinEpsilon(Color(1, 1, 1).luminance(), 1,      e) &&
-            withinEpsilon(Color(1, 0, 0).luminance(), 0.2126, e) &&
-            withinEpsilon(Color(0, 1, 0).luminance(), 0.7152, e) &&
-            withinEpsilon(Color(0, 0, 1).luminance(), 0.0722, e));
+    return (st(withinEpsilon(Color(       ).luminance(), 0,      e)) &&
+            st(withinEpsilon(Color(1, 1, 1).luminance(), 1,      e)) &&
+            st(withinEpsilon(Color(1, 0, 0).luminance(), 0.2126, e)) &&
+            st(withinEpsilon(Color(0, 1, 0).luminance(), 0.7152, e)) &&
+            st(withinEpsilon(Color(0, 0, 1).luminance(), 0.0722, e)));
 }
 
 bool color_hsv()
@@ -120,17 +145,17 @@ bool color_hsv()
         Color c = rs.randomUnitRGB();
         randoms_ok = randoms_ok && from_rgb_to_hsv_to_rgb(c.r(), c.g(), c.b());
     }
-    return (from_rgb_to_hsv_to_rgb(0.0, 0.0, 0.0) &&
-            from_rgb_to_hsv_to_rgb(1.0, 1.0, 1.0) &&
-            from_rgb_to_hsv_to_rgb(0.5, 0.5, 0.5) &&
-            from_rgb_to_hsv_to_rgb(0.1, 0.5, 0.9) &&
-            withinEpsilon(c0.r(), c1.r(), e) &&
-            withinEpsilon(c0.g(), c1.g(), e) &&
-            withinEpsilon(c0.b(), c1.b(), e) &&
-            withinEpsilon(h0, 0, e) &&
-            withinEpsilon(v0, 0, e) &&
-            withinEpsilon(s0, 0, e) &&
-            randoms_ok);
+    return (st(from_rgb_to_hsv_to_rgb(0.0, 0.0, 0.0)) &&
+            st(from_rgb_to_hsv_to_rgb(1.0, 1.0, 1.0)) &&
+            st(from_rgb_to_hsv_to_rgb(0.5, 0.5, 0.5)) &&
+            st(from_rgb_to_hsv_to_rgb(0.1, 0.5, 0.9)) &&
+            st(withinEpsilon(c0.r(), c1.r(), e)) &&
+            st(withinEpsilon(c0.g(), c1.g(), e)) &&
+            st(withinEpsilon(c0.b(), c1.b(), e)) &&
+            st(withinEpsilon(h0, 0, e)) &&
+            st(withinEpsilon(v0, 0, e)) &&
+            st(withinEpsilon(s0, 0, e)) &&
+            st(randoms_ok));
 }
 
 bool color_clip()
@@ -154,42 +179,42 @@ bool color_clip()
 
 bool vec2_constructors()
 {
-    return ((Vec2().x() == 0) &&
-            (Vec2().y() == 0) &&
-            (Vec2(1, -2).x() == 1) &&
-            (Vec2(1, -2).y() == -2));
+    return (st(Vec2().x() == 0) &&
+            st(Vec2().y() == 0) &&
+            st(Vec2(1, -2).x() == 1) &&
+            st(Vec2(1, -2).y() == -2));
 }
 
 bool vec2_equality()
 {
-    return ((Vec2() == Vec2()) &&
-            (Vec2(1, -2) == Vec2(1, -2)));
+    return (st(Vec2() == Vec2()) &&
+            st(Vec2(1, -2) == Vec2(1, -2)));
 }
 
 bool vec2_assignment()
 {
     Vec2 v1 = Vec2();
     Vec2 v2 = Vec2(1, -2);
-    return ((v1 == Vec2()) &&
-            (v2 == Vec2(1, -2)) &&
-            (v2 == (v2 = Vec2(1, -2))));
+    return (st(v1 == Vec2()) &&
+            st(v2 == Vec2(1, -2)) &&
+            st(v2 == (v2 = Vec2(1, -2))));
 }
 
 bool vec2_vector_operations()
 {
-    return ((Vec2(2, 4).dot(Vec2(10, 20)) == 100) &&
-            (Vec2(3, 4).length() == 5) &&
-            (Vec2(3, 4).normalize() == Vec2(0.6, 0.8)));
+    return (st(Vec2(2, 4).dot(Vec2(10, 20)) == 100) &&
+            st(Vec2(3, 4).length() == 5) &&
+            st(Vec2(3, 4).normalize() == Vec2(0.6, 0.8)));
 }
 
 bool vec2_basic_operators()
 {
-    return ((-Vec2(1, 2) == Vec2(-1, -2)) &&
-            ((Vec2(1, 2) + Vec2(10, 20)) == Vec2(11, 22)) &&
-            ((Vec2(10, 20) - Vec2(1, 2)) == Vec2(9, 18)) &&
-            ((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
-            ((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
-            (Vec2(1, 2) < Vec2(-3, -4)));
+    return (st(-Vec2(1, 2) == Vec2(-1, -2)) &&
+            st((Vec2(1, 2) + Vec2(10, 20)) == Vec2(11, 22)) &&
+            st((Vec2(10, 20) - Vec2(1, 2)) == Vec2(9, 18)) &&
+            st((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
+            st((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
+            st(Vec2(1, 2) < Vec2(-3, -4)));
 }
 
 bool vec2_random_point()
@@ -241,16 +266,16 @@ bool gradation_test()
         Color sampled_color = graduation.getColor(on_axis + off_axis);
         return withinEpsilon(sampled_color, expected_color, e);
     };
-    return ((graduation.getColor(point1) == color1) &&
-            (graduation.getColor(point2) == color2) &&
-            withinEpsilon(graduation.getColor(midpoint), midcolor, e) &&
-            withinEpsilon(graduation.getColor(Vec2(0, 0)), color1, e) &&
-            withinEpsilon(graduation.getColor(Vec2(1, 1)), color2, e) &&
-            [&](){
+    return (st(graduation.getColor(point1) == color1) &&
+            st(graduation.getColor(point2) == color2) &&
+            st(withinEpsilon(graduation.getColor(midpoint), midcolor, e)) &&
+            st(withinEpsilon(graduation.getColor(Vec2(0, 0)), color1, e)) &&
+            st(withinEpsilon(graduation.getColor(Vec2(1, 1)), color2, e)) &&
+            st([&](){
                 for (int i = 0; i < 10; i++)
                     if (!off_axis_sample(i * 0.1)) return false;
                 return true;
-            }());
+            }()));
 }
 
 bool spot_test()
@@ -268,10 +293,10 @@ bool spot_test()
     Vec2 midpoint = center + (Vec2(1, 0) * midradius);
     float e = 0.000001;
     RandomSequence rs(64577036);
-    return ((spot.getColor(center) == inner_color) &&
-            (spot.getColor(midpoint * 2) == outer_color) &&
-            withinEpsilon(spot.getColor(midpoint), midcolor, e) &&
-            [&](){
+    return (st(spot.getColor(center) == inner_color) &&
+            st(spot.getColor(midpoint * 2) == outer_color) &&
+            st(withinEpsilon(spot.getColor(midpoint), midcolor, e)) &&
+            st([&](){
                 for (int i = 0; i < 100; i++) // try 100 times
                 {
                     // Two random vectors, with the same random radius in
@@ -284,7 +309,7 @@ bool spot_test()
                     if (!withinEpsilon(color1, color2, e)) return false;
                 }
                 return true;
-            }());
+            }()));
 }
 
 bool grating_test()
@@ -314,28 +339,15 @@ bool grating_test()
                     Color gc_between = grating.getColor(between);
                     Color gc_other = grating.getColor(other);
                     // Check if everything is as expected
-                    bool ok = ((grating.getColor(p1) == c1) &&
-                               (grating.getColor(p2) == c1) &&
-                               withinEpsilon(gc_midpoint, c2, e) &&
-                               withinEpsilon(gc_between, gc_other, e));
+                    bool ok = (st(grating.getColor(p1) == c1) &&
+                               st(grating.getColor(p2) == c1) &&
+                               st(withinEpsilon(gc_midpoint, c2, e)) &&
+                               st(withinEpsilon(gc_between, gc_other, e)));
                     if (!ok) return false;
                 }
                 return true;
             }());
 }
-
-// TODO "subtest"
-#define st(e)                         \
-[&]()                                 \
-{                                     \
-    bool _e_ok = (e);                 \
-    if (!_e_ok)                       \
-    {                                 \
-        std::cout << "fail: " << #e;  \
-        std::cout << std::endl;       \
-    }                                 \
-    return _e_ok;                     \
-}()
 
 bool operators_minimal_test()
 {
@@ -394,12 +406,12 @@ bool noise_ranges()
         return ((min_max.first <= min_threshold) &&
                 (min_max.second >= max_threshold));
     };
-    return (test_range(PerlinNoise::noise2d,     -1, 1) &&
-            test_range(PerlinNoise::unitNoise2d,  0, 1) &&
-            test_range(PerlinNoise::turbulence2d, 0, 1) &&
-            test_range(PerlinNoise::brownian2d,   0, 1) &&
-            test_range(PerlinNoise::furbulence2d, 0, 1) &&
-            test_range(PerlinNoise::wrapulence2d, 0, 1));
+    return (st(test_range(PerlinNoise::noise2d,     -1, 1)) &&
+            st(test_range(PerlinNoise::unitNoise2d,  0, 1)) &&
+            st(test_range(PerlinNoise::turbulence2d, 0, 1)) &&
+            st(test_range(PerlinNoise::brownian2d,   0, 1)) &&
+            st(test_range(PerlinNoise::furbulence2d, 0, 1)) &&
+            st(test_range(PerlinNoise::wrapulence2d, 0, 1)));
 }
 
 // Used only in UnitTests::allTestsOK()
