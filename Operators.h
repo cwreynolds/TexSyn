@@ -1561,3 +1561,64 @@ private:
     const COTS cots_map;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO would need a Vec2 center if kept
+class RadiusScaleOffset : public Texture
+{
+public:
+    RadiusScaleOffset(float _scale_offset, const Texture& _texture)
+      : scale_offset(_scale_offset),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        float radius = position.length();
+        Vec2 unit_basis = position / radius;
+        return texture.getColor(unit_basis * (radius + scale_offset));
+    }
+private:
+    const float scale_offset;
+    const Texture& texture;
+};
+
+
+// Modifies the given texture within a disk of "radius" around "center", doing a
+// "fisheye" expansion of the center of the disk (when center_magnification > 1)
+// or a contraction (when center_magnification < 1).
+class NeoStretchSpot : public Texture
+{
+public:
+    NeoStretchSpot(float _center_magnification,
+                   float radius,
+                   Vec2 _center,
+                   const Texture& _texture) :
+        center_magnification(_center_magnification),
+        outer_radius(radius),
+        center(_center),
+    texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - center;
+        float radius = offset.length();
+        float relative_radius = radius / outer_radius;
+//        float s = (relative_radius == 0 ? 0 :
+//                   ((relative_radius > 1) ? 1 :
+//                    ((center_magnification < 1) ?
+//                     inverseRemapper (relative_radius) :
+//                     remapper (relative_radius))));
+        float s = interpolate(sinusoid(relative_radius),
+                              sinusoid(relative_radius),
+                              relative_radius);
+//        return texture.getColor((offset * s) + center);
+//        return texture.getColor((offset * s * radius) + center);
+        return texture.getColor((offset * s * center_magnification) + center);
+//        return texture.getColor((offset / s * center_magnification) + center);
+    }
+private:
+    const float center_magnification;
+    const float outer_radius;
+    const Vec2 center;
+    const Texture& texture;
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2895,6 +2895,49 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    
+    // plaid / StretchSpot -- June 24, 2020
+    
+    std::cout << "June 24, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200624_";
+
+    float f = 1;
+    float d = 0.1;
+    Uniform full_green(Color(f, 0, 0));
+    Uniform dark_green(Color(d, 0, 0));
+    Uniform full_red(Color(0, f, 0));
+    Uniform dark_red(Color(0, d, 0));
+    Grating red_stripes(Vec2(0, 0), full_red,
+                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+    Grating green_stripes(Vec2(0, 0), full_green,
+                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+    Add plaid(red_stripes, green_stripes);
+    
+    
+    for (float x = 0; x <= 2; x += 0.02)
+    {
+//        float y = (x + sinusoid(x)) / 2;
+//        float y = (sq(x) + sinusoid(x)) / 2;
+//        float y = interpolate(x, sinusoid(x), x);
+
+        float y = interpolate(sinusoid(x), sinusoid(x), x);
+
+        if (x > 1) y = x;
+        std::cout << x << "," << y << std::endl;
+    }
+    
+
+    Texture::displayAndFile(plaid);
+    Texture::displayAndFile(StretchSpot(2.0, 0.5, Vec2(), plaid));
+    Texture::displayAndFile(StretchSpot(0.5, 0.5, Vec2(), plaid));
+    Texture::displayAndFile(RadiusScaleOffset(0.20, plaid));
+    Texture::displayAndFile(RadiusScaleOffset(0.05, plaid));
+    Texture::displayAndFile(NeoStretchSpot(2.0, 0.5, Vec2(), plaid));
+    Texture::displayAndFile(NeoStretchSpot(0.5, 0.5, Vec2(), plaid));
+    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     return EXIT_SUCCESS;
 }
 
