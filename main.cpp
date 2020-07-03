@@ -2895,11 +2895,9 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    
-    // plaid / StretchSpot -- June 24, 2020
-    
-    std::cout << "June 24, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200624_";
+    // StretchSpot, this time for sure -- July 2, 2020
+    std::cout << "July 2, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200702_";
 
     float f = 1;
     float d = 0.1;
@@ -2913,27 +2911,40 @@ int main(int argc, const char * argv[])
                           Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
     Add plaid(red_stripes, green_stripes);
     
+    float radius = 0.9;
+    // Texture::displayAndFile(plaid);
+    Texture::displayAndFile(StretchSpot(1.50, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_150");
+    Texture::displayAndFile(StretchSpot(0.67, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_067");
+    Texture::displayAndFile(StretchSpot(2.00, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_200");
+    Texture::displayAndFile(StretchSpot(0.50, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_050");
+    Texture::displayAndFile(StretchSpot(5.00, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_500");
+    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), plaid)
+                            ); // , path + "ss_old_020");
     
-    for (float x = 0; x <= 2; x += 0.02)
-    {
-//        float y = (x + sinusoid(x)) / 2;
-//        float y = (sq(x) + sinusoid(x)) / 2;
-//        float y = interpolate(x, sinusoid(x), x);
-
-        float y = interpolate(sinusoid(x), sinusoid(x), x);
-
-        if (x > 1) y = x;
-        std::cout << x << "," << y << std::endl;
-    }
+    //Texture::displayAndFile(NeoStretchSpot(1.50, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_150");
+    //Texture::displayAndFile(NeoStretchSpot(0.67, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_067");
+    //Texture::displayAndFile(NeoStretchSpot(2.00, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_200");
+    //Texture::displayAndFile(NeoStretchSpot(0.50, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_050");
+    //Texture::displayAndFile(NeoStretchSpot(5.00, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_500");
+    //Texture::displayAndFile(NeoStretchSpot(0.20, radius, Vec2(), plaid)
+    //                        ); // , path + "ss_new_020");
     
+    //Texture::displayAndFile(NeoStretchSpot(-2.0, radius, Vec2(), plaid));
+    //Texture::displayAndFile(NeoStretchSpot(-0.5, radius, Vec2(), plaid));
+    //Texture::displayAndFile(NeoStretchSpot(0, radius, Vec2(), plaid));
+    //Texture::displayAndFile(NeoStretchSpot(2.0, -radius, Vec2(), plaid));
+    //Texture::displayAndFile(NeoStretchSpot(2.0, -0.1, Vec2(), plaid));
 
-    Texture::displayAndFile(plaid);
-    Texture::displayAndFile(StretchSpot(2.0, 0.5, Vec2(), plaid));
-    Texture::displayAndFile(StretchSpot(0.5, 0.5, Vec2(), plaid));
-    Texture::displayAndFile(RadiusScaleOffset(0.20, plaid));
-    Texture::displayAndFile(RadiusScaleOffset(0.05, plaid));
-    Texture::displayAndFile(NeoStretchSpot(2.0, 0.5, Vec2(), plaid));
-    Texture::displayAndFile(NeoStretchSpot(0.5, 0.5, Vec2(), plaid));
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

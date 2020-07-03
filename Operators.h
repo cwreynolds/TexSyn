@@ -557,88 +557,31 @@ private:
 
 // Modifies the given texture within a disk of "radius" around "center", doing a
 // "fisheye" expansion of the center of the disk (when center_magnification > 1)
-// or a contraction (when center_magnification < 1).
+// or a contraction (when center_magnification < 1). Rewritten on July 2, 2020.
 class StretchSpot : public Texture
 {
 public:
     StretchSpot(float _center_magnification,
-                float radius,
+                float _spot_radius,
                 Vec2 _center,
                 const Texture& _texture) :
-        center_magnification(_center_magnification),
-        outer_radius(radius),
+        center_magnification(std::max(_center_magnification, 0.0f)),
+        spot_radius(std::max(_spot_radius, 0.0f)),
         center(_center),
-        texture(_texture)
-    {
-        ifNeededInitializeInverseLUT();
-    }
+        texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
         Vec2 offset = position - center;
-        float radius = offset.length();
-        float relative_radius = radius / outer_radius;
-        float s = (relative_radius == 0 ? 0 :
-                   ((relative_radius > 1) ? 1 :
-                    ((center_magnification < 1) ?
-                     inverseRemapper (relative_radius) :
-                     remapper (relative_radius))));
-        return texture.getColor((offset * s) + center);
-    }
-    // maps from relative radius to magnification multiplier between 0 and 1
-    float remapper(float rr) const
-    {
-        return interpolate(interpolate(rr, rr, sinusoid (rr)),
-                           ((center_magnification > 1) ?
-                            (1 / center_magnification) :
-                            center_magnification),
-                           1.0f);
-    }
-    float inverseRemapper(float rr) const
-    {
-        int i = int(std::round(rr * (lutSize() - 1)));
-        return inverse_lut->at(i) / rr;
-    }
-    void ifNeededInitializeInverseLUT()
-    {
-        if (center_magnification < 1)
-        {
-            inverse_lut = std::make_shared<std::vector<float>>(lutSize());
-            float lastQ = 0;
-            int i = 0;
-            inverse_lut->at(0) = 0;
-            float inverseRes = 1.0 / lutSize();
-            for (float r = 0; r <= 1; r = r + (inverseRes * 0.01))
-            {
-                float q = r * remapper (r);
-                float d = q - lastQ;
-                if (d > inverseRes)
-                {
-                    i++;
-                    if (i == lutSize()) break;
-                    inverse_lut->at(i) = r;
-                    lastQ = q;
-                }
-            }
-            // Fill out LUT in case of numerical error.
-            for (; i<lutSize() - 1; ) { inverse_lut->at(++i) = 1; }
-        }
+        float r = offset.length();  // radius from center
+        float rr = clip01(r / spot_radius);  // "relative radius" is <= 1
+        float scale = interpolate(sinusoid(rr), center_magnification, 1.0f);
+        return texture.getColor((offset / scale) + center);
     }
 private:
     const float center_magnification;
-    const float outer_radius;
+    const float spot_radius;
     const Vec2 center;
     const Texture& texture;
-    std::shared_ptr<std::vector<float>> inverse_lut;
-    
-    // Note that this is massive overkill. The current design looks up a single
-    // value in the inverse LUT. This could be much smaller if it interpolated
-    // between adjacent values in the LUT. Perhaps it make sense to trade memory
-    // for code simplicity. This value was chosen by drawing 511 pixel diameter
-    // test textures using this code and visually inspecting for "smooth" edges.
-    //     Grating vert_stripes(Vec2(0, 0), Color(1, 1, 1),
-    //                          Vec2(0.1, 0), Color(0, 0, 0), 0.2);
-    //     StretchSpot(0.5, 10, Vec2(-5, 0), vert_stripes).displayInWindow();
-    int lutSize() const { return 10000; }
 };
 
 // Stretch (scale in one dimension) the given input Texture. The stretching is
@@ -1561,64 +1504,3 @@ private:
     const COTS cots_map;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// TODO would need a Vec2 center if kept
-class RadiusScaleOffset : public Texture
-{
-public:
-    RadiusScaleOffset(float _scale_offset, const Texture& _texture)
-      : scale_offset(_scale_offset),
-        texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        float radius = position.length();
-        Vec2 unit_basis = position / radius;
-        return texture.getColor(unit_basis * (radius + scale_offset));
-    }
-private:
-    const float scale_offset;
-    const Texture& texture;
-};
-
-
-// Modifies the given texture within a disk of "radius" around "center", doing a
-// "fisheye" expansion of the center of the disk (when center_magnification > 1)
-// or a contraction (when center_magnification < 1).
-class NeoStretchSpot : public Texture
-{
-public:
-    NeoStretchSpot(float _center_magnification,
-                   float radius,
-                   Vec2 _center,
-                   const Texture& _texture) :
-        center_magnification(_center_magnification),
-        outer_radius(radius),
-        center(_center),
-    texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 offset = position - center;
-        float radius = offset.length();
-        float relative_radius = radius / outer_radius;
-//        float s = (relative_radius == 0 ? 0 :
-//                   ((relative_radius > 1) ? 1 :
-//                    ((center_magnification < 1) ?
-//                     inverseRemapper (relative_radius) :
-//                     remapper (relative_radius))));
-        float s = interpolate(sinusoid(relative_radius),
-                              sinusoid(relative_radius),
-                              relative_radius);
-//        return texture.getColor((offset * s) + center);
-//        return texture.getColor((offset * s * radius) + center);
-        return texture.getColor((offset * s * center_magnification) + center);
-//        return texture.getColor((offset / s * center_magnification) + center);
-    }
-private:
-    const float center_magnification;
-    const float outer_radius;
-    const Vec2 center;
-    const Texture& texture;
-};
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

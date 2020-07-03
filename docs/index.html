@@ -36,6 +36,7 @@
             }
       .designnote { color: rgb(25%,25%,25%) }
       .novak_pad { margin-right: 105px; margin-left: 105px; }
+      .smaller { font-size: 75%; }
     <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="yyyymmdd">
       <a href="#yyyymmdd" class="date">Month 0, 0000</a>
@@ -48,8 +49,8 @@
     </style>
   </head>
   <body id="top">
-    <div style="font-size:75%;"> <a href="https://cwreynolds.github.io/TexSyn/">This
-        page on GitHub</a> </div>
+    <p class="smaller"><a href="https://cwreynolds.github.io/TexSyn/">This
+        page on GitHub</a></p>
     <h1>Introduction</h1>
     <br>
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
@@ -67,6 +68,73 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200702"> <a href="#20200702" class="date">July 2,
+        2020</a>
+      <h1><em>StretchSpot</em> <span class="smaller">(“This time for sure!” —
+          Bullwinkle J. Moose)</span></h1>
+      <p>As mentioned before, TexSyn is the second incarnation of an an earlier
+        library. Both include a <em>StretchSpot</em> operator which does a
+        nonlinear radial stretch inside a given circle. The recent one is
+        described on <a href="#20200116">January 16, 2020</a>, the older one on
+        <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090315">March 15,
+          2009</a>. Both of these were fraught with problems, as hinted at on <a
+          href="#20200119">January 19, 2020</a>, and in the previous library on
+        <a href="https://www.red3d.com/cwr/texsyn/diary.html#20081260b">December
+          26, 2008</a> and the following <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090101">January
+          1</a> and <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090104">4</a>.
+        The previous solutions seemed <em>ad hoc</em> (even for <em>this</em>
+        library), awkward (that different cases were required for expansion and
+        contraction), inelegant (an inverse transform was implemented with a
+        lookup table, based on piecewise linear interpolation), and just plain
+        buggy (there are visible artifacts in the textures shown on <a href="#20200116">January
+          16</a>).</p>
+      <p>Yesterday I decided to start from scratch. I think I now have a simple,
+        elegant(ish), closed form solution, with only one case parameterized by
+        scale. The “lines of code” metric is notoriously unreliable, but in this
+        case, the definition of class <em>StretchSpot</em> has shrunk from 81
+        to 24 lines of c++ code.</p>
+      <p>The new texture operator absolutely does not match the old one. The
+        whole reason for this exercise is that I felt the old one was wrong in
+        principle, and badly implemented. In the textures pairs below, the old
+        one (2009 version, as tweaked last January) is on the left and the
+        newest one is on the right. The scale factors for each pair are 5.0,
+        2.0, 1.5, 0.67, 0.5, and 0.2. The input texture <code>plaid</code> is
+        as defined most recently on <a href="#20200526">May 26</a>.<br>
+      </p>
+      <pre>radius = 0.9<br>StretchSpot(5.00, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_500.png" alt="old StretchSpot(5.00, radius, Vec2(), plaid)"
+        title="old StretchSpot(5.00, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_500.png" alt="new StretchSpot(5.00, radius, Vec2(), plaid)"
+        title="new StretchSpot(5.00, radius, Vec2(), plaid)" height="511" width="511">
+      <pre>StretchSpot(2.00, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_200.png" alt="old StretchSpot(2.00, radius, Vec2(), plaid)"
+        title="old StretchSpot(2.00, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_200.png" alt="new StretchSpot(2.00, radius, Vec2(), plaid)"
+        title="new StretchSpot(2.00, radius, Vec2(), plaid)" height="511" width="511">
+      <pre>StretchSpot(1.50, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_150.png" alt="old StretchSpot(1.50, radius, Vec2(), plaid)"
+        title="old StretchSpot(1.50, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_150.png" alt="new StretchSpot(1.50, radius, Vec2(), plaid)"
+        title="new StretchSpot(1.50, radius, Vec2(), plaid)" height="511" width="511">
+      <pre>StretchSpot(0.67, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_067.png" alt="old StretchSpot(0.67, radius, Vec2(), plaid)"
+        title="old StretchSpot(0.67, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_067.png" alt="new StretchSpot(0.67, radius, Vec2(), plaid)"
+        title="new StretchSpot(0.67, radius, Vec2(), plaid)" height="511" width="511">
+      <pre>StretchSpot(0.50, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_050.png" alt="old StretchSpot(0.50, radius, Vec2(), plaid)"
+        title="old StretchSpot(0.50, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_050.png" alt="new StretchSpot(0.50, radius, Vec2(), plaid)"
+        title="new StretchSpot(0.50, radius, Vec2(), plaid)" height="511" width="511">
+      <pre>StretchSpot(0.20, radius, Vec2(), plaid)</pre>
+      <img src="images/20200702_ss_old_020.png" alt="old StretchSpot(0.20, radius, Vec2(), plaid)"
+        title="old StretchSpot(0.20, radius, Vec2(), plaid)" height="511" width="511">
+      <img src="images/20200702_ss_new_020.png" alt="new StretchSpot(0.20, radius, Vec2(), plaid)"
+        title="new StretchSpot(0.20, radius, Vec2(), plaid)" height="511" width="511">
+      <p>As noted on <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090104">January
+          4, 2009</a>, the bugs and “near misses” produce interesting results:</p>
+      <img src="images/20200701_cool_bug.png" alt="" title="" height="511" width="511">
+    </div>
     <div class="post" id="20200624"> <a href="#20200624" class="date">June 24,
         2020</a>
       <h1>Adjust output range of fractal textures</h1>
@@ -1880,7 +1948,7 @@ twist = Twist(7, 9, Vec2(),
     <div class="post" id="20200406b"> <a href="#20200406b" class="date">April
         6, 2020</a>
       <h1><em>ColoredSpots</em></h1>
-      <p><em>ColoredSpots</em> is based on an experiment from <a href="http://www.red3d.com/cwr/texsyn/diary.html#20100209">February
+      <p><em>ColoredSpots</em> is based on an experiment from <a href="https://www.red3d.com/cwr/texsyn/diary.html#20100209">February
           9, 2010</a>. It uses the same geometric model as <em>LotsOfSpots</em>,
         then each spot's color is taken from a given <code>color_texture</code>.
         Shown below is a <em>ColoredSpots</em> texture and the <em>ColorNoise</em>
@@ -1955,7 +2023,7 @@ LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)</pre>
         2020</a>
       <h1>Experimental <em>LotsOfSpots</em></h1>
       <p>This is a new, updated version of <em>LotsOfSpots</em>, loosely based
-        on the version from <a href="http://www.red3d.com/cwr/texsyn/diary.html#20100208"
+        on the version from <a href="https://www.red3d.com/cwr/texsyn/diary.html#20100208"
           class="date">February 8, 2010</a>. As the original version aspired to
         be, this one is defined everywhere on the texture plane. It achieves
         this by the boring method of tiling a pattern of spots. The square
@@ -1998,8 +2066,8 @@ LotsOfSpots(0.7, 0.02, 0.2, 0.01, c, m)</pre>
       <p>As mentioned before, there was an earlier version of the <strong>TexSyn</strong>
         library, begun in 2008. It included some experimental operators (<em>LotsOfSpots</em>
         replaced by <em>SpotsInCircle</em>) for generating patterns of many
-        spots, see <a href="http://www.red3d.com/cwr/texsyn/diary.html#20100208"
-          class="date">February 8, 2010</a> and <a href="http://www.red3d.com/cwr/texsyn/diary.html#20100209"
+        spots, see <a href="https://www.red3d.com/cwr/texsyn/diary.html#20100208"
+          class="date">February 8, 2010</a> and <a href="https://www.red3d.com/cwr/texsyn/diary.html#20100209"
           class="date">February 9, 2010</a>. It is easy to curate a finite
         collection of spots, hence the easier-to-implement <em>SpotsInCircle</em>
         operator. It would be much more convenient to have a distribution
@@ -2166,7 +2234,7 @@ Shader(Vec3(-2, 2, 4), 0, green_stripes, hemisphere)
       <p>In the original <a href="#20200301">March 1</a> description of <em>EdgeDetect</em>
         and <em>EdgeEnhance</em>, they were both shown as (like <em>Blur</em>)
         having two parameters: a <code>float width</code> (the diameter of the
-        convolution kernel) and an input texture. In the <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090824">previous
+        convolution kernel) and an input texture. In the <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090824">previous
           version</a> of this library, <em>EdgeEnhance</em> had another
         parameter, a <code>float strength</code> that controlled how <u>how
           much</u> edge enhancement there was. At first I thought that parameter
@@ -2480,7 +2548,7 @@ for_slice = Add(SliceGrating(Vec2(1, 0), Vec2(), Brownian(0.1, Vec2(), black, gr
         correspond to the neighborhood of <code>center</code> on the input
         texture). In the previous version of this library I provided an Array
         operator which worked “correctly” for oblique arrays with non-orthogonal
-        bases (see <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090426">here</a>).
+        bases (see <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090426">here</a>).
         With the benefit of hindsight, I think <strong>TexSyn</strong> does not
         need an Array operator.</p>
       <pre>Row(Vec2(0.17, 0.52), Vec2(), Row(Vec2(-0.52, 0.17), Vec2(), spots_and_bg))</pre>
@@ -3658,7 +3726,7 @@ SoftMatte(spot(0.2),
         programs are compositions of functions from the <strong>TexSyn</strong>
         library. When executed they describe a <em>color texture</em>, an <em>image</em>.</p>
       <p>This is a re-implementation and update to the <strong>TextureSynthesisTest</strong>
-        library as described in <a href="http://www.red3d.com/cwr/texsyn/diary.html">Texture
+        library as described in <a href="https://www.red3d.com/cwr/texsyn/diary.html">Texture
           Synthesis Diary</a> and used as the basis of the 2011 paper <a href="https://www.red3d.com/cwr/iec/">Interactive
           Evolution of Camouflage</a>.</p>
       <p>(<span style="background-color: red;">Note:</span> as of <a href="#20200506">May
@@ -3671,5 +3739,6 @@ SoftMatte(spot(0.2),
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
+    
   </body>
 </html>
