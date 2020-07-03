@@ -2945,6 +2945,32 @@ int main(int argc, const char * argv[])
     //Texture::displayAndFile(NeoStretchSpot(2.0, -radius, Vec2(), plaid));
     //Texture::displayAndFile(NeoStretchSpot(2.0, -0.1, Vec2(), plaid));
 
+//    Uniform gray(0.5);
+//    Uniform magenta(1, 0, 1);
+//    LotsOfSpots los(0.8, 0.02, 0.02, 0.01, 0, magenta, gray);
+//    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), los)
+//                            , "/Users/cwr/Desktop/TexSyn_temp/20200703_" +
+//                              std::string("ss_spots_020"));
+//    Uniform gray(0.5);
+//    Uniform magenta(1, 0, 1);
+//    LotsOfSpots los(0.8, 0.02, 0.02, 0.01, 0, magenta, gray);
+//    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(),
+//                                        LotsOfSpots(0.8, 0.02, 0.02,
+//                                                    0.01, 0,
+//                                                    Add(full_red, full_green),
+//                                                    Add(dark_red, dark_green)
+//                                                    )));
+//                            , "/Users/cwr/Desktop/TexSyn_temp/20200703_" +
+//                              std::string("ss_spots_020"));
+    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(),
+                                        ColoredSpots(0.8, 0.02, 0.02,
+                                                     0.01, 0,
+                                                     plaid,
+                                                     Uniform(0))
+                                                    )
+                            , "/Users/cwr/Desktop/TexSyn_temp/20200703_" +
+                            std::string("ss_spots_020"));
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

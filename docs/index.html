@@ -49,8 +49,8 @@
     </style>
   </head>
   <body id="top">
-    <p class="smaller"><a href="https://cwreynolds.github.io/TexSyn/">This
-        page on GitHub</a></p>
+    <p class="smaller"><a href="https://cwreynolds.github.io/TexSyn/">This page
+        on GitHub</a></p>
     <h1>Introduction</h1>
     <br>
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
@@ -131,8 +131,20 @@
         title="old StretchSpot(0.20, radius, Vec2(), plaid)" height="511" width="511">
       <img src="images/20200702_ss_new_020.png" alt="new StretchSpot(0.20, radius, Vec2(), plaid)"
         title="new StretchSpot(0.20, radius, Vec2(), plaid)" height="511" width="511">
+      <p>[<strong>Update July 3</strong>] I was a little concerned about the
+        shape of some of those stripes in that last image.I tried it again using
+        <em>ColoredSpots</em> to overlay finer grain details on <code>plaid</code>.
+        The basic geometry of the <em>StretchSpot</em> seems correct, but I am
+        not happy with the profile of the radial scale transition. I feel like
+        there may be too much area at the center at nearly the lowest scale
+        factor (0.2) and and an abrupt transition outside of that where the
+        spots are stretched into long spoke-like ellipses. I'm trying to decide
+        if this is worth “fixing.”</p>
+      <pre>StretchSpot(0.20, radius, Vec2(), ColoredSpots(0.8, 0.02, 0.02, 0.01, 0, plaid, Uniform(0)))</pre>
+      <img src="images/20200703_ss_spots_020.png" alt="" title="" height="511" width="511">
       <p>As noted on <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090104">January
-          4, 2009</a>, the bugs and “near misses” produce interesting results:</p>
+          4, 2009</a>, the bugs and “near misses” for this operator produce
+        interesting results. This was an early test:</p>
       <img src="images/20200701_cool_bug.png" alt="" title="" height="511" width="511">
     </div>
     <div class="post" id="20200624"> <a href="#20200624" class="date">June 24,
@@ -3739,6 +3751,5 @@ SoftMatte(spot(0.2),
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
-    
   </body>
 </html>

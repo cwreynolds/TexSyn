@@ -11,7 +11,7 @@
 #include "Disk.h"
 #include "COTS.h"
 
-// Minimal texture, a uniform color everywhere on the texture plane. Its only
+// Minimal texture, a uniform color everywhere on the texture plane. Its single
 // parameter is that color. As a convenience for hand written code, also can be
 // constructed from three RGB floats, or a single gray level float.
 class Uniform : public Texture
