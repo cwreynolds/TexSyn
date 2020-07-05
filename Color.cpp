@@ -249,10 +249,10 @@ Color RandomSequence::randomUnitRGB()
     return Color(frandom01(), frandom01(), frandom01());
 }
 
-// Is distance between RGB vectors less than epsilon?
+// Is distance between RGB vectors no more than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon)
 {
-    return (a - b).length() < epsilon;
+    return (a - b).length() <= epsilon;
 }
 
 // Serialize Color object to stream.

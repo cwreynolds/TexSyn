@@ -574,11 +574,8 @@ public:
         Vec2 offset = position - center;
         float r = offset.length();  // radius from center
         float rr = clip01(r / spot_radius);  // "relative radius" on [0, 1]
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        float scale = interpolate(sinusoid(rr), center_magnification, 1.0f);
         float taper = interpolate(std::pow(rr, 5), rr, sinusoid(rr));
         float scale = interpolate(taper, center_magnification, 1.0f);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return texture.getColor((offset / scale) + center);
     }
 private:

@@ -59,7 +59,7 @@ private:
     float y_ = 0;
 };
 
-// Is distance between vectors less than epsilon?
+// Is distance between vectors no more than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon);
 
 // Serialize Vec2 object to stream.
@@ -119,7 +119,7 @@ private:
     float z_ = 0;
 };
 
-// Is distance between vectors less than epsilon?
+// Is distance between vectors no more than epsilon?
 bool withinEpsilon(Vec3 a, Vec3 b, float epsilon);
 
 // Serialize Vec2 object to stream.

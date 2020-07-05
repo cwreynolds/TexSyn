@@ -49,10 +49,10 @@ Vec2 RandomSequence::randomUnitVector()
     return v.normalize();
 }
 
-// Is distance between vectors less than epsilon?
+// Is distance between vectors no more than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {
-    return (a - b).length() < epsilon;
+    return (a - b).length() <= epsilon;
 }
 
 // Serialize Vec2 object to stream.
@@ -62,10 +62,10 @@ std::ostream& operator<<(std::ostream& os, const Vec2& v)
     return os;
 }
 
-// Is distance between vectors less than epsilon?
+// Is distance between vectors no more than epsilon?
 bool withinEpsilon(Vec3 a, Vec3 b, float epsilon)
 {
-    return (a - b).length() < epsilon;
+    return (a - b).length() <= epsilon;
 }
 
 // Serialize Vec3 object to stream.

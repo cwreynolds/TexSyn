@@ -81,7 +81,7 @@ private:
     float blue_ = 0;
 };
 
-// Is distance between RGB vectors less than epsilon?
+// Is distance between RGB vectors no more than epsilon?
 bool withinEpsilon(Color a, Color b, float epsilon);
 
 // Serialize Color object to stream.

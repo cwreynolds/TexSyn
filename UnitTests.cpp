@@ -88,6 +88,7 @@ bool color_constructors()
 bool color_equality()
 {
     return (st(Color() == Color()) &&
+            st(Color() != Color(1, 2, 3)) &&
             st(Color(1, 2, 3) == Color(1, 2, 3)));
 }
 
@@ -105,18 +106,34 @@ bool color_basic_operators()
     float e = 0.000001;
     Color wec1(0.1, 0.2, 0.3);
     Color wec2(0.1, 0.2, 0.3 + (e / 2));
+    Color black(0, 0, 0);
+    Color gray50(0.5, 0.5, 0.5);
+    Color white(1, 1, 1);
+    Color c(0.1, 0.1, 0.1);
     return (st(withinEpsilon(wec1, wec2, e)) &&
-            st(withinEpsilon(wec2, wec1, e)));
+            st(withinEpsilon(wec2, wec1, e)) &&
+            st((white + black) == white) &&
+            st((white - black) == white) &&
+            st((white - white) == black) &&
+            st((white - gray50) == gray50) &&
+            st((gray50 * 2) == white) &&
+            st((white / 2) == gray50) &&
+            st((gray50 * gray50) == (white / 4)) &&
+            st((c += c) == Color(0.2, 0.2, 0.2)) &&
+            st(gray50.length() == (std::sqrt(3 * sq(0.5)))) &&
+            st(gray50.normalize() == white.normalize()) &&
+            st(Color(0.3, 0, 0).normalize() == Color(1, 0, 0)) &&
+            st(gray50.gamma(2.2) == (white * std::pow(0.5f, 2.2f))));
 }
 
 bool color_luminance()
 {
-    float e = 0.000001;
-    return (st(withinEpsilon(Color(       ).luminance(), 0,      e)) &&
-            st(withinEpsilon(Color(1, 1, 1).luminance(), 1,      e)) &&
-            st(withinEpsilon(Color(1, 0, 0).luminance(), 0.2126, e)) &&
-            st(withinEpsilon(Color(0, 1, 0).luminance(), 0.7152, e)) &&
-            st(withinEpsilon(Color(0, 0, 1).luminance(), 0.0722, e)));
+    return (st(Color(0, 0, 0).luminance() == 0) &&
+            st(Color(1, 1, 1).luminance() == 1) &&
+            st(Color(1, 0, 0).luminance() == 0.2126f) &&
+            st(Color(0, 1, 0).luminance() == 0.7152f) &&
+            st(Color(0, 0, 1).luminance() == 0.0722f) &&
+            st(Color(0.5, 0.5, 0.5).luminance() == 0.5));
 }
 
 bool color_hsv()
@@ -209,12 +226,14 @@ bool vec2_vector_operations()
 
 bool vec2_basic_operators()
 {
+    Vec2 v(2, 3);
     return (st(-Vec2(1, 2) == Vec2(-1, -2)) &&
             st((Vec2(1, 2) + Vec2(10, 20)) == Vec2(11, 22)) &&
             st((Vec2(10, 20) - Vec2(1, 2)) == Vec2(9, 18)) &&
             st((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
             st((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
-            st(Vec2(1, 2) < Vec2(-3, -4)));
+            st(Vec2(1, 2) < Vec2(-3, -4)) &&
+            st((v += v) == Vec2(4, 6)));
 }
 
 bool vec2_random_point()

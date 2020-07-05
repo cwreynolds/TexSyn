@@ -2895,82 +2895,82 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // StretchSpot, this time for sure -- July 2, 2020
-    std::cout << "July 2, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200702_";
-
-    float f = 1;
-    float d = 0.1;
-    Uniform full_green(Color(f, 0, 0));
-    Uniform dark_green(Color(d, 0, 0));
-    Uniform full_red(Color(0, f, 0));
-    Uniform dark_red(Color(0, d, 0));
-    Grating red_stripes(Vec2(0, 0), full_red,
-                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
-    Grating green_stripes(Vec2(0, 0), full_green,
-                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
-    Add plaid(red_stripes, green_stripes);
-    
-    float radius = 0.9;
-    // Texture::displayAndFile(plaid);
-    //Texture::displayAndFile(StretchSpot(1.50, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_150");
-    //Texture::displayAndFile(StretchSpot(0.67, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_067");
-    //Texture::displayAndFile(StretchSpot(2.00, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_200");
-    //Texture::displayAndFile(StretchSpot(0.50, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_050");
-    //Texture::displayAndFile(StretchSpot(5.00, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_500");
-    //Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), plaid)
-    //                        ); // , path + "ss_old_020");
-    
-    Texture::displayAndFile(StretchSpot(1.50, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_150");
-    Texture::displayAndFile(StretchSpot(0.67, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_067");
-    Texture::displayAndFile(StretchSpot(2.00, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_200");
-    Texture::displayAndFile(StretchSpot(0.50, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_050");
-    Texture::displayAndFile(StretchSpot(5.00, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_500");
-    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), plaid)
-                            ); // , path + "ss_new_020");
-    
-    //Texture::displayAndFile(NeoStretchSpot(-2.0, radius, Vec2(), plaid));
-    //Texture::displayAndFile(NeoStretchSpot(-0.5, radius, Vec2(), plaid));
-    //Texture::displayAndFile(NeoStretchSpot(0, radius, Vec2(), plaid));
-    //Texture::displayAndFile(NeoStretchSpot(2.0, -radius, Vec2(), plaid));
-    //Texture::displayAndFile(NeoStretchSpot(2.0, -0.1, Vec2(), plaid));
-
-    path = "/Users/cwr/Desktop/TexSyn_temp/20200704_";
-    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(),
-                                        ColoredSpots(0.8, 0.02, 0.02, 0.01, 0,
-                                                     plaid, Uniform(0)))
-                            ); // , path + std::string("ss_spots_020"));
-
-    // I cut-n-pasted this text into a spread sheet to visualize the curves.
-    //for (float x = 0; x <= 1; x += 0.01)
-    //{
-    //    std::cout << x;
-    //    std::cout << ",";
-    //    std::cout << sinusoid(x);
-    //    std::cout << ",";
-    //    std::cout << (x + sinusoid(x)) / 2;
-    //    std::cout << ",";
-    //    std::cout << interpolate(x, x, sinusoid(x));
-    //    std::cout << ",";
-    //    std::cout << interpolate(sinusoid(x), x, sinusoid(x));
-    //    std::cout << ",";
-    //    std::cout << interpolate(std::pow(x, 2), x, sinusoid(x));
-    //    std::cout << ",";
-    //    std::cout << interpolate(std::pow(x, 5), x, sinusoid(x));
-    //    std::cout << std::endl;
-    //}
-    
-    Texture::waitKey();
+//    // StretchSpot, this time for sure -- July 2, 2020
+//    std::cout << "July 2, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200702_";
+//
+//    float f = 1;
+//    float d = 0.1;
+//    Uniform full_green(Color(f, 0, 0));
+//    Uniform dark_green(Color(d, 0, 0));
+//    Uniform full_red(Color(0, f, 0));
+//    Uniform dark_red(Color(0, d, 0));
+//    Grating red_stripes(Vec2(0, 0), full_red,
+//                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+//    Grating green_stripes(Vec2(0, 0), full_green,
+//                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+//    Add plaid(red_stripes, green_stripes);
+//    
+//    float radius = 0.9;
+//    // Texture::displayAndFile(plaid);
+//    //Texture::displayAndFile(StretchSpot(1.50, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_150");
+//    //Texture::displayAndFile(StretchSpot(0.67, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_067");
+//    //Texture::displayAndFile(StretchSpot(2.00, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_200");
+//    //Texture::displayAndFile(StretchSpot(0.50, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_050");
+//    //Texture::displayAndFile(StretchSpot(5.00, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_500");
+//    //Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), plaid)
+//    //                        ); // , path + "ss_old_020");
+//    
+//    Texture::displayAndFile(StretchSpot(1.50, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_150");
+//    Texture::displayAndFile(StretchSpot(0.67, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_067");
+//    Texture::displayAndFile(StretchSpot(2.00, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_200");
+//    Texture::displayAndFile(StretchSpot(0.50, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_050");
+//    Texture::displayAndFile(StretchSpot(5.00, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_500");
+//    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(), plaid)
+//                            ); // , path + "ss_new_020");
+//    
+//    //Texture::displayAndFile(NeoStretchSpot(-2.0, radius, Vec2(), plaid));
+//    //Texture::displayAndFile(NeoStretchSpot(-0.5, radius, Vec2(), plaid));
+//    //Texture::displayAndFile(NeoStretchSpot(0, radius, Vec2(), plaid));
+//    //Texture::displayAndFile(NeoStretchSpot(2.0, -radius, Vec2(), plaid));
+//    //Texture::displayAndFile(NeoStretchSpot(2.0, -0.1, Vec2(), plaid));
+//
+//    path = "/Users/cwr/Desktop/TexSyn_temp/20200704_";
+//    Texture::displayAndFile(StretchSpot(0.20, radius, Vec2(),
+//                                        ColoredSpots(0.8, 0.02, 0.02, 0.01, 0,
+//                                                     plaid, Uniform(0)))
+//                            ); // , path + std::string("ss_spots_020"));
+//
+//    // I cut-n-pasted this text into a spread sheet to visualize the curves.
+//    //for (float x = 0; x <= 1; x += 0.01)
+//    //{
+//    //    std::cout << x;
+//    //    std::cout << ",";
+//    //    std::cout << sinusoid(x);
+//    //    std::cout << ",";
+//    //    std::cout << (x + sinusoid(x)) / 2;
+//    //    std::cout << ",";
+//    //    std::cout << interpolate(x, x, sinusoid(x));
+//    //    std::cout << ",";
+//    //    std::cout << interpolate(sinusoid(x), x, sinusoid(x));
+//    //    std::cout << ",";
+//    //    std::cout << interpolate(std::pow(x, 2), x, sinusoid(x));
+//    //    std::cout << ",";
+//    //    std::cout << interpolate(std::pow(x, 5), x, sinusoid(x));
+//    //    std::cout << std::endl;
+//    //}
+//    
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
