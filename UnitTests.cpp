@@ -18,19 +18,6 @@
 #include "Utilities.h"
 #include "Vec2.h"
 
-//    #define st(e)                         \
-//    [&]()                                 \
-//    {                                     \
-//        bool _e_ok = (e);                 \
-//        if (!_e_ok)                       \
-//        {                                 \
-//            std::cout << "fail: " << #e;  \
-//            std::cout << std::endl;       \
-//        }                                 \
-//        return _e_ok;                     \
-//    }()
-
-
 // This "sub-test" wrapper macro just returns the value of the given expression
 // "e". If the value is NOT TRUE, the st() macro will also log the specific
 // failing sub-test expression ("e") to aid in debugging. Unit test functions
@@ -46,7 +33,8 @@
 bool utilities()
 {
     float e = 0.0000001;
-    return (st(withinEpsilon(1.1, 1.2, 0.2)) &&
+    return (st(withinEpsilon(1, 1, 0)) &&
+            st(withinEpsilon(1.1, 1.2, 0.2)) &&
             st(withinEpsilon(-1.1, -1.2, 0.2)) &&
             st(!withinEpsilon(1.1, 1.2, 0.01)) &&
             st(sq(2) == 4) &&
@@ -106,12 +94,15 @@ bool color_basic_operators()
     float e = 0.000001;
     Color wec1(0.1, 0.2, 0.3);
     Color wec2(0.1, 0.2, 0.3 + (e / 2));
+    Color wec3(0.1, 0.2, 0.3 + (e * 2));
     Color black(0, 0, 0);
     Color gray50(0.5, 0.5, 0.5);
     Color white(1, 1, 1);
     Color c(0.1, 0.1, 0.1);
-    return (st(withinEpsilon(wec1, wec2, e)) &&
+    return (st(withinEpsilon(wec1, wec1, 0)) &&
+            st(withinEpsilon(wec1, wec2, e)) &&
             st(withinEpsilon(wec2, wec1, e)) &&
+            st(!withinEpsilon(wec1, wec3, e)) &&
             st((white + black) == white) &&
             st((white - black) == white) &&
             st((white - white) == black) &&
@@ -226,14 +217,22 @@ bool vec2_vector_operations()
 
 bool vec2_basic_operators()
 {
+    float e = 0.000001;
+    Vec2 wev1(0.1, 0.2);
+    Vec2 wev2(0.1, 0.2 + (e / 2));
+    Vec2 wev3(0.1, 0.2 + (e * 2));
     Vec2 v(2, 3);
-    return (st(-Vec2(1, 2) == Vec2(-1, -2)) &&
+    return (st(withinEpsilon(wev1, wev1, 0)) &&
+            st(withinEpsilon(wev1, wev2, e)) &&
+            st(withinEpsilon(wev2, wev1, e)) &&
+            st(!withinEpsilon(wev1, wev3, e)) &&
+            st(-Vec2(1, 2) == Vec2(-1, -2)) &&
             st((Vec2(1, 2) + Vec2(10, 20)) == Vec2(11, 22)) &&
             st((Vec2(10, 20) - Vec2(1, 2)) == Vec2(9, 18)) &&
             st((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
             st((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
             st(Vec2(1, 2) < Vec2(-3, -4)) &&
-            st((v += v) == Vec2(4, 6)));
+            st((v * 2) == (v += v)));
 }
 
 bool vec2_random_point()
