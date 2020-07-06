@@ -1505,3 +1505,34 @@ private:
     const COTS cots_map;
     const Texture& texture;
 };
+
+// Maps a given "texture_to_warp" into a given circle (defined by "center" and
+// "radius") using a hyperbolic projection. The projection is related to, if not
+// identical to the Poincaré disk model of the hyperbolic plane. Pixels outside
+// the given disk are taken from "background_texture".
+// See: https://cwreynolds.github.io/TexSyn/#20200706
+class Hyperbolic : public Texture
+{
+public:
+    Hyperbolic(Vec2 _center,
+               float _radius,
+               const Texture& _texture_to_warp,
+               const Texture& _background_texture)
+      : center(_center),
+        radius(_radius),
+        texture_to_warp(_texture_to_warp),
+        background_texture(_background_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = (position - center) / radius;
+        float relative_radius = offset.length();
+        return (relative_radius >= 1 ?
+                background_texture.getColor(position) :
+                texture_to_warp.getColor(offset / (1 - relative_radius)));
+    }
+private:
+    const Vec2 center;
+    const float radius;
+    const Texture& texture_to_warp;
+    const Texture& background_texture;
+};

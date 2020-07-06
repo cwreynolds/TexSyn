@@ -68,6 +68,54 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200706"> <a href="#20200706" class="date">July 6,
+        2020</a>
+      <h1><em>Hyperbolic</em> transform to Poincaré disk</h1>
+      <p>Mathematicians will say “Poincaré disk model of the hyperbolic plane”
+        while normal people might say “oh, yeah, like Escher's <em>Circle Limit</em>
+        series of woodcuts.” For background, see these <a href="https://www.google.com/search?tbm=isch&amp;q=circle+limit">images</a>,
+        this <a href="http://www.ams.org/publicoutreach/feature-column/fcarc-circle-limit">description</a>
+        of the connection via H. S. M. Coxeter, and the work of <a href="https://www.d.umn.edu/%7Eddunham/isis4/index.html">Douglas
+          Dunham</a>.</p>
+      <p>While I was fixing <em>StretchSpot</em> (<a href="#20200702">July 2</a>)
+        the “fisheye” transform reminded me of Escher's woodcuts. There is some
+        similarity in the center of the “bulge.” But <em>StretchSpot</em> is a
+        local warp that leaves the input texture unchanged outside the given
+        radius, while <em>Hyperbolic</em> maps the <strong>entire</strong>
+        input texture into the given disk. (Informally, that is the disk is so
+        “squished” and crowded at the outside: most of the infinite input plane
+        is mapped very near the edge of the disk.) As a result, the <em>Hyperbolic</em>
+        operator requires a second texture parameter to supply pixels lying
+        outside the Poincaré disk. </p>
+      <p>Note that this <em>Hyperbolic</em> transform is perhaps the “worst
+        case scenario” for producing aliasing artifacts from point sampling, as
+        used in TexSyn. These textures are smoothed by additional subsampling,
+        setting <code>Texture::sqrt_of_aa_subsample_count</code> to 20, so
+        using 400 (20x20) point samples per pixel. As with other non-linear
+        warps in TexSyn, my assumption is that evolutionary optimization will
+        generally select against “confetti” artifacts, so to essentially ignore
+        the issue..</p>
+      <pre>bw_stripes = Grating(Vec2(-0.05, 0), black, Vec2(0.05, 0), white, 0.1, 0.5)
+Hyperbolic(Vec2(0, 0.75), 1.5, bw_stripes, white)</pre>
+      <img src="images/20200706_bw_stripes.png" alt="bw_stripes" title="bw_stripes"
+        height="511" width="511"> <img src="images/20200706_Hyperbolic_bw_stripes.png"
+        alt="Hyperbolic(Vec2(0, 0.75), 1.5, bw_stripes, white)" title="Hyperbolic(Vec2(0, 0.75), 1.5, bw_stripes, white)"
+        height="511" width="511">
+      <p>(See <a href="#20200526">May 26</a> for definition of <code>plaid</code>
+        texture.)</p>
+      <pre>Hyperbolic(Vec2(0, 0), 0.9, plaid, black)</pre>
+      <img src="images/20200706_plaid.png" alt="plaid" title="plaid" height="511"
+        width="511"> <img src="images/20200706_Hyperbolic_plaid.png" alt="Hyperbolic(Vec2(0, 0), 0.9, plaid, black)"
+        title="Hyperbolic(Vec2(0, 0), 0.9, plaid, black)" height="511" width="511">
+      <pre>dark_blue = Uniform(0, 0, 0.3)
+green = Uniform(0, 1, 0)
+los = LotsOfSpots(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue)
+
+Hyperbolic(Vec2(0, 0), 0.9, los, black)</pre>
+      <img src="images/20200706_los.png" alt="los" title="los" height="511" width="511">
+      <img src="images/20200706_Hyperbolic_los.png" alt="Hyperbolic(Vec2(0, 0), 0.9, los, black)"
+        title="Hyperbolic(Vec2(0, 0), 0.9, los, black)" height="511" width="511">
+    </div>
     <div class="post" id="20200702"> <a href="#20200702" class="date">July 2,
         2020</a>
       <h1><em>StretchSpot</em> <span class="smaller">(“This time for sure!” —

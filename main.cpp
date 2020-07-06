@@ -2971,7 +2971,48 @@ int main(int argc, const char * argv[])
 //    //}
 //    
 //    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // experimenting with hyperbolic projection -- July 6, 2020
+    std::cout << "July 6, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200706_";
 
+    Uniform black(0);
+    Uniform white(1);
+    Grating bw_stripes(Vec2(-0.05, 0), black, Vec2(0.05, 0), white, 0.1, 0.5);
+    
+    float f = 1;
+    float d = 0.1;
+    Uniform full_green(Color(f, 0, 0));
+    Uniform dark_green(Color(d, 0, 0));
+    Uniform full_red(Color(0, f, 0));
+    Uniform dark_red(Color(0, d, 0));
+    Grating red_stripes(Vec2(0, 0), full_red,
+                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+    Grating green_stripes(Vec2(0, 0), full_green,
+                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+    Add plaid(red_stripes, green_stripes);
+    
+    Uniform dark_blue(0, 0, 0.3);
+    Uniform green(0, 1, 0);
+    LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
+
+    Texture::displayAndFile(bw_stripes); //  , path + "bw_stripes");
+    Texture::displayAndFile(plaid); //  , path + "plaid");
+    Texture::displayAndFile(los); //  , path + "los");
+
+    Texture::sqrt_of_aa_subsample_count = 20;
+    
+    Texture::displayAndFile(Hyperbolic(Vec2(0, 0.75), 1.5, bw_stripes, white)
+                            ); //  , path + "Hyperbolic_bw_stripes");
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, plaid, black)
+                            ); //  , path + "Hyperbolic_plaid");
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, los, black)
+                            ); //  , path + "Hyperbolic_los");
+
+    Texture::waitKey();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
