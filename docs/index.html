@@ -79,14 +79,17 @@
           Dunham</a>.</p>
       <p>While I was fixing <em>StretchSpot</em> (<a href="#20200702">July 2</a>)
         the “fisheye” transform reminded me of Escher's woodcuts. There is some
-        similarity in the center of the “bulge.” But <em>StretchSpot</em> is a
+        similarity in the center of the “bulge” — but <em>StretchSpot</em> is a
         local warp that leaves the input texture unchanged outside the given
-        radius, while <em>Hyperbolic</em> maps the <strong>entire</strong>
+        radius — while <em>Hyperbolic</em> maps the <strong>entire</strong>
         input texture into the given disk. (Informally, that is the disk is so
         “squished” and crowded at the outside: most of the infinite input plane
         is mapped very near the edge of the disk.) As a result, the <em>Hyperbolic</em>
-        operator requires a second texture parameter to supply pixels lying
-        outside the Poincaré disk. </p>
+        operator requires a second texture parameter to supply which that lie
+        outside the Poincaré disk. <em>Hyperbolic</em>'s parameters are the <code>center</code>
+        of the resulting disk, its <code>radius</code>, the <code>texture_to_warp</code>
+        into the disk, and a <code>background_texture</code> for outside the
+        disk.</p>
       <p>Note that this <em>Hyperbolic</em> transform is perhaps the “worst
         case scenario” for producing aliasing artifacts from point sampling, as
         used in TexSyn. These textures are smoothed by additional subsampling,
