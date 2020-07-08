@@ -1536,3 +1536,67 @@ private:
     const Texture& texture_to_warp;
     const Texture& background_texture;
 };
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Simple "affine transformation" parameterized by the "two point" specification
+// used by many other operators. Its result is the combination of a scale,
+// rotation, and traslation of the input texture. The two-point specification
+// gives the positions of Vec2(0, 0) and Vec2(1, 0) after the transformation.
+class Affine : public Texture
+{
+public:
+    Affine(Vec2 point_0, Vec2 point_1, const Texture& texture)
+      : scale((point_1 - point_0).length()),
+        basis((point_1 - point_0).normalize()),
+        center (point_0),
+        texture(texture) {}
+    Color getColor(Vec2 position) const override
+    {
+//        float blend = getScalerNoise(transformIntoNoiseSpace(position));
+//        if (scale == 0) blend = 0.5;
+//        return interpolatePointOnTextures(blend,
+//                                          position, position,
+//                                          texture0, texture1);
+        
+//    //        Vec2 moved = position - center;
+//            Vec2 moved = center - position;
+//            Vec2 scaled = moved / scale;
+//            Vec2 rotated = scaled.localize(basis, basis.rotate90degCCW());
+//            return texture.getColor(rotated);
+        
+        Vec2 scaled = position / scale;
+        Vec2 rotated = scaled.localize(basis, basis.rotate90degCCW());
+        Vec2 moved = rotated - center;
+        return texture.getColor(moved);
+
+    }
+//    // Get scalar noise fraction on [0, 1] for the given transformed position.
+//    // Overridden by other noise-based textures to customize basic behavior.
+//    virtual float getScalerNoise(Vec2 transformed_position) const
+//    {
+//        return PerlinNoise::unitNoise2d(transformed_position);
+//    }
+//    // Transform a point from texture space into noise space.
+//    Vec2 transformIntoNoiseSpace(Vec2 position) const
+//    {
+//        Vec2 moved = position - center;
+//        Vec2 scaled = moved / scale;
+//        Vec2 rotated = scaled.localize(basis, basis.rotate90degCCW());
+//        return rotated;
+//    }
+//    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+//    Noise(float a, Vec2 b, const Texture& c, const Texture& d)
+//      : Noise(b, b + Vec2(a, 0), c, d) {};
+//    // BACKWARD_COMPATIBILITY with version before inherent matting.
+//    Noise(float a, Vec2 b, Color c, Color d)
+//      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
+private:
+    const float scale;
+    const Vec2 center;
+    const Vec2 basis;
+    const Texture& texture;
+//    const Texture& texture1;
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
