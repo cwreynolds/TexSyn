@@ -68,6 +68,58 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200708"> <a href="#20200708" class="date">July 8,
+        2020</a>
+      <h1><em>Affine</em> geometric transformation</h1>
+      <p>While parameters to control position, rotation, and scale are part of
+        many of the texture operators, I decided to add one to do only that. I
+        named it <em>Affine</em>, the formal name for this class of
+        transformation. Originally I had a to-do note to add “center” arguments
+        to operators <em>Scale</em> and <em>Rotate</em> (see <a href="#20200223">February
+          23</a>). Then I decided to combine them, and use the “two point”
+        specification which has become my standard API for affine
+        transformations. Included below is a semi-exhaustive test suite for the
+        operator. Recall the first point gives the new position of the origin
+        (of the input texture plane) and the second point is the new position of
+        <code>Vec(1,0)</code>, their difference is the x-basis of the
+        transformed space. This first one is the identity transform:</p>
+      <pre>Vec2 o(0, 0);                      <span class="comment">// origin</span>
+Vec2 mh = Vec2(1, 1) * -0.5;       <span class="comment">// point in the lower left</span>
+Vec2 x1(1, 0);                     <span class="comment">// unit vector in +x direction</span>
+Vec2 x2 = x1 * 2;
+Vec2 xh = x1 * 0.5;
+Vec2 d1 = Vec2(1, 1).normalize();  <span class="comment">// unit vector in (1,1) direction</span>
+Vec2 d2 = d1 * 2;
+Vec2 dh = d1 * 0.5;
+
+Affine(o,  o  + x1, test)</pre>
+      <img src="images/20200708_Affine_o_x1.png" alt="Affine(o,  o  + x1, test)"
+        title="Affine(o,  o  + x1, test)" height="511" width="511">
+      <p>Like above, but with center of input texture translated to <code>mh</code>
+        in the lower left:</p>
+      <pre>Affine(mh, mh + x1, test)</pre>
+      <img src="images/20200708_Affine_mh_x1.png" alt="Affine(mh, mh + x1, test)"
+        title="Affine(mh, mh + x1, test)" height="511" width="511">
+      <p>Like above, but with scale 0.5:</p>
+      <pre>Affine(mh, mh + xh, test)</pre>
+      <img src="images/20200708_Affine_mh_xh.png" alt="Affine(mh, mh + xh, test)"
+        title="Affine(mh, mh + xh, test)" height="511" width="511">
+      <p>Like above, but with scale 2:</p>
+      <pre>Affine(mh, mh + x2, test)</pre>
+      <img src="images/20200708_Affine_mh_x2.png" alt="Affine(mh, mh + x2, test)"
+        title="Affine(mh, mh + x2, test)" height="511" width="511">
+      <p>Like the previous three, but with 45° rotation counterclockwise,
+        because +x basis vectors <code>d1</code>, <code>dh</code>, <code>d2</code>
+        each point in the (1, 1) direction:</p>
+      <pre>Affine(mh, mh + d1, test)</pre>
+      <img src="images/20200708_Affine_mh_d1.png" alt="Affine(mh, mh + d1, test)"
+        title="Affine(mh, mh + d1, test)" height="511" width="511">
+      <pre>Affine(mh, mh + dh, test)</pre>
+      <img src="images/20200708_Affine_mh_dh.png" alt="Affine(mh, mh + dh, test)"
+        title="Affine(mh, mh + dh, test)" height="511" width="511">
+      <pre>Affine(mh, mh + d2, test)</pre>
+      <img src="images/20200708_Affine_mh_d2.png" alt="Affine(mh, mh + d2, test)"
+        title="Affine(mh, mh + d2, test)" height="511" width="511"> </div>
     <div class="post" id="20200706"> <a href="#20200706" class="date">July 6,
         2020</a>
       <h1><em>Hyperbolic</em> transform to Poincaré disk</h1>
@@ -405,9 +457,8 @@ CotsMap(Vec2(+0.1, -0.2), Vec2(+0.7, +0.8), Vec2(-0.3, +0.4), Vec2(-0.5, -0.6),
         TexSyn fashion, warping a procedurally defined <em>Texture</em>: here a
         pair of crossed <em>Gratings</em> and a <em>Furbulence</em> noise
         pattern. With this choice of corners (shown as four colored rings) the <em>CotsMap</em>
-        texture operator is behaving rather like the <em>Wrap</em> operator (
-        <meta charset="utf-8">
-        <a href="#20200115">January 15</a>):</p>
+        texture operator is behaving rather like the <em>Wrap</em> operator ( <a
+          href="#20200115">January 15</a>):</p>
       <img src="images/20200617_COTS_grid.png" alt="COTS transformation of grid texture."
         title="COTS transformation of grid texture." height="511" width="511"> <img
         src="images/20200617_COTS_noise.png" alt="COTS transformation of noise texture."

@@ -3015,11 +3015,10 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Affine -- July 7, 2020
-    std::cout << "July 7, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200707_";
+    // Affine -- July 8, 2020
+    std::cout << "July 8, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200708_";
     
-    float d = std::sqrt(2.0) / 4;
     Uniform black(0);
     Uniform white(1);
     Uniform gray(0.6);
@@ -3027,19 +3026,29 @@ int main(int argc, const char * argv[])
     Uniform yellow(1, 1, 0);
     Grating grate(Vec2(-0.05, 0), black, Vec2(0.05, 0), white, 0.1, 0.5);
     Gradation grad(Vec2(0, 1), yellow, Vec2(0, -1), red);
-//    Spot spot(Vec2(), 0.5, white, 0.8, gray);
-//    Multiply color_grate(grate, grad);
-//    Multiply test(spot, color_grate);
     Multiply color_grate(grate, grad);
-    Spot test(Vec2(), 0.1, white, 0.2, color_grate);
-
-
+    Spot s1(Vec2(), 0.20, white, 0.22, black);
+    Spot s2(Vec2(), 0.18, white, 0.20, black);
+    Subtract ring(s1, s2);
+    SoftMatte test(ring, color_grate, white);
+    
+    Vec2 o(0, 0);
+    Vec2 x1(1, 0);
+    Vec2 x2 = x1 * 2;
+    Vec2 xh = x1 * 0.5;
+    Vec2 d1 = Vec2(1, 1).normalize();
+    Vec2 d2 = d1 * 2;
+    Vec2 dh = d1 * 0.5;
+    Vec2 ph(0.5, 0.5);
+    Vec2 mh = ph * -1;
     Texture::displayAndFile(test);
-    Texture::displayAndFile(Affine(Vec2(0, 0), Vec2(1, 0), test));
-    Texture::displayAndFile(Affine(Vec2(0, 0), Vec2(2, 0), test));
-    Texture::displayAndFile(Affine(Vec2(0, 0), Vec2(0.5, 0), test));
-    Texture::displayAndFile(Affine(Vec2(-d, -d), Vec2(d, d), test));
-    Texture::displayAndFile(Affine(Vec2(-1, -1), Vec2(-0.6, -0.6), test));
+    Texture::displayAndFile(Affine(o,  o  + x1, test));//, path + "Affine_o_x1");
+    Texture::displayAndFile(Affine(mh, mh + xh, test));//, path + "Affine_mh_xh");
+    Texture::displayAndFile(Affine(mh, mh + x1, test));//, path + "Affine_mh_x1");
+    Texture::displayAndFile(Affine(mh, mh + x2, test));//, path + "Affine_mh_x2");
+    Texture::displayAndFile(Affine(mh, mh + dh, test));//, path + "Affine_mh_dh");
+    Texture::displayAndFile(Affine(mh, mh + d1, test));//, path + "Affine_mh_d1");
+    Texture::displayAndFile(Affine(mh, mh + d2, test));//, path + "Affine_mh_d2");
 
     Texture::waitKey();
     
