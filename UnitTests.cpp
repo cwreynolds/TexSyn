@@ -111,6 +111,7 @@ bool color_basic_operators()
             st((white / 2) == gray50) &&
             st((gray50 * gray50) == (white / 4)) &&
             st((c += c) == Color(0.2, 0.2, 0.2)) &&
+            st((c *= 4) == Color(0.8, 0.8, 0.8)) &&
             st(gray50.length() == (std::sqrt(3 * sq(0.5)))) &&
             st(gray50.normalize() == white.normalize()) &&
             st(Color(0.3, 0, 0).normalize() == Color(1, 0, 0)) &&
@@ -232,7 +233,8 @@ bool vec2_basic_operators()
             st((Vec2(1, 2) * 5) == Vec2(5, 10)) &&
             st((Vec2(5, 10) / 5) == Vec2(1, 2)) &&
             st(Vec2(1, 2) < Vec2(-3, -4)) &&
-            st((v * 2) == (v += v)));
+            st((v + v) == (v += v)) &&
+            st((v * 3) == (v *= 3)));
 }
 
 bool vec2_random_point()

@@ -51,13 +51,14 @@ public:
                                 float& H, float& S, float& V);
     static void convertHSVtoRGB(float h, float s, float v,
                                 float& R, float& G, float& B);
-    // Inline operators: + - *
+    // Inline operators: + - * / += *=
     Color operator+(Color v) const;
     Color operator-(Color v) const;
     Color operator*(Color c) const;  // color * color, aka "tint"
     Color operator*(float s) const;
     Color operator/(float s) const { return *this * (1 / s); };
     Color operator+=(const Color& rhs) { return *this = *this + rhs; }
+    Color operator*=(float s) { return *this = *this * s; }
     // Length and normalize in linear RGB space.
     float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
     Color normalize() const { return *this / length(); }
