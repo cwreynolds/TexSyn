@@ -1507,32 +1507,49 @@ private:
 };
 
 // Maps a given "texture_to_warp" into a given circle (defined by "center" and
-// "radius") using a hyperbolic projection. The projection is related to, if not
-// identical to the Poincaré disk model of the hyperbolic plane. Pixels outside
-// the given disk are taken from "background_texture".
+// "radius") using a hyperbolic projection. "exponent" controls the rate of
+// compression approaching the boundary of the circle. "scale" is the
+// magnification at the center, which falls off toward the boundary. Pixels
+// outside the given disk are taken from "background_texture". To the best of
+// my knowledge, when both "scale" and "exponent" are 2, the projection is
+// identical to the Poincaré disk model of the hyperbolic plane.
 // See: https://cwreynolds.github.io/TexSyn/#20200706
 class Hyperbolic : public Texture
 {
 public:
     Hyperbolic(Vec2 _center,
                float _radius,
+               float _scale,
+               float _exponent,
                const Texture& _texture_to_warp,
                const Texture& _background_texture)
       : center(_center),
         radius(_radius),
+        scale(_scale),
+        exponent(_exponent),
         texture_to_warp(_texture_to_warp),
         background_texture(_background_texture) {}
+    // Original constructor, assumed scale and exponent were 1.
+    Hyperbolic(Vec2 _center,
+               float _radius,
+               const Texture& _texture_to_warp,
+               const Texture& _background_texture)
+      : Hyperbolic(_center, _radius, 1, 1,
+                   _texture_to_warp, _background_texture) {}
     Color getColor(Vec2 position) const override
     {
         Vec2 offset = (position - center) / radius;
         float relative_radius = offset.length();
-        return (relative_radius >= 1 ?
-                background_texture.getColor(position) :
-                texture_to_warp.getColor(offset / (1 - relative_radius)));
+        float e = std::pow(relative_radius, exponent);
+        return ((relative_radius < 1) ?
+                texture_to_warp.getColor(offset / (scale * (1 - e))) :
+                background_texture.getColor(position));
     }
 private:
     const Vec2 center;
     const float radius;
+    const float scale;
+    const float exponent;
     const Texture& texture_to_warp;
     const Texture& background_texture;
 };

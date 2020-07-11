@@ -3015,40 +3015,66 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Affine -- July 8, 2020
-    std::cout << "July 8, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200708_";
+//    // Affine -- July 8, 2020
+//    std::cout << "July 8, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200708_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Uniform gray(0.6);
+//    Uniform red(1, 0, 0);
+//    Uniform yellow(1, 1, 0);
+//    Grating grate(Vec2(-0.05, 0), black, Vec2(0.05, 0), white, 0.1, 0.5);
+//    Gradation grad(Vec2(0, 1), yellow, Vec2(0, -1), red);
+//    Multiply color_grate(grate, grad);
+//    Spot s1(Vec2(), 0.20, white, 0.22, black);
+//    Spot s2(Vec2(), 0.18, white, 0.20, black);
+//    Subtract ring(s1, s2);
+//    SoftMatte test(ring, color_grate, white);
+//
+//    Vec2 o(0, 0);
+//    Vec2 x1(1, 0);
+//    Vec2 x2 = x1 * 2;
+//    Vec2 xh = x1 * 0.5;
+//    Vec2 d1 = Vec2(1, 1).normalize();
+//    Vec2 d2 = d1 * 2;
+//    Vec2 dh = d1 * 0.5;
+//    Vec2 ph(0.5, 0.5);
+//    Vec2 mh = ph * -1;
+//    Texture::displayAndFile(test);
+//    Texture::displayAndFile(Affine(o,  o  + x1, test));//, path + "Affine_o_x1");
+//    Texture::displayAndFile(Affine(mh, mh + xh, test));//, path + "Affine_mh_xh");
+//    Texture::displayAndFile(Affine(mh, mh + x1, test));//, path + "Affine_mh_x1");
+//    Texture::displayAndFile(Affine(mh, mh + x2, test));//, path + "Affine_mh_x2");
+//    Texture::displayAndFile(Affine(mh, mh + dh, test));//, path + "Affine_mh_dh");
+//    Texture::displayAndFile(Affine(mh, mh + d1, test));//, path + "Affine_mh_d1");
+//    Texture::displayAndFile(Affine(mh, mh + d2, test));//, path + "Affine_mh_d2");
+//
+//    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // add scale and exponent to hyperbolic projection -- July 10, 2020
+    std::cout << "July 10, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200710_";
     
     Uniform black(0);
     Uniform white(1);
-    Uniform gray(0.6);
-    Uniform red(1, 0, 0);
-    Uniform yellow(1, 1, 0);
-    Grating grate(Vec2(-0.05, 0), black, Vec2(0.05, 0), white, 0.1, 0.5);
-    Gradation grad(Vec2(0, 1), yellow, Vec2(0, -1), red);
-    Multiply color_grate(grate, grad);
-    Spot s1(Vec2(), 0.20, white, 0.22, black);
-    Spot s2(Vec2(), 0.18, white, 0.20, black);
-    Subtract ring(s1, s2);
-    SoftMatte test(ring, color_grate, white);
+    Uniform dark_blue(0, 0, 0.3);
+    Uniform green(0, 1, 0);
+    LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
     
-    Vec2 o(0, 0);
-    Vec2 x1(1, 0);
-    Vec2 x2 = x1 * 2;
-    Vec2 xh = x1 * 0.5;
-    Vec2 d1 = Vec2(1, 1).normalize();
-    Vec2 d2 = d1 * 2;
-    Vec2 dh = d1 * 0.5;
-    Vec2 ph(0.5, 0.5);
-    Vec2 mh = ph * -1;
-    Texture::displayAndFile(test);
-    Texture::displayAndFile(Affine(o,  o  + x1, test));//, path + "Affine_o_x1");
-    Texture::displayAndFile(Affine(mh, mh + xh, test));//, path + "Affine_mh_xh");
-    Texture::displayAndFile(Affine(mh, mh + x1, test));//, path + "Affine_mh_x1");
-    Texture::displayAndFile(Affine(mh, mh + x2, test));//, path + "Affine_mh_x2");
-    Texture::displayAndFile(Affine(mh, mh + dh, test));//, path + "Affine_mh_dh");
-    Texture::displayAndFile(Affine(mh, mh + d1, test));//, path + "Affine_mh_d1");
-    Texture::displayAndFile(Affine(mh, mh + d2, test));//, path + "Affine_mh_d2");
+    Texture::sqrt_of_aa_subsample_count = 20;
+    Texture::sqrt_of_aa_subsample_count = 4;
+    
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 2, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 5, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3, 5, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 0.5, los, black));
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, -2, los, black));
 
     Texture::waitKey();
     
