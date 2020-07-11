@@ -68,6 +68,62 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200711"> <a href="#20200711" class="date">July 11,
+        2020</a>
+      <h1><em>Hyperbolic</em> reconsidered</h1>
+      <p>On <a href="#20200706">July 6</a> I described a prototype <em>Hyperbolic</em>
+        texture operator which maps (warps) an entire texture plane onto a
+        finite disk. <em>Hyperbolic</em> was inspired by the <a href="https://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model">Poincaré
+          disk model</a> of the hyperbolic plane (see <a href="https://mathworld.wolfram.com/PoincareHyperbolicDisk.html">also</a>)
+        but now I think I described too direct a link. The general character of
+        the remapping is large texture scale in the center, becoming
+        asymptotically tiny as it approaches the circle's edge. However
+        Poincaré's disk is a special case of this general idea of
+        mapping-plane-to-disk with special properties related to hyperbolic
+        geometry.</p>
+      <p>After several days of conversations with smarter friends on email and
+        social media (thanks especially to Saty Raghavachary, Alyn Rockwood,
+        David Weilmuenster, and Douglas Dunham) I slowly came to understand
+        these issues. The formula I originally proposed was not identical to
+        Poincaré's disk, but they both fall into a “family” of transforms with
+        two real parameters, which all map a plane onto a disk. The inverse
+        transform takes a point <em>d</em> on the destination texture plane to
+        a point s on the source texture plane. If <em>d</em> is inside the unit
+        disk (‖<em>d</em>‖ &lt; 1) then<em></em>:</p>
+      <p style="text-align: center;"><em>s</em> = (<em>d</em> / <em>k</em>) /
+        (1 - ‖<em>d</em>‖<em>ⁿ</em>)</p>
+      <p>My original transform had <em>k</em>=<em>n</em>=1. As Douglas Dunham
+        helpfully derived (via the Gans model of hyperbolic geometry) the
+        Poincaré disk model has <em>k</em>=1/2 and <em>n</em>=2. As I
+        experimented with various value of <em>k</em> and <em>n</em> I decided
+        they were all graphically interesting. So I rewrote my TexSyn operator
+        to accept values for <em>k</em> and <em>n</em> via parameters called <code>scale</code>
+        and <code>exponent</code>. This follow my philosophy of “let evolution
+        decide” where the evolutionary GP optimization process manipulates all
+        parameters. The revised parameter list for <em>Hyperbolic</em> is: <code>center</code>
+        and <code>radius</code> (to transform the unit disk into texture
+        space), <code>scale</code> (the magnification at the center, which
+        falls off toward the edge) and <code>exponent</code> (controls the rate
+        of compression approaching the edge), <code>texture_to_warp</code> (the
+        “source” texture), and <code>background_texture</code> (to supply
+        pixels outside the disk). The examples below show various values of <code>scale</code>
+        and <code>exponent</code>. </p>
+      <pre>Hyperbolic(Vec2(), 0.9, 1, 1, los, black)  <span class="comment">// scale=1, exponent=1 (July 6 version)</span></pre>
+      <img src="images/20200711_Hyperbolic_10_10.png" alt="" title="" height="511"
+        width="511">
+      <pre>Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)  <span class="comment">// scale=0.5, exponent=2 (Poincaré disk version)</span></pre>
+      <img src="images/20200711_Hyperbolic_05_20.png" alt="Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)"
+        title="Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)" height="511" width="511">
+      <pre>Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)  <span class="comment">// scale=0.3, exponent=5</span></pre>
+      <img src="images/20200711_Hyperbolic_03_50.png" alt="Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)"
+        title="Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)" height="511" width="511">
+      <pre>Hyperbolic(Vec2(), 0.9, 1, 5, los, black)  <span class="comment">// scale=1, exponent=5</span></pre>
+      <img src="images/20200711_Hyperbolic_10_50.png" alt="Hyperbolic(Vec2(), 0.9, 1,   5, los, black)"
+        title="Hyperbolic(Vec2(), 0.9, 1,   5, los, black)" height="511" width="511">
+      <pre>Hyperbolic(Vec2(), 0.9, 3, 5, los, black)  <span class="comment">// scale=3, exponent=5</span></pre>
+      <img src="images/20200711_Hyperbolic_30_50.png" alt="Hyperbolic(Vec2(), 0.9, 3,   5, los, black)"
+        title="Hyperbolic(Vec2(), 0.9, 3,   5, los, black)" height="511" width="511">
+    </div>
     <div class="post" id="20200708"> <a href="#20200708" class="date">July 8,
         2020</a>
       <h1><em>Affine</em> geometric transformation</h1>
@@ -82,7 +138,8 @@
         operator. Recall the first point gives the new position of the origin
         (of the input texture plane) and the second point is the new position of
         <code>Vec(1,0)</code>, their difference is the x-basis of the
-        transformed space. This first one is the identity transform:</p>
+        transformed space. This first example shows the identity transform for
+        (0, 0) and (1, 0):</p>
       <pre>Vec2 o(0, 0);                      <span class="comment">// origin</span>
 Vec2 mh = Vec2(1, 1) * -0.5;       <span class="comment">// point in the lower left</span>
 Vec2 x1(1, 0);                     <span class="comment">// unit vector in +x direction</span>
@@ -134,9 +191,9 @@ Affine(o,  o  + x1, test)</pre>
         similarity in the center of the “bulge” — but <em>StretchSpot</em> is a
         local warp that leaves the input texture unchanged outside the given
         radius — while <em>Hyperbolic</em> maps the <strong>entire</strong>
-        input texture into the given disk. (Informally, that is the disk is so
-        “squished” and crowded at the outside: most of the infinite input plane
-        is mapped very near the edge of the disk.) As a result, the <em>Hyperbolic</em>
+        input texture into the given disk. (Informally, that is why the disk is
+        so “squished” and crowded at the outside: most of the infinite input
+        plane is mapped very near the edge of the disk.) As a result, the <em>Hyperbolic</em>
         operator requires a second texture parameter to supply which that lie
         outside the Poincaré disk. <em>Hyperbolic</em>'s parameters are the <code>center</code>
         of the resulting disk, its <code>radius</code>, the <code>texture_to_warp</code>

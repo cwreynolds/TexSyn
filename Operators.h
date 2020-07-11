@@ -1506,14 +1506,14 @@ private:
     const Texture& texture;
 };
 
-// Maps a given "texture_to_warp" into a given circle (defined by "center" and
-// "radius") using a hyperbolic projection. "exponent" controls the rate of
-// compression approaching the boundary of the circle. "scale" is the
-// magnification at the center, which falls off toward the boundary. Pixels
-// outside the given disk are taken from "background_texture". To the best of
-// my knowledge, when both "scale" and "exponent" are 2, the projection is
-// identical to the Poincaré disk model of the hyperbolic plane.
-// See: https://cwreynolds.github.io/TexSyn/#20200706
+// Maps entire "texture_to_warp" onto a given circle (defined by "center" and
+// "radius") using a hyperbolic projection. The result is large in the center,
+// becoming asymptotically tiny at the circle's edge. "exponent" controls the
+// rate of compression approaching the edge. "scale" is the magnification at
+// the center, which falls off toward the edge. Pixels outside the given disk
+// are taken from "background_texture". When "scale" is 0.5 and "exponent" is
+// 2, this projection corresponds (I think) to Poincaré's disk model of the
+// hyperbolic plane. See: https://cwreynolds.github.io/TexSyn/#20200711
 class Hyperbolic : public Texture
 {
 public:

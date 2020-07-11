@@ -3054,9 +3054,9 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // add scale and exponent to hyperbolic projection -- July 10, 2020
-    std::cout << "July 10, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200710_";
+    // add scale and exponent to hyperbolic projection -- July 11, 2020
+    std::cout << "July 11, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200711_";
     
     Uniform black(0);
     Uniform white(1);
@@ -3065,16 +3065,19 @@ int main(int argc, const char * argv[])
     LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
     
     Texture::sqrt_of_aa_subsample_count = 20;
-    Texture::sqrt_of_aa_subsample_count = 4;
-    
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 2, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 5, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3, 5, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 0.5, los, black));
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, -2, los, black));
+    // Texture::sqrt_of_aa_subsample_count = 4;
+
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black)
+                            , path + "Hyperbolic_10_10");
+    // Poincaré disk
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)
+                            , path + "Hyperbolic_05_20");
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)
+                            , path + "Hyperbolic_03_50");
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1,   5, los, black)
+                            , path + "Hyperbolic_10_50");
+    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3,   5, los, black)
+                            , path + "Hyperbolic_30_50");
 
     Texture::waitKey();
     
