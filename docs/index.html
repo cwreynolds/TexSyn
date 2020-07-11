@@ -86,10 +86,10 @@
         David Weilmuenster, and Douglas Dunham) I slowly came to understand
         these issues. The formula I originally proposed was not identical to
         Poincaré's disk, but they both fall into a “family” of transforms with
-        two real parameters, which all map a plane onto a disk. The inverse
-        transform takes a point <em>d</em> on the destination texture plane to
-        a point s on the source texture plane. If <em>d</em> is inside the unit
-        disk (‖<em>d</em>‖ &lt; 1) then<em></em>:</p>
+        two real parameters (<em>a</em> and <em>b</em>) which all map a plane
+        onto a disk. The inverse transform takes a point <em>d</em> on the
+        destination texture plane to a point s on the source texture plane. If <em>d</em>
+        is inside the unit disk (‖<em>d</em>‖ &lt; 1) then<em></em>:</p>
       <div style="text-align: center;"><img src="images/20200711_equation.png" alt="plane to disk equation"
           title="plane to disk equation" height="69" width="134"></div>
       <p>My original transform had <em>a</em>=<em>b</em>=1. As Douglas Dunham
@@ -98,16 +98,16 @@
         experimented with various value of <em>a</em> and <em>b</em> I decided
         they were all graphically interesting. So I rewrote my TexSyn operator
         to accept values for <em>a</em> and <em>b</em> via parameters called <code>scale</code>
-        and <code>exponent</code>. This follow my philosophy of “let evolution
-        decide” where the evolutionary GP optimization process manipulates all
-        relevant parameters. The revised parameter list for <em>Hyperbolic</em>
-        is now: <code>center</code> and <code>radius</code> (to transform the
-        unit disk into texture space), <code>scale</code> (the magnification at
-        the center, which falls off toward the edge) and <code>exponent</code>
-        (controls the rate of compression approaching the edge), <code>texture_to_warp</code>
-        (the “source” texture), and <code>background_texture</code> (to supply
-        pixels outside the disk). The examples below show various values of <code>scale</code>
-        and <code>exponent</code>. </p>
+        and <code>exponent</code>. This follows the TexSyn philosophy of “let
+        evolution decide” where the evolutionary GP optimization process has the
+        ability to manipulate all relevant parameters. The revised parameter
+        list for <em>Hyperbolic</em> is now: <code>center</code> and <code>radius</code>
+        (to translate and scale the unit disk into texture space), <code>scale</code>
+        (the magnification at the center, which falls off toward the disk edge)
+        and <code>exponent</code> (controls the rate of compression approaching
+        the edge), <code>texture_to_warp</code> (the “source” texture), and <code>background_texture</code>
+        (to supply pixels outside the disk). The examples below show various
+        values of <code>scale</code> and <code>exponent</code>. </p>
       <pre>Hyperbolic(Vec2(), 0.9, 1, 1, los, black)  <span class="comment">// scale=1, exponent=1 (July 6 version)</span></pre>
       <img src="images/20200711_Hyperbolic_10_10.png" alt="" title="" height="511"
         width="511">
