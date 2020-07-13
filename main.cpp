@@ -3054,30 +3054,46 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // add scale and exponent to hyperbolic projection -- July 11, 2020
-    std::cout << "July 11, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200711_";
+//    // add scale and exponent to hyperbolic projection -- July 11, 2020
+//    std::cout << "July 11, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200711_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Uniform dark_blue(0, 0, 0.3);
+//    Uniform green(0, 1, 0);
+//    LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
+//
+//    Texture::sqrt_of_aa_subsample_count = 20;
+//    // Texture::sqrt_of_aa_subsample_count = 4;
+//
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black)
+//                            , path + "Hyperbolic_10_10");
+//    // Poincaré disk
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)
+//                            , path + "Hyperbolic_05_20");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)
+//                            , path + "Hyperbolic_03_50");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1,   5, los, black)
+//                            , path + "Hyperbolic_10_50");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3,   5, los, black)
+//                            , path + "Hyperbolic_30_50");
+//
+//    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Tweak Texture::diff() -- July 12, 2020
+    std::cout << "July 12, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200712_";
     
     Uniform black(0);
     Uniform white(1);
-    Uniform dark_blue(0, 0, 0.3);
-    Uniform green(0, 1, 0);
-    LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
-    
-    Texture::sqrt_of_aa_subsample_count = 20;
-    // Texture::sqrt_of_aa_subsample_count = 4;
-
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black)
-                            , path + "Hyperbolic_10_10");
-    // Poincaré disk
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)
-                            , path + "Hyperbolic_05_20");
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)
-                            , path + "Hyperbolic_03_50");
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1,   5, los, black)
-                            , path + "Hyperbolic_10_50");
-    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3,   5, los, black)
-                            , path + "Hyperbolic_30_50");
+    Grating g1(Vec2(), black, Vec2(0.000, 0.200), white, 0.3, 0.8);
+    Grating g2(Vec2(), black, Vec2(0.005, 0.195), white, 0.3, 0.8);
+    Texture::diff(g1, g2);
+    Texture::diff(g1, g2, "", 471);
+    Texture::diff(g1, g2, path + "test", 471);
 
     Texture::waitKey();
     
