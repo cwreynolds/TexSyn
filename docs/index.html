@@ -77,23 +77,28 @@
         about this work-in-progress library to a Game AI class taught by my
         friend Dan Shapiro at University of California Santa Cruz. Mostly it was
         just images from this doc to provide a quick overview. I did make a few
-        “worked examples” at the top to show the correspondence between code and
-        graphics. Images like these color mixing diagrams were also included in
-        the <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090408">doc</a>
-        about the previous version of the library. Adding the three
-        primary-colored spots is straightforward. The subtractive side is made
-        by inverting the luminance of the three spots—so a red sport on black
-        becomes a cyan spot on white—by subtracting them from white. Then
-        multiplying them together produces this model of subtractive color
-        mixing.</p>
+        “worked examples” at the top to demonstrate the correspondence between
+        code and graphics. </p>
+      <p>Images like these color mixing diagrams were also <a href="http://www.red3d.com/cwr/texsyn/diary.html#20090408">included</a>
+        in the doc about the previous version of the library. They were
+        originally intended as an experiment to determine if the library needed
+        explicit support for both additive and subtractive color mixing. Adding
+        the three spots is straightforward. (This corresponds to, say,
+        projecting three primary-colored spots onto a white wall in a dark
+        room.) The subtractive version is made by inverting the luminance of the
+        three spots—by subtracting them from white—so a red spot on black
+        becomes a cyan spot on white. Multiplying those together produces this
+        model of subtractive color mixing. (Which corresponds to, say, a color
+        printer overlaying three secondary-colored spots on white paper.)</p>
       <pre><span class="comment">// Additive mixing.</span>
-Add(red_spot, Add(green_spot, blue_spot))
+Add(red_on_black, Add(green_on_black, blue_on_black)))
+
 <span class="comment">// Subtractive mixing.</span>
-Multiply(Subtract(white, red_spot), Multiply(Subtract(white, green_spot), Subtract(white, blue_spot)))
-</pre> <img src="images/20200712_additive.png" alt="additive color mixing" title="additive color mixing"
+Multiply(cyan_on_white, Multiply(magenta_on_white, yellow_on_white)))</pre>
+      <img src="images/20200712_additive.png" alt="additive color mixing" title="additive color mixing"
         height="511" width="511"> <img src="images/20200712_subtractive.png" alt="subtractive color mixing"
         title="subtractive color mixing" height="511" width="511">
-      <pre><span class="comment">// C++ to define the three spots.</span>
+      <pre><span class="comment">// C++ to define six spots.</span>
 Uniform white(1);
 Uniform black(0);
 Uniform red(1, 0, 0);
@@ -103,10 +108,11 @@ Vec2 p1(0.3, 0);
 Vec2 p2 = p1.rotate(2 * pi / 3);
 Vec2 p3 = p2.rotate(2 * pi / 3);
 float ro = 0.6;
-float ri = ro - 0.02;
-Spot red_spot(p1, ri, red, ro, black);
-Spot green_spot(p2, ri, green, ro, black);
-Spot blue_spot(p3, ri, blue, ro, black);</pre>
+float ri = ro - 0.02;<br>Spot red_on_black(p1, ri, red, ro, black);
+Spot green_on_black(p2, ri, green, ro, black);
+Spot blue_on_black(p3, ri, blue, ro, black);<br>Subtract cyan_on_white(white, red_on_black);
+Subtract magenta_on_white(white, green_on_black);
+Subtract yellow_on_white(white, blue_on_black);</pre>
     </div>
     <div class="post" id="20200711"> <a href="#20200711" class="date">July 11,
         2020</a>

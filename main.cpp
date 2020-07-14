@@ -3148,21 +3148,35 @@ int main(int argc, const char * argv[])
     float ro = 0.6;
     float ri = ro - 0.02;
 
-    Spot rs(p1, ri, red, ro, black);
-    Spot gs(p2, ri, green, ro, black);
-    Spot bs(p3, ri, blue, ro, black);
-    
-    Texture::displayAndFile(red
-                            ); // , path + "red");
-    Texture::displayAndFile(rs
-                            ); // , path + "red_spot");
-    Texture::displayAndFile(Add(rs, Add(gs, bs))
-                            ); // , path + "additive");
-    Texture::displayAndFile(Multiply(Subtract(white, rs),
-                                     Multiply(Subtract(white, gs),
-                                              Subtract(white, bs)))
-                            ); // , path + "subtractive");
+    //Spot rs(p1, ri, red, ro, black);
+    //Spot gs(p2, ri, green, ro, black);
+    //Spot bs(p3, ri, blue, ro, black);
+    //
+    //Texture::displayAndFile(red
+    //                        ); // , path + "red");
+    //Texture::displayAndFile(rs
+    //                        ); // , path + "red_spot");
+    //Texture::displayAndFile(Add(rs, Add(gs, bs))
+    //                        ); // , path + "additive");
+    //Texture::displayAndFile(Multiply(Subtract(white, rs),
+    //                                 Multiply(Subtract(white, gs),
+    //                                          Subtract(white, bs)))
+    //                        ); // , path + "subtractive");
 
+    Spot red_on_black(p1, ri, red, ro, black);
+    Spot green_on_black(p2, ri, green, ro, black);
+    Spot blue_on_black(p3, ri, blue, ro, black);
+    Subtract cyan_on_white(white, red_on_black);
+    Subtract magenta_on_white(white, green_on_black);
+    Subtract yellow_on_white(white, blue_on_black);
+    
+    Texture::displayAndFile(Add(red_on_black,
+                                Add(green_on_black, blue_on_black)));
+    Texture::displayAndFile(Multiply(cyan_on_white,
+                                     Multiply(magenta_on_white,
+                                              yellow_on_white)));
+
+    
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
