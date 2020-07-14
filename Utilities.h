@@ -81,24 +81,17 @@ inline float sinusoid (float x)
     return (1 - std::cos(x * M_PI)) / 2;
 }
 
-// remap a value specified relative to a pair of bounding values
+// Remap a value specified relative to a pair of bounding values
 // to the corresponding value relative to another pair of bounds.
-// Inspired by (dyna:remap-interval y y0 y1 z0 z1)
+// Inspired by (dyna:remap-interval y y0 y1 z0 z1) circa 1984.
 inline float remapInterval(float x,
                            float in0, float in1,
                            float out0, float out1)
 {
-    // If the input range is well defined do the linear remapping.
+    // Remap if input range is nonzero, otherwise blend them evenly.
     float input_range = in1 - in0;
-    if (input_range > 0)
-    {
-        // Uninterpolate: what is x relative to input interval?
-        float relative = (x - in0) / input_range;
-        // Interpolate relative to output interval.
-        return interpolate(relative, out0, out1);
-    }
-    // Otherwise blend halfway between outputs.
-    return interpolate(0.5, out0, out1);
+    float blend = ((input_range > 0) ? ((x - in0) / input_range) : 0.5);
+    return interpolate(blend, out0, out1);
 }
 
 // Like remapInterval but the result is clipped to remain between out0 and out1
