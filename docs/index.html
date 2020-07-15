@@ -54,14 +54,18 @@
     <h1>Introduction</h1>
     <br>
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
-      texture synthesis. It is not intended for use “by human hands.” TexSyn
-      programs will be automatically generated with a Genetic Programming
-      system. This is a blog (or a lab notebook? a design diary?) about making
-      TexSyn. It is not proper documentation, although might be some sort of a
-      starting point. Mostly this describes in “blog order” the steps and design
-      decisions made in its construction. There is some background and
-      introductory information, at the bottom of this page, in the entry for <a
-        href="#20191215">December 15, 2019</a>.</p>
+      texture synthesis. It is not primarily intended for use “by human hands.”
+      TexSyn programs will be automatically generated and optimized using a
+      Genetic Programming system. This is a blog (or a lab notebook? a design
+      diary?) about making TexSyn. It is not proper documentation, although it
+      might be some sort of a starting point. Mostly this describes in “blog
+      order” the steps and design decisions made in its construction. There is
+      some background and introductory information, at the bottom of this page,
+      in the entry for <a href="#20191215">December 15, 2019</a>.</p>
+    <p>(While the library is written in c++, many of the code samples below are
+      shown in a simplified style: textures are often written as an isolated
+      expression rather than a complete c++ statement, semicolons are often
+      omitted, as are `auto` declarations when defining variables.)</p>
     <p><span style="background-color: red;">Note:</span> as of <a href="#20200506">May
         6, 2020</a> an incompatible change was made to improve gamma handling.
       For entries dated before then, the given TexSyn code, if re-rendered anew,
@@ -88,8 +92,9 @@
         room.) The subtractive version is made by inverting the luminance of the
         three spots—by subtracting them from white—so a red spot on black
         becomes a cyan spot on white. Multiplying those together produces this
-        model of subtractive color mixing. (Which corresponds to, say, a color
-        printer overlaying three secondary-colored spots on white paper.)</p>
+        diagram of subtractive color mixing. (Which corresponds to, say, a color
+        printer overlaying three spots of secondary-colored tint on white paper.
+        In practice a black ink is overprinted for strong neutral blacks.)</p>
       <pre><span class="comment">// Additive mixing.</span>
 Add(red_on_black, Add(green_on_black, blue_on_black)))
 
