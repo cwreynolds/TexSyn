@@ -450,9 +450,10 @@ bool interpolate_float_rounding()
     Grating noise1(Vec2(), blue, Vec2(0.1, 0), green, 0.2, 0.5);
     bool ok = true;
     int subtest_count = 10000;
+    RandomSequence rs(38430341);
     for (int i = 0; i < subtest_count; i++)
     {
-        Vec2 p = Vec2::randomPointInUnitDiameterCircle() * 2;
+        Vec2 p = rs.randomPointInUnitDiameterCircle() * 2;
         Color color0 = noise0.getColor(p);
         Color color1 = noise1.getColor(p);
         Color interpolated = interpolate(1, color0, color1);
