@@ -3099,85 +3099,112 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // slides for UC Santa Cruz talk -- July 12, 2020
-    std::cout << "July 12, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200712_";
-
-//        Uniform white(1);
-//        Uniform black(0);
-//        Uniform less_red(Color(0.7, 0, 0));
-//        Uniform less_blue(Color(0, 0, 0.7));
+//    // slides for UC Santa Cruz talk -- July 12, 2020
+//    std::cout << "July 12, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200712_";
 //
-//        Spot spot1(Vec2(+0.2, 0), 0.38, less_red, 0.4, black);
-//        Spot spot2(Vec2(-0.2, 0), 0.38, less_blue, 0.4, black);
-//        Add two_spots(spot1, spot2);
+//    //    Uniform white(1);
+//    //    Uniform black(0);
+//    //    Uniform less_red(Color(0.7, 0, 0));
+//    //    Uniform less_blue(Color(0, 0, 0.7));
+//    //
+//    //    Spot spot1(Vec2(+0.2, 0), 0.38, less_red, 0.4, black);
+//    //    Spot spot2(Vec2(-0.2, 0), 0.38, less_blue, 0.4, black);
+//    //    Add two_spots(spot1, spot2);
+//    //
+//    ////    Uniform less_yellow(Color(0.7, 0.7, 0));
+//    ////    Uniform less_cyan(Color(0, 0.7, 0.7));
+//    //    Uniform less_yellow(Color(1, 1, 0));
+//    //    Uniform less_cyan(Color(0, 1, 1));
+//    //    Spot spot3(Vec2(+0.2, 0), 0.38, less_yellow, 0.4, white);
+//    //    Spot spot4(Vec2(-0.2, 0), 0.38, less_cyan, 0.4, white);
+//    //    Multiply two_spots2(spot3, spot4);
+//    //
+//    //    //    Scale scaled_spots(1.5, two_spots);
+//    //    //    Rotate rotated_spots(pi / 4, two_spots);
+//    //    //    Rotate scale_then_rotate(pi / 4, scaled_spots);
+//    //    //    Translate translated_spots(Vec2(0, 0.3), two_spots);
+//    //    //    Translate scale_rotate_translate(Vec2(0, 0.3), scale_then_rotate);
+//    //
+//    //
+//    ////    Texture::displayAndFile(white, path + "white");
+//    ////    Texture::displayAndFile(less_red, path + "less_red");
+//    ////    Texture::displayAndFile(less_blue, path + "less_blue");
+//    ////    Texture::displayAndFile(two_spots, path + "two_spots");
+//    //    Texture::displayAndFile(two_spots2); // , path + "two_spots2");
+//    //
+//    //    debugPrint(Color(1, 1, 0) * Color(0, 1, 1));
 //
-//    //    Uniform less_yellow(Color(0.7, 0.7, 0));
-//    //    Uniform less_cyan(Color(0, 0.7, 0.7));
-//        Uniform less_yellow(Color(1, 1, 0));
-//        Uniform less_cyan(Color(0, 1, 1));
-//        Spot spot3(Vec2(+0.2, 0), 0.38, less_yellow, 0.4, white);
-//        Spot spot4(Vec2(-0.2, 0), 0.38, less_cyan, 0.4, white);
-//        Multiply two_spots2(spot3, spot4);
+//    Uniform white(1);
+//    Uniform black(0);
+//    Uniform red(1, 0, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform blue(0, 0, 1);
 //
-//        //    Scale scaled_spots(1.5, two_spots);
-//        //    Rotate rotated_spots(pi / 4, two_spots);
-//        //    Rotate scale_then_rotate(pi / 4, scaled_spots);
-//        //    Translate translated_spots(Vec2(0, 0.3), two_spots);
-//        //    Translate scale_rotate_translate(Vec2(0, 0.3), scale_then_rotate);
+//    Vec2 p1(0.3, 0);
+//    Vec2 p2 = p1.rotate(2 * pi / 3);
+//    Vec2 p3 = p2.rotate(2 * pi / 3);
 //
+//    float ro = 0.6;
+//    float ri = ro - 0.02;
 //
-//    //    Texture::displayAndFile(white, path + "white");
-//    //    Texture::displayAndFile(less_red, path + "less_red");
-//    //    Texture::displayAndFile(less_blue, path + "less_blue");
-//    //    Texture::displayAndFile(two_spots, path + "two_spots");
-//        Texture::displayAndFile(two_spots2); // , path + "two_spots2");
+//    //Spot rs(p1, ri, red, ro, black);
+//    //Spot gs(p2, ri, green, ro, black);
+//    //Spot bs(p3, ri, blue, ro, black);
+//    //
+//    //Texture::displayAndFile(red
+//    //                        ); // , path + "red");
+//    //Texture::displayAndFile(rs
+//    //                        ); // , path + "red_spot");
+//    //Texture::displayAndFile(Add(rs, Add(gs, bs))
+//    //                        ); // , path + "additive");
+//    //Texture::displayAndFile(Multiply(Subtract(white, rs),
+//    //                                 Multiply(Subtract(white, gs),
+//    //                                          Subtract(white, bs)))
+//    //                        ); // , path + "subtractive");
 //
-//        debugPrint(Color(1, 1, 0) * Color(0, 1, 1));
+//    Spot red_on_black(p1, ri, red, ro, black);
+//    Spot green_on_black(p2, ri, green, ro, black);
+//    Spot blue_on_black(p3, ri, blue, ro, black);
+//    Subtract cyan_on_white(white, red_on_black);
+//    Subtract magenta_on_white(white, green_on_black);
+//    Subtract yellow_on_white(white, blue_on_black);
+//
+//    Texture::displayAndFile(Add(red_on_black,
+//                                Add(green_on_black, blue_on_black)));
+//    Texture::displayAndFile(Multiply(cyan_on_white,
+//                                     Multiply(magenta_on_white,
+//                                              yellow_on_white)));
+//    Texture::waitKey();
     
-    Uniform white(1);
-    Uniform black(0);
-    Uniform red(1, 0, 0);
-    Uniform green(0, 1, 0);
-    Uniform blue(0, 0, 1);
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Vec2 p1(0.3, 0);
-    Vec2 p2 = p1.rotate(2 * pi / 3);
-    Vec2 p3 = p2.rotate(2 * pi / 3);
-    
-    float ro = 0.6;
-    float ri = ro - 0.02;
-
-    //Spot rs(p1, ri, red, ro, black);
-    //Spot gs(p2, ri, green, ro, black);
-    //Spot bs(p3, ri, blue, ro, black);
-    //
-    //Texture::displayAndFile(red
-    //                        ); // , path + "red");
-    //Texture::displayAndFile(rs
-    //                        ); // , path + "red_spot");
-    //Texture::displayAndFile(Add(rs, Add(gs, bs))
-    //                        ); // , path + "additive");
-    //Texture::displayAndFile(Multiply(Subtract(white, rs),
-    //                                 Multiply(Subtract(white, gs),
-    //                                          Subtract(white, bs)))
-    //                        ); // , path + "subtractive");
-
-    Spot red_on_black(p1, ri, red, ro, black);
-    Spot green_on_black(p2, ri, green, ro, black);
-    Spot blue_on_black(p3, ri, blue, ro, black);
-    Subtract cyan_on_white(white, red_on_black);
-    Subtract magenta_on_white(white, green_on_black);
-    Subtract yellow_on_white(white, blue_on_black);
-    
-    Texture::displayAndFile(Add(red_on_black,
-                                Add(green_on_black, blue_on_black)));
-    Texture::displayAndFile(Multiply(cyan_on_white,
-                                     Multiply(magenta_on_white,
-                                              yellow_on_white)));
-
-    
-    Texture::waitKey();
+//    // for stackoverflow -- July 15, 2020
+//    std::cout << "July 15, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200715_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Uniform dark_blue(0, 0, 0.3);
+//    Uniform green(0, 1, 0);
+//    LotsOfSpots los(0.85, 0.04, 0.17, 0.01, 0.02, green, dark_blue);
+//
+//    Texture::sqrt_of_aa_subsample_count = 20;
+//    //Texture::sqrt_of_aa_subsample_count = 4;
+//
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1, 1, los, black)
+//                            , path + "Hyperbolic_10_10");
+//    // Poincaré disk
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.5, 2, los, black)
+//                            , path + "Hyperbolic_05_20");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 0.3, 5, los, black)
+//                            , path + "Hyperbolic_03_50");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 1,   5, los, black)
+//                            , path + "Hyperbolic_10_50");
+//    Texture::displayAndFile(Hyperbolic(Vec2(), 0.9, 3,   5, los, black)
+//                            , path + "Hyperbolic_30_50");
+//
+//    Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

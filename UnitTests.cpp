@@ -434,6 +434,46 @@ bool noise_ranges()
             st(test_range(PerlinNoise::wrapulence2d, 0, 1)));
 }
 
+bool interpolate_float_rounding()
+{
+    // See https://cwreynolds.github.io/TexSyn/#20200614 about a change to the
+    // interpolate() template to avoid floating point rounding issues. I changed
+    // from basing noise1/noise2 on Noise/Brownian to Grating. I had been unable
+    // to reproduce the June 14 fail (today on July 16) perhaps because of a
+    // change to noise ranges on June 24.
+    Vec2 p1(0, 0);
+    Vec2 p2(0.1, 0.2);
+    Uniform red(1, 0, 0);
+    Uniform blue(0, 0, 1);
+    Uniform green(0, 1, 0);
+    Grating noise0(Vec2(), red, Vec2(0, 0.1), blue, 0.2, 0.5);
+    Grating noise1(Vec2(), blue, Vec2(0.1, 0), green, 0.2, 0.5);
+    bool ok = true;
+    int subtest_count = 10000;
+    for (int i = 0; i < subtest_count; i++)
+    {
+        Vec2 p = Vec2::randomPointInUnitDiameterCircle() * 2;
+        Color color0 = noise0.getColor(p);
+        Color color1 = noise1.getColor(p);
+        Color interpolated = interpolate(1, color0, color1);
+        if (!st(color1 == interpolated)) ok = false;
+        // Enable this code to verify failing case:
+        if ((false))
+        {
+            // This was the body of interpolation() before June 14.
+            auto old_interp = [](float alpha, const Color& x0, const Color& x1)
+                { return x0 + ((x1 - x0) * alpha); };
+            interpolated = old_interp(1, color0, color1);
+            if (color1 != interpolated)
+            {
+                std::cout << "old_interp() fails with color difference of: ";
+                std::cout << (color1 - interpolated) << std::endl;
+            }
+        }
+    }
+    return ok;
+}
+
 // Used only in UnitTests::allTestsOK()
 #define logAndTally(e)                       \
 {                                            \
@@ -469,6 +509,7 @@ bool UnitTests::allTestsOK()
     logAndTally(grating_test);
     logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
+    logAndTally(interpolate_float_rounding);
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
     std::cout << std::endl << std::endl;
