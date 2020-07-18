@@ -25,9 +25,10 @@ class Color;
 // Original (circa 2002) "non locking" version, in case it is ever useful.
 #define debugPrintNL(e) (std::cout << #e" = " << (e) << std::endl << std::flush)
 
-// Global mutex to allow synchronizing console output from parallel threads
-static std::recursive_mutex print_mutex_;
-#define grabPrintLock() std::lock_guard<std::recursive_mutex> pl_(print_mutex_);
+// Use global mutex to allow synchronizing console output from parallel threads.
+// (Written as a macro since the lock_guard is released at the end of a block.)
+#define grabPrintLock() std::lock_guard<std::recursive_mutex> pl_(printMutex());
+std::recursive_mutex& printMutex();
 
 // Just for convenience in hand-written prototypes and tests:
 const float pi = M_PI;
