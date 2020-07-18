@@ -606,4 +606,6 @@ void UnitTests::instantiateAllTextureTypes()
     do_thumbnail(LotsOfButtons(0.8, 0.1, 0.4, 0.05, 0.01, p1, t1, 1, t2));
     do_thumbnail(Gamma(0.5, t3));
     do_thumbnail(RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1));
+    do_thumbnail(CotsMap(p1, p2, p3, Vec2(-1, -1), white_cyan));
+    do_thumbnail(Hyperbolic(p3, 1.5, 4, 2, black_red, white_cyan));
 }
