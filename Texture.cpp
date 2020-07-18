@@ -37,7 +37,7 @@ Color Texture::interpolatePointOnTextures(float alpha,
 // Rasterize this texture into size² OpenCV image, display in pop-up window.
 void Texture::displayInWindow(int size, bool wait) const
 {
-    rasterizeToImageCache(size, true);
+    rasterizeToImageCache(size, getDefaultRenderAsDisk());
     windowPlacementTool(*raster_);
     if (wait) waitKey();  // Wait for a keystroke in the window.
 }
@@ -167,8 +167,8 @@ void Texture::writeToFile(int size,
                          cv::Scalar(255 * bg_color.b(),
                                     255 * bg_color.g(),
                                     255 * bg_color.r()));
-    // Ensure cached rendering of Texture is available. (TODO "disk" arg inline)
-    rasterizeToImageCache(size, true);
+    // Ensure cached rendering of Texture is available.
+    rasterizeToImageCache(size, getDefaultRenderAsDisk());
     // Define a new image, a "pointer" to portion of opencv_image inside margin.
     cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
     // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
@@ -272,7 +272,7 @@ void Texture::displayAndFile3(const Texture& t1,
     auto subwindow = [&](const Texture& t, int x)
     {
         // Render Texture to its raster_ cv::Mat.
-        t.rasterizeToImageCache(size, true);
+        t.rasterizeToImageCache(size, getDefaultRenderAsDisk());
         // Define a size*size portion of "mat" whose left edge is at "x".
         cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
         // Copy into submat while conveting from rgb float to rgb uint8_t
@@ -290,3 +290,9 @@ void Texture::displayAndFile3(const Texture& t1,
 
 // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
 int Texture::sqrt_of_aa_subsample_count = 1;
+
+// Global default render size.
+int Texture::render_size_ = 511;
+
+// Global default "render as disk" flag: disk if true, else square.
+bool Texture::render_as_disk_ = true;

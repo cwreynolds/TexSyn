@@ -59,7 +59,15 @@ bool utilities()
             st(withinEpsilon(fmod_floor(2, 1.23), 0.77, e)) &&
             st(withinEpsilon(fmod_floor(-1, 1.23), 0.23, e)) &&
             st(withinEpsilon(fmod_floor(-2, 1.23), 0.46, e)) &&
-            st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)));
+            st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)) &&
+            st(nearestOddInt(0.1) == 1) &&
+            st(nearestOddInt(1.0) == 1) &&
+            st(nearestOddInt(1.9) == 1) &&
+            st(nearestOddInt(2.1) == 3) &&
+            st(nearestOddInt(-0.1) == -1) &&
+            st(nearestOddInt(-1.0) == -1) &&
+            st(nearestOddInt(-1.9) == -1) &&
+            st(nearestOddInt(-2.1) == -3));
 };
 
 // Tests for Color class.

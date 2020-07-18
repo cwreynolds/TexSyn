@@ -36,10 +36,12 @@ public:
     Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
                                      const Texture& t0, const Texture& t1) const;
     // Rasterize this texture into size² OpenCV image, display in pop-up window.
-    void displayInWindow(int size = 511, bool wait = true) const;
+    void displayInWindow(int size = getDefaultRenderSize(),
+                         bool wait = true) const;
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
-                                int size = 511, bool wait = true);
+                                int size = getDefaultRenderSize(),
+                                bool wait = true);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
     static void windowPlacementTool(cv::Mat& mat);
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
@@ -81,7 +83,7 @@ public:
     // See: https://cwreynolds.github.io/TexSyn/#20200305
     static void displayAndFile(const Texture& texture,
                                std::string pathname = "",
-                               int size = 511);
+                               int size = getDefaultRenderSize());
     static void waitKey();
     // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
     // is called ONLY from constructors providing backward compatibility. The
@@ -92,9 +94,9 @@ public:
     static void diff(const Texture& t0, const Texture& t1,
                      std::string pathname, int size);
     static void diff(const Texture& t0, const Texture& t1, std::string pathname)
-        { diff(t0, t1, pathname, 333); }
+        { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)
-        { diff(t0, t1, "", 333); }
+        { diff(t0, t1, "", getDiffSize()); }
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
@@ -102,6 +104,14 @@ public:
                                 int size = 333);
     // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
     static int sqrt_of_aa_subsample_count;
+    // Get/set global default render size.
+    static int getDefaultRenderSize() { return render_size_; }
+    static void setDefaultRenderSize(int size) { render_size_ = size; }
+    static int getDiffSize()
+        { return nearestOddInt(getDefaultRenderSize() * 0.666); }
+    // Get/set global default "render as disk" flag: disk if true, else square.
+    static bool getDefaultRenderAsDisk() { return render_as_disk_; }
+    static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
@@ -113,4 +123,8 @@ private:
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const;
     const std::shared_ptr<cv::Mat> raster_;
+    // Global default render size.
+    static int render_size_;
+    // Global default "render as disk" flag: disk if true, else square.
+    static bool render_as_disk_;
 };

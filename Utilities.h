@@ -322,3 +322,6 @@ void jittered_grid_NxN_in_square(int n,
                                  float square_side_length,
                                  RandomSequence& rs,
                                  std::vector<Vec2>& offsets);
+
+// Map/round a float value (including negative) to the nearest odd integer.
+inline int nearestOddInt(float x) { return (floor(x / 2) * 2) + 1; }

@@ -3208,6 +3208,29 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // global flags for default render shape and resolution -- July 17, 2020
+    std::cout << "July 17, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200717_";
+    
+    Vec2 p1(0, 0);
+    Vec2 p2(0.01, 0.03);
+    Uniform gray50(0.5);
+    Uniform red(1, 0, 0);
+    
+    Texture::displayAndFile(Noise(p1, p2, gray50, red));
+    Texture::setDefaultRenderAsDisk(false);
+    Texture::displayAndFile(Noise(p1, p2, gray50, red));
+    Texture::setDefaultRenderAsDisk(true);
+    Texture::setDefaultRenderSize(701);
+    Texture::displayAndFile(Noise(p1, p2, gray50, red));
+    Texture::diff(Noise(p1, p2, gray50, red),
+                  Noise(p1, p2, red, gray50));
+    Texture::setDefaultRenderSize(333);
+    Texture::displayAndFile(Noise(p1, p2, gray50, red));
+    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     return EXIT_SUCCESS;
 }
 
