@@ -100,7 +100,12 @@ inline float remapIntervalClip(float x,
                                float in0, float in1,
                                float out0, float out1)
 {
-    return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
+    return clip(remapInterval(x, in0, in1, out0, out1),
+                std::min(out0, out1),
+                std::max(out0, out1));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // This variation on fmod() is analogous to the difference between "rounding

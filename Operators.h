@@ -1581,3 +1581,192 @@ private:
     const Vec2 perp;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO experimental analog of RgbBox but for HSV color space.
+
+// Linear remap of positive unit RGB color cube to a given "box" within it.
+// Parameters are the min and max bounds of the box for each of red, green and
+// blue. So for example The clipped input color's red component is remapped from
+// the interval [0, 1] to [min_r, max_r].
+
+//    class RgbBox : public Texture
+//    {
+//    public:
+//        RgbBox(float minr, float maxr,
+//               float ming, float maxg,
+//               float minb, float maxb,
+//               const Texture& _texture)
+//          : min_r(clip01(std::min(minr, maxr))),
+//            max_r(clip01(std::max(minr, maxr))),
+//            min_g(clip01(std::min(ming, maxg))),
+//            max_g(clip01(std::max(ming, maxg))),
+//            min_b(clip01(std::min(minb, maxb))),
+//            max_b(clip01(std::max(minb, maxb))),
+//            texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color input = texture.getColor(position).clipToUnitRGB();
+//            return Color(remapInterval(input.r(), 0, 1, min_r, max_r),
+//                         remapInterval(input.g(), 0, 1, min_g, max_g),
+//                         remapInterval(input.b(), 0, 1, min_b, max_b));
+//        }
+//    private:
+//        const float min_r;
+//        const float max_r;
+//        const float min_g;
+//        const float max_g;
+//        const float min_b;
+//        const float max_b;
+//        const Texture& texture;
+//    };
+
+class HsvBox : public Texture
+{
+public:
+    HsvBox(float minh, float maxh,
+           float mins, float maxs,
+           float minv, float maxv,
+           const Texture& _texture)
+        // trying it without imposing an ordering
+//      : min_h(clip01(std::min(minh, maxh))),
+//        max_h(clip01(std::max(minh, maxh))),
+//        min_s(clip01(std::min(mins, maxs))),
+//        max_s(clip01(std::max(mins, maxs))),
+//        min_v(clip01(std::min(minv, maxv))),
+//        max_v(clip01(std::max(minv, maxv))),
+        : min_h(clip01(minh)),
+          max_h(clip01(maxh)),
+          min_s(clip01(mins)),
+          max_s(clip01(maxs)),
+          min_v(clip01(minv)),
+          max_v(clip01(maxv)),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        // TODO do I want to keep the clip?
+        Color input = texture.getColor(position).clipToUnitRGB();
+        float h1, s1, v1;
+        Color::convertRGBtoHSV(input.r(), input.g(), input.b(), h1, s1, v1);
+        
+//        float h2 = remapInterval(h1, 0, 1, min_h, max_h);
+        
+//        float h_folded = (h1 < 0.5 ?
+//                          h1 * 2 :
+//                          2 - (h1 * 2));
+        float h_folded = sinusoid(h1 < 0.5 ?
+                                  h1 * 2 :
+                                  2 - (h1 * 2));
+        float h2 = remapInterval(h_folded, 0, 1, min_h, max_h);
+
+        float s2 = remapInterval(s1, 0, 1, min_s, max_s);
+        float v2 = remapInterval(v1, 0, 1, min_v, max_v);
+        return Color::makeHSV(h2, s2, v2);
+    }
+private:
+    const float min_h;
+    const float max_h;
+    const float min_s;
+    const float max_s;
+    const float min_v;
+    const float max_v;
+    const Texture& texture;
+};
+
+// TODO temporary, just or testing
+class HueRing : public Texture
+{
+public:
+    HueRing(){}
+//    Color getColor(Vec2 position) const override
+//    {
+//        Color color(0, 0, 0);
+//        if (between(position.length(), 0.5, 0.9))
+//        {
+//            float angle = position.atan2();
+//            color = Color::makeHSV(angle / (2 * pi), 1, 1);
+//        }
+//        return color;
+//    }
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color(0, 0, 0);
+//            float radius = position.length();
+//    //        float ri = 0.1;
+//    //        float rm = 0.5;
+//    //        float ro = 0.9;
+//            float ri = 0.0;
+//            float rm = 0.5;
+//            float ro = 1.0;
+//            if (between(radius, ri, ro))
+//            {
+//                color = Color::makeHSV(position.atan2() / (2 * pi),
+//                                       remapInterval(radius, ri, rm, 0, 1),
+//                                       remapInterval(radius, rm, ro, 1, 0));
+//            }
+//            return color;
+//        }
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color(0, 0, 0);
+//            float radius = position.length();
+//    //        float r1 = 0.3;
+//    //        float r2 = 0.8;
+//    //        float r1 = 0.5;
+//    //        float r2 = 0.6;
+//            float r1 = 0.4;
+//            float r2 = 0.6;
+//            if (radius < 1)
+//            {
+//    //            color = Color::makeHSV(position.atan2() / (2 * pi),
+//    //                                   remapInterval(radius, 0, r1, 0, 1),
+//    //                                   remapInterval(radius, r2, 1, 1, 0));
+//    //            color = Color::makeHSV(position.atan2() / (2 * pi),
+//    //                                   remapIntervalClip(radius, 0, r1, 0, 1),
+//    //                                   remapIntervalClip(radius, r2, 1, 1, 0));
+//    //            color = Color::makeHSV(position.atan2() / (2 * pi),
+//    //                                   remapIntervalClip(radius, 0, r1, 0, 1),
+//    ////                                   remapIntervalClip(radius, r2, 1, 1, 0)
+//    //                                   1 - remapIntervalClip(radius, r2, 1, 0, 1)
+//    //                                   );
+//
+//    //            color = Color::makeHSV(position.atan2() / (2 * pi),
+//    //                                   sinusoid(remapIntervalClip(radius, 0, r1, 0, 1)),
+//    ////                                   sinusoid(remapIntervalClip(radius, r2, 1, 1, 0))
+//    //                                   sinusoid(1 - remapIntervalClip(radius,
+//    //                                                                  r2, 1, 0, 1))
+//    //                                   );
+//    //
+//
+//
+//                color = Color::makeHSV(position.atan2() / (2 * pi),
+//                                       sinusoid(remapIntervalClip(radius, 0, r1, 0, 1)),
+//                                       sinusoid(remapIntervalClip(radius, r2, 1, 1, 0))
+//                                       );
+//
+//
+//
+//            }
+//            return color;
+//        }
+
+    Color getColor(Vec2 position) const override
+    {
+        Color color(0, 0, 0);
+        float radius = position.length();
+        if (radius < 1)
+        {
+            float r1 = 0.4;
+            float r2 = 0.6;
+            float h = position.atan2() / (2 * pi);
+            float s = sinusoid(remapIntervalClip(radius,  0, r1,  0, 1));
+            float v = sinusoid(remapIntervalClip(radius,  r2, 1,  1, 0));
+            color = Color::makeHSV(h, s, v);
+        }
+        return color;
+    }
+};
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

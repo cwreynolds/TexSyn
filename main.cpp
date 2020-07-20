@@ -3231,11 +3231,52 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // update UnitTests::instantiateAllTextureTypes() -- July 18, 2020
+//    // update UnitTests::instantiateAllTextureTypes() -- July 18, 2020
+//    std::cout << "July 18, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200718_";
+//
+//    UnitTests::instantiateAllTextureTypes();
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // HsvBox -- July 18, 2020
     std::cout << "July 18, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200718_";
 
-    UnitTests::instantiateAllTextureTypes();
+
+//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.8));
+//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.7));
+//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.2, 1.8), 0.7));
+//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.15, 1.85), 0.7));
+//    Texture::displayAndFile(ColorNoise(Vec2(3, 7), Vec2(3.15, 6.85), 0.7));
+
+//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.7);
+//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.2);
+//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0);
+    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
+    Texture::displayAndFile(cn);
+    
+//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.4, 0.6, 0.0, 1.0, cn));
+//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.0, 0.5, cn));
+//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.4, 0.6, cn));
+//
+//    Texture::displayAndFile(HsvBox(0.9, 0.5, 0.6, 0.8, 0.4, 1.0, cn));
+//    Texture::displayAndFile(HsvBox(0.5, 0.9, 0.6, 0.8, 0.4, 1.0, cn));
+
+//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
+//    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, cn));
+//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.5, 0.0, 1.0, cn));
+//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.5, cn));
+    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
+    Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, cn));
+    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.33, 0.0, 1.0, cn));
+    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.33, cn));
+
+    Texture::displayAndFile(HueRing());
+//    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, HueRing()));
+    Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, HueRing()));
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
