@@ -72,6 +72,36 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200720"> <a href="#20200720" class="date">July 20,
+        2020</a>
+      <h1><em>HueOnly</em></h1>
+      <p>For each point in the input texture, <em>HueOnly</em> keeps only the
+        hue information from its input texture. It replaces the other two HSV
+        components, saturation and value, with constant values given as
+        parameters to <em>HueOnly</em>. There was an operator called <em>HueOnly</em>
+        in the previous version of this library (see <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090323">March
+          23, 2009</a>). This one provides more parametric control, and avoids
+        the older one's bug for gray scale input textures. (It considered those
+        to be red, corresponding to hue value zero, leading to a replacement
+        operator called <em>HueIfAny</em> (see <a href="https://www.red3d.com/cwr/texsyn/diary.html#20100226">February
+          26, 2010</a>).) Below is shown a color noise texture <code>cn</code>
+        used as an example input, followed by four variations of the <code>saturation</code>
+        and <code>value</code> parameters.</p>
+      <pre>cn = ColorNoise(Vec2(3, 7), Vec2(3.10, 6.9), 0)</pre>
+      <img src="images/20200720_cn.png" alt="cn = ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0)"
+        title="cn = ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0)" height="511"
+        width="511">
+      <pre>HueOnly(1.0, 1.0, cn)  <span class="comment">// Full saturation, full brightness.</span>
+HueOnly(1.0, 0.5, cn)  <span class="comment">// Full saturation, half brightness.</span></pre>
+      <img src="images/20200720_HueOnly_10_10.png" alt="HueOnly(1, 1, cn)" title="HueOnly(1, 1, cn)"
+        height="511" width="511"> <img src="images/20200720_HueOnly_10_05.png"
+        alt="HueOnly(1, 0.5, cn)" title="HueOnly(1, 0.5, cn)" height="511" width="511">
+      <pre>HueOnly(0.5, 1.0, cn)  <span class="comment">// Half saturation, full brightness.</span>
+HueOnly(0.5, 0.5, cn)  <span class="comment">// Half saturation, half brightness.</span></pre>
+      <img src="images/20200720_HueOnly_05_10.png" alt="HueOnly(0.5, 1, cn)" title="HueOnly(0.5, 1, cn)"
+        height="511" width="511"> <img src="images/20200720_HueOnly_05_05.png"
+        alt="HueOnly(0.5, 0.5, cn)" title="HueOnly(0.5, 0.5, cn)" height="511" width="511">
+    </div>
     <div class="post" id="20200713"> <a href="#20200713" class="date">July 13,
         2020</a>
       <h1>Slightly less stealthy</h1>

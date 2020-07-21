@@ -3240,42 +3240,100 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // HsvBox -- July 18, 2020
-    std::cout << "July 18, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200718_";
-
-
-//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.8));
-//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.7));
-//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.2, 1.8), 0.7));
-//    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.15, 1.85), 0.7));
-//    Texture::displayAndFile(ColorNoise(Vec2(3, 7), Vec2(3.15, 6.85), 0.7));
-
-//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.7);
-//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.2);
-//    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0);
-    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
-    Texture::displayAndFile(cn);
-    
-//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.4, 0.6, 0.0, 1.0, cn));
-//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.0, 0.5, cn));
-//    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.4, 0.6, cn));
+//        // HsvBox -- July 18, 2020
+//        std::cout << "July 18, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200718_";
 //
-//    Texture::displayAndFile(HsvBox(0.9, 0.5, 0.6, 0.8, 0.4, 1.0, cn));
-//    Texture::displayAndFile(HsvBox(0.5, 0.9, 0.6, 0.8, 0.4, 1.0, cn));
+//
+//    //    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.8));
+//    //    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.1, 1.9), 0.7));
+//    //    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.2, 1.8), 0.7));
+//    //    Texture::displayAndFile(ColorNoise(Vec2(1, 2), Vec2(1.15, 1.85), 0.7));
+//    //    Texture::displayAndFile(ColorNoise(Vec2(3, 7), Vec2(3.15, 6.85), 0.7));
+//
+//    //    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.7);
+//    //    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0.2);
+//    //    ColorNoise cn(Vec2(3, 7), Vec2(3.15, 6.85), 0);
+//        ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
+//        Texture::displayAndFile(cn);
+//
+//    //    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.4, 0.6, 0.0, 1.0, cn));
+//    //    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.0, 0.5, cn));
+//    //    Texture::displayAndFile(HsvBox(0.2, 0.4, 0.3, 0.5, 0.4, 0.6, cn));
+//    //
+//    //    Texture::displayAndFile(HsvBox(0.9, 0.5, 0.6, 0.8, 0.4, 1.0, cn));
+//    //    Texture::displayAndFile(HsvBox(0.5, 0.9, 0.6, 0.8, 0.4, 1.0, cn));
+//
+//    //    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
+//    //    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, cn));
+//    //    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.5, 0.0, 1.0, cn));
+//    //    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.5, cn));
+//        Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
+//        Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, cn));
+//        Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.33, 0.0, 1.0, cn));
+//        Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.33, cn));
+//
+//        Texture::displayAndFile(HueRing());
+//    //    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, HueRing()));
+//        Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, HueRing()));
+//
+//        Texture::displayAndFile(HueIfAny(1, 1, cn));
+//        Texture::displayAndFile(HueIfAny(0.8, 0.5, cn));
+//        Texture::displayAndFile(HueIfAny(0.6, 0.8, cn));
+//        Texture::displayAndFile(HueIfAny(0.8, 0.8, cn));
+//        Texture::displayAndFile(HueIfAny(0.8, 1, cn));
+//        Texture::displayAndFile(HueIfAny(0.6, 1, cn));
+//        Texture::displayAndFile(HueIfAny(1, 0.7, cn));
+//
+//        Texture::displayAndFile(HueIfAny(1, 0.7,
+//                                         Noise(Vec2(3, 7), Vec2(3.10, 6.9),
+//                                               Uniform(0), Uniform(1))));
+//
+//    //    Texture::displayAndFile(HueIfAny(1, 0.7,
+//    //                                     Spot(Vec2(1, 0), 0, cn, 1.6,
+//    //                                          Noise(Vec2(3, 7), Vec2(3.10, 6.9),
+//    //                                                Uniform(0), Uniform(1)))));
+//    //    Texture::displayAndFile(Spot(Vec2(1, 0), 0, cn, 1.6,
+//    //                                 Noise(Vec2(3, 7), Vec2(3.10, 6.9),
+//    //                                       Uniform(0), Uniform(1))));
+//        Texture::waitKey();
 
-//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
-//    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, cn));
-//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.5, 0.0, 1.0, cn));
-//    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.5, cn));
-    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, cn));
-    Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, cn));
-    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 0.33, 0.0, 1.0, cn));
-    Texture::displayAndFile(HsvBox(0.0, 1.0, 0.0, 1.0, 0.0, 0.33, cn));
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+//    //  Lueker circles -- July 20, 2020
+//    // See: https://www.facebook.com/jonathan.lueker/posts/10221043878240079
+//    std::cout << "July 20, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200720_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Wrapulence noise(Vec2(1, 2), Vec2(1.1, 1.9), white, black);
+//    SliceGrating hgrate(Vec2(0, 1), Vec2(), noise);
+//    SliceGrating vgrate(Vec2(1, 0), Vec2(), noise);
+//    Spot spot(Vec2(), 0.12, white, 0.13, black);
+//    Row row0(Vec2(0.5, 0), Vec2(), spot);
+//    Row spots(Vec2(0, 0.5), Vec2(), row0);
+//
+//    Texture::setDefaultRenderAsDisk(false);
+//    Texture::displayAndFile(spots, path + "Lueker_1");
+//    Texture::displayAndFile(hgrate, path + "Lueker_2");
+//    Texture::displayAndFile(vgrate, path + "Lueker_3");
+//    Texture::displayAndFile(SoftMatte(spots, hgrate, vgrate), path + "Lueker_4");
+//
+//    Texture::waitKey();
 
-    Texture::displayAndFile(HueRing());
-//    Texture::displayAndFile(HsvBox(0.0, 0.5, 0.0, 1.0, 0.0, 1.0, HueRing()));
-    Texture::displayAndFile(HsvBox(0.0, 0.33, 0.0, 1.0, 0.0, 1.0, HueRing()));
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // HueOnly -- July 20, 2020
+    std::cout << "July 20, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200720_";
+
+    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
+    Texture::displayAndFile(cn,                    path + "cn");
+    Texture::displayAndFile(HueOnly(1, 1, cn),     path + "HueOnly_10_10");
+    Texture::displayAndFile(HueOnly(0.5, 0.5, cn), path + "HueOnly_05_05");
+    Texture::displayAndFile(HueOnly(0.5, 1, cn),   path + "HueOnly_05_10");
+    Texture::displayAndFile(HueOnly(1, 0.5, cn),   path + "HueOnly_10_05");
 
     Texture::waitKey();
 

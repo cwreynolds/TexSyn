@@ -1767,6 +1767,48 @@ public:
     }
 };
 
+//    // TODO super prototype
+//
+//    class HueIfAny : public Texture
+//    {
+//    public:
+//        HueIfAny(float _saturation, float _value, const Texture& _texture)
+//          : saturation(_saturation), value(_value), texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color input = texture.getColor(position);
+//            Color clipped = input.clipToUnitRGB();
+//            float h, s, v;
+//            Color::convertRGBtoHSV(clipped.r(), clipped.g(), clipped.b(), h, s, v);
+//            return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
+//        }
+//    private:
+//        const float min_sat = 0.000001;
+//        const float saturation;
+//        const float value;
+//        const Texture& texture;
+//    };
+
+
+class HueOnly : public Texture
+{
+public:
+    HueOnly(float _saturation, float _value, const Texture& _texture)
+      : saturation(_saturation), value(_value), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color input = texture.getColor(position);
+        Color clipped = input.clipToUnitRGB();
+        float h, s, v;
+        Color::convertRGBtoHSV(clipped.r(), clipped.g(), clipped.b(), h, s, v);
+        return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
+    }
+private:
+    const float min_sat = 0.000001;
+    const float saturation;
+    const float value;
+    const Texture& texture;
+};
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
