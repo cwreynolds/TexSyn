@@ -60,15 +60,18 @@ inline bool between(float x, float low, float high)
 
 // TODO took this directly from TextureSynthesisTest, needs clean up:
 // ----------------------------------------------------------------------------
-// Constrain a given value (x) to be between two (ordered) bounds: min
-// and max.  Returns x if it is between the bounds, otherwise returns
-// the nearer bound.
 
-inline float clip (const float x, const float min, const float max)
+// Constrain a given value "x" to be between two bounds: "bound0" and "bound1"
+// (without regard to order). Returns x if it is between the bounds, otherwise
+// returns the nearer bound.
+inline float clip(float x, float bound0, float bound1)
 {
-    if (x < min) return min;
-    if (x > max) return max;
-    return x;
+    float clipped = x;
+    float min = std::min(bound0, bound1);
+    float max = std::max(bound0, bound1);
+    if (clipped < min) clipped = min;
+    if (clipped > max) clipped = max;
+    return clipped;
 }
 
 inline float clip01 (const float x)
@@ -100,12 +103,7 @@ inline float remapIntervalClip(float x,
                                float in0, float in1,
                                float out0, float out1)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
-    return clip(remapInterval(x, in0, in1, out0, out1),
-                std::min(out0, out1),
-                std::max(out0, out1));
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
 }
 
 // This variation on fmod() is analogous to the difference between "rounding

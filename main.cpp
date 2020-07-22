@@ -3324,18 +3324,18 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // HueOnly -- July 20, 2020
-    std::cout << "July 20, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200720_";
-
-    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
-    Texture::displayAndFile(cn,                    path + "cn");
-    Texture::displayAndFile(HueOnly(1, 1, cn),     path + "HueOnly_10_10");
-    Texture::displayAndFile(HueOnly(0.5, 0.5, cn), path + "HueOnly_05_05");
-    Texture::displayAndFile(HueOnly(0.5, 1, cn),   path + "HueOnly_05_10");
-    Texture::displayAndFile(HueOnly(1, 0.5, cn),   path + "HueOnly_10_05");
-
-    Texture::waitKey();
+//    // HueOnly -- July 20, 2020
+//    std::cout << "July 20, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200720_";
+//
+//    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
+//    Texture::displayAndFile(cn,                    path + "cn");
+//    Texture::displayAndFile(HueOnly(1, 1, cn),     path + "HueOnly_10_10");
+//    Texture::displayAndFile(HueOnly(0.5, 0.5, cn), path + "HueOnly_05_05");
+//    Texture::displayAndFile(HueOnly(0.5, 1, cn),   path + "HueOnly_05_10");
+//    Texture::displayAndFile(HueOnly(1, 0.5, cn),   path + "HueOnly_10_05");
+//
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
