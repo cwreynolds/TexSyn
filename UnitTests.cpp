@@ -57,7 +57,7 @@ bool utilities()
             st(remapInterval(2, 1, 4, 10, 40) == 20) &&
             st(remapIntervalClip(5, 1, 4, 10, 40) == 40) &&
             st(remapInterval(1.5, 1, 2, 30, 20) == 25) &&
-            st(withinEpsilon(remapInterval(2, 1, 4, 40, 10), 30, 0.00001)) &&
+            st(remapInterval(2, 1, 3, 30, 10) == 20) &&
             st(remapIntervalClip(5, 1, 4, 40, 10) == 10) &&
             st(!std::isnan(remapInterval(1, 1, 1, 2, 3))) &&
             st(!std::isnan(remapIntervalClip(1, 1, 1, 2, 3))) &&
