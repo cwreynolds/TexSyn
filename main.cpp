@@ -3339,24 +3339,24 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // HsvBox for doc -- July 22, 2020
-    std::cout << "July 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200722_";
-
-    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
-    Texture::displayAndFile(cn
-                            );  // , path + "cn");
-    Texture::displayAndFile(HsvBox(0, 0.33, 0, 1,    0, 1,    cn)
-                            );  // , path + "HsvBox_0_3_0_1_0_1");
-    Texture::displayAndFile(HsvBox(0, 0.33, 0, 0.33, 0, 1,    cn)
-                            );  // , path + "HsvBox_0_3_0_3_0_1");
-    Texture::displayAndFile(HsvBox(0, 0.33, 0, 0.33, 0, 0.33, cn)
-                            );  // , path + "HsvBox_0_3_0_3_0_3");
-
-    Texture::displayAndFile(HsvBox(0, 0.33, 0, 1,    0, 1,    cn)
-                            );  // , path + "HsvBox_unfolded");
-
-    Texture::waitKey();
+//    // HsvBox for doc -- July 22, 2020
+//    std::cout << "July 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200722_";
+//
+//    ColorNoise cn(Vec2(3, 7), Vec2(3.10, 6.9), 0);
+//    Texture::displayAndFile(cn
+//                            );  // , path + "cn");
+//    Texture::displayAndFile(HsvBox(0, 0.33, 0, 1,    0, 1,    cn)
+//                            );  // , path + "HsvBox_0_3_0_1_0_1");
+//    Texture::displayAndFile(HsvBox(0, 0.33, 0, 0.33, 0, 1,    cn)
+//                            );  // , path + "HsvBox_0_3_0_3_0_1");
+//    Texture::displayAndFile(HsvBox(0, 0.33, 0, 0.33, 0, 0.33, cn)
+//                            );  // , path + "HsvBox_0_3_0_3_0_3");
+//
+//    Texture::displayAndFile(HsvBox(0, 0.33, 0, 1,    0, 1,    cn)
+//                            );  // , path + "HsvBox_unfolded");
+//
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
