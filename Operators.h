@@ -1649,14 +1649,8 @@ public:
         float h1, s1, v1;
         Color::convertRGBtoHSV(input.r(), input.g(), input.b(), h1, s1, v1);
         
-//        float h2 = remapInterval(h1, 0, 1, min_h, max_h);
-        
-//        float h_folded = (h1 < 0.5 ?
-//                          h1 * 2 :
-//                          2 - (h1 * 2));
-        float h_folded = sinusoid(h1 < 0.5 ?
-                                  h1 * 2 :
-                                  2 - (h1 * 2));
+        //float h2 = remapInterval(h1, 0, 1, min_h, max_h);
+        float h_folded = sinusoid(h1 < 0.5 ? h1 * 2 : 2 - (h1 * 2));
         float h2 = remapInterval(h_folded, 0, 1, min_h, max_h);
 
         float s2 = remapInterval(s1, 0, 1, min_s, max_s);

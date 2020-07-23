@@ -72,6 +72,49 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200722"> <a href="#20200722" class="date">July 22,
+        2020</a>
+      <h1><em>HsvBox</em> — probably not</h1>
+      <p><em>HueOnly</em> had been on my to-do list for a while. I wondered if I
+        wanted to have similar operators for the other two HSV components. I
+        thought about how nicely <em>RgbBox</em> seemed to work, and wondered
+        about an HSV version of it. I built a prototype, decided I was not happy
+        with it. On <a href="#20200720">July 20</a> I went back to updating <em>HueOnly</em>.
+        Here are some textures from the failed prototype <em>HsvBox</em> which
+        I will remove from TexSyn. </p>
+      <p>First of all <em>HsvBox</em> is not even a good name. <em>RgbBox</em>
+        referred to an axis-aligned “sub-box” inside the unit positive RGB color
+        cube. RGB space is Cartesian while HSV space uses cylindrical
+        coordinates. Hue is an angular parameter. So a range of hues is a
+        circular (cylindrical, actually) “sector.” Mapping the entire circle
+        onto this sector implies that resulting hues will have discontinuities.
+        In the second example below, the hue range from red to green was
+        selected. But transforming reds adjacent to greens creates an infinitely
+        sharp transition from green→red. (See this discontinuity in the second
+        example below.) I worked around that by “folding” the hue range. In the
+        third example below, the output hue ranges from red→green→red. This
+        removes the hue discontinuity but causes other artifacts. For example,
+        because of the hue fold, <em>HsvBox</em> has no parameters that produce
+        an identity transform. In the end, this just seemed too arbitrary and
+        capacious. </p>
+      <pre>cn = ColorNoise(Vec2(3, 7), Vec2(3.10, 6.9), 0)<span class="comment"></span></pre>
+      <img src="images/20200722_cn.png" alt="cn = ColorNoise(Vec2(3, 7), Vec2(3.10, 6.9), 0)"
+        title="cn = ColorNoise(Vec2(3, 7), Vec2(3.10, 6.9), 0)" height="511" width="511">
+      <p>Here the full hue range [0, 1] is mapped onto [0, 1/3]. Texture on left
+        shows hue discontinuity between green and red. Texture on right has no
+        discontinuity due to hue folding (red→green→red).</p>
+      <pre>HsvBox(0, 0.33, 0, 1, 0, 1, cn)</pre>
+      <img src="images/20200722_HsvBox_unfolded.png" alt="without fold" title="without fold"
+        height="511" width="511"> <img src="images/20200722_HsvBox_0_3_0_1_0_1.png"
+        alt="HsvBox(0, 0.33, 0, 1, 0, 1, cn)" title="HsvBox(0, 0.33, 0, 1, 0, 1, cn)"
+        height="511" width="511">
+      <pre>HsvBox(0, 0.33, 0, 0.33, 0, 1,    cn)<span class="comment">  // Both H and S map to lower third of range, V is full range.</span>
+HsvBox(0, 0.33, 0, 0.33, 0, 0.33, cn)<span class="comment">  // All three HSV components map to lower third of range.</span></pre>
+      <img src="images/20200722_HsvBox_0_3_0_3_0_1.png" alt="HsvBox(0, 0.33, 0, 0.33, 0, 1, cn)"
+        title="HsvBox(0, 0.33, 0, 0.33, 0, 1, cn)" height="511" width="511"> <img
+        src="images/20200722_HsvBox_0_3_0_3_0_3.png" alt="HsvBox(0, 0.33, 0, 0.33, 0, 0.33, cn)"
+        title="HsvBox(0, 0.33, 0, 0.33, 0, 0.33, cn)" height="511" width="511">
+    </div>
     <div class="post" id="20200720"> <a href="#20200720" class="date">July 20,
         2020</a>
       <h1><em>HueOnly</em></h1>
