@@ -3360,6 +3360,26 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // Move operator methods from .h to .cpp -- July 23, 2020
+    std::cout << "July 23, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200723_";
+    
+    Uniform black(0);
+    Uniform white(1);
+    Vec2 p1(0.1, 0.1);
+    Vec2 p2(-0.1, -0.1);
+
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.0, 0.5));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.5));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.4, 0.5));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.6, 0.5));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.8, 0.5));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 1.0, 0.5));
+
+    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     return EXIT_SUCCESS;
 }
 

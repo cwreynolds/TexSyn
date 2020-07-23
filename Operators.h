@@ -127,27 +127,11 @@ public:
         // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
         float unit_modulo = fmod_floor(projection, distance) / distance;
         // Adjust for "duty cycle" then then for "soft-edge square wave".
-        float alpha = softSquareWave(dutyCycle(unit_modulo));
+        float alpha = soft_square_wave(dutyCycle(unit_modulo), softness);
         if (distance == 0) alpha = 0.5;
         return interpolatePointOnTextures(alpha,
                                           position, position,
                                           texture0, texture1);
-    }
-    // Defines a "square wave with soft edges". When softness is 0 it is a
-    // square wave. When softness is 1 it is a sinusoid.
-    float softSquareWave(float fraction) const
-    {
-        // Clip fraction to [0, 1].
-        fraction = clip(fraction, 0, 1);
-        // Fold second half of range back over first. f ranges over [0, 0.5].
-        float f = (fraction < 0.5) ? fraction : (1 - fraction);
-        // Start/end of transition region, adjusted for softness.
-        float s = remapInterval(softness, 0, 1, 0.25, 0);
-        float e = remapInterval(softness, 0, 1, 0.25, 0.5);
-        // Piecewise linear transition (flat, ramp, flat).
-        float adjust_for_softness = remapIntervalClip(f, s, e, 0, 1);
-        // Apply sinusoid to adjusted value.
-        return sinusoid(adjust_for_softness);
     }
     // Adjust for duty_cycle. Modifies normalized cross-strip coordinate. For
     // dc=0.5, color1 corresponds to the middle half, interval [0.25, 0.75].

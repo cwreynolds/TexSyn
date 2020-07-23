@@ -79,12 +79,6 @@ inline float clip01 (const float x)
     return clip(x, 0, 1);
 }
 
-// Maps from 0 to 1 into a sinusoid ramp ("slow in, slow out") from 0 to 1.
-inline float sinusoid (float x)
-{
-    return (1 - std::cos(x * M_PI)) / 2;
-}
-
 // Remap a value specified relative to a pair of bounding values
 // to the corresponding value relative to another pair of bounds.
 // Inspired by (dyna:remap-interval y y0 y1 z0 z1) circa 1984.
@@ -104,6 +98,32 @@ inline float remapIntervalClip(float x,
                                float out0, float out1)
 {
     return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
+}
+
+// Maps from 0 to 1 into a sinusoid ramp ("slow in, slow out") from 0 to 1.
+inline float sinusoid (float x)
+{
+    return (1 - std::cos(x * M_PI)) / 2;
+}
+
+// Defines a "square wave with soft edges". Produces square wave when softness
+// is 0, a sinusoid when softness is 1, intermediate values interpolate between
+// the two. "fraction" on [0, 1] is the input, a normalized phase.
+inline float soft_square_wave(float fraction, float softness)
+{
+    // Clip fraction to [0, 1].
+    fraction = clip(fraction, 0, 1);
+    // Fold second half of range back over first. f ranges over [0, 0.5].
+    float f = (fraction < 0.5) ? fraction : (1 - fraction);
+    // Start/end of transition region, adjusted for softness.
+    float s = remapInterval(softness, 0, 1, 0.25, 0);
+    float e = remapInterval(softness, 0, 1, 0.25, 0.5);
+    // Piecewise linear transition (flat, ramp, flat).
+    float adjust_for_softness = ((s == e) ?
+                                 (f < s ? 0 : 1):
+                                 remapIntervalClip(f, s, e, 0, 1));
+    // Apply sinusoid to adjusted value.
+    return sinusoid(adjust_for_softness);
 }
 
 // This variation on fmod() is analogous to the difference between "rounding
