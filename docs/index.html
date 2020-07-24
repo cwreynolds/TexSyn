@@ -72,6 +72,53 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200724"> <a href="#20200724" class="date">July 24,
+        2020</a>
+      <h1>How many texture operators are enough?</h1>
+      <p>How many texture operators are enough? Probably less than are currently
+        in the library.</p>
+      <p>On <a href="#20200713">July 13</a> I mentioned giving a short
+        presentation on this “work in progress” library to a class at UC Santa
+        Cruz. Afterward, one of the class full of bright students asked a great
+        question. I don't remember the exact words, but it had to do with the
+        large number of texture operators in TexSyn (currently about 52). Why so
+        many? How many are actually required? Are any missing that could be
+        considered necessary? If there are more than required, how could we know
+        that? Aside from agreeing that it was a good question, all I could
+        answer was that once the Genetic Programming component is in place, I
+        hope to do experiments on this issue. For example, using some subset of
+        the operators, are results significantly different from using the entire
+        set?</p>
+      <p>Still it is fun to invent new operators, experiment with them, and
+        consider the visual results they produce. Which is to say, I tried
+        another prototype. While mildly interesting, it does not seem useful
+        enough to keep in the library. Said a different way, I think visually
+        similar results can be obtained from compositions of existing operators.
+        Below are some results from the failed prototype <em>HsvFrom3</em>
+        operator. It takes three textures as parameters, the resulting color at
+        any point is defined in HSV space by taking the hue from its first
+        texture parameter, the saturation from another texture, and the value
+        from a third texture. In the first texture example below, the hue of the
+        result comes from a red and green <em>Grating</em>, the saturation from
+        a blue and white <em>Wrapulence</em> texture (seen as curved edges of
+        red/green shading to gray), and its value (luminance) from a black and
+        white <em>Turbulence</em> (seen as dark “valleys” wandering across the
+        texture). The idea for <em>HsvFrom3</em> came up when thinking about
+        problems with <em>HsvBox</em>. In the end, neither are included in
+        TexSyn.</p>
+      <pre>HsvFrom3(Grating(p1, red, p1 + o1, green, 1, 0.5),
+         Wrapulence(p2, p2 + o3, blue, white),
+         Turbulence(p3, p3 + o3, black, white))</pre>
+      <img src="images/20200724_HsvFrom3_c.png" alt="" title="" height="511" width="511">
+      <pre>HsvFrom3(ColorNoise(p1, p1 + o2, 0.4),
+         ColorNoise(p2, p2 + o2, 0.8),
+         Brownian(p3, p3 + o2, white, black))</pre>
+      <img src="images/20200724_HsvFrom3_a.png" alt="" title="" height="511" width="511">
+      <pre>HsvFrom3(ColorNoise(p1, p1 + o2, 0.2),
+         ColorNoise(p2, p2 + o2, 0.4),
+         Turbulence(p3, p3 + o3, black, white))</pre>
+      <img src="images/20200724_HsvFrom3_b.png" alt="" title="" height="511" width="511">
+    </div>
     <div class="post" id="20200722"> <a href="#20200722" class="date">July 22,
         2020</a>
       <h1><em>HsvBox</em> — probably not</h1>

@@ -614,4 +614,8 @@ void UnitTests::instantiateAllTextureTypes()
     do_thumbnail(RgbBox(0.2, 1, 0, 0.2, 0.2, 1, t1));
     do_thumbnail(CotsMap(p1, p2, p3, Vec2(-1, -1), white_cyan));
     do_thumbnail(Hyperbolic(p3, 1.5, 4, 2, black_red, white_cyan));
+    do_thumbnail(Affine(p3, p3 + Vec2(0.3, 0.3), white_cyan));
+    do_thumbnail(HueOnly(1, 1, AdjustBrightness(0.1, Add(white_cyan, white))));
+
+    std::cout << "Total thumbnails constructed: " << counter << std::endl;
 }

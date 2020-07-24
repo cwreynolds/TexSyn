@@ -3360,24 +3360,59 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Move operator methods from .h to .cpp -- July 23, 2020
-    std::cout << "July 23, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200723_";
+//    // Move operator methods from .h to .cpp -- July 23, 2020
+//    std::cout << "July 23, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200723_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Vec2 p1(0.1, 0.1);
+//    Vec2 p2(-0.1, -0.1);
+//
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 0.0, 0.5));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.5));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 0.4, 0.5));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 0.6, 0.5));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 0.8, 0.5));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 1.0, 0.5));
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//    // Experimental HsvFrom3 -- July 24, 2020
+//    std::cout << "July 24, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200724_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Uniform red(1, 0, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform blue(0, 0, 1);
+//    Vec2 p1;
+//    Vec2 p2(1, -3);
+//    Vec2 p3(-2, 4);
+//    Vec2 o1 = Vec2::randomUnitVector() * 0.1;
+//    Vec2 o2 = Vec2::randomUnitVector() * 0.2;
+//    Vec2 o3 = Vec2::randomUnitVector() * 0.3;
+//
+//    Texture::displayAndFile(HsvFrom3(ColorNoise(p1, p1 + o2, 0.4),
+//                                     ColorNoise(p2, p2 + o2, 0.8),
+//                                     Brownian(p3, p3 + o2, white, black))
+//                            );  // , path + "HsvFrom3_a");
+//    Texture::displayAndFile(HsvFrom3(ColorNoise(p1, p1 + o2, 0.2),
+//                                     ColorNoise(p2, p2 + o2, 0.4),
+//                                     Turbulence(p3, p3 + o3, black, white))
+//                            );  // , path + "HsvFrom3_b");
+//    Texture::displayAndFile(HsvFrom3(Grating(p1, red, p1 + o1, green, 1, 0.5),
+//                                     Wrapulence(p2, p2 + o3, blue, white),
+//                                     Turbulence(p3, p3 + o3, black, white))
+//                            );  // , path + "HsvFrom3_c");
+//    Texture::waitKey();
+
+//    UnitTests::instantiateAllTextureTypes();
+//    Texture::waitKey();
     
-    Uniform black(0);
-    Uniform white(1);
-    Vec2 p1(0.1, 0.1);
-    Vec2 p2(-0.1, -0.1);
-
-    Texture::displayAndFile(Grating(p1, black, p2, white, 0.0, 0.5));
-    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.5));
-    Texture::displayAndFile(Grating(p1, black, p2, white, 0.4, 0.5));
-    Texture::displayAndFile(Grating(p1, black, p2, white, 0.6, 0.5));
-    Texture::displayAndFile(Grating(p1, black, p2, white, 0.8, 0.5));
-    Texture::displayAndFile(Grating(p1, black, p2, white, 1.0, 0.5));
-
-    Texture::waitKey();
-
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
