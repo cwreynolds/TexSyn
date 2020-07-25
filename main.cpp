@@ -3415,6 +3415,46 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // Move operator methods from .h to .cpp -- July 25, 2020
+    std::cout << "July 25, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200725_";
+
+    Uniform black(0);
+    Uniform white(1);
+    Vec2 p1(0.1, 0.1);
+    Vec2 p2(-0.1, -0.1);
+
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 0.0, 0.5));
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.5));
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 0.4, 0.5));
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 0.6, 0.5));
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 0.8, 0.5));
+    //Texture::displayAndFile(Grating(p1, black, p2, white, 1.0, 0.5));
+
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.0));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.2));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.4));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.6));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 0.8));
+    Texture::displayAndFile(Grating(p1, black, p2, white, 0.2, 1.0));
+    
+    //auto foo = [&](float dc)
+    //{
+    //    Texture::diff(Grating (p1, black, p2, white, 0.2, dc),
+    //                  Grating2(p1, black, p2, white, 0.2, dc));
+    //};
+    //foo(0.0);
+    //foo(0.2);
+    //foo(0.4);
+    //foo(0.6);
+    //foo(0.8);
+    //foo(1.0);
+
+    
+    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     return EXIT_SUCCESS;
 }
 

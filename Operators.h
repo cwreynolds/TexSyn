@@ -126,26 +126,12 @@ public:
         float projection = basis.dot(offset);
         // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
         float unit_modulo = fmod_floor(projection, distance) / distance;
-        // Adjust for "duty cycle" then then for "soft-edge square wave".
-        float alpha = soft_square_wave(dutyCycle(unit_modulo), softness);
+        // Blend by soft_square_wave() unless degenerate "two point" transform.
+        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
         if (distance == 0) alpha = 0.5;
         return interpolatePointOnTextures(alpha,
                                           position, position,
                                           texture0, texture1);
-    }
-    // Adjust for duty_cycle. Modifies normalized cross-strip coordinate. For
-    // dc=0.5, color1 corresponds to the middle half, interval [0.25, 0.75].
-    // For dc=1 interval is [0, 1], for dc=0 interval is [0.5, 0.5].
-    float dutyCycle(float fraction) const
-    {
-        // offset phase by 0.25 aka 90° to put middle of raising edge at 0
-        auto offset_phase = [](float p, float o){return std::fmod(p + o, 1.0);};
-        float i = offset_phase(fraction, 0.25);
-        // Two linear ramps, from (0,0) to (dc,0.5), then (dc,0.5) to (1,1).
-        float result = ((i < duty_cycle) ?
-                        remapInterval(i,  0, duty_cycle,  0, 0.5) :
-                        remapInterval(i,  duty_cycle, 1,  0.5, 1));
-        return offset_phase(result, 0.75);
     }
     // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
     Grating(Vec2 a, Color b, Vec2 c, Color d, float e)

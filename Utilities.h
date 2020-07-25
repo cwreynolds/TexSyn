@@ -108,7 +108,8 @@ inline float sinusoid (float x)
 
 // Defines a "square wave with soft edges". Produces square wave when softness
 // is 0, a sinusoid when softness is 1, intermediate values interpolate between
-// the two. "fraction" on [0, 1] is the input, a normalized phase.
+// the two. "fraction" on [0, 1] is the input, a normalized phase parameter.
+// This is the symmetrical (duty_cycle=0.5) version, else see next function.
 inline float soft_square_wave(float fraction, float softness)
 {
     // Clip fraction to [0, 1].
@@ -124,6 +125,26 @@ inline float soft_square_wave(float fraction, float softness)
                                  remapIntervalClip(f, s, e, 0, 1));
     // Apply sinusoid to adjusted value.
     return sinusoid(adjust_for_softness);
+}
+
+// Version of soft_square_wave with one more parameter, "duty_cycle" on [0, 1]
+// to adjust the relative width of the high part to the low part. (Or vice
+// versa?) Basis of the Grating texture operator, where the comment used to say:
+//     Adjust for duty_cycle. Modifies normalized cross-strip coordinate. For
+//     dc=0.5, color1 corresponds to the middle half, interval [0.25, 0.75].
+//     For dc=1 interval is [0, 1], for dc=0 interval is [0.5, 0.5].
+inline float soft_square_wave(float fraction, float softness, float duty_cycle)
+{
+    auto offset_phase = [](float p, float o){return std::fmod(p + o, 1.0);};
+    // Offset phase by 0.25 aka 90° to put middle of raising edge at 0.
+    float alpha = offset_phase(fraction, 0.25);
+    // Two linear ramps, from (0,0) to (dc,0.5), then (dc,0.5) to (1,1).
+    float result = ((alpha < duty_cycle) ?
+                    remapInterval(alpha,  0, duty_cycle,  0, 0.5) :
+                    remapInterval(alpha,  duty_cycle, 1,  0.5, 1));
+    // Undo phase offset.
+    float fraction_adjusted_for_dc = offset_phase(result, 0.75);
+    return soft_square_wave(fraction_adjusted_for_dc, softness);
 }
 
 // This variation on fmod() is analogous to the difference between "rounding
