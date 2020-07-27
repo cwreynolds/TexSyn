@@ -489,6 +489,40 @@ bool interpolate_float_rounding()
     return ok;
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool two_point_transform()
+{
+//    float e = 0.0000000000001;
+
+    TwoPointTransform identity;
+    TwoPointTransform identity2(Vec2(0, 0), Vec2(1, 0));
+
+//    debugPrint(identity.scale() - 1);
+//    debugPrint(identity2.scale() - 1);
+//    debugPrint(identity2.scale() );
+
+    return (st(identity.scale() == 1) &&
+            st(identity2.scale() == 1) &&
+            st(identity.origin() == Vec2(0, 0)) &&
+            st(identity2.origin() == Vec2(0, 0)) &&
+            
+            st(identity.xBasis() == Vec2(1, 0)) &&
+            st(identity2.xBasis() == Vec2(1, 0)) &&
+            st(identity.xBasisUnit() == Vec2(1, 0)) &&
+            st(identity2.xBasisUnit() == Vec2(1, 0)) &&
+            st(identity.yBasis() == Vec2(0, 1)) &&
+            st(identity2.yBasis() == Vec2(0, 1)) &&
+            st(identity.yBasisUnit() == Vec2(0, 1)) &&
+            st(identity2.yBasisUnit() == Vec2(0, 1)) &&
+            
+            // non identity transforms
+            // localize/globalize
+            
+            true);
+
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Used only in UnitTests::allTestsOK()
 #define logAndTally(e)                       \
 {                                            \
@@ -525,6 +559,9 @@ bool UnitTests::allTestsOK()
     logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
     logAndTally(interpolate_float_rounding);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    logAndTally(two_point_transform);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
     std::cout << std::endl << std::endl;

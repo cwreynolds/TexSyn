@@ -99,6 +99,8 @@ private:
     const Texture& texture1;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // A grating of two alternating stripes each colored according to two given
 // input textures. Spacing and orientation is defined by two points. Stripes are
 // perpendicular to the segment between these two points. That segment's length
@@ -147,6 +149,60 @@ private:
     const float softness;
     const float duty_cycle;
 };
+
+// A grating of two alternating stripes each colored according to two given
+// input textures. Spacing and orientation is defined by two points. Stripes are
+// perpendicular to the segment between these two points. That segment's length
+// is the width (wavelength) of the stripe. The softness parameter varies from a
+// square wave at 0 and a sinusoid at 1. The duty_cycle parameter controls
+// relative width of sub-stripes, it is the ratio of the first color's stripes
+// to the stripe pair's total width.
+class Grating2 : public Texture
+{
+public:
+    Grating2(Vec2 point_0, const Texture& texture_0,
+            Vec2 point_1, const Texture& texture_1,
+            float softness_,
+            float duty_cycle_) :
+        transform(point_0, point_1),
+        texture0(texture_0),
+        texture1(texture_1),
+        origin(point_0),
+        distance((point_1 - point_0).length()),
+        basis((point_1 - point_0) / distance),
+        softness(clip(softness_, 0, 1)),
+        duty_cycle(clip(duty_cycle_, 0, 1)) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 offset = position - origin;
+        float projection = basis.dot(offset);
+        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
+        float unit_modulo = fmod_floor(projection, distance) / distance;
+        // Blend by soft_square_wave() unless degenerate "two point" transform.
+        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
+        if (distance == 0) alpha = 0.5;
+        return interpolatePointOnTextures(alpha,
+                                          position, position,
+                                          texture0, texture1);
+    }
+    // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
+    Grating2(Vec2 a, Color b, Vec2 c, Color d, float e)
+      : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
+    Grating2(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
+      : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
+private:
+    const TwoPointTransform transform;
+    const Vec2 origin;
+    const float distance;
+    const Vec2 basis;
+    const Texture& texture0;
+    const Texture& texture1;
+    const float softness;
+    const float duty_cycle;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 class SoftMatte : public Texture
 {

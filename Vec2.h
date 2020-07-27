@@ -125,3 +125,37 @@ bool withinEpsilon(Vec3 a, Vec3 b, float epsilon);
 
 // Serialize Vec2 object to stream.
 std::ostream& operator<<(std::ostream& os, const Vec3& v);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO prototype, this seems wrong place
+//      yes, wrote a note in DynaList, maybe put in own file.
+//
+// TODO oh but do we want a normalized basis or the original differene vector?
+
+class TwoPointTransform
+{
+public:
+    TwoPointTransform(){}
+    TwoPointTransform(Vec2 point_0, Vec2 point_1)
+      : scale_((point_1 - point_0).length()),
+        origin_(point_0),
+        x_basis_(point_1 - point_0),
+        y_basis_(xBasis().rotate90degCCW()),
+        x_basis_unit_(xBasis().normalize()),
+        y_basis_unit_(yBasis().normalize()) {}
+    float scale() const { return scale_; }
+    Vec2 origin() const { return origin_; }
+    Vec2 xBasis() const { return x_basis_; }
+    Vec2 yBasis() const { return y_basis_; }
+    Vec2 xBasisUnit() const { return x_basis_unit_; }
+    Vec2 yBasisUnit() const { return y_basis_unit_; }
+private:
+    const float scale_ = 1;
+    const Vec2 origin_ = Vec2(0, 0);
+    const Vec2 x_basis_ = Vec2(1, 0);
+    const Vec2 y_basis_ = Vec2(0, 1);
+    const Vec2 x_basis_unit_ = Vec2(1, 0);
+    const Vec2 y_basis_unit_ = Vec2(0, 1);
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
