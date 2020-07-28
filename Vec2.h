@@ -41,12 +41,14 @@ public:
     // 90° (π/2) rotation
     Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
     Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    // TODO--these "Old" versions are deprecated. Use TwoPointTransform instead.
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
     // "Localize" this Vec2 into a local space defined by x and y basis vectors.
-    Vec2 localize(Vec2 bx, Vec2 by) const { return Vec2(dot(bx), dot(by)); }
+    Vec2 localizeOld(Vec2 bx, Vec2 by) const {return Vec2(dot(bx), dot(by));}
     // "Globalize" this Vec2 from local space defined by x and y basis vectors.
-    // TODO This has not been tested. I cribbed localize() from OpenSteer, and
-    // TODO decided to write this while I had the file open. "Might" be right.
-    Vec2 globalize(Vec2 bx, Vec2 by) const { return (bx * x()) + (by * y()); }
+    Vec2 globalizeOld(Vec2 bx, Vec2 by) const {return (bx * x()) + (by * y());}
+    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
     // Compute a 32 bit hash value for a Vec2.
     size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
     // Angle of this vector with +Y axis.
@@ -128,10 +130,14 @@ std::ostream& operator<<(std::ostream& os, const Vec3& v);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO prototype, this seems wrong place
-//      yes, wrote a note in DynaList, maybe put in own file.
+// TODO     yes, wrote a note in DynaList, maybe put in own file.
 //
-// TODO oh but do we want a normalized basis or the original differene vector?
-
+// A 2d affine transformation providing scaling, rotation, and translation.
+// Normally constructed with "two point" specification (like a two finger
+// pinch-twist-drag interface on a touch screen). The first point is the origin
+// of the local space (0, 0), the second point is (1, 0) in the local space.
+// localize() transforms a point specified in global space to the corresponding
+// point specified in global space. globalize() goes from local to global.
 class TwoPointTransform
 {
 public:
@@ -149,31 +155,17 @@ public:
     Vec2 yBasis() const { return y_basis_; }
     Vec2 xBasisUnit() const { return x_basis_unit_; }
     Vec2 yBasisUnit() const { return y_basis_unit_; }
-    
-    
-    // TODO
-    // note: Vec2::localize() used only in classes Affine and Noise
-    
-    // "Localize" a Vec2 into this transform's "local space".
+    // "Localize" a Vec2 from global space into this transform's "local space".
     Vec2 localize(Vec2 v) const
     {
-        return (v - origin()).localize(xBasis() / sq(scale()),
-                                       yBasis() / sq(scale()));
+        return Vec2((v - origin()).dot(xBasis() / sq(scale())),
+                    (v - origin()).dot(yBasis() / sq(scale())));
     }
     // "Globalize" a Vec2 from this transform's "local space" to "global space".
     Vec2 globalize(Vec2 v) const
     {
-        return origin() + v.globalize(xBasis(), yBasis());
+        return origin() + (xBasis() * v.x()) + (yBasis() * v.y());
     }
-    
-    // TODO I want to move this code into TwoPointTransform class:
-
-//    // "Localize" this Vec2 into a local space defined by x and y basis vectors.
-//    Vec2 localize(Vec2 bx, Vec2 by) const { return Vec2(dot(bx), dot(by)); }
-//    // "Globalize" this Vec2 from local space defined by x and y basis vectors.
-//    // TODO This has not been tested. I cribbed localize() from OpenSteer, and
-//    // TODO decided to write this while I had the file open. "Might" be right.
-//    Vec2 globalize(Vec2 bx, Vec2 by) const { return (bx * x()) + (by * y()); }
 private:
     const float scale_ = 1;
     const Vec2 origin_ = Vec2(0, 0);

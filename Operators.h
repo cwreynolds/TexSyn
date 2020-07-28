@@ -406,7 +406,7 @@ public:
     {
         Vec2 moved = position - center;
         Vec2 scaled = moved / scale;
-        Vec2 rotated = scaled.localize(basis, basis.rotate90degCCW());
+        Vec2 rotated = scaled.localizeOld(basis, basis.rotate90degCCW());
         return rotated;
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
@@ -1645,7 +1645,7 @@ public:
     {
         Vec2 moved = position - center;
         Vec2 scaled = moved / scale;
-        Vec2 rotated = scaled.localize(basis, perp);
+        Vec2 rotated = scaled.localizeOld(basis, perp);
         return texture.getColor(rotated);
     }
 private:
