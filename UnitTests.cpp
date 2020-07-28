@@ -490,113 +490,35 @@ bool interpolate_float_rounding()
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    bool two_point_transform()
-//    {
-//    //    float e = 0.0000000000001;
-//    //    float e = 0.000000001;
-//    //    float e = 0.0000001;
-//        TwoPointTransform identity1;
-//        TwoPointTransform identity2(Vec2(0, 0), Vec2(1, 0));
-//
-//        Vec2 ao(-1, -2);
-//        Vec2 axb(3, 5);
-//        Vec2 ayb(-5, 3);
-//
-//    //    TwoPointTransform arbitrary(Vec2(-1, -2), Vec2(2, 3));
-//        TwoPointTransform arbitrary(ao, ao + axb);
-//
-//    //    debugPrint(arbitrary.scale());
-//    //    debugPrint(arbitrary.origin());
-//    //    debugPrint(arbitrary.xBasis());
-//    //    debugPrint(arbitrary.yBasis());
-//    //    debugPrint(arbitrary.xBasisUnit());
-//    //    debugPrint(arbitrary.yBasisUnit());
-//
-//        return (st(identity1.scale() == 1) &&
-//                st(identity2.scale() == 1) &&
-//                st(identity1.origin() == Vec2(0, 0)) &&
-//                st(identity2.origin() == Vec2(0, 0)) &&
-//
-//                st(identity1.xBasis() == Vec2(1, 0)) &&
-//                st(identity2.xBasis() == Vec2(1, 0)) &&
-//                st(identity1.yBasis() == Vec2(0, 1)) &&
-//                st(identity2.yBasis() == Vec2(0, 1)) &&
-//                st(identity1.xBasisUnit() == Vec2(1, 0)) &&
-//                st(identity2.xBasisUnit() == Vec2(1, 0)) &&
-//                st(identity1.yBasisUnit() == Vec2(0, 1)) &&
-//                st(identity2.yBasisUnit() == Vec2(0, 1)) &&
-//
-//
-//                /*
-//                 arbitrary.scale() = 5.83095
-//                 arbitrary.origin() = (-1, -2)
-//                 arbitrary.xBasis() = (3, 5)
-//                 arbitrary.yBasis() = (-5, 3)
-//                 arbitrary.xBasisUnit() = (0.514496, 0.857493)
-//                 arbitrary.yBasisUnit() = (-0.857493, 0.514496)
-//                 */
-//
-//    //            st(withinEpsilon(arbitrary.scale(), Vec2(3, 5).length(), e)) &&
-//    //            st(arbitrary.origin() == Vec2(-1, -2)) &&
-//    //            st(arbitrary.xBasis() == Vec2(3, 5)) &&
-//    //            st(arbitrary.yBasis() == Vec2(-5, 3)) &&
-//    //            st(withinEpsilon(arbitrary.xBasisUnit(),
-//    //                             Vec2(3, 5).normalize(), e)) &&
-//    //            st(withinEpsilon(arbitrary.yBasisUnit(),
-//    //                             Vec2(-5, 3).normalize(), e)) &&
-//
-//    //            Vec2 ao(-1, -2);
-//    //            Vec2 axb(3, 5);
-//    //            Vec2 ayb(-5, 3);
-//
-//    //            st(withinEpsilon(arbitrary.scale(), axb.length(), e)) &&
-//                st(arbitrary.scale() == axb.length()) &&
-//                st(arbitrary.origin() == ao) &&
-//                st(arbitrary.xBasis() == axb) &&
-//                st(arbitrary.yBasis() == ayb) &&
-//    //            st(withinEpsilon(arbitrary.xBasisUnit(), axb.normalize(), e)) &&
-//    //            st(withinEpsilon(arbitrary.yBasisUnit(), ayb.normalize(), e)) &&
-//                st(arbitrary.xBasisUnit() == axb.normalize()) &&
-//                st(arbitrary.yBasisUnit() == ayb.normalize()) &&
-//
-//
-//                // non identity transforms
-//                // localize/globalize
-//
-//                true);
-//
-//    }
-
 
 bool two_point_transform()
 {
-    float e = 0.0000001;
+    float e = 0.000001;
+    // Define identity transform two ways.
     TwoPointTransform identity;
     TwoPointTransform identity2(Vec2(0, 0), Vec2(1, 0));
-    Vec2 ao(-1, -2);
-    Vec2 axb(3, 5);
-    Vec2 ayb(-5, 3);
+    // Define an "arbitrary" transform.
+    Vec2 ao(-1, -2);     // global position of local space's origin
+    Vec2 axb(3, 5);      // basis vector along local space's x axis (1, 0).
+    Vec2 ayb = axb.rotate90degCCW(); // basis vector along y axis (0, 1)
+    Vec2 ahl(0.5, 0.5);  // (0.5, 0.5) in local space, which correponds to:
+    Vec2 ahg(-2, 2);     // (-2, 2) in global space
     TwoPointTransform arbitrary(ao, ao + axb);
-    
-    debugPrint(arbitrary.globalize(Vec2(0, 0)));
-    debugPrint(arbitrary.globalize(Vec2(1, 1)));
-    debugPrint(arbitrary.localize(Vec2(-2, 2)));
-    debugPrint(arbitrary.localize(Vec2(-3, 6)));
-
-    return (st(identity.scale() == 1) &&
+    return (// Test default constructor, identity transform.
+            st(identity.scale() == 1) &&
             st(identity.origin() == Vec2(0, 0)) &&
             st(identity.xBasis() == Vec2(1, 0)) &&
             st(identity.yBasis() == Vec2(0, 1)) &&
             st(identity.xBasisUnit() == Vec2(1, 0)) &&
             st(identity.yBasisUnit() == Vec2(0, 1)) &&
-            
+            // Test constructor with two point parameters, identity transform.
             st(identity2.scale() == 1) &&
             st(identity2.origin() == Vec2(0, 0)) &&
             st(identity2.xBasis() == Vec2(1, 0)) &&
             st(identity2.yBasis() == Vec2(0, 1)) &&
             st(identity2.xBasisUnit() == Vec2(1, 0)) &&
             st(identity2.yBasisUnit() == Vec2(0, 1)) &&
-
+            // Construct arbitrary transform with scale, rotation, and translate.
             st(arbitrary.scale() == axb.length()) &&
             st(arbitrary.origin() == ao) &&
             st(arbitrary.xBasis() == axb) &&
@@ -604,22 +526,19 @@ bool two_point_transform()
             st(arbitrary.xBasisUnit() == axb.normalize()) &&
             st(arbitrary.yBasisUnit() == ayb.normalize()) &&
 
-            // TODO localize/globalize
-            
+            // Test localize() and globalize() Vec2 operators.
+            st(identity.globalize(ao) == ao) &&
+            st(identity.localize(ao) == ao) &&
             st(arbitrary.globalize(Vec2(0, 0)) == ao) &&
             st(arbitrary.globalize(Vec2(1, 1)) == Vec2(-3, 6)) &&
-            
-/*
-            // TODO globalize() seems good, localize() broken?
+            st(arbitrary.globalize(Vec2(0, 1)) == Vec2(-6, 1)) &&
+            st(arbitrary.globalize(Vec2(1, 0)) == Vec2(2, 3)) &&
+            st(arbitrary.globalize(ahl) == ahg) &&
             st(arbitrary.localize(ao) == Vec2(0, 0)) &&
-//            st(arbitrary.localize(Vec2(-3, 6)) == Vec2(1, 1)) &&
-//            st(arbitrary.localize(Vec2(-2, 2)) == Vec2(0.5, 0.5)) &&
             st(withinEpsilon(arbitrary.localize(Vec2(-3, 6)), Vec2(1, 1), e)) &&
-            st(withinEpsilon(arbitrary.localize(Vec2(-2, 2)),
-                             Vec2(0.5, 0.5), e)) &&
-
-*/
-            
+            st(withinEpsilon(arbitrary.localize(Vec2(-6, 1)), Vec2(0, 1), e)) &&
+            st(withinEpsilon(arbitrary.localize(Vec2(2, 3)), Vec2(1, 0), e)) &&
+            st(withinEpsilon(arbitrary.localize(ahg), ahl, e)) &&
             true);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
