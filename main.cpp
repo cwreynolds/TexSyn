@@ -3466,11 +3466,16 @@ int main(int argc, const char * argv[])
     
 //    Texture::diff(Grating (p1, black, p2, white, 0.2, 0.8),
 //                  Grating2(p1, black, p2, white, 0.2, 0.8));
-//    Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
-//                  Grating2(p1, black, p2, white, 1.0, 0.8));
-//    
-//    Texture::waitKey();
-
+    
+/*
+    Texture::diff(Grating (p1, black, p1, white, 0.2, 0.8),
+                  Grating2(p1, black, p1, white, 0.2, 0.8));
+    Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
+                  Grating2(p1, black, p2, white, 1.0, 0.8));
+     
+     Texture::waitKey();
+*/
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
