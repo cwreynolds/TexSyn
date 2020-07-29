@@ -3464,17 +3464,12 @@ int main(int argc, const char * argv[])
     Vec2 p1(0.1, 0.1);
     Vec2 p2(-0.1, -0.1);
     
-//    Texture::diff(Grating (p1, black, p2, white, 0.2, 0.8),
-//                  Grating2(p1, black, p2, white, 0.2, 0.8));
-    
-/*
     Texture::diff(Grating (p1, black, p1, white, 0.2, 0.8),
                   Grating2(p1, black, p1, white, 0.2, 0.8));
     Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
                   Grating2(p1, black, p2, white, 1.0, 0.8));
      
      Texture::waitKey();
-*/
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

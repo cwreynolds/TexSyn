@@ -41,6 +41,7 @@
 		849FF57623A70EC2008B4326 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		849FF57D23A70F93008B4326 /* Texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		849FF57E23A70F93008B4326 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
+		84DE15B024D1C1A9005DCCE4 /* TwoPointTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoPointTransform.h; sourceTree = "<group>"; };
 		84F6BB3C23A85C1F00911365 /* UnitTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnitTests.cpp; sourceTree = "<group>"; };
 		84F6BB3D23A85C1F00911365 /* UnitTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitTests.h; sourceTree = "<group>"; };
 		84F6BB3F23A85E0A00911365 /* Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
@@ -76,6 +77,7 @@
 				84172B4323BBA26E00B866B6 /* Operators.cpp */,
 				849FF57E23A70F93008B4326 /* Texture.h */,
 				849FF57D23A70F93008B4326 /* Texture.cpp */,
+				84DE15B024D1C1A9005DCCE4 /* TwoPointTransform.h */,
 				84F6BB3D23A85C1F00911365 /* UnitTests.h */,
 				84F6BB3C23A85C1F00911365 /* UnitTests.cpp */,
 				84F6BB4023A85E0A00911365 /* Utilities.h */,

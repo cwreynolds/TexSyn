@@ -489,8 +489,6 @@ bool interpolate_float_rounding()
     return ok;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 bool two_point_transform()
 {
     float e = 0.000001;
@@ -541,7 +539,6 @@ bool two_point_transform()
             st(withinEpsilon(arbitrary.localize(ahg), ahl, e)) &&
             true);
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Used only in UnitTests::allTestsOK()
 #define logAndTally(e)                       \

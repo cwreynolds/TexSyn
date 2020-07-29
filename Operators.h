@@ -10,10 +10,11 @@
 #include "Texture.h"
 #include "Disk.h"
 #include "COTS.h"
+#include "TwoPointTransform.h"
 
 // Minimal texture, a uniform color everywhere on the texture plane. Its single
 // parameter is that color. As a convenience for hand written code, also can be
-// constructed from three RGB floats, or a single gray level float.
+// constructed from three RGB floats, or a single luminance (gray level) float.
 class Uniform : public Texture
 {
 public:
