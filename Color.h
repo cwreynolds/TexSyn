@@ -15,11 +15,9 @@ class Color
 {
 public:
     // Constructors:
-    Color(){};
+    Color() : Color(0, 0, 0) {};
+    Color(float gray) : Color(gray, gray, gray) {}
     Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
-    Color(const Color& color) : red_(color.r()),
-                                green_(color.green()),
-                                blue_(color.blue()) {}
     // assignment, set RGB components
     Color operator=(const Color& c)
     {
@@ -75,11 +73,10 @@ public:
     float r() const { return red_; }
     float g() const { return green_; }
     float b() const { return blue_; }
-    
 private:
-    float red_ = 0;
-    float green_ = 0;
-    float blue_ = 0;
+    float red_;
+    float green_;
+    float blue_;
 };
 
 // Is distance between RGB vectors no more than epsilon?

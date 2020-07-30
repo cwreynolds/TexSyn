@@ -35,7 +35,10 @@ void Texture::diff(const Texture& t0,
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);
     debugPrint(mismatch_count);
-    Texture::displayAndFile3(t0, t1, abs_diff, pathname, size);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Texture::displayAndFile3(t0, t1, abs_diff, pathname, size);
+    Texture::displayAndFile3(t0, t1, NotEqual(t0, t1), pathname, size);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This

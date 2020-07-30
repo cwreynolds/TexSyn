@@ -195,7 +195,7 @@ public:
 
     Color getColor(Vec2 position) const override
     {
-        Vec2 offset = position - transform.origin();
+//        Vec2 offset = position - transform.origin();
         
 //        float projection = transform.xBasisUnit().dot(offset);
 //        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
@@ -221,12 +221,51 @@ public:
 //    //        float unit_modulo = fmod_floor(projection / scale, scale);
 //            float unit_modulo = fmod_floor(projection, scale) / scale;
 
-        float projection = transform.xBasisUnit().dot(offset);
-        float scale = transform.scale();
-        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-        float unit_modulo = fmod_floor(projection, scale) / scale;
+//        float projection = transform.xBasisUnit().dot(offset);
+//        float scale = transform.scale();
+//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
+//        float unit_modulo = fmod_floor(projection, scale) / scale;
+//
+//        // Blend by soft_square_wave() unless degenerate "two point" transform.
+//        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
+//        if (transform.scale() == 0) alpha = 0.5;
+//        return interpolatePointOnTextures(alpha,
+//                                          position, position,
+//                                          texture0, texture1);
+        
+        
+//        float projection = transform.xBasisUnit().dot(offset);
+//        float scale = transform.scale();
+//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
+//        float unit_modulo = fmod_floor(projection, scale) / scale;
+        
+//        Vec2 inside = transform.localize(position);
+//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
+//        float unit_modulo = fmod_floor(inside.x(), 1);
+//
+//        // Blend by soft_square_wave() unless degenerate "two point" transform.
+//        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
+//        if (transform.scale() == 0) alpha = 0.5;
+//        return interpolatePointOnTextures(alpha,
+//                                          position, position,
+//                                          texture0, texture1);
 
-        // Blend by soft_square_wave() unless degenerate "two point" transform.
+//        float alpha = 0.5;
+//        if (transform.scale() != 0)
+//        {
+//            // Transform so vector from (0, 0) to (1, 0) exactly spans a stripe.
+//            Vec2 inside = transform.localize(position);
+//            // unit_modulo is normalized "cross stripe coordinate" on [0, 1]
+//            float unit_modulo = fmod_floor(inside.x(), 1);
+//            // Blend alpha is remapped by soft_square_wave().
+//            alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
+//        }
+
+        // Transform so vector from (0, 0) to (1, 0) exactly spans a stripe.
+        Vec2 inside = transform.localize(position);
+        // unit_modulo is normalized "cross stripe coordinate" on [0, 1]
+        float unit_modulo = fmod_floor(inside.x(), 1);
+        // Blend alpha is unit_modulo remapped by soft_square_wave().
         float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
         if (transform.scale() == 0) alpha = 0.5;
         return interpolatePointOnTextures(alpha,
@@ -373,6 +412,28 @@ private:
     const Texture& texture0;
     const Texture& texture1;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Like a binary version of AbsDiff, also to be used in Texture::diff(), texture
+// is black everywhere the two input textures have exactly equal RGB values, and
+// white where they are not equal.
+class NotEqual : public Texture
+{
+public:
+    NotEqual(const Texture& _texture0, const Texture& _texture1)
+      : texture0(_texture0), texture1(_texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color black(0);
+        Color white(1);
+        Color diff = texture0.getColor(position) - texture1.getColor(position);
+        return ((diff == black) ? black : white);
+    }
+private:
+    const Texture& texture0;
+    const Texture& texture1;
+};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
