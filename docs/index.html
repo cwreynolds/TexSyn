@@ -93,21 +93,36 @@
         differences. Here is the old (on left) new (center) and <em>AbsDiff</em>
         of the two (on right). The black <em>AbsDiff</em> image indicates they
         are visually identical, but about half of the pixels do not have
-        identical floating point gray values. The average error per unmatched
-        pixel is 1.55727e-07. That is, where black is 0 and white is 1, the
-        average error is 0.00000155727. That bothers my OCD, but I guess it is
-        less annoying than the code duplication.</p>
-      <pre>Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
+        identical floating point gray values. The average error per pixel is
+        1.55727e-07. That is, where black is 0 and white is 1, the average error
+        is 0.00000155727. That bothers my OCD, but I guess it is less annoying
+        than the original code duplication.</p>
+      <pre>p1 = Vec2(0.1, 0.1)
+p2 = Vec2(-0.1, -0.1)
+Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
               Grating2(p1, black, p2, white, 1.0, 0.8))</pre>
-      <img src="images/20200730_AbsDiff.png" alt="" title="" height="341" width="1023">
+      <img src="images/20200730_AbsDiff.png" alt="diff Grating before/after TwoPointTransform" title="diff Grating before/after TwoPointTransform" height="341" width="1023">
       <p>I added a new fifth optional parameter to <code>Texture::diff()</code>,
         a <code>bool</code> called <code>binary</code> which defaults to <code>false</code>.
         When <code>true</code>, the third texture in a diff is made with a new
         <em>NotEqual</em> texture operator which returns white where the two
         textures do not match and black where they do. This allows seeing where
         those tiny invisible numerical errors are:</p>
-      <img src="images/20200730_NotEqual.png" alt="" title="" height="341" width="1023">
-    </div>
+      <img src="images/20200730_NotEqual.png" alt="diff Grating before/after TwoPointTransform" title="diff Grating before/after TwoPointTransform" height="341" width="1023">
+      <p>Then I went on to the corresponding change to <em>Gradation</em>.
+        Again the result is very slightly different—4.16738e-08—less than a
+        millionth. Most display hardware only portrays 256 gray levels. As
+        before one diff() showing the visual difference, and one showing white
+        where the tiny differences occur.</p>
+      <pre>p3 = Vec2 p3(0.6, 0.6)
+p4 = Vec2(-0.6, -0.6)
+Texture::diff(Gradation (p3, black, p4, white),
+              Gradation2(p3, black, p4, white))</pre>
+      <img src="images/20200730_Gradation_AbsDiff.png" alt="diff Gradation before/after TwoPointTransform" title="diff Gradation before/after TwoPointTransform" height="341"
+        width="1023"> <br>
+      <br>
+      <img src="images/20200730_Gradation_NotEqual.png" alt="diff Gradation before/after TwoPointTransform" title="diff Gradation before/after TwoPointTransform" height="341"
+        width="1023"> </div>
     <div class="post" id="20200724"> <a href="#20200724" class="date">July 24,
         2020</a>
       <h1>How many texture operators are enough?</h1>

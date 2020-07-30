@@ -63,6 +63,8 @@ private:
     const Texture& outer_texture;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Gradation between two textures with arbitrary position, width, and
 // orientation. The arguments are two points, defining a line segment, and a
 // texture for each end. The gradation occurs along the line segment, a given
@@ -99,6 +101,35 @@ private:
     const Texture& texture0;
     const Texture& texture1;
 };
+
+class Gradation2 : public Texture
+{
+public:
+    Gradation2(Vec2 point_0, const Texture& texture_0,
+               Vec2 point_1, const Texture& texture_1)
+      : transform(point_0, point_1),
+        texture0(texture_0),
+        texture1(texture_1) {}
+    Color getColor(Vec2 position) const override
+    {
+        // Transform so vector from (0, 0) to (1, 0) spans transition region.
+        Vec2 inside = transform.localize(position);
+        return interpolatePointOnTextures((transform.scale() == 0 ?
+                                           0.5 :
+                                           sinusoid(clip01(inside.x()))),
+                                          position, position,
+                                          texture0, texture1);
+    }
+    // BACKWARD_COMPATIBILITY for version before inherent matting.
+    Gradation2(Vec2 a, Color b, Vec2 c, Color d)
+      : Gradation2(a, disposableUniform(b), c, disposableUniform(d)){}
+private:
+    const TwoPointTransform transform;
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -168,100 +199,11 @@ public:
         transform(point_0, point_1),
         texture0(texture_0),
         texture1(texture_1),
-//        origin(point_0),
-//        distance((point_1 - point_0).length()),
-//        basis((point_1 - point_0) / distance),
         softness(clip(softness_, 0, 1)),
         duty_cycle(clip(duty_cycle_, 0, 1)) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//    //        Vec2 offset = position - origin;
-//    //        float projection = basis.dot(offset);
-//            Vec2 offset = position - transform.origin();
-//            float projection = transform.xBasisUnit().dot(offset);
-//    //        float projection = transform.xBasis().dot(offset);
-//            // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//    //        float unit_modulo = fmod_floor(projection, distance) / distance;
-//            float unit_modulo = fmod_floor(projection, transform.scale()) / transform.scale();
-//    //        float unit_modulo = fmod_floor(projection, 1);
-//            // Blend by soft_square_wave() unless degenerate "two point" transform.
-//            float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
-//    //        if (distance == 0) alpha = 0.5;
-//            if (transform.scale() == 0) alpha = 0.5;
-//            return interpolatePointOnTextures(alpha,
-//                                              position, position,
-//                                              texture0, texture1);
-//        }
-
     Color getColor(Vec2 position) const override
     {
-//        Vec2 offset = position - transform.origin();
-        
-//        float projection = transform.xBasisUnit().dot(offset);
-//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//        float unit_modulo = fmod_floor(projection, transform.scale()) / transform.scale();
-        
-//            float projection = transform.xBasis().dot(offset);
-//            // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//    //        float unit_modulo = fmod_floor(projection, transform.scale()) / transform.scale();
-//    //        float unit_modulo = fmod_floor(projection, transform.scale());
-//    //        float unit_modulo = fmod_floor(projection / transform.scale(), 1);
-//            float unit_modulo = (fmod_floor(projection / transform.scale(), 1) /
-//                                 transform.scale());
-
-//        float projection = transform.xBasisUnit().dot(offset);
-//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//        float unit_modulo = (fmod_floor(projection, transform.scale()) /
-//                             transform.scale());
-
-//            float projection = transform.xBasis().dot(offset);
-//            float scale = transform.scale();
-//            // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//    //        float unit_modulo = fmod_floor(projection / sq(scale), 1);
-//    //        float unit_modulo = fmod_floor(projection / scale, scale);
-//            float unit_modulo = fmod_floor(projection, scale) / scale;
-
-//        float projection = transform.xBasisUnit().dot(offset);
-//        float scale = transform.scale();
-//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//        float unit_modulo = fmod_floor(projection, scale) / scale;
-//
-//        // Blend by soft_square_wave() unless degenerate "two point" transform.
-//        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
-//        if (transform.scale() == 0) alpha = 0.5;
-//        return interpolatePointOnTextures(alpha,
-//                                          position, position,
-//                                          texture0, texture1);
-        
-        
-//        float projection = transform.xBasisUnit().dot(offset);
-//        float scale = transform.scale();
-//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//        float unit_modulo = fmod_floor(projection, scale) / scale;
-        
-//        Vec2 inside = transform.localize(position);
-//        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-//        float unit_modulo = fmod_floor(inside.x(), 1);
-//
-//        // Blend by soft_square_wave() unless degenerate "two point" transform.
-//        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
-//        if (transform.scale() == 0) alpha = 0.5;
-//        return interpolatePointOnTextures(alpha,
-//                                          position, position,
-//                                          texture0, texture1);
-
-//        float alpha = 0.5;
-//        if (transform.scale() != 0)
-//        {
-//            // Transform so vector from (0, 0) to (1, 0) exactly spans a stripe.
-//            Vec2 inside = transform.localize(position);
-//            // unit_modulo is normalized "cross stripe coordinate" on [0, 1]
-//            float unit_modulo = fmod_floor(inside.x(), 1);
-//            // Blend alpha is remapped by soft_square_wave().
-//            alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
-//        }
-
-        // Transform so vector from (0, 0) to (1, 0) exactly spans a stripe.
+        // Transform so vector from (0, 0) to (1, 0) exactly spans one stripe.
         Vec2 inside = transform.localize(position);
         // unit_modulo is normalized "cross stripe coordinate" on [0, 1]
         float unit_modulo = fmod_floor(inside.x(), 1);
@@ -272,7 +214,6 @@ public:
                                           position, position,
                                           texture0, texture1);
     }
-
     // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
     Grating2(Vec2 a, Color b, Vec2 c, Color d, float e)
       : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
@@ -280,9 +221,6 @@ public:
       : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
 private:
     const TwoPointTransform transform;
-//    const Vec2 origin;
-//    const float distance;
-//    const Vec2 basis;
     const Texture& texture0;
     const Texture& texture1;
     const float softness;
@@ -413,7 +351,6 @@ private:
     const Texture& texture1;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Like a binary version of AbsDiff, also to be used in Texture::diff(), texture
 // is black everywhere the two input textures have exactly equal RGB values, and
 // white where they are not equal.
@@ -433,7 +370,6 @@ private:
     const Texture& texture0;
     const Texture& texture1;
 };
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h

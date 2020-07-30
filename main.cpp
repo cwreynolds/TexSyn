@@ -3463,7 +3463,9 @@ int main(int argc, const char * argv[])
     Uniform white(1);
     Vec2 p1(0.1, 0.1);
     Vec2 p2(-0.1, -0.1);
-    
+    Vec2 p3(0.6, 0.6);
+    Vec2 p4(-0.6, -0.6);
+
     Texture::diff(Grating (p1, black, p1, white, 0.2, 0.8),
                   Grating2(p1, black, p1, white, 0.2, 0.8));
     Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
@@ -3474,6 +3476,17 @@ int main(int argc, const char * argv[])
     Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
                   Grating2(p1, black, p2, white, 1.0, 0.8),
                   // path + "NotEqual", Texture::getDiffSize(), true);
+                  "", Texture::getDiffSize(), true);
+    
+    Texture::diff(Gradation (p3, black, p3, white),
+                  Gradation2(p3, black, p3, white));
+    Texture::diff(Gradation (p3, black, p4, white),
+                  Gradation2(p3, black, p4, white),
+                  // path + "Gradation_AbsDiff", Texture::getDiffSize(), false);
+                  "", Texture::getDiffSize(), false);
+    Texture::diff(Gradation (p3, black, p4, white),
+                  Gradation2(p3, black, p4, white),
+                  // path + "Gradation_NotEqual", Texture::getDiffSize(), true);
                   "", Texture::getDiffSize(), true);
 
     Texture::waitKey();
