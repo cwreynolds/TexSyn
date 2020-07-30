@@ -72,6 +72,42 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200730"> <a href="#20200730" class="date">July 30,
+        2020</a>
+      <h1>Boring software engineering: use <code>TwoPointTransform</code></h1>
+      <p>The “two point” specification for a general affine transform was used
+        in early members of this library, see <em>Gradation</em> and <em>Grating</em>
+        on <a href="#20200101">January 1</a>. This is the same idea used in
+        “two finger” pinch-twist-drag gestures in touch screen devices. On <a href="#20200531">May
+          31</a> I refactored several noise textures to more uniformly use
+        two-point transformations, and on <a href="#20200708">July 8</a>, the
+        generic<br>
+        <em>Affine</em> operator. As a result the code for “two point”
+        specification is duplicated around the operators. This <strong>really</strong>
+        bothered the software engineer in me. So I wrote a new general purpose <code>TwoPointTransform</code>
+        utility class to encapsulate this code. Now I have begun changing
+        texture operators to use it.</p>
+      <p><em>Grating</em> was first to be updated. Annoyingly the modified <em>Grating<strong>2</strong></em>
+        is ever-so-slightly different from the original version. I assume that
+        the order of floating point operations leads to tiny rounding
+        differences. Here is the old (on left) new (center) and <em>AbsDiff</em>
+        of the two (on right). The black <em>AbsDiff</em> image indicates they
+        are visually identical, but about half of the pixels do not have
+        identical floating point gray values. The average error per unmatched
+        pixel is 1.55727e-07. That is, where black is 0 and white is 1, the
+        average error is 0.00000155727. That bothers my OCD, but I guess it is
+        less annoying than the code duplication.</p>
+      <pre>Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
+              Grating2(p1, black, p2, white, 1.0, 0.8))</pre>
+      <img src="images/20200730_AbsDiff.png" alt="" title="" height="341" width="1023">
+      <p>I added a new fifth optional parameter to <code>Texture::diff()</code>,
+        a <code>bool</code> called <code>binary</code> which defaults to <code>false</code>.
+        When <code>true</code>, the third texture in a diff is made with a new
+        <em>NotEqual</em> texture operator which returns white where the two
+        textures do not match and black where they do. This allows seeing where
+        those tiny invisible numerical errors are:</p>
+      <img src="images/20200730_NotEqual.png" alt="" title="" height="341" width="1023">
+    </div>
     <div class="post" id="20200724"> <a href="#20200724" class="date">July 24,
         2020</a>
       <h1>How many texture operators are enough?</h1>

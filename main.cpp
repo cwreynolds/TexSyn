@@ -3455,9 +3455,9 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // TwoPointTransform -- July 26, 2020
-    std::cout << "July 26, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200726_";
+    // TwoPointTransform -- July 30, 2020
+    std::cout << "July 30, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200730_";
 
     Uniform black(0);
     Uniform white(1);
@@ -3467,9 +3467,16 @@ int main(int argc, const char * argv[])
     Texture::diff(Grating (p1, black, p1, white, 0.2, 0.8),
                   Grating2(p1, black, p1, white, 0.2, 0.8));
     Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
-                  Grating2(p1, black, p2, white, 1.0, 0.8));
-     
-     Texture::waitKey();
+                  Grating2(p1, black, p2, white, 1.0, 0.8),
+                  // path + "AbsDiff", Texture::getDiffSize(), false);
+                  "", Texture::getDiffSize(), false);
+
+    Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
+                  Grating2(p1, black, p2, white, 1.0, 0.8),
+                  // path + "NotEqual", Texture::getDiffSize(), true);
+                  "", Texture::getDiffSize(), true);
+
+    Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

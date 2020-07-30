@@ -92,7 +92,10 @@ public:
     // Special utility for Texture::diff() maybe refactor to be more general?
     // Compare textures, print stats, optional file, display inputs and AbsDiff.
     static void diff(const Texture& t0, const Texture& t1,
-                     std::string pathname, int size);
+                     std::string pathname, int size, bool binary);
+    static void diff(const Texture& t0, const Texture& t1,
+                     std::string pathname, int size)
+        { diff(t0, t1, pathname, getDiffSize(), false); }
     static void diff(const Texture& t0, const Texture& t1, std::string pathname)
         { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)

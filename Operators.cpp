@@ -17,7 +17,8 @@
 void Texture::diff(const Texture& t0,
                    const Texture& t1,
                    std::string pathname,
-                   int size)
+                   int size,
+                   bool binary)
 {
     AbsDiff abs_diff(t0, t1);
     int pixel_count = 0;
@@ -35,10 +36,11 @@ void Texture::diff(const Texture& t0,
     debugPrint(total_color);
     debugPrint(total_color / pixel_count);
     debugPrint(mismatch_count);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Texture::displayAndFile3(t0, t1, abs_diff, pathname, size);
-    Texture::displayAndFile3(t0, t1, NotEqual(t0, t1), pathname, size);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    NotEqual not_equal(t0, t1);
+    const Texture* compare = (binary ?
+                              (Texture*)(&not_equal) :
+                              (Texture*)(&abs_diff));
+    Texture::displayAndFile3(t0, t1, *compare, pathname, size);
 }
 
 // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
