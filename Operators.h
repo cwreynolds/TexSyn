@@ -371,6 +371,8 @@ private:
     const Texture& texture1;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
 class Noise : public Texture
@@ -420,6 +422,49 @@ private:
     const Texture& texture0;
     const Texture& texture1;
 };
+
+
+class Noise2 : public Texture
+{
+public:
+    Noise2(Vec2 point_0,
+          Vec2 point_1,
+          const Texture& texture_0,
+          const Texture& texture_1)
+      : transform(point_0, point_1),
+        texture0(texture_0),
+        texture1(texture_1) {}
+    Color getColor(Vec2 position) const override
+    {
+        float blend = getScalerNoise(transformIntoNoiseSpace(position));
+        return interpolatePointOnTextures(transform.scale() == 0 ? 0.5 : blend,
+                                          position, position,
+                                          texture0, texture1);
+    }
+    // Get scalar noise fraction on [0, 1] for the given transformed position.
+    // Overridden by other noise-based textures to customize basic behavior.
+    virtual float getScalerNoise(Vec2 transformed_position) const
+    {
+        return PerlinNoise::unitNoise2d(transformed_position);
+    }
+    // Transform a point from texture space into noise space.
+    Vec2 transformIntoNoiseSpace(Vec2 position) const
+    {
+        return transform.localize(position);
+    }
+    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+    Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Noise2(b, b + Vec2(a, 0), c, d) {};
+    // BACKWARD_COMPATIBILITY with version before inherent matting.
+    Noise2(float a, Vec2 b, Color c, Color d)
+      : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+private:
+    const TwoPointTransform transform;
+    const Texture& texture0;
+    const Texture& texture1;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Brownian Noise -- multi octave fractal 1/f Perlin Noise
 class Brownian : public Noise
@@ -1626,6 +1671,8 @@ private:
     const Texture& background_texture;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Simple "affine transformation" parameterized by the "two point" specification
 // used by several other operators. Its result is the combination of a scale,
 // rotation, and traslation of the input texture. The two-point specification
@@ -1653,6 +1700,24 @@ private:
     const Vec2 perp;
     const Texture& texture;
 };
+
+class Affine2 : public Texture
+{
+public:
+    Affine2(Vec2 point_0, Vec2 point_1, const Texture& texture)
+      : transform(point_0, point_1), texture(texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 inside = transform.localize(position);
+        return texture.getColor(transform.scale() == 0 ? position : inside);
+    }
+private:
+    const TwoPointTransform transform;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // For each point in the input texture, HueOnly keeps only the hue information
 // from its input texture. It replaces the other two HSV components, saturation

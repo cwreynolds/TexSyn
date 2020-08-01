@@ -72,6 +72,39 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200731"> <a href="#20200731" class="date">July 31,
+        2020</a>
+      <h1>More boring: <em>Noise</em> and <em>Affine</em> get <code>TwoPointTransform</code></h1>
+      <p>Refactoring <em>Noise</em> to use the new <code>TwoPointTransform</code>
+        class, completely analogous to <em>Grating</em> and <em>Gradation</em>
+        <a href="#20200730">yesterday</a>. Because <em>Noise</em> is the base
+        class for all other Perlin noise related operators, they all inherit the
+        same change. As before, showing the visual different between old and
+        new—average error was 1.606e-07—and the binary version showing were
+        mismatches occur.</p>
+      <pre>Texture::diff(Noise (p4, p5, black, white),
+              Noise2(p4, p5, black, white))</pre>
+      <img src="images/20200730_Noise_AbsDiff.png" alt="diff Noise before/after TwoPointTransform"
+        title="diff Noise before/after TwoPointTransform" height="341" width="1023">
+      <br>
+      <br>
+      <img src="images/20200730_Noise_NotEqual.png" alt="diff Noise before/after TwoPointTransform"
+        title="diff Noise before/after TwoPointTransform" height="341" width="1023">
+      <p>Making the fix for <em>Affine</em> had one surprise. I found that it
+        had not previously handled the case for a degenerate “scale=0”
+        transform. This occurs when the two point specifying the transform are
+        identical. In the old version, each color of the texture contained <strong>nan</strong>
+        RGB values. Now in that case <em>Affine</em> uses an identity
+        transform. The average error per pixel in this case was 5.53341e-09.</p>
+      <pre>Texture::diff(Affine (p1, p2, spot),
+              Affine2(p1, p2, spot))</pre>
+      <img src="images/20200730_Affine_AbsDiff.png" alt="diff Affine before/after TwoPointTransform"
+        title="diff Affine before/after TwoPointTransform" height="341" width="1023">
+      <br>
+      <br>
+      <img src="images/20200730_Affine_NotEqual.png" alt="diff Affine before/after TwoPointTransform"
+        title="diff Affine before/after TwoPointTransform" height="341" width="1023">
+    </div>
     <div class="post" id="20200730"> <a href="#20200730" class="date">July 30,
         2020</a>
       <h1>Boring software engineering: use <code>TwoPointTransform</code></h1>
@@ -101,14 +134,16 @@
 p2 = Vec2(-0.1, -0.1)
 Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
               Grating2(p1, black, p2, white, 1.0, 0.8))</pre>
-      <img src="images/20200730_AbsDiff.png" alt="diff Grating before/after TwoPointTransform" title="diff Grating before/after TwoPointTransform" height="341" width="1023">
+      <img src="images/20200730_AbsDiff.png" alt="diff Grating before/after TwoPointTransform"
+        title="diff Grating before/after TwoPointTransform" height="341" width="1023">
       <p>I added a new fifth optional parameter to <code>Texture::diff()</code>,
         a <code>bool</code> called <code>binary</code> which defaults to <code>false</code>.
         When <code>true</code>, the third texture in a diff is made with a new
         <em>NotEqual</em> texture operator which returns white where the two
         textures do not match and black where they do. This allows seeing where
         those tiny invisible numerical errors are:</p>
-      <img src="images/20200730_NotEqual.png" alt="diff Grating before/after TwoPointTransform" title="diff Grating before/after TwoPointTransform" height="341" width="1023">
+      <img src="images/20200730_NotEqual.png" alt="diff Grating before/after TwoPointTransform"
+        title="diff Grating before/after TwoPointTransform" height="341" width="1023">
       <p>Then I went on to the corresponding change to <em>Gradation</em>.
         Again the result is very slightly different—4.16738e-08—less than a
         millionth. Most display hardware only portrays 256 gray levels. As
@@ -118,11 +153,13 @@ Texture::diff(Grating (p1, black, p2, white, 1.0, 0.8),
 p4 = Vec2(-0.6, -0.6)
 Texture::diff(Gradation (p3, black, p4, white),
               Gradation2(p3, black, p4, white))</pre>
-      <img src="images/20200730_Gradation_AbsDiff.png" alt="diff Gradation before/after TwoPointTransform" title="diff Gradation before/after TwoPointTransform" height="341"
-        width="1023"> <br>
+      <img src="images/20200730_Gradation_AbsDiff.png" alt="diff Gradation before/after TwoPointTransform"
+        title="diff Gradation before/after TwoPointTransform" height="341" width="1023">
       <br>
-      <img src="images/20200730_Gradation_NotEqual.png" alt="diff Gradation before/after TwoPointTransform" title="diff Gradation before/after TwoPointTransform" height="341"
-        width="1023"> </div>
+      <br>
+      <img src="images/20200730_Gradation_NotEqual.png" alt="diff Gradation before/after TwoPointTransform"
+        title="diff Gradation before/after TwoPointTransform" height="341" width="1023">
+    </div>
     <div class="post" id="20200724"> <a href="#20200724" class="date">July 24,
         2020</a>
       <h1>How many texture operators are enough?</h1>
