@@ -63,8 +63,6 @@ private:
     const Texture& outer_texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Gradation between two textures with arbitrary position, width, and
 // orientation. The arguments are two points, defining a line segment, and a
 // texture for each end. The gradation occurs along the line segment, a given
@@ -73,40 +71,8 @@ private:
 class Gradation : public Texture
 {
 public:
-        Gradation(Vec2 point_0, const Texture& texture_0,
-                  Vec2 point_1, const Texture& texture_1) :
-            texture0(texture_0),
-            texture1(texture_1),
-        origin(point_0),
-        distance((point_1 - point_0).length()),
-        basis((point_1 - point_0) / distance) {}
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 offset = position - origin;
-        float projection = basis.dot(offset);
-        float relative = remapIntervalClip(projection, 0, distance, 0, 1);
-        return interpolatePointOnTextures(sinusoid(relative),
-                                          position,
-                                          position,
-                                          texture0,
-                                          texture1);
-    }
-    // BACKWARD_COMPATIBILITY for version before inherent matting.
-    Gradation(Vec2 a, Color b, Vec2 c, Color d)
-      : Gradation(a, disposableUniform(b), c, disposableUniform(d)){}
-private:
-    const Vec2 origin;
-    const float distance;
-    const Vec2 basis;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-class Gradation2 : public Texture
-{
-public:
-    Gradation2(Vec2 point_0, const Texture& texture_0,
-               Vec2 point_1, const Texture& texture_1)
+    Gradation(Vec2 point_0, const Texture& texture_0,
+              Vec2 point_1, const Texture& texture_1)
       : transform(point_0, point_1),
         texture0(texture_0),
         texture1(texture_1) {}
@@ -114,24 +80,19 @@ public:
     {
         // Transform so vector from (0, 0) to (1, 0) spans transition region.
         Vec2 inside = transform.localize(position);
-        return interpolatePointOnTextures((transform.scale() == 0 ?
-                                           0.5 :
+        return interpolatePointOnTextures((transform.scale() == 0 ? 0.5 :
                                            sinusoid(clip01(inside.x()))),
                                           position, position,
                                           texture0, texture1);
     }
     // BACKWARD_COMPATIBILITY for version before inherent matting.
-    Gradation2(Vec2 a, Color b, Vec2 c, Color d)
-      : Gradation2(a, disposableUniform(b), c, disposableUniform(d)){}
+    Gradation(Vec2 a, Color b, Vec2 c, Color d)
+      : Gradation(a, disposableUniform(b), c, disposableUniform(d)){}
 private:
     const TwoPointTransform transform;
     const Texture& texture0;
     const Texture& texture1;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // A grating of two alternating stripes each colored according to two given
 // input textures. Spacing and orientation is defined by two points. Stripes are
@@ -144,55 +105,6 @@ class Grating : public Texture
 {
 public:
     Grating(Vec2 point_0, const Texture& texture_0,
-            Vec2 point_1, const Texture& texture_1,
-            float softness_,
-            float duty_cycle_) :
-        texture0(texture_0),
-        texture1(texture_1),
-        origin(point_0),
-        distance((point_1 - point_0).length()),
-        basis((point_1 - point_0) / distance),
-        softness(clip(softness_, 0, 1)),
-        duty_cycle(clip(duty_cycle_, 0, 1)) {}
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 offset = position - origin;
-        float projection = basis.dot(offset);
-        // unit_modulo is the normalized "cross stripe coordinate" on [0, 1]
-        float unit_modulo = fmod_floor(projection, distance) / distance;
-        // Blend by soft_square_wave() unless degenerate "two point" transform.
-        float alpha = soft_square_wave(unit_modulo, softness, duty_cycle);
-        if (distance == 0) alpha = 0.5;
-        return interpolatePointOnTextures(alpha,
-                                          position, position,
-                                          texture0, texture1);
-    }
-    // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
-    Grating(Vec2 a, Color b, Vec2 c, Color d, float e)
-      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
-    Grating(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
-      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
-private:
-    const Vec2 origin;
-    const float distance;
-    const Vec2 basis;
-    const Texture& texture0;
-    const Texture& texture1;
-    const float softness;
-    const float duty_cycle;
-};
-
-// A grating of two alternating stripes each colored according to two given
-// input textures. Spacing and orientation is defined by two points. Stripes are
-// perpendicular to the segment between these two points. That segment's length
-// is the width (wavelength) of the stripe. The softness parameter varies from a
-// square wave at 0 and a sinusoid at 1. The duty_cycle parameter controls
-// relative width of sub-stripes, it is the ratio of the first color's stripes
-// to the stripe pair's total width.
-class Grating2 : public Texture
-{
-public:
-    Grating2(Vec2 point_0, const Texture& texture_0,
             Vec2 point_1, const Texture& texture_1,
             float softness_,
             float duty_cycle_) :
@@ -215,10 +127,10 @@ public:
                                           texture0, texture1);
     }
     // BACKWARD_COMPATIBILITY with version before duty_cycle, inherent matting.
-    Grating2(Vec2 a, Color b, Vec2 c, Color d, float e)
-      : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
-    Grating2(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
-      : Grating2(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
+    Grating(Vec2 a, Color b, Vec2 c, Color d, float e)
+      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, 0.5) {}
+    Grating(Vec2 a, Color b, Vec2 c, Color d, float e, float f)
+      : Grating(a, disposableUniform(b), c, disposableUniform(d), e, f) {}
 private:
     const TwoPointTransform transform;
     const Texture& texture0;
@@ -226,9 +138,6 @@ private:
     const float softness;
     const float duty_cycle;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 class SoftMatte : public Texture
 {
@@ -371,63 +280,12 @@ private:
     const Texture& texture1;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This and other noise textures below use PerlinNoise package in Utilities.h
 class Noise : public Texture
 {
 public:
     Noise(Vec2 point_0,
-          Vec2 point_1,
-          const Texture& texture_0,
-          const Texture& texture_1)
-      : scale((point_1 - point_0).length()),
-        basis((point_1 - point_0).normalize()),
-        center (point_0),
-        texture0(texture_0),
-        texture1(texture_1) {}
-    Color getColor(Vec2 position) const override
-    {
-        float blend = getScalerNoise(transformIntoNoiseSpace(position));
-        if (scale == 0) blend = 0.5;
-        return interpolatePointOnTextures(blend,
-                                          position, position,
-                                          texture0, texture1);
-    }
-    // Get scalar noise fraction on [0, 1] for the given transformed position.
-    // Overridden by other noise-based textures to customize basic behavior.
-    virtual float getScalerNoise(Vec2 transformed_position) const
-    {
-        return PerlinNoise::unitNoise2d(transformed_position);
-    }
-    // Transform a point from texture space into noise space.
-    Vec2 transformIntoNoiseSpace(Vec2 position) const
-    {
-        Vec2 moved = position - center;
-        Vec2 scaled = moved / scale;
-        Vec2 rotated = scaled.localizeOld(basis, basis.rotate90degCCW());
-        return rotated;
-    }
-    // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Noise(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Noise(b, b + Vec2(a, 0), c, d) {};
-    // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Noise(float a, Vec2 b, Color c, Color d)
-      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
-private:
-    const float scale;
-    const Vec2 center;
-    const Vec2 basis;
-    const Texture& texture0;
-    const Texture& texture1;
-};
-
-
-class Noise2 : public Texture
-{
-public:
-    Noise2(Vec2 point_0,
           Vec2 point_1,
           const Texture& texture_0,
           const Texture& texture_1)
@@ -453,18 +311,16 @@ public:
         return transform.localize(position);
     }
     // BACKWARD_COMPATIBILITY with version before "two point" specification.
-    Noise2(float a, Vec2 b, const Texture& c, const Texture& d)
-      : Noise2(b, b + Vec2(a, 0), c, d) {};
+    Noise(float a, Vec2 b, const Texture& c, const Texture& d)
+      : Noise(b, b + Vec2(a, 0), c, d) {};
     // BACKWARD_COMPATIBILITY with version before inherent matting.
-    Noise2(float a, Vec2 b, Color c, Color d)
-      : Noise2(a, b, disposableUniform(c), disposableUniform(d)) {}
+    Noise(float a, Vec2 b, Color c, Color d)
+      : Noise(a, b, disposableUniform(c), disposableUniform(d)) {}
 private:
     const TwoPointTransform transform;
     const Texture& texture0;
     const Texture& texture1;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Brownian Noise -- multi octave fractal 1/f Perlin Noise
 class Brownian : public Noise
@@ -1671,8 +1527,6 @@ private:
     const Texture& background_texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Simple "affine transformation" parameterized by the "two point" specification
 // used by several other operators. Its result is the combination of a scale,
 // rotation, and traslation of the input texture. The two-point specification
@@ -1681,30 +1535,6 @@ class Affine : public Texture
 {
 public:
     Affine(Vec2 point_0, Vec2 point_1, const Texture& texture)
-      : scale((point_1 - point_0).length()),
-        basis((point_1 - point_0).normalize()),
-        perp(basis.rotate90degCCW()),
-        center (point_0),
-        texture(texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 moved = position - center;
-        Vec2 scaled = moved / scale;
-        Vec2 rotated = scaled.localizeOld(basis, perp);
-        return texture.getColor(rotated);
-    }
-private:
-    const float scale;
-    const Vec2 center;
-    const Vec2 basis;
-    const Vec2 perp;
-    const Texture& texture;
-};
-
-class Affine2 : public Texture
-{
-public:
-    Affine2(Vec2 point_0, Vec2 point_1, const Texture& texture)
       : transform(point_0, point_1), texture(texture) {}
     Color getColor(Vec2 position) const override
     {
@@ -1715,9 +1545,6 @@ private:
     const TwoPointTransform transform;
     const Texture& texture;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // For each point in the input texture, HueOnly keeps only the hue information
 // from its input texture. It replaces the other two HSV components, saturation

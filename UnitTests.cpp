@@ -576,9 +576,7 @@ bool UnitTests::allTestsOK()
     logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
     logAndTally(interpolate_float_rounding);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     logAndTally(two_point_transform);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << std::endl;
     std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
     std::cout << std::endl << std::endl;

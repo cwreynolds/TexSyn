@@ -3493,49 +3493,57 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // TwoPointTransform part 2 -- July 31, 2020
-    std::cout << "July 31, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200731_";
-    
-    Uniform black(0);
-    Uniform white(1);
-    Vec2 p1(0.1, 0.1);
-    Vec2 p2(-0.1, -0.1);
-    Vec2 p3(0.6, 0.6);
-    Vec2 p4(-0.6, -0.6);
-    Vec2 p5(-0.56, -0.52);
-
-    
-    Texture::diff(Noise (p4, p4, black, white),
-                  Noise2(p4, p4, black, white));
-    Texture::diff(Noise (p4, p5, black, white),
-                  Noise2(p4, p5, black, white),
-                  // path + "Noise_AbsDiff", Texture::getDiffSize(), false);
-                  "", Texture::getDiffSize(), false);
-    Texture::diff(Noise (p4, p5, black, white),
-                  Noise2(p4, p5, black, white),
-                  // path + "Noise_NotEqual", Texture::getDiffSize(), true);
-                  "", Texture::getDiffSize(), true);
-
-    Uniform gray(0.5);
-    Gradation gg0(Vec2(-0.1, 0), black, Vec2(0.1, 0), gray);
-    Gradation gg1(Vec2(0, -0.1), black, Vec2(0, 0.1), gray);
-    Add gg(gg0, gg1);
-    Spot spot(Vec2(0.4, 0.4), 0.18, black, 0.2, gg);
-    
-    // TODO OH, looks like a bug in current Affine for scale=0 transform.
-    Texture::diff(Affine (p1, p1, spot),
-                  Affine2(p1, p1, spot));
-    Texture::diff(Affine (p1, p2, spot),
-                  Affine2(p1, p2, spot),
-                  // path + "Affine_AbsDiff", Texture::getDiffSize(), false);
-                  "", Texture::getDiffSize(), false);
-    Texture::diff(Affine (p1, p2, spot),
-                  Affine2(p1, p2, spot),
-                  // path + "Affine_NotEqual", Texture::getDiffSize(), true);
-                  "", Texture::getDiffSize(), true);
-
-    Texture::waitKey();
+//    // TwoPointTransform part 2 -- July 31, 2020
+//    std::cout << "July 31, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200731_";
+//
+//    Uniform black(0);
+//    Uniform white(1);
+//    Vec2 p1(0.1, 0.1);
+//    Vec2 p2(-0.1, -0.1);
+//    Vec2 p3(0.6, 0.6);
+//    Vec2 p4(-0.6, -0.6);
+//    Vec2 p5(-0.56, -0.52);
+//
+//    Texture::diff(Noise (p4, p4, black, white),
+//                  Noise2(p4, p4, black, white));
+//    Texture::diff(Noise (p4, p5, black, white),
+//                  Noise2(p4, p5, black, white),
+//                  // path + "Noise_AbsDiff", Texture::getDiffSize(), false);
+//                  "", Texture::getDiffSize(), false);
+//    Texture::diff(Noise (p4, p5, black, white),
+//                  Noise2(p4, p5, black, white),
+//                  // path + "Noise_NotEqual", Texture::getDiffSize(), true);
+//                  "", Texture::getDiffSize(), true);
+//
+//    Uniform gray(0.5);
+//    Gradation gg0(Vec2(-0.1, 0), black, Vec2(0.1, 0), gray);
+//    Gradation gg1(Vec2(0, -0.1), black, Vec2(0, 0.1), gray);
+//    Add gg(gg0, gg1);
+//    Spot spot(Vec2(0.4, 0.4), 0.18, black, 0.2, gg);
+//
+//    // TODO OH, looks like a bug in current Affine for scale=0 transform.
+//    Texture::diff(Affine (p1, p1, spot),
+//                  Affine2(p1, p1, spot));
+//    Texture::diff(Affine (p1, p2, spot),
+//                  Affine2(p1, p2, spot),
+//                  // path + "Affine_AbsDiff", Texture::getDiffSize(), false);
+//                  "", Texture::getDiffSize(), false);
+//    Texture::diff(Affine (p1, p2, spot),
+//                  Affine2(p1, p2, spot),
+//                  // path + "Affine_NotEqual", Texture::getDiffSize(), true);
+//                  "", Texture::getDiffSize(), true);
+//
+//    Texture::displayAndFile(Grating(p1, black, p1, white, 1.0, 0.8));
+//    Texture::displayAndFile(Grating(p1, black, p2, white, 1.0, 0.8));
+//    Texture::displayAndFile(Gradation(p3, black, p3, white));
+//    Texture::displayAndFile(Gradation(p3, black, p4, white));
+//    Texture::displayAndFile(Noise(p4, p4, black, white));
+//    Texture::displayAndFile(Noise(p4, p5, black, white));
+//    Texture::displayAndFile(Affine(p1, p1, spot));
+//    Texture::displayAndFile(Affine(p1, p2, spot));
+//
+//    Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
