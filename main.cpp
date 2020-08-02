@@ -3546,6 +3546,23 @@ int main(int argc, const char * argv[])
 //    Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // clean up gamma, remove Texture::deGamma()/reGamma() -- August 2, 2020
+    std::cout << "August 2, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200802_";
+    
+    Uniform red(1, 0, 0);
+    Uniform green(0, 1, 0);
+    Uniform magenta(1, 0, 1);
+    //Texture::sqrt_of_aa_subsample_count = 2;
+    Texture::displayAndFile(Spot(Vec2(0.5, 0),
+                                 0.1, red,
+                                 0.5, Spot(Vec2(-0.5, 0),
+                                           0.1, magenta,
+                                           0.5, green)));
+    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
 }

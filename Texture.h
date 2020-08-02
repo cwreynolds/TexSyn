@@ -65,11 +65,6 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
-    // Convert Color from normal "gamma-ed" space to temporary "linear" space.
-    Color deGamma(Color c) const { return c.gamma(defaultGamma()); }
-    float deGamma(float f) const { return pow(f, defaultGamma()); }
-    // Convert Color from temporary "linear" space to normal "gamma-ed" space.
-    Color reGamma(Color c) const { return c.gamma(1 / defaultGamma()); }
     // Utilities for rasterizing a Texture to tiling of pixels, with versions
     // for a square and a disk of pixels. Each require a "size" (width of the
     // square or diameter of the disk) and a function to be applied at each

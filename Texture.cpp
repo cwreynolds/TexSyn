@@ -111,9 +111,9 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     {
         // Read TexSyn Color from Texture at (i, j).
         Color color(0, 0, 0);
+        Vec2 pixel_center = Vec2(i, j) / half;
         if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
         {
-            Vec2 pixel_center = Vec2(i, j) / half;
             float pixel_radius = 2.0 / size;
             std::vector<Vec2> offsets;
             RandomSequence rs(pixel_center.hash());
@@ -121,12 +121,14 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                         pixel_radius * 2, rs, offsets);
             for (Vec2 offset : offsets)
                 color += getColorClipped(pixel_center + offset);
-            color = reGamma(color / sq(sqrt_of_aa_subsample_count));
+            color = color / sq(sqrt_of_aa_subsample_count);
         }
         else
         {
-            color = reGamma(getColorClipped(Vec2(i, j) / half));
+            color = getColorClipped(pixel_center);
         }
+        // Adjust for display gamma.
+        color = color.gamma(1 / defaultGamma());
         // Make OpenCV color, with reversed component order.
         cv::Vec3f opencv_color(color.b(), color.g(), color.r());
         // Write OpenCV color to corresponding pixel on row image:
