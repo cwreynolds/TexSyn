@@ -3964,26 +3964,50 @@ SoftMatte(spot(0.2),
       <img src="images/20200103_Noise.png" alt="Noise texture generator (blue and yellow blobs)"
         title="Noise texture generator (blue and yellow blobs)" height="511" width="511">
     </div>
-    <div class="post" id="20200101"> <a href="#20200101" class="date">January
+    <div class="post" id="20200101d"> <a href="#20200101d" class="date">January
         1, 2020</a>
-      <h1>Catching up: <em>Gradation</em>, <em>Grating</em>, <em>SoftMatte</em>,
-        <em>Max</em>, and <em>Min</em></h1>
-      <p>Having installed a modern version of <strong>OpenCV</strong> and
-        integrated it into <strong>TexSyn</strong>, I could now see the
-        textures that I had only been able to verify with unit tests so far.</p>
-      <h2><em>Gradation</em></h2>
-      <p> The <em>Gradation</em> generator defines two colored “half planes”
-        with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>
-        are two “colored positions.” The line segment between the two points
-        defines the orientation and width of the transition region. Outside the
-        transition region the texture is uniformly the nearest of the two
-        colors.</p>
-      <pre>Gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
-          Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));</pre>
-      <img src="images/20200101_Gradation.png" alt="Gradation texture generator (red to white)"
-        title="Gradation texture generator (red to white)" height="511" width="511">
-      <br>
-      <h2><em>Grating</em></h2>
+      <h1>Catching up: <em>Max</em> and <em>Min</em></h1>
+      <p>The <em>Max</em> and <em>Min</em> operators compose two textures
+        together. Each point's color comes from whichever input texture has the
+        <em>Max</em> (or <em>Min</em>) luminance/brightness at the
+        corresponding point. These examples show the result with the same two <em>Grating</em>s
+        used in the <em>SoftMatte</em> example. In the first image, the white
+        parts of the vertical Grating push to the front and the black parts push
+        to the back. They are covered by the horizontal Grating. Note that
+        magenta is in front of blue. The second image is the same code with <em>Min</em>
+        instead.</p>
+      <pre>Max(Grating(Vec2(-0.2, 0), Color(0, 0, 0),
+            Vec2( 0.2, 0), Color(1, 1, 1), 1),
+    Grating(Vec2(0, -0.1), Color(1, 0, 1),
+            Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
+      <img src="images/20200101_Max.png" alt="Max texture operator" title="Max texture operator"
+        height="511" width="511"> <img src="images/20200101_Min.png" alt="Min texture operator"
+        title="Min texture operator" height="511" width="511"> </div>
+    <div class="post" id="20200101c"> <a href="#20200101c" class="date">January
+        1, 2020</a>
+      <h1>Catching up: <em>SoftMatte</em></h1>
+      <p>The <em>SoftMatte</em> Operator take three Textures as parameters. The
+        first is interpreted as the “matte.” When it's luminance value is zero,
+        the result is taken from the second Texture. When the matte's luminance
+        value is one, the result is taken from the third Texture. Matte values
+        in between result in a linear interpolation between the other Textures.
+        In this example the matte Texture is a <em>Spot</em>. The outer dark
+        part of the <em>Spot</em> takes the second texture, a sinusoid <em>Gradient</em>
+        of vertical black and white bands. The inner bright part of the spot
+        takes the third texture, a “slightly soft square wave” <em>Gradient</em>
+        of horizontal magenta and blue stripes.</p>
+      <pre>SoftMatte(Spot(Vec2(0, 0),
+               0.2, Color(1, 1, 1),
+               0.8, Color(0, 0, 0)),
+          Grating(Vec2(-0.2, 0), Color(0, 0, 0),
+                  Vec2( 0.2, 0), Color(1, 1, 1), 1),
+          Grating(Vec2(0, -0.1), Color(1, 0, 1),
+                  Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
+      <img src="images/20200101_SoftMatte.png" alt="SoftMatte texture operator"
+        title="SoftMatte texture operator" height="511" width="511"> </div>
+    <div class="post" id="20200101b"> <a href="#20200101b" class="date">January
+        1, 2020</a>
+      <h1>Catching up: <em>Grating</em></h1>
       <p> The <em>Grating</em> generator creates a swept stripe pattern whose
         cross-sectional “slice” is a periodic waveform. The parameters to <em>Grating</em>
         include: </p>
@@ -4000,44 +4024,24 @@ SoftMatte(spot(0.2),
         0.3)</pre>
       <img src="images/20200101_Grating.png" alt="Grating texture generator (green and yellow stripes)"
         title="Grating texture generator (green and yellow stripes)" height="511"
-        width="511"> <br>
-      <h2><em>SoftMatte</em></h2>
-      <p> The <em>SoftMatte</em> Operator take three Textures as parameters.
-        The first is interpreted as the “matte.” When it's luminance value is
-        zero, the result is taken from the second Texture. When the matte's
-        luminance value is one, the result is taken from the third Texture.
-        Matte values in between result in a linear interpolation between the
-        other Textures. In this example the matte Texture is a <em>Spot</em>.
-        The outer dark part of the <em>Spot</em> takes the second texture, a
-        sinusoid <em>Gradient</em> of vertical black and white bands. The inner
-        bright part of the spot takes the third texture, a “slightly soft square
-        wave” <em>Gradient</em> of horizontal magenta and blue stripes.</p>
-      <pre>SoftMatte(Spot(Vec2(0, 0),
-               0.2, Color(1, 1, 1),
-               0.8, Color(0, 0, 0)),
-          Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-                  Vec2( 0.2, 0), Color(1, 1, 1), 1),
-          Grating(Vec2(0, -0.1), Color(1, 0, 1),
-                  Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
-      <img src="images/20200101_SoftMatte.png" alt="SoftMatte texture operator"
-        title="SoftMatte texture operator" height="511" width="511"> <br>
-      <h2><em>Max</em> and <em>Min</em></h2>
-      <p> The <em>Max</em> and <em>Min</em> operators compose two textures.
-        Each point's color comes from whichever input texture has the <em>Max</em>
-        (or <em>Min</em>) luminance/brightness at the corresponding point.
-        These examples show the result with the same two <em>Grating</em>s used
-        in the <em>SoftMatte</em> example. In the first image, the white parts
-        of the vertical Grating push to the front and the black parts push to
-        the back. They are covered by the horizontal Grating. Note that magenta
-        is in front of blue. The second image is the same code with <em>Min</em>
-        instead.</p>
-      <pre>Max(Grating(Vec2(-0.2, 0), Color(0, 0, 0),
-            Vec2( 0.2, 0), Color(1, 1, 1), 1),
-    Grating(Vec2(0, -0.1), Color(1, 0, 1),
-            Vec2(0,  0.1), Color(0, 0, 1), 0.2))</pre>
-      <img src="images/20200101_Max.png" alt="Max texture operator" title="Max texture operator"
-        height="511" width="511"> <img src="images/20200101_Min.png" alt="Min texture operator"
-        title="Min texture operator" height="511" width="511"> </div>
+        width="511"> </div>
+    <div class="post" id="20200101"> <a href="#20200101" class="date">January
+        1, 2020</a>
+      <h1>Catching up: <em>Gradation</em></h1>
+      <p>Having installed a modern version of <strong>OpenCV</strong> and
+        integrated it into <strong>TexSyn</strong>, I can now see the textures
+        that before I could only verify with unit tests.</p>
+      <p>The <em>Gradation</em> generator defines two colored “half planes”
+        with a smooth (sinusoidal) transition between them. The parameters to <em>Gradation</em>
+        are two “colored positions.” The line segment between the two points
+        defines the orientation and width of the transition region. Outside the
+        transition region the texture is uniformly the nearest of the two
+        colors.</p>
+      <pre>Gradation(Vec2(0.4, -0.2), Color(0.9, 0.0, 0.0),
+          Vec2(-0.4, 0.2), Color(0.9, 0.9, 0.9));</pre>
+      <img src="images/20200101_Gradation.png" alt="Gradation texture generator (red to white)"
+        title="Gradation texture generator (red to white)" height="511" width="511">
+    </div>
     <div class="post" id="20191230"> <a href="#20191230" class="date">December
         30, 2019</a>
       <h1>“First light” and the <em>Spot</em> operator</h1>
