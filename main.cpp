@@ -6,10 +6,7 @@
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
 
-#include "Texture.h"
-#include "Operators.h"
-#include "UnitTests.h"
-#include "Utilities.h"
+#include "TexSyn.h"
 
 bool run_unit_tests = true;
 

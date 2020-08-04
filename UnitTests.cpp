@@ -12,11 +12,7 @@
 //
 // The main entry point is UnitTests::allTestsOK()
 
-#include "Color.h"
-#include "Operators.h"
-#include "UnitTests.h"
-#include "Utilities.h"
-#include "Vec2.h"
+#include "TexSyn.h"
 
 // This "sub-test" wrapper macro just returns the value of the given expression
 // "e". If the value is NOT TRUE, the st() macro will also log the specific

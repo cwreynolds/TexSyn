@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		84172B4523BBA26E00B866B6 /* Operators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84172B4323BBA26E00B866B6 /* Operators.cpp */; };
-		8422C74A24980277006D4A50 /* COTS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8422C74824980277006D4A50 /* COTS.cpp */; };
 		843D95C12452653A00741263 /* Disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843D95BF2452653A00741263 /* Disk.cpp */; };
 		849FF57723A70EC2008B4326 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57623A70EC2008B4326 /* main.cpp */; };
 		849FF57F23A70F93008B4326 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57D23A70F93008B4326 /* Texture.cpp */; };
@@ -33,7 +32,6 @@
 /* Begin PBXFileReference section */
 		84172B4323BBA26E00B866B6 /* Operators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Operators.cpp; sourceTree = "<group>"; };
 		84172B4423BBA26E00B866B6 /* Operators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operators.h; sourceTree = "<group>"; };
-		8422C74824980277006D4A50 /* COTS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = COTS.cpp; sourceTree = "<group>"; };
 		8422C74924980277006D4A50 /* COTS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COTS.h; sourceTree = "<group>"; };
 		843D95BF2452653A00741263 /* Disk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Disk.cpp; sourceTree = "<group>"; };
 		843D95C02452653A00741263 /* Disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
@@ -42,6 +40,7 @@
 		849FF57D23A70F93008B4326 /* Texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		849FF57E23A70F93008B4326 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		84DE15B024D1C1A9005DCCE4 /* TwoPointTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoPointTransform.h; sourceTree = "<group>"; };
+		84DE15B224D9CA5F005DCCE4 /* TexSyn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TexSyn.h; sourceTree = "<group>"; };
 		84F6BB3C23A85C1F00911365 /* UnitTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnitTests.cpp; sourceTree = "<group>"; };
 		84F6BB3D23A85C1F00911365 /* UnitTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitTests.h; sourceTree = "<group>"; };
 		84F6BB3F23A85E0A00911365 /* Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
@@ -67,7 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				8422C74924980277006D4A50 /* COTS.h */,
-				8422C74824980277006D4A50 /* COTS.cpp */,
 				843D95C02452653A00741263 /* Disk.h */,
 				843D95BF2452653A00741263 /* Disk.cpp */,
 				84FE3C7123A71E8100600F2A /* Color.h */,
@@ -75,6 +73,7 @@
 				849FF57623A70EC2008B4326 /* main.cpp */,
 				84172B4423BBA26E00B866B6 /* Operators.h */,
 				84172B4323BBA26E00B866B6 /* Operators.cpp */,
+				84DE15B224D9CA5F005DCCE4 /* TexSyn.h */,
 				849FF57E23A70F93008B4326 /* Texture.h */,
 				849FF57D23A70F93008B4326 /* Texture.cpp */,
 				84DE15B024D1C1A9005DCCE4 /* TwoPointTransform.h */,
@@ -154,7 +153,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8422C74A24980277006D4A50 /* COTS.cpp in Sources */,
 				843D95C12452653A00741263 /* Disk.cpp in Sources */,
 				849FF57723A70EC2008B4326 /* main.cpp in Sources */,
 				84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */,
