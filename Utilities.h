@@ -263,7 +263,20 @@ size_t hash_float(float x);
 size_t hash_mashup(size_t hash0, size_t hash1);
 
 // Takes a 32 bit value and shuffles it around to produce a new 32 bit value.
-uint32_t rehash32bits(uint64_t a);
+// "Robert Jenkins' 32 bit integer hash function" from "Integer Hash Function"
+// (1997) by Thomas Wang (https://gist.github.com/badboy/6267743)
+// Altered to accept input as uint64_t but ignores the top 32 bits.
+inline uint32_t rehash32bits(uint64_t u64)
+{
+    uint32_t a = uint32_t(u64);
+    a = (a+0x7ed55d16) + (a<<12);
+    a = (a^0xc761c23c) ^ (a>>19);
+    a = (a+0x165667b1) + (a<<5);
+    a = (a+0xd3a2646c) ^ (a<<9);
+    a = (a+0xfd7046c5) + (a<<3);
+    a = (a^0xb55a4f09) ^ (a>>16);
+    return a;
+}
 
 // Simple self-contained generator for a sequence of psuedo-random 32 bit values
 class RandomSequence
