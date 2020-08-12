@@ -27,8 +27,23 @@ class Color;
 
 // Use global mutex to allow synchronizing console output from parallel threads.
 // (Written as a macro since the lock_guard is released at the end of a block.)
-#define grabPrintLock() std::lock_guard<std::recursive_mutex> pl_(printMutex());
-std::recursive_mutex& printMutex();
+#define grabPrintLock() \
+    std::lock_guard<std::recursive_mutex> pl_(DebugPrint::getPrintMutex());
+
+// Define a global, static std::recursive_mutex to allow synchronizing console
+// output from parallel threads.
+//
+// TODO maybe make constructor do the work now done by "debugPrint(e)" macro?
+//
+class DebugPrint
+{
+public:
+    static std::recursive_mutex& getPrintMutex()
+    {
+        static std::recursive_mutex print_mutex_;
+        return print_mutex_;
+    }
+};
 
 // Just for convenience in hand-written prototypes and tests:
 const float pi = M_PI;

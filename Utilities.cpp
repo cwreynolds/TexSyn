@@ -9,11 +9,6 @@
 #include "Utilities.h"
 #include "Vec2.h"
 
-// Global mutex to allow synchronizing console output from parallel threads.
-std::recursive_mutex print_mutex_;
-// Acessor.
-std::recursive_mutex& printMutex() { return print_mutex_; }
-
 // True when a and b differ by no more than epsilon.
 bool withinEpsilon(float a, float b, float epsilon)
 {
