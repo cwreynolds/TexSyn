@@ -9,25 +9,6 @@
 #include "Utilities.h"
 #include "Vec2.h"
 
-// True when a and b differ by no more than epsilon.
-bool withinEpsilon(float a, float b, float epsilon)
-{
-    return std::abs(a - b) <= epsilon;
-}
-
-// Returns a float randomly distributed between 0 and 1
-float frandom01()
-{
-    return (((float) rand()) / ((float) RAND_MAX));
-}
-
-// Returns a float randomly distributed between lowerBound and upperBound
-//
-float frandom2 (float lowerBound, float upperBound)
-{
-    return lowerBound + (frandom01 () * (upperBound - lowerBound));
-}
-
 // Perlin Noise
 // Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
 // This code based on a transliteration by Malcolm Kesson from Java to c:
