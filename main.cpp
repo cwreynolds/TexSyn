@@ -3544,20 +3544,44 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // clean up gamma, remove Texture::deGamma()/reGamma() -- August 2, 2020
-    std::cout << "August 2, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200802_";
+//    // clean up gamma, remove Texture::deGamma()/reGamma() -- August 2, 2020
+//    std::cout << "August 2, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200802_";
+//
+//    Uniform red(1, 0, 0);
+//    Uniform green(0, 1, 0);
+//    Uniform magenta(1, 0, 1);
+//    //Texture::sqrt_of_aa_subsample_count = 2;
+//    Texture::displayAndFile(Spot(Vec2(0.5, 0),
+//                                 0.1, red,
+//                                 0.5, Spot(Vec2(-0.5, 0),
+//                                           0.1, magenta,
+//                                           0.5, green)));
+//    Texture::waitKey();
     
-    Uniform red(1, 0, 0);
-    Uniform green(0, 1, 0);
-    Uniform magenta(1, 0, 1);
-    //Texture::sqrt_of_aa_subsample_count = 2;
-    Texture::displayAndFile(Spot(Vec2(0.5, 0),
-                                 0.1, red,
-                                 0.5, Spot(Vec2(-0.5, 0),
-                                           0.1, magenta,
-                                           0.5, green)));
-    Texture::waitKey();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+//    // visualizing some random programs from LazyPredator
+//    std::cout << "August 15, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200815_";
+//    int i = 0;
+//    auto d = [&](const Texture& t)
+//    {
+//        std::string pathname = path + "random_program_" + std::to_string(i++);
+//        Texture::displayAndFile(t, pathname);
+//    };
+//    // random_program_0
+//    d(Twist(-1.5007, -3.12824, Vec2(0.389467, 0.832243), LotsOfButtons(0.862353, 0.326306, 0.00177993, 0.711357, 0.76274, Vec2(3.0448, 3.68129), Spot(Vec2(1.48987, -4.49347), 1.78005, ColorNoise(Vec2(-1.32046, 2.42863), Vec2(-1.91713, 0.940589), 0.84564), 0.764313, ColorNoise(Vec2(0.273154, -1.46148), Vec2(-1.18504, -4.00435), 0.724306)), 0.367926, ColorNoise(Vec2(-1.59627, -3.31247), Vec2(2.23131, -1.37167), 0.698217))));
+//    // random_program_1
+//    d(ColoredSpots(0.0873328, 0.904293, 0.0523186, 0.0906169, 0.854814, MobiusTransform(Vec2(3.11807, 1.18701), Vec2(-0.589404, 2.75448), Vec2(-3.33792, 2.08031), Vec2(-2.82157, -3.79023), Uniform(0.409955, 0.158851, 0.22622)), BrightnessWrap(0.0941196, 0.596546, EdgeDetect(0.985994, Max(MultiNoise(Vec2(-4.08933, -2.55314), Vec2(-3.52786, 3.43654), Uniform(0.547777, 0.71849, 0.51048), Uniform(0.0970927, 0.656361, 0.669388), 0.0278431), ColorNoise(Vec2(-0.665772, -3.61144), Vec2(3.66564, -4.4826), 0.695869))))));
+//    // random_program_2
+//    d(Ring(3.11535, Vec2(3.03757, 0.967017), Vec2(-1.42594, -1.81315), SliceShear(Vec2(-4.01977, -3.029), Vec2(-3.63676, 2.93948), Hyperbolic(Vec2(-4.63751, 3.72073), 8.21554, 9.18318, 4.19357, Uniform(0.642181, 0.261001, 0.428011), ColorNoise(Vec2(-4.05045, -1.65673), Vec2(-3.66899, 1.61807), 0.792373)), Vec2(-0.478021, 4.5042), Vec2(4.56995, 0.0112824), ColorNoise(Vec2(3.34685, 3.47989), Vec2(-0.249423, -0.262976), 0.175241))));
+//    // random_program_3
+//    d(Grating(Vec2(-1.47541, -0.86595), AdjustBrightness(0.0384087, BrightnessWrap(0.805273, 0.469073, BrightnessWrap(0.401083, 0.670738, HueOnly(0.281567, 0.0632304, Min(Uniform(0.427763, 0.769109, 0.859361), ColorNoise(Vec2(2.44752, -4.46087), Vec2(-2.27331, 4.02469), 0.0391472)))))), Vec2(-2.13785, -3.31639), Gamma(1.47854, SliceToRadial(Vec2(-3.44811, -2.35952), Vec2(-3.74908, 1.89859), ColorNoise(Vec2(-2.45512, 3.92944), Vec2(1.00124, 3.80463), 0.657286))), 0.965485, 0.55324));
+//    // random_program_4
+//     d(EdgeDetect(0.670139, ColoredSpots(0.7614, 0.427715, 0.698671, 0.885313, 0.0558514, Stretch(Vec2(-4.63756, -4.60256), Vec2(-0.0368361, -2.01205), AbsDiff(SoftMatte(Uniform(0.817255, 0.00670789, 0.326614), ColorNoise(Vec2(-1.51223, 2.41655), Vec2(-3.37003, -4.64803), 0.29183), Uniform(0.990324, 0.0578273, 0.848225)), Uniform(0.030859, 0.428472, 0.973189))), Add(SliceToRadial(Vec2(-0.793439, -2.48329), Vec2(4.03724, 2.45832), Uniform(0.442126, 0.573716, 0.949417)), LotsOfButtons(0.270409, 0.145435, 0.790308, 0.703025, 0.736794, Vec2(4.84287, 3.77388), ColorNoise(Vec2(-2.84685, -1.22626), Vec2(-1.97162, -3.88645), 0.157141), 0.0940529, Uniform(0.0183813, 0.9557, 0.00798232))))));
+//
+//    Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
