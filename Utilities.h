@@ -327,6 +327,9 @@ public:
     float frandom01() { return float(nextInt()) / float(maxIntValue()); }
     // Returns a float randomly distributed between lowerBound and upperBound
     float frandom2(float a, float b) { return interpolate(frandom01(), a, b); }
+    // Returns an int randomly distributed between 0 and n-1.
+    int randomN(int n) { return nextInt() % n; }
+    int randomN(size_t n) { return nextInt() % n; }
     
     // TODO these duplicate the function of the same name in global namespace.
     //  Maybe those should be replaced by defining a global RandomSequence which
