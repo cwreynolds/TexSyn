@@ -15,6 +15,7 @@
 #include <limits>
 #include <vector>
 #include <chrono>
+#include <any>
 class Vec2;
 class Color;
 
@@ -339,6 +340,11 @@ public:
     Vec2 randomUnitVector();
     // TODO moved from Color class to here on June 30, 2020:
     Color randomUnitRGB();
+    // Set seed (RS state) to given value, or defaultSeed() if none given.
+    void setSeed() { state_ = defaultSeed(); }
+    void setSeed(uint32_t seed) { state_ = seed; }
+    // Get state.
+    uint32_t getSeed() { return state_; }
 private:
     uint32_t state_;
 };
@@ -411,3 +417,11 @@ void jittered_grid_NxN_in_square(int n,
 
 // Map/round a float value (including negative) to the nearest odd integer.
 inline int nearestOddInt(float x) { return (floor(x / 2) * 2) + 1; }
+
+// Given an std::any value, cast it to the given type, and convert to string.
+template<typename T> std::string any_to_string(std::any a)
+{
+    std::stringstream ss;
+    ss << std::any_cast<T>(a);
+    return ss.str();
+}

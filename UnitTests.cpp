@@ -69,7 +69,9 @@ bool utilities()
             st(nearestOddInt(-0.1) == -1) &&
             st(nearestOddInt(-1.0) == -1) &&
             st(nearestOddInt(-1.9) == -1) &&
-            st(nearestOddInt(-2.1) == -3));
+            st(nearestOddInt(-2.1) == -3) &&
+            st(any_to_string<float>(0.5f) == "0.5") &&
+            st(any_to_string<std::string>(std::string("abc")) == "abc"));
 };
 
 // Tests for Color class.
