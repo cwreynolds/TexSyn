@@ -7,6 +7,9 @@
 //
 
 #include "TexSyn.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include "GP.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
 
@@ -3583,14 +3586,41 @@ int main(int argc, const char * argv[])
 //
 //    Texture::waitKey();
     
-    Texture::displayAndFile(Ring(3.11535, Vec2(3.03757, 0.967017), Vec2(-1.42594, -1.81315), SliceShear(Vec2(-4.01977, -3.029), Vec2(-3.63676, 2.93948), Hyperbolic(Vec2(-4.63751, 3.72073), 8.21554, 9.18318, 4.19357, Uniform(0.642181, 0.261001, 0.428011), ColorNoise(Vec2(-4.05045, -1.65673), Vec2(-3.66899, 1.61807), 0.792373)), Vec2(-0.478021, 4.5042), Vec2(4.56995, 0.0112824), ColorNoise(Vec2(3.34685, 3.47989), Vec2(-0.249423, -0.262976), 0.175241))));
-    Texture::displayAndFile(Ring(40, Vec2(3.03757, 0.967017), Vec2(0, 0), SliceShear(Vec2(-4.01977, -3.029), Vec2(-3.63676, 2.93948), Hyperbolic(Vec2(-4.63751, 3.72073), 8.21554, 9.18318, 4.19357, Uniform(0.642181, 0.261001, 0.428011), ColorNoise(Vec2(-4.05045, -1.65673), Vec2(-3.66899, 1.61807), 0.792373)), Vec2(-0.478021, 4.5042), Vec2(4.56995, 0.0112824), ColorNoise(Vec2(3.34685, 3.47989), Vec2(-0.249423, -0.262976), 0.175241))));
+//    Texture::displayAndFile(Ring(3.11535, Vec2(3.03757, 0.967017), Vec2(-1.42594, -1.81315), SliceShear(Vec2(-4.01977, -3.029), Vec2(-3.63676, 2.93948), Hyperbolic(Vec2(-4.63751, 3.72073), 8.21554, 9.18318, 4.19357, Uniform(0.642181, 0.261001, 0.428011), ColorNoise(Vec2(-4.05045, -1.65673), Vec2(-3.66899, 1.61807), 0.792373)), Vec2(-0.478021, 4.5042), Vec2(4.56995, 0.0112824), ColorNoise(Vec2(3.34685, 3.47989), Vec2(-0.249423, -0.262976), 0.175241))));
+//    Texture::displayAndFile(Ring(40, Vec2(3.03757, 0.967017), Vec2(0, 0), SliceShear(Vec2(-4.01977, -3.029), Vec2(-3.63676, 2.93948), Hyperbolic(Vec2(-4.63751, 3.72073), 8.21554, 9.18318, 4.19357, Uniform(0.642181, 0.261001, 0.428011), ColorNoise(Vec2(-4.05045, -1.65673), Vec2(-3.66899, 1.61807), 0.792373)), Vec2(-0.478021, 4.5042), Vec2(4.56995, 0.0112824), ColorNoise(Vec2(3.34685, 3.47989), Vec2(-0.249423, -0.262976), 0.175241))));
+//
+//    Texture::displayAndFile(Grating(Vec2(0.084042, -3.372581), Wrap(-1.211668, Vec2(4.022692, 3.877531), Vec2(-3.112230, 0.683885), ColorNoise(Vec2(2.435783, -4.575052), Vec2(4.331541, -2.095832), 0.196655)), Vec2(1.814379, -3.739372), LotsOfSpots(0.252883, 0.487457, 0.088388, 0.128435, 0.163529, ColorNoise(Vec2(4.333685, 2.229997), Vec2(4.410281, 1.619063), 0.044797), ColorNoise(Vec2(2.266673, 0.545833), Vec2(-2.298026, 4.235314), 0.004139)), 0.946295, 0.852064));
+//
+//    Texture::displayAndFile(Twist(0.705134, 1.189807, Vec2(2.909842, -4.278739), Wrap(-2.765690, Vec2(-2.950244, -4.747859), Vec2(2.744241, 2.461258), RgbBox(0.136500, 0.151909, 0.136924, 0.281066, 0.881210, 0.503134, Spot(Vec2(-3.338686, -3.287991), 0.746691, ColorNoise(Vec2(4.022692, 3.877531), Vec2(-2.298026, 4.235314), 0.817780), 0.412435, SliceGrating(Vec2(3.982192, -1.292202), Vec2(1.964732, 1.248409), Twist(1.57598, 0.535471, Vec2(2.429565, 3.697453), AdjustSaturation(0.810464, ColorNoise(Vec2(2.266673, 0.545833), Vec2(-2.298026, 4.235314), 0.004139)))))))));
+//
+//    Texture::waitKey();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Texture::displayAndFile(Grating(Vec2(0.084042, -3.372581), Wrap(-1.211668, Vec2(4.022692, 3.877531), Vec2(-3.112230, 0.683885), ColorNoise(Vec2(2.435783, -4.575052), Vec2(4.331541, -2.095832), 0.196655)), Vec2(1.814379, -3.739372), LotsOfSpots(0.252883, 0.487457, 0.088388, 0.128435, 0.163529, ColorNoise(Vec2(4.333685, 2.229997), Vec2(4.410281, 1.619063), 0.044797), ColorNoise(Vec2(2.266673, 0.545833), Vec2(-2.298026, 4.235314), 0.004139)), 0.946295, 0.852064));
+    // Try connecting to LazyPredator as a header-only library
+    std::cout << "September 20, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200920_";
     
-    Texture::displayAndFile(Twist(0.705134, 1.189807, Vec2(2.909842, -4.278739), Wrap(-2.765690, Vec2(-2.950244, -4.747859), Vec2(2.744241, 2.461258), RgbBox(0.136500, 0.151909, 0.136924, 0.281066, 0.881210, 0.503134, Spot(Vec2(-3.338686, -3.287991), 0.746691, ColorNoise(Vec2(4.022692, 3.877531), Vec2(-2.298026, 4.235314), 0.817780), 0.412435, SliceGrating(Vec2(3.982192, -1.292202), Vec2(1.964732, 1.248409), Twist(1.57598, 0.535471, Vec2(2.429565, 3.697453), AdjustSaturation(0.810464, ColorNoise(Vec2(2.266673, 0.545833), Vec2(-2.298026, 4.235314), 0.004139)))))))));
+    const FunctionSet& fs = TexSynFS::tinyTexSyn();
+    std::cout << std::endl;
+    fs.print();
+    std::cout << std::endl;
+    LPRS().setSeed();
+    for (int i = 0; i < 10; i++)
+    {
+        GpTree gp_tree;
+        fs.makeRandomTree(100, gp_tree);
+        std::cout << std::endl << gp_tree.to_string() << std::endl;
+        std::cout << "size=" << gp_tree.size() << std::endl;
+        std::any result_as_any = gp_tree.eval();
+        Texture* result = std::any_cast<Texture*>(result_as_any);
+        Texture::displayAndFile(*result
+                                // , path + "uniform_spot_" + std::to_string(i)
+                                );
+    }
     
+
     Texture::waitKey();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
