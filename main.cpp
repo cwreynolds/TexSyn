@@ -3596,16 +3596,22 @@ int main(int argc, const char * argv[])
 //    Texture::waitKey();
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Try connecting to LazyPredator as a header-only library
-    std::cout << "September 20, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200920_";
+//    // Try connecting to LazyPredator as a header-only library
+//    std::cout << "September 20, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200920_";
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Fill out FunctionSet for TexSyn
+    std::cout << "September 22, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200922_";
+
     const FunctionSet& fs = TexSynFS::tinyTexSyn();
     std::cout << std::endl;
     fs.print();
     std::cout << std::endl;
     LPRS().setSeed();
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 30; i++)
     {
         GpTree gp_tree;
         fs.makeRandomTree(100, gp_tree);
@@ -3614,15 +3620,13 @@ int main(int argc, const char * argv[])
         std::any result_as_any = gp_tree.eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
         Texture::displayAndFile(*result
-                                // , path + "uniform_spot_" + std::to_string(i)
+                                 , path + "texsyn14_" + std::to_string(i)
                                 );
+        Texture::waitKey();
     }
-    
-
-    Texture::waitKey();
+//    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
 }
-
