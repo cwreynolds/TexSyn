@@ -3605,6 +3605,8 @@ int main(int argc, const char * argv[])
     // Fill out FunctionSet for TexSyn
     std::cout << "September 22, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200922_";
+    // part two:
+    path = "/Users/cwr/Desktop/TexSyn_temp/20200923_";
 
     const FunctionSet& fs = TexSynFS::tinyTexSyn();
     std::cout << std::endl;
@@ -3620,7 +3622,7 @@ int main(int argc, const char * argv[])
         std::any result_as_any = gp_tree.eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
         Texture::displayAndFile(*result
-                                 , path + "texsyn14_" + std::to_string(i)
+                                // , path + "texsyn43_" + std::to_string(i)
                                 );
         Texture::waitKey();
     }
