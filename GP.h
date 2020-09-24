@@ -6,92 +6,21 @@
 //  Copyright © 2020 Craig Reynolds. All rights reserved.
 //
 
-//  TODO experimenting with connection to LazyPredator as a heder-only library
-//       and so defining a FunctionSet for directly evaluating TexSyn Texture
-//       trees.
-
 #pragma once
-#include "../LazyPredator/LazyPredator.h"
+#include "../LazyPredator/LazyPredator.h"  // TODO use something more portable.
 
-//    // Nicknames for oft-repeated expressions:
-//    #define argFloatq(n)   tree.evalSubtree<float>(n)
-//    #define argVec2q(n)    tree.evalSubtree<Vec2>(n)
-//    #define argTextureq(n) *tree.evalSubtree<Texture*>(n)
-//
-//    #define evalTexture(body)   \
-//    [](const GpTree& tree)      \
-//    {                           \
-//        Texture* t = new body;  \
-//        return std::any(t);     \
-//    }
-
-
-//    // TODO for prototyping, move elsewhere
-//    class ArgIndex
-//    {
-//    public:
-//        static void reset_arg_index() { arg_index = 0; }
-//        static int inc_arg_index() { arg_index++; return arg_index - 1; }
-//    private:
-//        static inline int arg_index = 0;
-//    };
-
-//// Nicknames for oft-repeated expressions:
-//#define argFloat()   tree.evalSubtree<float>(arg_index++)
-//#define argVec2()    tree.evalSubtree<Vec2>(arg_index++)
-//#define argTexture() *tree.evalSubtree<Texture*>(arg_index++)
-
-//    // Nicknames for oft-repeated expressions:
-//    #define argFloat()   tree.evalSubtree<float>(ArgIndex::inc_arg_index())
-//    #define argVec2()    tree.evalSubtree<Vec2>(ArgIndex::inc_arg_index())
-//    #define argTexture() *tree.evalSubtree<Texture*>(ArgIndex::inc_arg_index())
-//
-//
-//    #define evalTexture(body)        \
-//    [](const GpTree& tree)           \
-//    {                                \
-//        ArgIndex::reset_arg_index(); \
-//        Texture* t = new body;       \
-//        return std::any(t);          \
-//    }
-
-
-
-// TODO for prototyping, move elsewhere
-class ArgIndex
-{
-public:
-    ArgIndex(){}
-//    static void reset_arg_index() { arg_index = 0; }
-    int inc() { return arg_index++; }
-private:
-    int arg_index = 0;
-};
-
-
-// Nicknames for oft-repeated expressions:
-#define argFloat()   tree.evalSubtree<float>(arg_index.inc())
-#define argVec2()    tree.evalSubtree<Vec2>(arg_index.inc())
-#define argTexture() *tree.evalSubtree<Texture*>(arg_index.inc())
-
-
-//    #define evalTexture(body)        \
-//    [](const GpTree& tree)           \
-//    {                                \
-//        ArgIndex arg_index;          \
-//        Texture* t = new body;       \
-//        arg_index.inc();  /* to silence warning */ \
-//        return std::any(t);          \
-//    }
-
-#define evalTexture(body)        \
-[](const GpTree& tree)           \
-{                                \
-    ArgIndex arg_index;          \
-    Texture* t = new body;       \
-    return std::any(t);          \
+// Nicknames for oft-repeated expressions below (used in this file only):
+#define argFloat() tree.evalSubtree<float>(inc_tex_arg())
+#define argVec2() tree.evalSubtree<Vec2>(inc_tex_arg())
+#define argTexture() *tree.evalSubtree<Texture*>(inc_tex_arg())
+#define evalTexture(body)                                \
+[](const GpTree& tree)                                   \
+{                                                        \
+    int i = 0;                                           \
+    auto inc_tex_arg = [&](){ int j = i++; return j; };  \
+    Texture* t = new body;                               \
+    return std::any(t);                                  \
 }
-
 
 class TexSynFS
 {
@@ -143,13 +72,16 @@ public:
             
             {
                 "Uniform", "Texture", {"Float_01", "Float_01", "Float_01"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Uniform(tree.evalSubtree<float>(0),
-                                             tree.evalSubtree<float>(1),
-                                             tree.evalSubtree<float>(2));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Uniform(tree.evalSubtree<float>(0),
+//                                             tree.evalSubtree<float>(1),
+//                                             tree.evalSubtree<float>(2));
+//                    return std::any(t);
+//                }
+                evalTexture(Uniform(argFloat(),
+                                    argFloat(),
+                                    argFloat()))
             },
             
             {
@@ -157,15 +89,21 @@ public:
                 "Texture",
 //                {"Vec2", "Float_01", "Texture", "Float_01", "Texture"},
                 {"Vec2", "Float_02", "Texture", "Float_02", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Spot(tree.evalSubtree<Vec2>(0),
-                                          tree.evalSubtree<float>(1),
-                                          *tree.evalSubtree<Texture*>(2),
-                                          tree.evalSubtree<float>(3),
-                                          *tree.evalSubtree<Texture*>(4));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Spot(tree.evalSubtree<Vec2>(0),
+//                                          tree.evalSubtree<float>(1),
+//                                          *tree.evalSubtree<Texture*>(2),
+//                                          tree.evalSubtree<float>(3),
+//                                          *tree.evalSubtree<Texture*>(4));
+//                    return std::any(t);
+//                }
+                
+                evalTexture(Spot(argVec2(),
+                                 argFloat(),
+                                 argTexture(),
+                                 argFloat(),
+                                 argTexture()))
             },
             
             
@@ -173,107 +111,132 @@ public:
                 "Gradation",
                 "Texture",
                 {"Vec2", "Texture", "Vec2", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Gradation(tree.evalSubtree<Vec2>(0),
-                                               *tree.evalSubtree<Texture*>(1),
-                                               tree.evalSubtree<Vec2>(2),
-                                               *tree.evalSubtree<Texture*>(3));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Gradation(tree.evalSubtree<Vec2>(0),
+//                                               *tree.evalSubtree<Texture*>(1),
+//                                               tree.evalSubtree<Vec2>(2),
+//                                               *tree.evalSubtree<Texture*>(3));
+//                    return std::any(t);
+//                }
+                evalTexture(Gradation(argVec2(),
+                                      argTexture(),
+                                      argVec2(),
+                                      argTexture()))
             },
             {
                 "Grating",
                 "Texture",
                 {"Vec2", "Texture", "Vec2", "Texture", "Float_01", "Float_01"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Grating(tree.evalSubtree<Vec2>(0),
-                                             *tree.evalSubtree<Texture*>(1),
-                                             tree.evalSubtree<Vec2>(2),
-                                             *tree.evalSubtree<Texture*>(3),
-                                             tree.evalSubtree<float>(4),
-                                             tree.evalSubtree<float>(5));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Grating(tree.evalSubtree<Vec2>(0),
+//                                             *tree.evalSubtree<Texture*>(1),
+//                                             tree.evalSubtree<Vec2>(2),
+//                                             *tree.evalSubtree<Texture*>(3),
+//                                             tree.evalSubtree<float>(4),
+//                                             tree.evalSubtree<float>(5));
+//                    return std::any(t);
+//                }
+                evalTexture(Grating(argVec2(),
+                                    argTexture(),
+                                    argVec2(),
+                                    argTexture(),
+                                    argFloat(),
+                                    argFloat()))
             },
             {
                 "SoftMatte",
                 "Texture",
                 {"Texture", "Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new SoftMatte(*tree.evalSubtree<Texture*>(0),
-                                               *tree.evalSubtree<Texture*>(1),
-                                               *tree.evalSubtree<Texture*>(2));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new SoftMatte(*tree.evalSubtree<Texture*>(0),
+//                                               *tree.evalSubtree<Texture*>(1),
+//                                               *tree.evalSubtree<Texture*>(2));
+//                    return std::any(t);
+//                }
+                evalTexture(SoftMatte(argTexture(),
+                                      argTexture(),
+                                      argTexture()))
             },
             // texsyn6_
             {
                 "Add",
                 "Texture",
                 {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Add(*tree.evalSubtree<Texture*>(0),
-                                         *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Add(*tree.evalSubtree<Texture*>(0),
+//                                         *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(Add(argTexture(),
+                                argTexture()))
             },
             {
                 "Subtract",
                 "Texture",
                 {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Subtract(*tree.evalSubtree<Texture*>(0),
-                                              *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Subtract(*tree.evalSubtree<Texture*>(0),
+//                                              *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(Subtract(argTexture(),
+                                     argTexture()))
             },
             
             {
                 "Multiply",
                 "Texture",
                 {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Multiply(*tree.evalSubtree<Texture*>(0),
-                                              *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Multiply(*tree.evalSubtree<Texture*>(0),
+//                                              *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(Multiply(argTexture(),
+                                     argTexture()))
             },
             {
                 "Max",
                 "Texture",
                 {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Max(*tree.evalSubtree<Texture*>(0),
-                                         *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Max(*tree.evalSubtree<Texture*>(0),
+//                                         *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(Max(argTexture(),
+                                argTexture()))
             },
             {
                 "Min",
                 "Texture",
                 {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Min(*tree.evalSubtree<Texture*>(0),
-                                         *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Min(*tree.evalSubtree<Texture*>(0),
+//                                         *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(Min(argTexture(),
+                                argTexture()))
             },
             // texsyn10_
             {"AbsDiff", "Texture", {"Texture", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new AbsDiff(*tree.evalSubtree<Texture*>(0),
-                                             *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new AbsDiff(*tree.evalSubtree<Texture*>(0),
+//                                             *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(AbsDiff(argTexture(),
+                                    argTexture()))
             },
             
             //{"NotEqual", "Texture", {"Texture", "Texture"}},
@@ -293,15 +256,20 @@ public:
                 "MultiNoise",
                 "Texture",
                 {"Vec2", "Vec2", "Texture", "Texture", "Float_01"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new MultiNoise(tree.evalSubtree<Vec2>(0),
-                                                tree.evalSubtree<Vec2>(1),
-                                                *tree.evalSubtree<Texture*>(2),
-                                                *tree.evalSubtree<Texture*>(3),
-                                                tree.evalSubtree<float>(4));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new MultiNoise(tree.evalSubtree<Vec2>(0),
+//                                                tree.evalSubtree<Vec2>(1),
+//                                                *tree.evalSubtree<Texture*>(2),
+//                                                *tree.evalSubtree<Texture*>(3),
+//                                                tree.evalSubtree<float>(4));
+//                    return std::any(t);
+//                }
+                evalTexture(MultiNoise(argVec2(),
+                                       argVec2(),
+                                       argTexture(),
+                                       argTexture(),
+                                       argFloat()))
             },
             // TODO texsyn12_
 
@@ -309,26 +277,31 @@ public:
                 "ColorNoise",
                 "Texture",
                 {"Vec2", "Vec2", "Float_01"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new ColorNoise(tree.evalSubtree<Vec2>(0),
-                                                tree.evalSubtree<Vec2>(1),
-                                                tree.evalSubtree<float>(2));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new ColorNoise(tree.evalSubtree<Vec2>(0),
+//                                                tree.evalSubtree<Vec2>(1),
+//                                                tree.evalSubtree<float>(2));
+//                    return std::any(t);
+//                }
+                evalTexture(ColorNoise(argVec2(),
+                                       argVec2(),
+                                       argFloat()))
             },
             // TODO texsyn13_
             {
                 "BrightnessToHue",
                 "Texture",
                 {"Float_01", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new
-                        BrightnessToHue(tree.evalSubtree<float>(0),
-                                        *tree.evalSubtree<Texture*>(1));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new
+//                        BrightnessToHue(tree.evalSubtree<float>(0),
+//                                        *tree.evalSubtree<Texture*>(1));
+//                    return std::any(t);
+//                }
+                evalTexture(BrightnessToHue(argFloat(),
+                                            argTexture()))
             },
             
             // TODO texsyn14_
@@ -336,14 +309,18 @@ public:
                 "Wrap",
                 "Texture",
                 {"Float_m5p5", "Vec2", "Vec2", "Texture"},
-                [](const GpTree& tree)
-                {
-                    Texture* t = new Wrap(tree.evalSubtree<float>(0),
-                                          tree.evalSubtree<Vec2>(1),
-                                          tree.evalSubtree<Vec2>(2),
-                                          *tree.evalSubtree<Texture*>(3));
-                    return std::any(t);
-                }
+//                [](const GpTree& tree)
+//                {
+//                    Texture* t = new Wrap(tree.evalSubtree<float>(0),
+//                                          tree.evalSubtree<Vec2>(1),
+//                                          tree.evalSubtree<Vec2>(2),
+//                                          *tree.evalSubtree<Texture*>(3));
+//                    return std::any(t);
+//                }
+                evalTexture(Wrap(argFloat(),
+                                 argVec2(),
+                                 argVec2(),
+                                 argTexture()))
             },
                         
             

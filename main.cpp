@@ -3602,16 +3602,39 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Fill out FunctionSet for TexSyn
-    std::cout << "September 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200922_";
-    // part two:
-    path = "/Users/cwr/Desktop/TexSyn_temp/20200923_";
+//    // Fill out FunctionSet for TexSyn
+//    std::cout << "September 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200922_";
+//    // part two:
+//    path = "/Users/cwr/Desktop/TexSyn_temp/20200923_";
+//
+//    const FunctionSet& fs = TexSynFS::tinyTexSyn();
+//    std::cout << std::endl;
+//    fs.print();
+//    std::cout << std::endl;
+//    LPRS().setSeed();
+//    for (int i = 0; i < 30; i++)
+//    {
+//        GpTree gp_tree;
+//        fs.makeRandomTree(100, gp_tree);
+//        std::cout << std::endl << gp_tree.to_string() << std::endl;
+//        std::cout << "size=" << gp_tree.size() << std::endl;
+//        std::any result_as_any = gp_tree.eval();
+//        Texture* result = std::any_cast<Texture*>(result_as_any);
+//        Texture::displayAndFile(*result
+//                                // , path + "texsyn43_" + std::to_string(i)
+//                                );
+//        Texture::waitKey();
+//    }
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Fill out FunctionSet for TexSyn
+    std::cout << "September 24, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/202009224_";
+    
     const FunctionSet& fs = TexSynFS::tinyTexSyn();
-    std::cout << std::endl;
     fs.print();
-    std::cout << std::endl;
     LPRS().setSeed();
     for (int i = 0; i < 30; i++)
     {
@@ -3624,10 +3647,10 @@ int main(int argc, const char * argv[])
         Texture::displayAndFile(*result
                                 // , path + "texsyn43_" + std::to_string(i)
                                 );
-        Texture::waitKey();
+        //Texture::waitKey();
     }
-//    Texture::waitKey();
-
+    Texture::waitKey();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
