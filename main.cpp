@@ -3636,19 +3636,66 @@ int main(int argc, const char * argv[])
     const FunctionSet& fs = TexSynFS::tinyTexSyn();
     fs.print();
     LPRS().setSeed();
-    for (int i = 0; i < 30; i++)
-    {
-        GpTree gp_tree;
-        fs.makeRandomTree(100, gp_tree);
-        std::cout << std::endl << gp_tree.to_string() << std::endl;
-        std::cout << "size=" << gp_tree.size() << std::endl;
-        std::any result_as_any = gp_tree.eval();
-        Texture* result = std::any_cast<Texture*>(result_as_any);
-        Texture::displayAndFile(*result
-                                // , path + "texsyn43_" + std::to_string(i)
-                                );
-        //Texture::waitKey();
-    }
+//    for (int i = 0; i < 30; i++)
+//    {
+//        GpTree gp_tree;
+//        fs.makeRandomTree(100, gp_tree);
+//        std::cout << std::endl << gp_tree.to_string() << std::endl;
+//        std::cout << "size=" << gp_tree.size() << std::endl;
+//        std::any result_as_any = gp_tree.eval();
+//        Texture* result = std::any_cast<Texture*>(result_as_any);
+//        Texture::displayAndFile(*result
+//                                , path + "texsyn44_" + std::to_string(i)
+//                                );
+//        Texture::waitKey();
+//    }
+    
+        
+    
+    Texture::displayAndFile
+    (EdgeEnhance(0.92443,
+                1.9135,
+                BrightnessToHue(0.420112,
+                                AdjustHue(0.0773456,
+                                          ColorNoise(Vec2(0.867493, -0.123083),
+                                                     Vec2(-0.729388, 0.0366988),
+                                                     0.508404)))),
+     path + "texsyn44_a");
+    
+    Texture::displayAndFile
+    (EdgeDetect(0.931086,
+                AdjustBrightness(0.929502,
+                                 SliceToRadial(Vec2(0.277333, -0.691483),
+                                               Vec2(-0.216433, 0.97751),
+                                               Wrap(0.790288,
+                                                    Vec2(-0.572195, -0.432135),
+                                                    Vec2(0.145933, 0.402443),
+                                                    BrightnessToHue(0.307826,
+                                                                    Grating(Vec2(),
+                                                                            Uniform(0),
+                                                                            Vec2(0.1, 0.1),
+                                                                            Uniform(1),
+                                                                            1, 0.5)))))),
+     path + "texsyn44_b");
+    
+    Texture::displayAndFile
+    (EdgeDetect(0.931086,
+                AdjustBrightness(0.929502,
+                                 SliceToRadial(Vec2(0.277333, -0.691483),
+                                               Vec2(-0.216433, 0.97751),
+                                               Wrap(0.790288,
+                                                    Vec2(-0.572195, -0.432135),
+                                                    Vec2(0.145933, 0.402443),
+                                                    BrightnessToHue(0.307826,
+                                                                    EdgeEnhance(0.92443,
+                                                                                1.9135,
+                                                                                BrightnessToHue(0.420112,
+                                                                                                AdjustHue(0.0773456,
+                                                                                                          ColorNoise(Vec2(0.867493, -0.123083),
+                                                                                                                     Vec2(-0.729388, 0.0366988),
+                                                                                                                     0.508404))))))))),
+//     path + "texsyn44_c", 99);
+     path + "texsyn44_c");
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

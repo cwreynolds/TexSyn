@@ -112,6 +112,9 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // Read TexSyn Color from Texture at (i, j).
         Color color(0, 0, 0);
         Vec2 pixel_center = Vec2(i, j) / half;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        expensive_to_nest = 0;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
         {
             float pixel_radius = 2.0 / size;

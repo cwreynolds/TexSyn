@@ -457,17 +457,19 @@ public:
             //{"Rotate", "Texture", {"Float_m5p5", "Texture"}},
             //{"Translate", "Texture", {"Vec2", "Texture"}},
             
-//            {
-//                "Blur",
-//                "Texture",
-//                {"Float_01", "Texture"},
+            {
+                "Blur",
+                "Texture",
+                {"Float_01", "Texture"},
 //                [](const GpTree& tree)
 //                {
 //                    Texture* t = new Blur(argFloat(0),
 //                                          argTexture(1));
 //                    return std::any(t);
 //                }
-//            },
+                evalTexture(Blur(argFloat(),
+                                 argTexture()))
+            },
             
             // TODO texsyn23_
             {
@@ -487,8 +489,21 @@ public:
             },
             
             
-//                {"EdgeDetect", "Texture", {"Float_01", "Texture"}},
-//                {"EdgeEnhance", "Texture", {"Float_01", "Float_02", "Texture"}},
+                {
+                    "EdgeDetect",
+                    "Texture",
+                    {"Float_01", "Texture"},
+                    evalTexture(EdgeDetect(argFloat(), argTexture()))
+                },
+            
+                {
+                    "EdgeEnhance",
+                    "Texture",
+                    {"Float_01", "Float_02", "Texture"},
+                    evalTexture(EdgeEnhance(argFloat(),
+                                            argFloat(),
+                                            argTexture()))
+                },
             
             {
                 "AdjustHue",
