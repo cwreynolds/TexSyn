@@ -3629,75 +3629,99 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Fill out FunctionSet for TexSyn
-    std::cout << "September 24, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/202009224_";
+//    // Fill out FunctionSet for TexSyn
+//    std::cout << "September 24, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/202009224_";
+//
+//    const FunctionSet& fs = TexSynFS::tinyTexSyn();
+//    fs.print();
+//    LPRS().setSeed();
+//    //for (int i = 0; i < 30; i++)
+//    //{
+//    //    GpTree gp_tree;
+//    //    fs.makeRandomTree(100, gp_tree);
+//    //    std::cout << std::endl << gp_tree.to_string() << std::endl;
+//    //    std::cout << "size=" << gp_tree.size() << std::endl;
+//    //    std::any result_as_any = gp_tree.eval();
+//    //    Texture* result = std::any_cast<Texture*>(result_as_any);
+//    //    Texture::displayAndFile(*result
+//    //                            , path + "texsyn44_" + std::to_string(i)
+//    //                            );
+//    //    Texture::waitKey();
+//    //}
+//
+//
+//
+//    Texture::displayAndFile
+//    (EdgeEnhance(0.92443,
+//                1.9135,
+//                BrightnessToHue(0.420112,
+//                                AdjustHue(0.0773456,
+//                                          ColorNoise(Vec2(0.867493, -0.123083),
+//                                                     Vec2(-0.729388, 0.0366988),
+//                                                     0.508404)))),
+//     path + "texsyn44_a");
+//
+//    Texture::displayAndFile
+//    (EdgeDetect(0.931086,
+//                AdjustBrightness(0.929502,
+//                                 SliceToRadial(Vec2(0.277333, -0.691483),
+//                                               Vec2(-0.216433, 0.97751),
+//                                               Wrap(0.790288,
+//                                                    Vec2(-0.572195, -0.432135),
+//                                                    Vec2(0.145933, 0.402443),
+//                                                    BrightnessToHue(0.307826,
+//                                                                    Grating(Vec2(),
+//                                                                            Uniform(0),
+//                                                                            Vec2(0.1, 0.1),
+//                                                                            Uniform(1),
+//                                                                            1, 0.5)))))),
+//     path + "texsyn44_b");
+//
+//    Texture::displayAndFile
+//    (EdgeDetect(0.931086,
+//                AdjustBrightness(0.929502,
+//                                 SliceToRadial(Vec2(0.277333, -0.691483),
+//                                               Vec2(-0.216433, 0.97751),
+//                                               Wrap(0.790288,
+//                                                    Vec2(-0.572195, -0.432135),
+//                                                    Vec2(0.145933, 0.402443),
+//                                                    BrightnessToHue(0.307826,
+//                                                                    EdgeEnhance(0.92443,
+//                                                                                1.9135,
+//                                                                                BrightnessToHue(0.420112,
+//                                                                                                AdjustHue(0.0773456,
+//                                                                                                          ColorNoise(Vec2(0.867493, -0.123083),
+//                                                                                                                     Vec2(-0.729388, 0.0366988),
+//                                                                                                                     0.508404))))))))),
+//     path + "texsyn44_c");
+//    Texture::waitKey();
     
-    const FunctionSet& fs = TexSynFS::tinyTexSyn();
-    fs.print();
-    LPRS().setSeed();
-//    for (int i = 0; i < 30; i++)
-//    {
-//        GpTree gp_tree;
-//        fs.makeRandomTree(100, gp_tree);
-//        std::cout << std::endl << gp_tree.to_string() << std::endl;
-//        std::cout << "size=" << gp_tree.size() << std::endl;
-//        std::any result_as_any = gp_tree.eval();
-//        Texture* result = std::any_cast<Texture*>(result_as_any);
-//        Texture::displayAndFile(*result
-//                                , path + "texsyn44_" + std::to_string(i)
-//                                );
-//        Texture::waitKey();
-//    }
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-        
+    // Experiment with Blur: bias samples toward center of kernel.
+    std::cout << "September 26, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/202009226_";
     
-    Texture::displayAndFile
-    (EdgeEnhance(0.92443,
-                1.9135,
-                BrightnessToHue(0.420112,
-                                AdjustHue(0.0773456,
-                                          ColorNoise(Vec2(0.867493, -0.123083),
-                                                     Vec2(-0.729388, 0.0366988),
-                                                     0.508404)))),
-     path + "texsyn44_a");
-    
-    Texture::displayAndFile
-    (EdgeDetect(0.931086,
-                AdjustBrightness(0.929502,
-                                 SliceToRadial(Vec2(0.277333, -0.691483),
-                                               Vec2(-0.216433, 0.97751),
-                                               Wrap(0.790288,
-                                                    Vec2(-0.572195, -0.432135),
-                                                    Vec2(0.145933, 0.402443),
-                                                    BrightnessToHue(0.307826,
-                                                                    Grating(Vec2(),
-                                                                            Uniform(0),
-                                                                            Vec2(0.1, 0.1),
-                                                                            Uniform(1),
-                                                                            1, 0.5)))))),
-     path + "texsyn44_b");
-    
-    Texture::displayAndFile
-    (EdgeDetect(0.931086,
-                AdjustBrightness(0.929502,
-                                 SliceToRadial(Vec2(0.277333, -0.691483),
-                                               Vec2(-0.216433, 0.97751),
-                                               Wrap(0.790288,
-                                                    Vec2(-0.572195, -0.432135),
-                                                    Vec2(0.145933, 0.402443),
-                                                    BrightnessToHue(0.307826,
-                                                                    EdgeEnhance(0.92443,
-                                                                                1.9135,
-                                                                                BrightnessToHue(0.420112,
-                                                                                                AdjustHue(0.0773456,
-                                                                                                          ColorNoise(Vec2(0.867493, -0.123083),
-                                                                                                                     Vec2(-0.729388, 0.0366988),
-                                                                                                                     0.508404))))))))),
-//     path + "texsyn44_c", 99);
-     path + "texsyn44_c");
+    Uniform yellow(1, 1, 0);
+    Uniform blue(0, 0, 1);
+    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+    float filter_width = 0.1;
+    Texture::displayAndFile(grating);
+    Texture::displayAndFile(Blur(filter_width, grating));
+    Texture::displayAndFile(Blur2(filter_width, grating));
+    Texture::displayAndFile(Gradation(Vec2(0, 0.1),
+                                      Blur(filter_width, grating),
+                                      Vec2(0, -0.1),
+                                      Blur2(filter_width, grating)));
+    Texture::displayAndFile(CotsMap(Vec2(),
+                                    Vec2(0.4, 0),
+                                    Vec2(0.2, 0.2),
+                                    Vec2(0, 0.4),
+                                    Blur2(filter_width * 10,
+                                          Scale(10, grating))));
     Texture::waitKey();
-    
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
