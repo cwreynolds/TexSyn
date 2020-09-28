@@ -74,13 +74,94 @@
     <p>(While the library is written in c++, many of the code samples below are
       shown in a simplified style: textures are often written as an isolated
       expression rather than a complete c++ statement, semicolons are often
-      omitted, as are `auto` declarations when defining variables.)</p>
+      omitted, as are <code>auto</code> declarations when defining variables.)</p>
     <p><span style="background-color: red;">Note:</span> as of <a href="#20200506">May
         6, 2020</a> an incompatible change was made to improve gamma handling.
       For entries dated before then, the given TexSyn code, if re-rendered anew,
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20200927"> <a href="#20200927" class="date">September
+        27, 2020</a>
+      <h1>Reconsidering convolution</h1>
+      <p>The most “heavyweight” Texture operators are those based on
+        convolution: <em>Blur</em>, <em>EdgeDetect</em>, and <em>EdgeEnhance</em>.
+        (Only <em>Blur</em> actually does a convolution, <em>EdgeDetect</em>
+        and <em>EdgeEnhance</em> are derived from <em>Blur</em> by “unsharp
+        masking.”) For all other Texture operators, each output pixel <code>getColor()</code>
+        requires one, two, or some small number of input <code>getColor()</code>
+        lookups in textures further down the tree. For each pixel of a <em>Blur</em>,
+        a large number of lookups are needed to sample the input texture under
+        the support of the convolution kernel. That value had been set to 11x11
+        or 121 samples per output pixel <code>getColor()</code> lookup. </p>
+      <p>In normal image processing, blurring an image can be done quickly,
+        especially when computed on a GPU. The whole image can be blurred at
+        once, in place in a memory array. With a Gaussian kernel, that can be
+        separated into two sequential one-dimensional passes. None of these
+        speedups apply to TexSyn where textures have “infinite” extent and are
+        routinely addressed via non-linear warps. A TexSyn textures has no idea
+        of the spacing between adjacent pixel samples, so cannot build memory
+        arrays that cache the pixel colors.</p>
+      <p>Nonetheless the current design allows warping the result of applying <em>Blur</em>
+        to a warped texture, at the cost of taking about 100 times longer than
+        other operators. But until I started generating random TexSyn trees with
+        <em>Blur</em>, <em>EdgeDetect</em>, and <em>EdgeEnhance</em>, I was
+        chagrined that I had not considered the cost of <strong>composing</strong>
+        multiple convolution operators. Now we run into some subtrees — such as
+        <em>Blur(EdgeEnhance(...)) </em>— that are 10,000 slower than normal
+        operators!<br>
+        <br>
+        One possibility is deciding we didn't really want blur and edge
+        operations in TexSyn. And I guess that could still happen. But first I
+        want to see what I can do to chip away at the cost. One approach is to
+        disallow the deadly nested convolutions. This could be done as a
+        constraint on <code>GpTree</code> construction. But that would add a
+        lot of complexity for this one edge case. Another way is to say that a
+        nested convolution operator turns into the identity operator. This is
+        appealing because it only touches the relevant TexSyn operators, and in
+        fact merely <em>Blur</em>. So I implemented that.</p>
+      <p>Another approach is to use the stochastic sampling to trade off image
+        smoothness for speed. All it takes is reducing the number of subsamples
+        to run faster, while causing more noise. That global parameter is called
+        <code> Blur::sqrt_of_subsample_count</code> and had been set to 11 (121
+        subsamples). I have now decreased it to 7 (49 subsamples). So it now
+        runs in about 40% (49/121) of the time it did previously. Below are an
+        input Gradient texture, and a comparison of Blur at 11x11 (as before, on
+        the top half) and 7x7 (as now, on the bottom half):</p>
+      <pre>yellow = Uniform(1, 1, 0)
+blue = Uniform(0, 0, 1)
+grating = Grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5)
+filter_width = 0.1
+
+blur_7_11_compare = Gradation(Vec2(0, 0.1),
+                              Blur(filter_width, grating),
+                              Vec2(0, -0.1),
+                              Blur(filter_width, grating))
+</pre> <img src="images/20200927_grating.png" alt="grating" title="grating" height="511"
+        width="511"> &nbsp; <img src="images/20200927_blur_7_11_compare.png" alt="blur_7_11_compare"
+        title="blur_7_11_compare" height="511" width="511">
+      <p>Now here is a similar texture, wrapped into a spiral by the COTS patch
+        operator. Note how the zone of transition between the two colors grows
+        with the spiral as do the width of the stripes. (this is the same <code>grating</code>
+        texture as above, scaled up by 10, with the filter width also scaled by
+        10 to match) These three textures show the result with <code>Blur::sqrt_of_subsample_count</code>
+        set to 40, 11, and 7 (corresponding to 1600, 121, and 49 subsamples per
+        output pixel). 40 is ridiculously high and slow-running, but shows what
+        the <em>Blur</em> looks like with essentially no sampling noise. The
+        middle value 11 is what was previously used, and 7 is the new default
+        value. The resulting stipple pattern looks a bit like colored pencil on
+        textured drawing paper.</p>
+      <pre>CotsMap(Vec2(0.0, 0.0),
+        Vec2(0.4, 0.0),
+        Vec2(0.2, 0.2),
+        Vec2(0.0, 0.4),
+        Blur(filter_width * 10, Scale(10, grating)))</pre>
+      <img src="images/20200927_blur_40_spiral.png" alt="blur 40 spiral" title="blur 40 spiral"
+        height="511" width="511"> <br>
+      <br>
+      <img src="images/20200927_blur_11_spiral.png" alt="blur 11 spiral" title="blur 11 spiral"
+        height="511" width="511"> &nbsp; <img src="images/20200927_blur_7_spiral.png"
+        alt="blur 7 spiral" title="blur 7 spiral" height="511" width="511"> </div>
     <div class="post" id="20200923"> <a href="#20200923" class="date">September
         23, 2020</a>
       <h1>Completed TexSyn's <code>FunctionSet</code></h1>

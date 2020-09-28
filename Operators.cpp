@@ -53,7 +53,7 @@ Texture& Texture::disposableUniform(Color color)
     return *(new Uniform(color));
 }
 
-
+// TODO given c++17, move this back to .h file
 // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
 int Blur::sqrt_of_subsample_count = 11;
 
