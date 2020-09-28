@@ -7,9 +7,7 @@
 //
 
 #include "TexSyn.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include "GP.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
 
@@ -3699,102 +3697,123 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Experiment with Blur:
-    //     bias samples toward center of kernel
-    //     then just trade off speed with noise by reducing samples per pixel.
-    std::cout << "September 27, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200927_";
+//        // Experiment with Blur:
+//        //     bias samples toward center of kernel
+//        //     then just trade off speed with noise by reducing samples per pixel.
+//        std::cout << "September 27, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200927_";
+//
+//        Uniform yellow(1, 1, 0);
+//        Uniform blue(0, 0, 1);
+//        Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+//        float filter_width = 0.1;
+//
+//        Texture::displayAndFile(grating, path + "grating");
+//    //    Texture::displayAndFile(Blur(filter_width, grating));
+//        Texture::displayAndFile(BlurN(11, filter_width, grating));
+//        Texture::displayAndFile(BlurN(7, filter_width, grating));
+//    //    Blur::sqrt_of_subsample_count = 8;
+//    //    debugPrint(Blur::sqrt_of_subsample_count);
+//    //    Texture::displayAndFile(Blur(filter_width, grating));
+//    //    Blur::sqrt_of_subsample_count = 11;
+//    //    debugPrint(Blur::sqrt_of_subsample_count);
+//    //    Texture::displayAndFile(Blur2(filter_width, grating));
+//    //    Texture::displayAndFile(Gradation(Vec2(0, 0.1),
+//    //                                      Blur(filter_width, grating),
+//    //                                      Vec2(0, -0.1),
+//    //                                      Blur2(filter_width, grating)));
+//        Texture::displayAndFile(Gradation(Vec2(0, 0.1),
+//                                          BlurN(11, filter_width, grating),
+//                                          Vec2(0, -0.1),
+//                                          BlurN(7, filter_width, grating))
+//                                , path + "blur_7_11_compare");
+//        //Texture::displayAndFile(CotsMap(Vec2(),
+//        //                                Vec2(0.4, 0),
+//        //                                Vec2(0.2, 0.2),
+//        //                                Vec2(0, 0.4),
+//        //                                Blur2(filter_width * 10,
+//        //                                      Scale(10, grating))));
+//    //    Blur::sqrt_of_subsample_count = 40;
+//    //    debugPrint(Blur::sqrt_of_subsample_count);
+//        //Texture::displayAndFile(CotsMap(Vec2(),
+//        //                                Vec2(0.4, 0),
+//        //                                Vec2(0.2, 0.2),
+//        //                                Vec2(0, 0.4),
+//        //                                Blur2(filter_width * 10,
+//        //                                      Scale(10, grating))));
+//    //    Texture::displayAndFile(CotsMap(Vec2(),
+//    //                                    Vec2(0.4, 0),
+//    //                                    Vec2(0.2, 0.2),
+//    //                                    Vec2(0, 0.4),
+//    //                                    Blur(filter_width * 10,
+//    //                                         Scale(10, grating))));
+//        Texture::displayAndFile(CotsMap(Vec2(),
+//                                        Vec2(0.4, 0),
+//                                        Vec2(0.2, 0.2),
+//                                        Vec2(0, 0.4),
+//                                        BlurN(40,
+//                                              filter_width * 10,
+//                                              Scale(10, grating)))
+//                                , path + "blur_40_spiral");
+//    //    Blur::sqrt_of_subsample_count = 8;
+//    //    debugPrint(Blur::sqrt_of_subsample_count);
+//    //    Texture::displayAndFile(CotsMap(Vec2(),
+//    //                                    Vec2(0.4, 0),
+//    //                                    Vec2(0.2, 0.2),
+//    //                                    Vec2(0, 0.4),
+//    //                                    Blur(filter_width * 10,
+//    //                                         Scale(10, grating))));
+//    //    Blur::sqrt_of_subsample_count = 7;
+//    //    debugPrint(Blur::sqrt_of_subsample_count);
+//    //    Texture::displayAndFile(CotsMap(Vec2(),
+//    //                                    Vec2(0.4, 0),
+//    //                                    Vec2(0.2, 0.2),
+//    //                                    Vec2(0, 0.4),
+//    //                                    Blur(filter_width * 10,
+//    //                                         Scale(10, grating))));
+//        Texture::displayAndFile(CotsMap(Vec2(),
+//                                        Vec2(0.4, 0),
+//                                        Vec2(0.2, 0.2),
+//                                        Vec2(0, 0.4),
+//                                        BlurN(11,
+//                                              filter_width * 10,
+//                                              Scale(10, grating)))
+//                                , path + "blur_11_spiral");
+//        Texture::displayAndFile(CotsMap(Vec2(),
+//                                        Vec2(0.4, 0),
+//                                        Vec2(0.2, 0.2),
+//                                        Vec2(0, 0.4),
+//                                        BlurN(7,
+//                                              filter_width * 10,
+//                                              Scale(10, grating)))
+//                                , path + "blur_7_spiral");
+//        Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Uniform yellow(1, 1, 0);
-    Uniform blue(0, 0, 1);
-    Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
-    float filter_width = 0.1;
-
-    Texture::displayAndFile(grating, path + "grating");
-//    Texture::displayAndFile(Blur(filter_width, grating));
-    Texture::displayAndFile(BlurN(11, filter_width, grating));
-    Texture::displayAndFile(BlurN(7, filter_width, grating));
-//    Blur::sqrt_of_subsample_count = 8;
-//    debugPrint(Blur::sqrt_of_subsample_count);
-//    Texture::displayAndFile(Blur(filter_width, grating));
-//    Blur::sqrt_of_subsample_count = 11;
-//    debugPrint(Blur::sqrt_of_subsample_count);
-//    Texture::displayAndFile(Blur2(filter_width, grating));
-//    Texture::displayAndFile(Gradation(Vec2(0, 0.1),
-//                                      Blur(filter_width, grating),
-//                                      Vec2(0, -0.1),
-//                                      Blur2(filter_width, grating)));
-    Texture::displayAndFile(Gradation(Vec2(0, 0.1),
-                                      BlurN(11, filter_width, grating),
-                                      Vec2(0, -0.1),
-                                      BlurN(7, filter_width, grating))
-                            , path + "blur_7_11_compare");
-    //Texture::displayAndFile(CotsMap(Vec2(),
-    //                                Vec2(0.4, 0),
-    //                                Vec2(0.2, 0.2),
-    //                                Vec2(0, 0.4),
-    //                                Blur2(filter_width * 10,
-    //                                      Scale(10, grating))));
-//    Blur::sqrt_of_subsample_count = 40;
-//    debugPrint(Blur::sqrt_of_subsample_count);
-    //Texture::displayAndFile(CotsMap(Vec2(),
-    //                                Vec2(0.4, 0),
-    //                                Vec2(0.2, 0.2),
-    //                                Vec2(0, 0.4),
-    //                                Blur2(filter_width * 10,
-    //                                      Scale(10, grating))));
-//    Texture::displayAndFile(CotsMap(Vec2(),
-//                                    Vec2(0.4, 0),
-//                                    Vec2(0.2, 0.2),
-//                                    Vec2(0, 0.4),
-//                                    Blur(filter_width * 10,
-//                                         Scale(10, grating))));
-    Texture::displayAndFile(CotsMap(Vec2(),
-                                    Vec2(0.4, 0),
-                                    Vec2(0.2, 0.2),
-                                    Vec2(0, 0.4),
-                                    BlurN(40,
-                                          filter_width * 10,
-                                          Scale(10, grating)))
-                            , path + "blur_40_spiral");
-//    Blur::sqrt_of_subsample_count = 8;
-//    debugPrint(Blur::sqrt_of_subsample_count);
-//    Texture::displayAndFile(CotsMap(Vec2(),
-//                                    Vec2(0.4, 0),
-//                                    Vec2(0.2, 0.2),
-//                                    Vec2(0, 0.4),
-//                                    Blur(filter_width * 10,
-//                                         Scale(10, grating))));
-//    Blur::sqrt_of_subsample_count = 7;
-//    debugPrint(Blur::sqrt_of_subsample_count);
-//    Texture::displayAndFile(CotsMap(Vec2(),
-//                                    Vec2(0.4, 0),
-//                                    Vec2(0.2, 0.2),
-//                                    Vec2(0, 0.4),
-//                                    Blur(filter_width * 10,
-//                                         Scale(10, grating))));
-    Texture::displayAndFile(CotsMap(Vec2(),
-                                    Vec2(0.4, 0),
-                                    Vec2(0.2, 0.2),
-                                    Vec2(0, 0.4),
-                                    BlurN(11,
-                                          filter_width * 10,
-                                          Scale(10, grating)))
-                            , path + "blur_11_spiral");
-    Texture::displayAndFile(CotsMap(Vec2(),
-                                    Vec2(0.4, 0),
-                                    Vec2(0.2, 0.2),
-                                    Vec2(0, 0.4),
-                                    BlurN(7,
-                                          filter_width * 10,
-                                          Scale(10, grating)))
-                            , path + "blur_7_spiral");
-
+    // Clean up after experiments with Blur.
+    std::cout << "September 28, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200928_";
     
-
-
-    Texture::waitKey();
-
+    const FunctionSet& fs = TexSynFS::tinyTexSyn();
+    fs.print();
+    LPRS().setSeed();
+    LPRS().setSeed(367459);
+    for (int i = 0; i < 30; i++)
+    {
+        GpTree gp_tree;
+        //fs.makeRandomTree(100, gp_tree);
+        fs.makeRandomTree(50, gp_tree);
+        std::cout << std::endl << gp_tree.to_string() << std::endl;
+        std::cout << "size=" << gp_tree.size() << std::endl;
+        std::any result_as_any = gp_tree.eval();
+        Texture* result = std::any_cast<Texture*>(result_as_any);
+        //Texture::displayAndFile(*result,
+        //                        path + "texsyn44_" + std::to_string(i));
+        Texture::displayAndFile(*result, "", 255);
+        Texture::waitKey();
+    }
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

@@ -799,46 +799,11 @@ private:
     const Texture& texture;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Uses a "distributed sampling" approach. Takes subsamples on a jiggled NxN
-// grid spaning the bounding square of a cosinusoidal kernel with the given
+// grid spanning the bounding square of a cosinusoidal kernel with the given
 // diameter. N can be statically adjusted with Blur::sqrt_of_subsample_count.
 // For each subsample, it looks up a color in the input texture, adjusts it
 // by the kernel weight, and averages the result.
-//    class Blur : public Texture
-//    {
-//    public:
-//        Blur(const float _width, const Texture& _texture)
-//            : width(_width), texture(_texture) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//            float radius = width / 2;
-//            std::vector<Vec2> offsets;
-//            RandomSequence rs(position.hash());
-//            jittered_grid_NxN_in_square(sqrt_of_subsample_count, width, rs, offsets);
-//            Color sum_of_weighted_colors(0, 0, 0);
-//            float sum_of_weights = 0;
-//            for (Vec2 offset : offsets)
-//            {
-//                float length = offset.length();
-//                if (length <= radius)
-//                {
-//                    float weight = 1 - sinusoid(length / radius);
-//                    Color color_at_offset = texture.getColor(position + offset);
-//                    sum_of_weighted_colors += color_at_offset * weight;
-//                    sum_of_weights += weight;
-//                }
-//            }
-//            return sum_of_weighted_colors / sum_of_weights;
-//        }
-//        // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
-//        static int sqrt_of_subsample_count;
-//    private:
-//        const float width;
-//        const Texture& texture;
-//    };
-
 class Blur : public Texture
 {
 public:
@@ -846,53 +811,14 @@ public:
         : width(_width), texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO this could be written to fiddle with sqrt_of_subsample_count
-        //      instead of two versions of how to compute the pixel color.
-        //      But then sqrt_of_subsample_count would need to be 
-//        if (expensive_to_nest > 0)
-//        {
-//            return texture.getColor(position);
-//        }
-//        else
-//        {
-//            expensive_to_nest++;
-//            float radius = width / 2;
-//            std::vector<Vec2> offsets;
-//            RandomSequence rs(position.hash());
-//            jittered_grid_NxN_in_square(sqrt_of_subsample_count,
-//                                        width, rs, offsets);
-//            Color sum_of_weighted_colors(0, 0, 0);
-//            float sum_of_weights = 0;
-//            for (Vec2 offset : offsets)
-//            {
-//                float length = offset.length();
-//                if (length <= radius)
-//                {
-//                    float weight = 1 - sinusoid(length / radius);
-//                    Color color_at_offset = texture.getColor(position + offset);
-//                    sum_of_weighted_colors += color_at_offset * weight;
-//                    sum_of_weights += weight;
-//                }
-//            }
-//            expensive_to_nest--;
-//            return sum_of_weighted_colors / sum_of_weights;
-//        }
-        int sosc = (expensive_to_nest > 0 ? 1 : sqrt_of_subsample_count);
-        expensive_to_nest++;
         float radius = width / 2;
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());
-//        jittered_grid_NxN_in_square(sqrt_of_subsample_count,
-//        jittered_grid_NxN_in_square(sosc, width, rs, offsets);
-        // TODO maybe fold this “Single sample is unjittered” behavior inside
-        //      jittered_grid_NxN_in_square()?
-        if (sosc == 1)
-            offsets.push_back({});
-        else
-            jittered_grid_NxN_in_square(sosc, width, rs, offsets);
+        int n = (expensive_to_nest > 0) ? 1 : sqrt_of_subsample_count;
+        jittered_grid_NxN_in_square(n, width, rs, offsets);
         Color sum_of_weighted_colors(0, 0, 0);
         float sum_of_weights = 0;
+        expensive_to_nest++;
         for (Vec2 offset : offsets)
         {
             float length = offset.length();
@@ -906,7 +832,6 @@ public:
         }
         expensive_to_nest--;
         return sum_of_weighted_colors / sum_of_weights;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
     static int sqrt_of_subsample_count;
@@ -914,143 +839,6 @@ private:
     const float width;
     const Texture& texture;
 };
-
-//    class Blur2 : public Texture
-//    {
-//    public:
-//        Blur2(const float _width, const Texture& _texture)
-//          : width(_width), texture(_texture) {}
-//        Color getColor(Vec2 position) const override
-//        {
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            int sosc = (expensive_to_nest > 0 ? 1 : Blur::sqrt_of_subsample_count);
-//            expensive_to_nest++;
-//            float radius = width / 2;
-//            std::vector<Vec2> offsets;
-//            RandomSequence rs(position.hash());
-//
-//    //        for (int i = 0; i < sq(sosc); i++)
-//    //        for (int i = 0; i < sq(sosc / 4); i++)
-//    //        for (int i = 0; i < sq(sosc / 2); i++)
-//    //        {
-//    //            offsets.push_back(rs.randomUnitVector() * rs.frandom2(0, radius));
-//    //        }
-//    //        for (int i = 0; i < sq(sosc / 2); i++)
-//    //        {
-//    //            Vec2 ruv = rs.randomUnitVector();
-//    //            float rr = rs.frandom2(0, radius);
-//    //            offsets.push_back(ruv * rr);
-//    //            offsets.push_back(ruv * -rr);
-//    //        }
-//
-//    //        for (int i = 0; i < sq(sosc / 4); i++)
-//    //        for (int i = 0; i < sq(sosc / 8); i++)
-//            // TODO oh, doing the divide in the wrong place
-//    //        for (int i = 0; i < sq(sosc) / 8; i++)
-//    //        {
-//    //            Vec2 ruv = rs.randomUnitVector();
-//    //            float rr = rs.frandom2(0, radius);
-//    //            Vec2 q = ruv.rotate90degCCW();
-//    //            offsets.push_back(ruv * rr);
-//    //            offsets.push_back(ruv * -rr);
-//    //            offsets.push_back(q * rr);
-//    //            offsets.push_back(q * -rr);
-//    //        }
-//
-//    //            // TODO need to handle the case for sosc==1
-//    //    //        for (int i = 0; i < sq(sosc) / 2; i++)
-//    //            for (int i = 0; i < sq(sosc) / 4; i++)
-//    //            {
-//    //                Vec2 ruv = rs.randomUnitVector();
-//    //                float rr = rs.frandom2(0, radius);
-//    //                offsets.push_back(ruv * rr);
-//    //            }
-//
-//    //        int count = std::max(int(1), int(sq(sosc) / 4));
-//    //        int count = std::max(1, (sosc * sosc) / 4);
-//    //        int count = std::max(1, (sosc * sosc) / 8);
-//            int count = std::max(1, (sosc * sosc) / 10);
-//            for (int i = 0; i < count; i++)
-//            {
-//                offsets.push_back(rs.randomUnitVector() * rs.frandom2(0, radius));
-//            }
-//
-//            Color sum_of_weighted_colors(0, 0, 0);
-//            float sum_of_weights = 0;
-//            for (Vec2 offset : offsets)
-//            {
-//                float length = offset.length();
-//                if (length <= radius)
-//                {
-//                    float weight = 1 - sinusoid(length / radius);
-//                    Color color_at_offset = texture.getColor(position + offset);
-//                    sum_of_weighted_colors += color_at_offset * weight;
-//                    sum_of_weights += weight;
-//                }
-//            }
-//            expensive_to_nest--;
-//            return sum_of_weighted_colors / sum_of_weights;
-//        }
-//    //    // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
-//    //    static int sqrt_of_subsample_count;
-//    private:
-//        const float width;
-//        const Texture& texture;
-//    };
-
-
-class BlurN : public Texture
-{
-public:
-    BlurN(int _sqrt_ss_count, const float _width, const Texture& _texture)
-        : sqrt_ss_count(_sqrt_ss_count), width(_width), texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO this could be written to fiddle with sqrt_of_subsample_count
-        //      instead of two versions of how to compute the pixel color.
-        //      But then sqrt_of_subsample_count would need to be
-//        int sosc = (expensive_to_nest > 0 ? 1 : sqrt_of_subsample_count);
-        int sosc = (expensive_to_nest > 0 ? 1 : sqrt_ss_count);
-        expensive_to_nest++;
-        float radius = width / 2;
-        std::vector<Vec2> offsets;
-        RandomSequence rs(position.hash());
-//        jittered_grid_NxN_in_square(sqrt_of_subsample_count,
-//        jittered_grid_NxN_in_square(sosc, width, rs, offsets);
-        // TODO maybe fold this “Single sample is unjittered” behavior inside
-        //      jittered_grid_NxN_in_square()?
-        if (sosc == 1)
-            offsets.push_back({});
-        else
-            jittered_grid_NxN_in_square(sosc, width, rs, offsets);
-        Color sum_of_weighted_colors(0, 0, 0);
-        float sum_of_weights = 0;
-        for (Vec2 offset : offsets)
-        {
-            float length = offset.length();
-            if (length <= radius)
-            {
-                float weight = 1 - sinusoid(length / radius);
-                Color color_at_offset = texture.getColor(position + offset);
-                sum_of_weighted_colors += color_at_offset * weight;
-                sum_of_weights += weight;
-            }
-        }
-        expensive_to_nest--;
-        return sum_of_weighted_colors / sum_of_weights;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    }
-    // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
-    static int sqrt_of_subsample_count;
-private:
-    const int sqrt_ss_count;
-    const float width;
-    const Texture& texture;
-};
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Given two intensity thresholds and an input texture, remap the texture colors
 // between those thresholds to "full intensity range". Converts the texture to

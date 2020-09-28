@@ -383,6 +383,7 @@ void setDefaultGamma(float gamma) { default_gamma = gamma; }
 //     rs: a RandomSequence for generating random jitter.
 //     offsets: vector to be filled with Vec2d offsets
 // (FYI See https://www.redblobgames.com/x/1830-jittered-grid/)
+// September 28, 2020: if n=1 offset will be in center of cell (square)
 void jittered_grid_NxN_in_square(int n,
                                  float square_side_length,
                                  RandomSequence& rs,
@@ -393,7 +394,9 @@ void jittered_grid_NxN_in_square(int n,
     float cell_width = square_side_length / n;
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
-            offsets.push_back(Vec2((i * cell_width) - radius, // cell corner
+            offsets.push_back(n == 1 ?
+                              Vec2() :
+                              Vec2((i * cell_width) - radius, // cell corner
                                    (j * cell_width) - radius) +
                               Vec2(rs.frandom01() * cell_width,  // jitter
                                    rs.frandom01() * cell_width));
