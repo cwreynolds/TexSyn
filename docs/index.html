@@ -172,19 +172,14 @@ blur_7_11_compare = Gradation(Vec2(0, 0.1),
         23, 2020</a>
       <h1>Completed TexSyn's <code>FunctionSet</code></h1>
       <p>I completed building a LazyPredator <code>FunctionSet</code> for
-        TexSyn's API. Or what I have come to regard as the “modern subset.” For
-        example TexSyn still defines <em>Scale</em>, <em>Rotate</em>, and <em>Translate</em>,
-        but I consider them deprecated, replaced by <em>Affine</em>. I will
-        post an updated list soon, but of the 52(?) Texture operators in TexSyn,
-        I defined 43(?) in the GP <code>FunctionSet</code>. This is all subject
-        to change.</p>
-      <p>I also defined some “helper functions” in the new <code>GP.h</code>
+        TexSyn's API. Or what I have come to regard as the “modern subset” of
+        TexSyn's API. For example TexSyn still defines <em>Scale</em>, <em>Rotate</em>,
+        and <em>Translate</em>, but I consider them deprecated, replaced by <em>Affine</em>.
+        I will post an updated list soon, but of the 52(?) Texture operators in
+        TexSyn, I defined 43(?) in the GP <code>FunctionSet</code>. This is all
+        subject to change. I also defined some “helper functions” in the new <code>GP.h</code>
         file to reduce the repetition of boiler place, especially in the <code>eval()</code>
-        lambda specified for each <code>GpFunction</code>. I ran into some
-        weird bugs where the preprocessor macros I defined, to abbreviate code,
-        seemed to be fooling the compiler into trying to cache some computations
-        rather than repeat. I hope I have worked around that while still keeping
-        the code compact.</p>
+        lambda specified for each <code>GpFunction</code>. </p>
       <p>Shown below are some of the random textures produced with this full <code>FunctionSet</code>,
         all made with a max size of 100. As I was testing I would save off
         examples that I thought were a bit interesting. Here a six pointed star
@@ -294,48 +289,14 @@ AbsDiff(SoftThreshold(0.298399, 0.727319,
                               Uniform(0.0151601, 0.389861, 0.339307)))))</pre>
       <img src="images/20200923_texsyn37_11.png" alt="texsyn37_11" title="texsyn37_11"
         height="511" width="511">
-      <p>Fuzzy spots, in limbo.</p>
-      <pre><span class="comment">// random program texsyn37_17</span>
-LotsOfButtons(0.933154,
-              0.468443,
-              0.290417,
-              0.921633,
-              0.196655,
-              Vec2(-0.108668, 0.362876),
-              Spot(Vec2(0.60092, 0.346435),
-                   0.505766,
-                   AdjustSaturation(0.487457,
-                                    Uniform(0.0883881, 0.484707, 0.128435)),
-                   1.87522,
-                   Mirror(Vec2(-0.254049, 0.387378),
-                          Vec2(-0.115558, 0.445999),
-                          Max(Uniform(0.941028, 0.640188, 0.661906),
-                              BrightnessToHue(0.0447968,
-                                              Uniform(0.732487, 0.42239, 0.726667))))),
-              0.594073,
-              SoftThreshold(0.176752,
-                            0.651301,
-                            Subtract(Uniform(0.923531, 0.26259, 0.00413869),
-                                     AbsDiff(Colorize(Vec2(0.704127, -0.96683),
-                                                      Vec2(0.434464, 0.536132),
-                                                      Subtract(Uniform(0.149775, 0.951417, 0.157127),
-                                                               Uniform(0.612073, 0.00658208, 0.0262323)),
-                                                      ColorNoise(Vec2(0.668097, -0.470961),
-                                                                 Vec2(0.0229161, -0.327769),
-                                                                 0.940818)),
-                                             Row(Vec2(-0.329714, -0.38582),
-                                                 Vec2(-0.206665, -0.232556),
-                                                 Max(AdjustBrightness(0.183757,
-                                                                      BrightnessWrap(0.526949,
-                                                                                     0.963419,
-                                                                                     Uniform(0.0419757, 0.998081, 0.398214))),
-                                                     StretchSpot(0.880503,
-                                                                 0.214836,
-                                                                 Vec2(-0.823275, -0.788442),
-                                                                 Uniform(0.784191, 0.197271, 0.717908))))))))</pre>
-      <img src="images/20200923_texsyn37_17.png" alt="texsyn37_17" title="texsyn37_17"
-        height="511" width="511">
-      <p>Lots of stretched out spots:</p>
+      <!--
+      <p>Fuzzy spots, in limbo.</p>      <pre><span class="comment">// random program texsyn37_17</span>LotsOfButtons(0.933154,              0.468443,              0.290417,              0.921633,              0.196655,              Vec2(-0.108668, 0.362876),
+              Spot(Vec2(0.60092, 0.346435),                   0.505766,                   AdjustSaturation(0.487457,                                    Uniform(0.0883881, 0.484707, 0.128435)),                   1.87522,                   Mirror(Vec2(-0.254049, 0.387378),                          Vec2(-0.115558, 0.445999),                          Max(Uniform(0.941028, 0.640188, 0.661906),
+                              BrightnessToHue(0.0447968,                                              Uniform(0.732487, 0.42239, 0.726667))))),              0.594073,              SoftThreshold(0.176752,                            0.651301,                            Subtract(Uniform(0.923531, 0.26259, 0.00413869),                                     AbsDiff(Colorize(Vec2(0.704127, -0.96683),                                                      Vec2(0.434464, 0.536132),
+                                                      Subtract(Uniform(0.149775, 0.951417, 0.157127),                                                               Uniform(0.612073, 0.00658208, 0.0262323)),                                                      ColorNoise(Vec2(0.668097, -0.470961),                                                                 Vec2(0.0229161, -0.327769),                                                                 0.940818)),                                             Row(Vec2(-0.329714, -0.38582),                                                 Vec2(-0.206665, -0.232556),                                                 Max(AdjustBrightness(0.183757,
+                                                                      BrightnessWrap(0.526949,                                                                                     0.963419,                                                                                     Uniform(0.0419757, 0.998081, 0.398214))),                                                     StretchSpot(0.880503,                                                                 0.214836,                                                                 Vec2(-0.823275, -0.788442),                                                                 Uniform(0.784191, 0.197271, 0.717908))))))))</pre>      <img src="images/20200923_texsyn37_17.png" alt="texsyn37_17" title="texsyn37_17"
+        height="511" width="511">      -->
+      <p>Lots of stretched-out spots:</p>
       <pre><span class="comment">// random program texsyn37_26</span>
 SoftMatte(StretchSpot(1.65618, 1.70558,
                       Vec2(0.220822, -0.484598),

@@ -3798,12 +3798,12 @@ int main(int argc, const char * argv[])
     const FunctionSet& fs = TexSynFS::tinyTexSyn();
     fs.print();
     LPRS().setSeed();
-    LPRS().setSeed(367459);
+    //LPRS().setSeed(367459);
     for (int i = 0; i < 30; i++)
     {
         GpTree gp_tree;
-        //fs.makeRandomTree(100, gp_tree);
-        fs.makeRandomTree(50, gp_tree);
+        fs.makeRandomTree(100, gp_tree);
+        //fs.makeRandomTree(50, gp_tree);
         std::cout << std::endl << gp_tree.to_string() << std::endl;
         std::cout << "size=" << gp_tree.size() << std::endl;
         std::any result_as_any = gp_tree.eval();

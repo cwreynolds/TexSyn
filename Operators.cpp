@@ -53,10 +53,6 @@ Texture& Texture::disposableUniform(Color color)
     return *(new Uniform(color));
 }
 
-// TODO given c++17, move this back to .h file
-// Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
-int Blur::sqrt_of_subsample_count = 11;
-
 // Insert random Disks until density threshold is met. Disk center positions
 // are uniformly distributed across center tile. Radii are chosen from the
 // interval [min_radius, max_radius] with a preference for smaller values.

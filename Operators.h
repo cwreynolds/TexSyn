@@ -834,7 +834,7 @@ public:
         return sum_of_weighted_colors / sum_of_weights;
     }
     // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
-    static int sqrt_of_subsample_count;
+    static inline int sqrt_of_subsample_count = 7;
 private:
     const float width;
     const Texture& texture;
