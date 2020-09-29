@@ -3795,7 +3795,8 @@ int main(int argc, const char * argv[])
     std::cout << "September 28, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200928_";
     
-    const FunctionSet& fs = TexSynFS::tinyTexSyn();
+    //const FunctionSet& fs = TexSynFS::tinyTexSyn();
+    const FunctionSet& fs = GP::fs();
     fs.print();
     LPRS().setSeed();
     //LPRS().setSeed(367459);
@@ -3811,6 +3812,7 @@ int main(int argc, const char * argv[])
         //Texture::displayAndFile(*result,
         //                        path + "texsyn44_" + std::to_string(i));
         Texture::displayAndFile(*result, "", 255);
+        //Texture::displayAndFile(*result);
         Texture::waitKey();
     }
     
