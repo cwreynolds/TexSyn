@@ -81,6 +81,39 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="20201003"> <a href="#20201003" class="date">October
+        3, 2020</a>
+      <h1>Crossover</h1>
+      <p>LazyPredator's <code>FunctionSet::crossover()</code> operator for <em>strongly
+          typed genetic programming</em> appears to be working. After a few
+        simple abstract tests, I tried this test with the TexSyn <code>FunctionSet</code>.
+        I created two random “parent” <code>GpTree</code>s, then made 30
+        “offspring” <code>GpTree</code>s, which combine elements of both
+        parents. Here are eight of those variations, each of which is close to
+        one parent (stripes) or the other (mostly uniform).</p>
+      <p>The difference tend to be fairly subtle. I assume that “most” of the
+        nodes in the parent trees of size 100 are numeric values at the leaves.
+        As a result, many of the offspring differ from their parent by just one
+        number being replaced by another. I <em>think</em> that is correct but
+        may experiment with biasing the crossover points to be higher up the
+        trees.</p>
+      <img src="images/20201003_offspring_0.png" alt="offspring_0" title="offspring_0"
+        height="511" width="511"> <img src="images/20201003_offspring_1.png" alt="offspring_1"
+        title="offspring_1" height="511" width="511"> <br>
+      <br>
+      <img src="images/20201003_offspring_13.png" alt="offspring_13" title="offspring_13"
+        height="511" width="511"> <img src="images/20201003_offspring_10.png" alt="offspring_10"
+        title="offspring_10" height="511" width="511"> <br>
+      <br>
+      <img src="images/20201003_offspring_18.png" alt="offspring_18" title="offspring_18"
+        height="511" width="511"> <img src="images/20201003_offspring_11.png" alt="offspring_11"
+        title="offspring_11" height="511" width="511"> <br>
+      <br>
+      <img src="images/20201003_offspring_28.png" alt="offspring_28" title="offspring_28"
+        height="511" width="511"> <img src="images/20201003_offspring_15.png" alt="offspring_15"
+        title="offspring_15" height="511" width="511"> </div>
+    <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="20200927"> <a href="#20200927" class="date">September
         27, 2020</a>
       <h1>Reconsidering convolution</h1>
@@ -290,12 +323,7 @@ AbsDiff(SoftThreshold(0.298399, 0.727319,
       <img src="images/20200923_texsyn37_11.png" alt="texsyn37_11" title="texsyn37_11"
         height="511" width="511">
       <!--
-      <p>Fuzzy spots, in limbo.</p>      <pre><span class="comment">// random program texsyn37_17</span>LotsOfButtons(0.933154,              0.468443,              0.290417,              0.921633,              0.196655,              Vec2(-0.108668, 0.362876),
-              Spot(Vec2(0.60092, 0.346435),                   0.505766,                   AdjustSaturation(0.487457,                                    Uniform(0.0883881, 0.484707, 0.128435)),                   1.87522,                   Mirror(Vec2(-0.254049, 0.387378),                          Vec2(-0.115558, 0.445999),                          Max(Uniform(0.941028, 0.640188, 0.661906),
-                              BrightnessToHue(0.0447968,                                              Uniform(0.732487, 0.42239, 0.726667))))),              0.594073,              SoftThreshold(0.176752,                            0.651301,                            Subtract(Uniform(0.923531, 0.26259, 0.00413869),                                     AbsDiff(Colorize(Vec2(0.704127, -0.96683),                                                      Vec2(0.434464, 0.536132),
-                                                      Subtract(Uniform(0.149775, 0.951417, 0.157127),                                                               Uniform(0.612073, 0.00658208, 0.0262323)),                                                      ColorNoise(Vec2(0.668097, -0.470961),                                                                 Vec2(0.0229161, -0.327769),                                                                 0.940818)),                                             Row(Vec2(-0.329714, -0.38582),                                                 Vec2(-0.206665, -0.232556),                                                 Max(AdjustBrightness(0.183757,
-                                                                      BrightnessWrap(0.526949,                                                                                     0.963419,                                                                                     Uniform(0.0419757, 0.998081, 0.398214))),                                                     StretchSpot(0.880503,                                                                 0.214836,                                                                 Vec2(-0.823275, -0.788442),                                                                 Uniform(0.784191, 0.197271, 0.717908))))))))</pre>      <img src="images/20200923_texsyn37_17.png" alt="texsyn37_17" title="texsyn37_17"
-        height="511" width="511">      -->
+      <p>Fuzzy spots, in limbo.</p>      <pre><span class="comment">// random program texsyn37_17</span>LotsOfButtons(0.933154,              0.468443,              0.290417,              0.921633,              0.196655,              Vec2(-0.108668, 0.362876),              Spot(Vec2(0.60092, 0.346435),                   0.505766,                   AdjustSaturation(0.487457,                                    Uniform(0.0883881, 0.484707, 0.128435)),                   1.87522,                   Mirror(Vec2(-0.254049, 0.387378),                          Vec2(-0.115558, 0.445999),                          Max(Uniform(0.941028, 0.640188, 0.661906),                              BrightnessToHue(0.0447968,                                              Uniform(0.732487, 0.42239, 0.726667))))),              0.594073,              SoftThreshold(0.176752,                            0.651301,                            Subtract(Uniform(0.923531, 0.26259, 0.00413869),                                     AbsDiff(Colorize(Vec2(0.704127, -0.96683),                                                      Vec2(0.434464, 0.536132),                                                      Subtract(Uniform(0.149775, 0.951417, 0.157127),                                                               Uniform(0.612073, 0.00658208, 0.0262323)),                                                      ColorNoise(Vec2(0.668097, -0.470961),                                                                 Vec2(0.0229161, -0.327769),                                                                 0.940818)),                                             Row(Vec2(-0.329714, -0.38582),                                                 Vec2(-0.206665, -0.232556),                                                 Max(AdjustBrightness(0.183757,                                                                      BrightnessWrap(0.526949,                                                                                     0.963419,                                                                                     Uniform(0.0419757, 0.998081, 0.398214))),                                                     StretchSpot(0.880503,                                                                 0.214836,                                                                 Vec2(-0.823275, -0.788442),                                                                 Uniform(0.784191, 0.197271, 0.717908))))))))</pre>      <img src="images/20200923_texsyn37_17.png" alt="texsyn37_17" title="texsyn37_17"        height="511" width="511">      -->
       <p>Lots of stretched-out spots:</p>
       <pre><span class="comment">// random program texsyn37_26</span>
 SoftMatte(StretchSpot(1.65618, 1.70558,

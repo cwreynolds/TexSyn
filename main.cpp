@@ -3791,31 +3791,59 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Clean up after experiments with Blur.
-    std::cout << "September 28, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200928_";
+//    // Clean up after experiments with Blur.
+//    std::cout << "September 28, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20200928_";
+//
+//    //const FunctionSet& fs = TexSynFS::tinyTexSyn();
+//    const FunctionSet& fs = GP::fs();
+//    fs.print();
+//    LPRS().setSeed();
+//    //LPRS().setSeed(367459);
+//    for (int i = 0; i < 30; i++)
+//    {
+//        GpTree gp_tree;
+//        fs.makeRandomTree(100, gp_tree);
+//        //fs.makeRandomTree(50, gp_tree);
+//        std::cout << std::endl << gp_tree.to_string() << std::endl;
+//        std::cout << "size=" << gp_tree.size() << std::endl;
+//        std::any result_as_any = gp_tree.eval();
+//        Texture* result = std::any_cast<Texture*>(result_as_any);
+//        //Texture::displayAndFile(*result,
+//        //                        path + "texsyn44_" + std::to_string(i));
+//        Texture::displayAndFile(*result, "", 255);
+//        //Texture::displayAndFile(*result);
+//        Texture::waitKey();
+//    }
     
-    //const FunctionSet& fs = TexSynFS::tinyTexSyn();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Test LazyPredator's new crossover.
+    std::cout << "October 3, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201003_";
+    
     const FunctionSet& fs = GP::fs();
     fs.print();
-    LPRS().setSeed();
-    //LPRS().setSeed(367459);
+    LPRS().setSeed(58138756); // curved dark brown/blue stripes, uniforms
+    int max_size = 100;
+    GpTree parent_0, parent_1;
+    fs.makeRandomTree(max_size, parent_0);
+    fs.makeRandomTree(max_size, parent_1);
+
     for (int i = 0; i < 30; i++)
     {
-        GpTree gp_tree;
-        fs.makeRandomTree(100, gp_tree);
-        //fs.makeRandomTree(50, gp_tree);
-        std::cout << std::endl << gp_tree.to_string() << std::endl;
-        std::cout << "size=" << gp_tree.size() << std::endl;
-        std::any result_as_any = gp_tree.eval();
+        GpTree offspring;
+        fs.crossover(parent_0, parent_1, offspring);
+        std::cout << std::endl << offspring.to_string() << std::endl;
+        std::cout << "size=" << offspring.size() << std::endl;
+        std::any result_as_any = offspring.eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
-        //Texture::displayAndFile(*result,
-        //                        path + "texsyn44_" + std::to_string(i));
-        Texture::displayAndFile(*result, "", 255);
-        //Texture::displayAndFile(*result);
+        Texture::displayAndFile(*result
+                                // , path + "offspring_" + std::to_string(i)
+                                );
         Texture::waitKey();
     }
-    
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
