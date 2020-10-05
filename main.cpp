@@ -3821,7 +3821,8 @@ int main(int argc, const char * argv[])
     // Test LazyPredator's new crossover.
     std::cout << "October 3, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201003_";
-    
+    path = "/Users/cwr/Desktop/TexSyn_temp/20201005_";
+
     const FunctionSet& fs = GP::fs();
     fs.print();
     LPRS().setSeed(58138756); // curved dark brown/blue stripes, uniforms
@@ -3830,7 +3831,8 @@ int main(int argc, const char * argv[])
     fs.makeRandomTree(max_size, parent_0);
     fs.makeRandomTree(max_size, parent_1);
 
-    for (int i = 0; i < 30; i++)
+//    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 50; i++)
     {
         GpTree offspring;
         fs.crossover(parent_0, parent_1, offspring);

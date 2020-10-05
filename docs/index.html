@@ -81,7 +81,63 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
-    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="20201005"> <a href="#20201005" class="date">October
+        5, 2020</a>
+      <h1>Experiment: minimum size for crossover snippet</h1>
+      <p>As mentioned on <a href="#20201003">October 3</a>, treating all nodes
+        of a <code>GpTree</code> as candidates for crossover implies that
+        “many” crossover operations serve only to move a leaf node from one tree
+        to another. (For binary trees, about half the nodes are leaves.) There
+        is something minimal and elegant to this approach. But I wonder if it is
+        the best choice, especially for the TexSyn <code>FunctionSet</code>
+        where those numeric leaf values are just the “knobs” on various texture
+        operators. In broad terms, about half the crossovers would actually
+        change the tree of texture operators, while the other half would make
+        changes to their parameters.</p>
+      <p>Relevant to this is that next on the “to do” list is jitter/jiggle <strong>mutations</strong>
+        of constant leaf values. I intend to jiggle constant values after
+        crossover, so “wasting” half the crossover operations on merely changing
+        a single constant in the tree (of size 100-200 nodes) seems a poor
+        choice.</p>
+      <p>I wanted to experiment with concentrating crossover operations on
+        “structure changing” operations rather than “parameter changing”—so that
+        a typical crossover would actually replace one subtree (of nested
+        texture operators) with another one. In the current version, each node
+        (including leaves) have uniform probability of being selected for
+        participating in crossover. I considered weighting the probability of
+        choosing a node to be proportional the the size of the tree below it.
+        But this seems to give far too much weight to the root node and its
+        immediate subnodes. I also considered just limiting crossover to
+        subtrees that return a value of type <code>Texture</code> (as opposed
+        to <code>Vec2</code> or <code>float</code>). But that seemed too <em>ad
+          hoc</em>.</p>
+      <p>The experiments below add a new parameter to crossover, the minimum
+        size of a subtree (from the “donor” parent) that can be considered (for
+        insertion into a copy of the “recipient” parent). By default, in the
+        minimalist neutral strategy, that value is 1, meaning an individual
+        numeric leaf node can be crossed over. If <code>min_size</code> is 2
+        (or more) it means that leaf nodes (or other small subtrees) are
+        excluded as crossover candidates. While <a href="#20201003">as before</a>,
+        many many of the textures are obviously “variations on a theme” of the
+        two parent texures, using a larger <code>min_size</code> clearly
+        produced a wider variety of changes. I am leaning toward making “min
+        size for crossover” a parameter of <code>FunctionSet</code>, defaulting
+        to the neutral value of 1, but probably set to 2 for TexSyn. (Note the
+        six examples below were hand-selected from a run of 50 crossovers, based
+        on the same parents in the <a href="#20201003">October 3</a>
+        experiments, with a <code>min_size</code> of 5.)</p>
+      <img src="images/20201005_offspring_34.png" alt="offspring_34" title="offspring_34"
+        height="511" width="511"> <img src="images/20201005_offspring_35.png" alt="offspring_35"
+        title="offspring_35" height="511" width="511"> <br>
+      <br>
+      <img src="images/20201005_offspring_32.png" alt="offspring_32" title="offspring_32"
+        height="511" width="511"> <img src="images/20201005_offspring_41.png" alt="offspring_41"
+        title="offspring_41" height="511" width="511"> <br>
+      <br>
+      <img src="images/20201005_offspring_47.png" alt="offspring_47" title="offspring_47"
+        height="511" width="511"> <img src="images/20201005_offspring_49.png" alt="offspring_49"
+        title="offspring_49" height="511" width="511">
+    </div>
     <div class="post" id="20201003"> <a href="#20201003" class="date">October
         3, 2020</a>
       <h1>Crossover</h1>
@@ -113,7 +169,6 @@
       <img src="images/20201003_offspring_28.png" alt="offspring_28" title="offspring_28"
         height="511" width="511"> <img src="images/20201003_offspring_15.png" alt="offspring_15"
         title="offspring_15" height="511" width="511"> </div>
-    <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="20200927"> <a href="#20200927" class="date">September
         27, 2020</a>
       <h1>Reconsidering convolution</h1>
