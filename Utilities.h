@@ -331,7 +331,9 @@ public:
     // Returns an int randomly distributed between 0 and n-1.
     int randomN(int n) { return nextInt() % n; }
     int randomN(size_t n) { return nextInt() % n; }
-    
+    // Return random element of given std::vector.
+    template<typename T> T randomSelectElement(const std::vector<T>& collection)
+        { return collection.at(randomN(collection.size())); }
     // TODO these duplicate the function of the same name in global namespace.
     //  Maybe those should be replaced by defining a global RandomSequence which
     // must be specifically written in source code. This may help avoid the

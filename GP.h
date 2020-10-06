@@ -352,7 +352,9 @@ public:
                 "HueOnly", "Texture", {"Float_01", "Float_01", "Texture"},
                 evalTexture(HueOnly(argFloat(), argFloat(), argTexture()))
             }
-        }
+        },
+        // Crossover min_size, must be larger than: Uniform(r, g, b)
+        5
     };
 };
 
