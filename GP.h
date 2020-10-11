@@ -33,26 +33,10 @@ public:
         {
             {"Texture"},
             {"Vec2"},
-            {
-                "Float_01",
-                [](){ return std::any(LPRS().frandom01()); },
-                any_to_string<float>
-            },
-            {
-                "Float_02",
-                [](){ return std::any(LPRS().frandom2(0, 2)); },
-                any_to_string<float>
-            },
-            {
-                "Float_0_10",
-                [](){ return std::any(LPRS().frandom2(0, 10)); },
-                any_to_string<float>
-            },
-            {
-                "Float_m5p5",
-                [](){ return std::any(LPRS().frandom2(-5, 5)); },
-                any_to_string<float>
-            }
+            { "Float_01", 0.0f, 1.0f },
+            { "Float_02", 0.0f, 2.0f },
+            { "Float_0_10", 0.0f, 10.0f },
+            { "Float_m5p5", -5.0f, 5.0f }
         },
         // GpFunctions
         {

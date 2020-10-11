@@ -331,6 +331,8 @@ public:
     // Returns an int randomly distributed between 0 and n-1.
     int randomN(int n) { return nextInt() % n; }
     int randomN(size_t n) { return nextInt() % n; }
+    // Returns an int between i and j INCLUSIVE: i or j or any int between them.
+    int randomIJ(int i, int j) { assert(i<=j); return i + randomN(j - i + 1); }
     // Return random element of given std::vector.
     template<typename T> T randomSelectElement(const std::vector<T>& collection)
         { return collection.at(randomN(collection.size())); }

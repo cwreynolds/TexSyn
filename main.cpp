@@ -3846,6 +3846,12 @@ int main(int argc, const char * argv[])
         Texture::waitKey();
     }
 
+    for (int i = 0; i < 30; i++) debugPrint(LPRS().randomIJ(3, 8));
+    
+    GpType gp_type("Test", 4, 6);
+    for (int i = 0; i < 30; i++)
+        debugPrint(std::any_cast<int>(gp_type.generateEphemeralConstant()));
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
