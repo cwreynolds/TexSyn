@@ -3831,7 +3831,6 @@ int main(int argc, const char * argv[])
     fs.makeRandomTree(max_size, parent_0);
     fs.makeRandomTree(max_size, parent_1);
 
-//    for (int i = 0; i < 30; i++)
     for (int i = 0; i < 50; i++)
     {
         GpTree offspring;
@@ -3846,8 +3845,10 @@ int main(int argc, const char * argv[])
         Texture::waitKey();
     }
 
-    for (int i = 0; i < 30; i++) debugPrint(LPRS().randomIJ(3, 8));
-    
+    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(3, 8));
+    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(7, 7));
+    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(1.23f, 1.23f));
+
     GpType gp_type("Test", 4, 6);
     for (int i = 0; i < 30; i++)
         debugPrint(std::any_cast<int>(gp_type.generateEphemeralConstant()));
