@@ -3818,41 +3818,58 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Test LazyPredator's new crossover.
+//    std::cout << "October 3, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201003_";
+//    path = "/Users/cwr/Desktop/TexSyn_temp/20201005_";
+//
+//    const FunctionSet& fs = GP::fs();
+//    fs.print();
+//    LPRS().setSeed(58138756); // curved dark brown/blue stripes, uniforms
+//    int max_size = 100;
+//    GpTree parent_0, parent_1;
+//    fs.makeRandomTree(max_size, parent_0);
+//    fs.makeRandomTree(max_size, parent_1);
+//
+//    for (int i = 0; i < 50; i++)
+//    {
+//        GpTree offspring;
+//        fs.crossover(parent_0, parent_1, offspring);
+//        std::cout << std::endl << offspring.to_string() << std::endl;
+//        std::cout << "size=" << offspring.size() << std::endl;
+//        std::any result_as_any = offspring.eval();
+//        Texture* result = std::any_cast<Texture*>(result_as_any);
+//        Texture::displayAndFile(*result
+//                                // , path + "offspring_" + std::to_string(i)
+//                                );
+//        Texture::waitKey();
+//    }
+//
+//    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(3, 8));
+//    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(7, 7));
+//    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(1.23f, 1.23f));
+//
+//    GpType gp_type("Test", 4, 6);
+//    for (int i = 0; i < 30; i++)
+//        debugPrint(std::any_cast<int>(gp_type.generateEphemeralConstant()));
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     // Test LazyPredator's new crossover.
-    std::cout << "October 3, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201003_";
-    path = "/Users/cwr/Desktop/TexSyn_temp/20201005_";
-
-    const FunctionSet& fs = GP::fs();
-    fs.print();
-    LPRS().setSeed(58138756); // curved dark brown/blue stripes, uniforms
-    int max_size = 100;
-    GpTree parent_0, parent_1;
-    fs.makeRandomTree(max_size, parent_0);
-    fs.makeRandomTree(max_size, parent_1);
-
-    for (int i = 0; i < 50; i++)
+    std::cout << "October 14, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201014_";
+    
+    const FunctionSet& function_set = GP::fs();
+    int population_size = 30;
+    int max_tree_size = 60;
+    Population population(population_size, max_tree_size, function_set);
+    for (auto& individual : population.individuals())
     {
-        GpTree offspring;
-        fs.crossover(parent_0, parent_1, offspring);
-        std::cout << std::endl << offspring.to_string() << std::endl;
-        std::cout << "size=" << offspring.size() << std::endl;
-        std::any result_as_any = offspring.eval();
+        std::any result_as_any = individual->tree().eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
-        Texture::displayAndFile(*result
-                                // , path + "offspring_" + std::to_string(i)
-                                );
+        Texture::displayAndFile(*result);
         Texture::waitKey();
     }
-
-    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(3, 8));
-    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(7, 7));
-    for (int i = 0; i < 30; i++) debugPrint(LPRS().random2(1.23f, 1.23f));
-
-    GpType gp_type("Test", 4, 6);
-    for (int i = 0; i < 30; i++)
-        debugPrint(std::any_cast<int>(gp_type.generateEphemeralConstant()));
-
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
