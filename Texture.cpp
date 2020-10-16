@@ -198,6 +198,18 @@ void Texture::waitKey()
     cv::waitKey(0);
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// close the window
+void Texture::closeAllWindows()
+{
+    //cv::destroyWindow(name);
+    cv::destroyAllWindows();
+    //cvReleaseImage(&images[i]);
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 // Reset statistics for debugging.
 void Texture::resetStatistics() const
 {

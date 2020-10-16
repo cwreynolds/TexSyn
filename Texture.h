@@ -80,6 +80,12 @@ public:
                                std::string pathname = "",
                                int size = getDefaultRenderSize());
     static void waitKey();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // close the window
+    //static void closeWindow(const std::string name);
+    static void closeAllWindows();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
     // is called ONLY from constructors providing backward compatibility. The
     // tiny Uniform texture object is allowed to "memory leak" for ease of use.

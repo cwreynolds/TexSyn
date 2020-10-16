@@ -3855,20 +3855,128 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Test LazyPredator's new crossover.
-    std::cout << "October 14, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201014_";
+//    // Test constructing LazyPredator Population from FunctionSet.
+//    std::cout << "October 14, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201014_";
+//
+//    const FunctionSet& function_set = GP::fs();
+//    int population_size = 30;
+//    int max_tree_size = 60;
+//    Population population(population_size, max_tree_size, function_set);
+//    for (auto& individual : population.individuals())
+//    {
+//        std::any result_as_any = individual->tree().eval();
+//        Texture* result = std::any_cast<Texture*>(result_as_any);
+//        Texture::displayAndFile(*result);
+//        Texture::waitKey();
+//    }
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Test constructing LazyPredator Population from FunctionSet.
+    std::cout << "October 15, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201015_";
     
     const FunctionSet& function_set = GP::fs();
-    int population_size = 30;
-    int max_tree_size = 60;
+    int population_size = 10;
+    int max_tree_size = 50;
     Population population(population_size, max_tree_size, function_set);
-    for (auto& individual : population.individuals())
+    
+    for (int i = 0; i < 100; i++)
     {
-        std::any result_as_any = individual->tree().eval();
+        auto average_color_metric = []
+        (Texture* texture, std::function<float(const Color&)> color_metric)
+        {
+            int n = 10;
+            std::vector<Vec2> samples;
+            jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
+            float sum = 0;
+            
+            for (auto s : samples)
+            {
+                sum += color_metric(texture->getColor(s));
+            }
+            
+            return sum / sq(n);
+        };
+        
+        
+        
+//        auto tournament_function = []
+//        (Individual* a, Individual* b, Individual* c)
+//        {
+//            if (LPRS().frandom01() < 0.33)
+//            {
+//                return a;
+//            }
+//            else if (LPRS().frandom01() < 0.5)
+//            {
+//                return b;
+//            }
+//            else
+//            {
+//                return c;
+//            }
+//        };
+        
+        auto texture_from_individual = [](Individual* i)
+        {
+            std::any result_as_any = i->tree().eval();
+            Texture* result = std::any_cast<Texture*>(result_as_any);
+            return result;
+        };
+        
+        
+        auto tournament_function = [&]
+        (Individual* a, Individual* b, Individual* c)
+        {
+            Texture* at = texture_from_individual(a);
+            Texture* bt = texture_from_individual(b);
+            Texture* ct = texture_from_individual(c);
+            if (LPRS().frandom01() < 0.5)
+            {
+                auto getGreen = [](const Color& c){ return c.green(); };
+                float am = average_color_metric(at, getGreen);
+                float bm = average_color_metric(bt, getGreen);
+                float cm = average_color_metric(ct, getGreen);
+                // high green to win
+                if (am > bm) // /////////////////////////////////// likely wrong
+                {
+                    return (bm > cm) ? c : b;
+                }
+                else
+                {
+                    return (am > cm) ? c : a;
+                }
+            }
+            else
+            {
+                auto getBlue = [](const Color& c){ return c.blue(); };
+                float am = average_color_metric(at, getBlue);
+                float bm = average_color_metric(bt, getBlue);
+                float cm = average_color_metric(ct, getBlue);
+                // low blue to win
+                if (am > bm)  // /////////////////////////////////// likely wrong
+                {
+                    return (bm > cm) ? a : b;
+                }
+                else
+                {
+                    return (am > cm) ? a : c;
+                }
+            }
+        };
+
+        
+        population.evolutionStep(tournament_function, function_set);
+        
+        std::any result_as_any = Population::last_individual_added->tree().eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
         Texture::displayAndFile(*result);
         Texture::waitKey();
+        
+        Texture::closeAllWindows();
+
     }
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
