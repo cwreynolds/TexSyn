@@ -123,6 +123,11 @@ public:
     static bool getDefaultRenderAsDisk() { return render_as_disk_; }
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
     thread_local static inline int expensive_to_nest = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static inline const int class_validity_id = 652883009;
+    int instance_validity_id = class_validity_id;
+    bool valid() const { return instance_validity_id == class_validity_id; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

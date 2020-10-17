@@ -3879,7 +3879,6 @@ int main(int argc, const char * argv[])
     
     const FunctionSet& function_set = GP::fs();
     int population_size = 10;
-//    int max_tree_size = 50;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
@@ -3903,8 +3902,16 @@ int main(int argc, const char * argv[])
         {
             std::any result_as_any = i->tree().eval();
             Texture* result = std::any_cast<Texture*>(result_as_any);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            assert(result->valid());
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             return result;
         };
+        
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // TODO just for debugging
+        Texture* tournament_best;
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
         auto lowest_average_metric = [&]
         (Individual* a, Individual* b, Individual* c,
@@ -3914,6 +3921,12 @@ int main(int argc, const char * argv[])
             float am = average_color_metric(at, color_metric);
             float bm = average_color_metric(bt, color_metric);
             float cm = average_color_metric(ct, color_metric);
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+            // TODO just for debugging
+            tournament_best = ct;
+            if ((am > bm) && (am > cm)) tournament_best = at;
+            if ((bm > am) && (bm > cm)) tournament_best = bt;
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             if ((am < bm) && (am < cm)) return a;
             if ((bm < am) && (bm < cm)) return b;
             return c;
@@ -3940,12 +3953,23 @@ int main(int argc, const char * argv[])
 
         population.evolutionStep(tournament_function, function_set);
         
-        std::any result_as_any = Population::last_individual_added->tree().eval();
+        Individual* last_added = Population::last_individual_added;
+        assert(last_added->valid());
+        std::any result_as_any = last_added->tree().eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // TODO just for debugging
+        result = tournament_best;
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        assert(result->valid());
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         Texture::displayAndFile(*result);
+//        Texture::displayAndFile(*result, "", 111);
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         debugPrint(Population::last_individual_added->tree().size());
         debugPrint(i);
-        Texture::waitKey(1000);
+//        Texture::waitKey(1000);
+        Texture::waitKey(250);
         Texture::closeAllWindows();
     }
     Texture::waitKey();
