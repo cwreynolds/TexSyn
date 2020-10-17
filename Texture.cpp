@@ -45,9 +45,11 @@ void Texture::displayInWindow(int size, bool wait) const
 // Display cv::Mat in pop-up window. Stack diagonally from upper left.
 void Texture::windowPlacementTool(cv::Mat& mat)
 {
-    static int window_counter = 0;
-    static int window_x = 0;
-    static int window_y = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    static int window_counter = 0;
+//    static int window_x = 0;
+//    static int window_y = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
     int tm = 23;  // TODO approximate top margin height
@@ -199,12 +201,22 @@ void Texture::waitKey()
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+void Texture::waitKey(int delay_in_milliseconds)
+{
+    cv::waitKey(delay_in_milliseconds);
+}
+
 // close the window
 void Texture::closeAllWindows()
 {
     //cv::destroyWindow(name);
-    cv::destroyAllWindows();
     //cvReleaseImage(&images[i]);
+    
+    cv::destroyAllWindows();
+    window_counter = 0;
+    window_x = 0;
+    window_y = 0;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -3879,11 +3879,15 @@ int main(int argc, const char * argv[])
     
     const FunctionSet& function_set = GP::fs();
     int population_size = 10;
-    int max_tree_size = 50;
+//    int max_tree_size = 50;
+    int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1000; i++)
     {
+        // TODO would it be any better to use the same samples for all three
+        //      textures?
+        
         auto average_color_metric = []
         (Texture* texture, std::function<float(const Color&)> color_metric)
         {
@@ -3891,42 +3895,30 @@ int main(int argc, const char * argv[])
             std::vector<Vec2> samples;
             jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
             float sum = 0;
-            
-            for (auto s : samples)
-            {
-                sum += color_metric(texture->getColor(s));
-            }
-            
+            for (auto s : samples) sum += color_metric(texture->getColor(s));
             return sum / sq(n);
         };
-        
-        
-        
-//        auto tournament_function = []
-//        (Individual* a, Individual* b, Individual* c)
-//        {
-//            if (LPRS().frandom01() < 0.33)
-//            {
-//                return a;
-//            }
-//            else if (LPRS().frandom01() < 0.5)
-//            {
-//                return b;
-//            }
-//            else
-//            {
-//                return c;
-//            }
-//        };
-        
+                
         auto texture_from_individual = [](Individual* i)
         {
             std::any result_as_any = i->tree().eval();
             Texture* result = std::any_cast<Texture*>(result_as_any);
             return result;
         };
-        
-        
+
+        auto lowest_average_metric = [&]
+        (Individual* a, Individual* b, Individual* c,
+         Texture* at, Texture* bt, Texture* ct,
+         std::function<float(const Color&)> color_metric)
+        {
+            float am = average_color_metric(at, color_metric);
+            float bm = average_color_metric(bt, color_metric);
+            float cm = average_color_metric(ct, color_metric);
+            if ((am < bm) && (am < cm)) return a;
+            if ((bm < am) && (bm < cm)) return b;
+            return c;
+        };
+
         auto tournament_function = [&]
         (Individual* a, Individual* b, Individual* c)
         {
@@ -3935,49 +3927,28 @@ int main(int argc, const char * argv[])
             Texture* ct = texture_from_individual(c);
             if (LPRS().frandom01() < 0.5)
             {
-                auto getGreen = [](const Color& c){ return c.green(); };
-                float am = average_color_metric(at, getGreen);
-                float bm = average_color_metric(bt, getGreen);
-                float cm = average_color_metric(ct, getGreen);
-                // high green to win
-                if (am > bm) // /////////////////////////////////// likely wrong
-                {
-                    return (bm > cm) ? c : b;
-                }
-                else
-                {
-                    return (am > cm) ? c : a;
-                }
+                auto high_green = [](const Color& c){ return c.green(); };
+                return lowest_average_metric(a, b, c, at, bt, ct, high_green);
             }
             else
             {
-                auto getBlue = [](const Color& c){ return c.blue(); };
-                float am = average_color_metric(at, getBlue);
-                float bm = average_color_metric(bt, getBlue);
-                float cm = average_color_metric(ct, getBlue);
-                // low blue to win
-                if (am > bm)  // /////////////////////////////////// likely wrong
-                {
-                    return (bm > cm) ? a : b;
-                }
-                else
-                {
-                    return (am > cm) ? a : c;
-                }
+                auto low_blue = [](const Color& c)
+                    { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
+                return lowest_average_metric(a, b, c, at, bt, ct, low_blue);
             }
         };
 
-        
         population.evolutionStep(tournament_function, function_set);
         
         std::any result_as_any = Population::last_individual_added->tree().eval();
         Texture* result = std::any_cast<Texture*>(result_as_any);
         Texture::displayAndFile(*result);
-        Texture::waitKey();
-        
+        debugPrint(Population::last_individual_added->tree().size());
+        debugPrint(i);
+        Texture::waitKey(1000);
         Texture::closeAllWindows();
-
     }
+    Texture::waitKey();
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
