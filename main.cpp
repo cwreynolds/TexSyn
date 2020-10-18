@@ -3968,8 +3968,7 @@ int main(int argc, const char * argv[])
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         debugPrint(Population::last_individual_added->tree().size());
         debugPrint(i);
-//        Texture::waitKey(1000);
-        Texture::waitKey(250);
+        Texture::waitKey(1);
         Texture::closeAllWindows();
     }
     Texture::waitKey();

@@ -91,20 +91,9 @@ Color Color::operator*(float s) const
 void Color::convertRGBtoHSV (float red, float green, float blue,
                              float& H, float& S, float& V)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    const float R = 255.0f * red;
-//    const float G = 255.0f * green;
-//    const float B = 255.0f * blue;
-    Color clipped = Color(red, green, blue).clipToUnitRGB();
-    float R = 255.0f * clipped.red();
-    float G = 255.0f * clipped.green();
-    float B = 255.0f * clipped.blue();
-    
-//    // TODO Oct 17 12:30pm even more heavy handed:
-//    if (std::isnan(R)) R = 0;
-//    if (std::isnan(G)) G = 0;
-//    if (std::isnan(B)) B = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    const float R = 255.0f * red;
+    const float G = 255.0f * green;
+    const float B = 255.0f * blue;
     if((B > G) && (B > R)) // Blue Is the dominant color
     {
         V = B; // Value is set as the dominant color
@@ -163,17 +152,6 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
         { S = 0; H = 0;}
     }
     H /= 360.0f;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if (std::isnan(H)||std::isinf(H))
-    {
-        debugPrint(red);
-        debugPrint(green);
-        debugPrint(blue);
-        debugPrint(H);
-        debugPrint(S);
-        debugPrint(V);
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    if (!((H >= 0.0) && ( H <= 1.0)))
 //        std::cout << "h Value error in Pixel conversion, Value is " << H
 //        << " Input r,g,b = " << red << "," << green << "," << blue << std::endl;
@@ -195,12 +173,8 @@ void Color::convertHSVtoRGB(float h, float s, float v,
                             float& R, float& G, float& B)
 {
     const float H = fmod_floor(h, 1) * 360;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    const float S = s;
-//    const float V = v;
-    const float S = clip01(s);
-    const float V = clip01(v);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    const float S = s;
+    const float V = v;
     if( V == 0 )
     { R = 0; G = 0; B = 0; }
     else if( S == 0 )
