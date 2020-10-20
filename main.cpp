@@ -3873,40 +3873,88 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Test constructing LazyPredator Population from FunctionSet.
-    std::cout << "October 15, 2020" << std::endl;
+    // Testing evolution runs, “yellow/green test”
+    // (was: Test constructing LazyPredator Population from FunctionSet.)
+    std::cout << "October 15-19, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201015_";
+    path = "/Users/cwr/Desktop/TexSyn_temp/20201019_";
     
+    Timer t("evolution run");
     const FunctionSet& function_set = GP::fs();
-    int population_size = 10;
+//    int population_size = 10;
+    int population_size = 50;
+    int generation_equivalents = 100;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < (population_size * generation_equivalents); i++)
     {
         // TODO would it be any better to use the same samples for all three
         //      textures?
         
-        auto average_color_metric = []
-        (Texture* texture, std::function<float(const Color&)> color_metric)
+//        auto texture_from_individual = [](Individual* i)
+        auto texture_from_individual = [](Individual* individual)
+        {
+//            std::any result_as_any = i->treeValue();
+//            Texture* result = std::any_cast<Texture*>(result_as_any);
+//            return result;
+            return std::any_cast<Texture*>(individual->treeValue());
+        };
+
+        
+//            auto average_color_metric = []
+//            (Texture* texture, std::function<float(const Color&)> color_metric)
+//            {
+//                int n = 10;
+//                std::vector<Vec2> samples;
+//    //            jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
+//                jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+//                float sum = 0;
+//                for (auto s : samples) sum += color_metric(texture->getColor(s));
+//                return sum / sq(n);
+//            };
+        
+        // Added this several days after average_color_metric()
+        // Maybe that should be written in terms of this, or maybe not worth it?
+        auto average_color_of_texture = [] (Texture* texture)
         {
             int n = 10;
             std::vector<Vec2> samples;
-            jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
-            float sum = 0;
-            for (auto s : samples) sum += color_metric(texture->getColor(s));
+            jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+            Color sum;
+//            for (auto s : samples) sum += texture->getColor(s);
+            for (auto s : samples) sum += texture->getColor(s).clipToUnitRGB();
             return sum / sq(n);
         };
-                
-        auto texture_from_individual = [](Individual* i)
+        
+        auto average_color_of_population = [&](Population& population)
         {
-            std::any result_as_any = i->tree().eval();
-            Texture* result = std::any_cast<Texture*>(result_as_any);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            assert(result->valid());
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            return result;
+            Color sum;
+            for (auto individual : population.individuals())
+            {
+                Texture* texture = texture_from_individual(individual);
+                sum += average_color_of_texture(texture);
+            }
+            return sum / population.individuals().size();
         };
+        
+//        auto average_color_metric = [&]
+//        (Texture* texture, std::function<float(const Color&)> color_metric)
+//        {
+//            return color_metric(average_color_of_texture(texture));
+//        };
+
+
+//            auto texture_from_individual = [](Individual* i)
+//            {
+//    //            std::any result_as_any = i->tree().eval();
+//                std::any result_as_any = i->treeValue();
+//                Texture* result = std::any_cast<Texture*>(result_as_any);
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    //            assert(result->valid());
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                return result;
+//            };
         
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // TODO just for debugging
@@ -3918,9 +3966,13 @@ int main(int argc, const char * argv[])
          Texture* at, Texture* bt, Texture* ct,
          std::function<float(const Color&)> color_metric)
         {
-            float am = average_color_metric(at, color_metric);
-            float bm = average_color_metric(bt, color_metric);
-            float cm = average_color_metric(ct, color_metric);
+//            float am = average_color_metric(at, color_metric);
+//            float bm = average_color_metric(bt, color_metric);
+//            float cm = average_color_metric(ct, color_metric);
+            float am = color_metric(average_color_of_texture(at));
+            float bm = color_metric(average_color_of_texture(bt));
+            float cm = color_metric(average_color_of_texture(ct));
+
             //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             // TODO just for debugging
             tournament_best = ct;
@@ -3954,8 +4006,9 @@ int main(int argc, const char * argv[])
         population.evolutionStep(tournament_function, function_set);
         
         Individual* last_added = Population::last_individual_added;
-        assert(last_added->valid());
-        std::any result_as_any = last_added->tree().eval();
+//        assert(last_added->valid());
+//        std::any result_as_any = last_added->tree().eval();
+        std::any result_as_any = last_added->treeValue();
         Texture* result = std::any_cast<Texture*>(result_as_any);
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // TODO just for debugging
@@ -3963,15 +4016,34 @@ int main(int argc, const char * argv[])
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         assert(result->valid());
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        Texture::displayAndFile(*result);
-//        Texture::displayAndFile(*result, "", 111);
+// TODO super temp
+//        Texture::displayAndFile(*result);
+        Texture::displayAndFile(*result, "", 99);
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        debugPrint(Population::last_individual_added->tree().size());
-        debugPrint(i);
+//        debugPrint(Population::last_individual_added->tree().size());
+//        debugPrint(i);
+        
+//        debugPrint(average_color_of_population(population));
+//        Color c = average_color_of_population(population);
+//        std::cout << c.r() << "," << c.g() << "," << c.b() << std::endl;
+//        population.findBestIndividual();
+        
+        
+        
+        Color ac = average_color_of_population(population);
+        std::cout << ac.r() << "," << ac.g() << "," << ac.b() << ",";
+        Individual* best_individual = population.findBestIndividual();
+        Texture* best_texture = texture_from_individual(best_individual);
+        Color bc = average_color_of_texture(best_texture);
+        std::cout << bc.r() << "," << bc.g() << "," << bc.b() << std::endl;
+
         Texture::waitKey(1);
         Texture::closeAllWindows();
+        
+         
+         
     }
-    Texture::waitKey();
+//    Texture::waitKey();
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
