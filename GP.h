@@ -340,6 +340,41 @@ public:
         // Crossover min_size, must be larger than: Uniform(r, g, b)
         5
     };
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO moving stuff here prototyped in main.cpp October 15-19, 2020.
+    
+    
+    static Texture* textureFromIndividual(Individual* individual)
+    {
+        return std::any_cast<Texture*>(individual->treeValue());
+    };
+    
+    // For yellow/green evolution test.
+    static Color ygAverageColorOfTexture(Texture* texture)
+    {
+        int n = 10;
+        std::vector<Vec2> samples;
+        jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+        Color sum;
+        for (auto s : samples) sum += texture->getColor(s).clipToUnitRGB();
+        return sum / sq(n);
+    };
+
+    // For yellow/green evolution test.
+    static Color ygAverageColorOfPopulation(Population& population)
+    {
+        Color sum;
+        for (auto individual : population.individuals())
+        {
+            Texture* texture = GP::textureFromIndividual(individual);
+            sum += GP::ygAverageColorOfTexture(texture);
+        }
+        return sum / population.individuals().size();
+    };
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 #undef argFloat

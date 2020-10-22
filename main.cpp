@@ -3873,15 +3873,186 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing evolution runs, “yellow/green test”
-    // (was: Test constructing LazyPredator Population from FunctionSet.)
-    std::cout << "October 15-19, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201015_";
-    path = "/Users/cwr/Desktop/TexSyn_temp/20201019_";
+//        // Testing evolution runs, “yellow/green test”
+//        // (was: Test constructing LazyPredator Population from FunctionSet.)
+//        std::cout << "October 15-19, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201015_";
+//        path = "/Users/cwr/Desktop/TexSyn_temp/20201019_";
+//
+//        Timer t("evolution run");
+//        const FunctionSet& function_set = GP::fs();
+//    //    int population_size = 10;
+//        int population_size = 50;
+//        int generation_equivalents = 100;
+//        int max_tree_size = 100;
+//        Population population(population_size, max_tree_size, function_set);
+//
+//        for (int i = 0; i < (population_size * generation_equivalents); i++)
+//        {
+//            // TODO would it be any better to use the same samples for all three
+//            //      textures?
+//
+//    //        auto texture_from_individual = [](Individual* i)
+//            auto texture_from_individual = [](Individual* individual)
+//            {
+//    //            std::any result_as_any = i->treeValue();
+//    //            Texture* result = std::any_cast<Texture*>(result_as_any);
+//    //            return result;
+//                return std::any_cast<Texture*>(individual->treeValue());
+//            };
+//
+//
+//    //            auto average_color_metric = []
+//    //            (Texture* texture, std::function<float(const Color&)> color_metric)
+//    //            {
+//    //                int n = 10;
+//    //                std::vector<Vec2> samples;
+//    //    //            jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
+//    //                jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+//    //                float sum = 0;
+//    //                for (auto s : samples) sum += color_metric(texture->getColor(s));
+//    //                return sum / sq(n);
+//    //            };
+//
+//            // Added this several days after average_color_metric()
+//            // Maybe that should be written in terms of this, or maybe not worth it?
+//            auto average_color_of_texture = [] (Texture* texture)
+//            {
+//                int n = 10;
+//                std::vector<Vec2> samples;
+//                jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+//                Color sum;
+//    //            for (auto s : samples) sum += texture->getColor(s);
+//                for (auto s : samples) sum += texture->getColor(s).clipToUnitRGB();
+//                return sum / sq(n);
+//            };
+//
+//            auto average_color_of_population = [&](Population& population)
+//            {
+//                Color sum;
+//                for (auto individual : population.individuals())
+//                {
+//                    Texture* texture = texture_from_individual(individual);
+//                    sum += average_color_of_texture(texture);
+//                }
+//                return sum / population.individuals().size();
+//            };
+//
+//    //        auto average_color_metric = [&]
+//    //        (Texture* texture, std::function<float(const Color&)> color_metric)
+//    //        {
+//    //            return color_metric(average_color_of_texture(texture));
+//    //        };
+//
+//
+//    //            auto texture_from_individual = [](Individual* i)
+//    //            {
+//    //    //            std::any result_as_any = i->tree().eval();
+//    //                std::any result_as_any = i->treeValue();
+//    //                Texture* result = std::any_cast<Texture*>(result_as_any);
+//    //                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    //    //            assert(result->valid());
+//    //                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    //                return result;
+//    //            };
+//
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//            // TODO just for debugging
+//            Texture* tournament_best;
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//
+//            auto lowest_average_metric = [&]
+//            (Individual* a, Individual* b, Individual* c,
+//             Texture* at, Texture* bt, Texture* ct,
+//             std::function<float(const Color&)> color_metric)
+//            {
+//    //            float am = average_color_metric(at, color_metric);
+//    //            float bm = average_color_metric(bt, color_metric);
+//    //            float cm = average_color_metric(ct, color_metric);
+//                float am = color_metric(average_color_of_texture(at));
+//                float bm = color_metric(average_color_of_texture(bt));
+//                float cm = color_metric(average_color_of_texture(ct));
+//
+//                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//                // TODO just for debugging
+//                tournament_best = ct;
+//                if ((am > bm) && (am > cm)) tournament_best = at;
+//                if ((bm > am) && (bm > cm)) tournament_best = bt;
+//                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//                if ((am < bm) && (am < cm)) return a;
+//                if ((bm < am) && (bm < cm)) return b;
+//                return c;
+//            };
+//
+//            auto tournament_function = [&]
+//            (Individual* a, Individual* b, Individual* c)
+//            {
+//                Texture* at = texture_from_individual(a);
+//                Texture* bt = texture_from_individual(b);
+//                Texture* ct = texture_from_individual(c);
+//                if (LPRS().frandom01() < 0.5)
+//                {
+//                    auto high_green = [](const Color& c){ return c.green(); };
+//                    return lowest_average_metric(a, b, c, at, bt, ct, high_green);
+//                }
+//                else
+//                {
+//                    auto low_blue = [](const Color& c)
+//                        { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
+//                    return lowest_average_metric(a, b, c, at, bt, ct, low_blue);
+//                }
+//            };
+//
+//            population.evolutionStep(tournament_function, function_set);
+//
+//            Individual* last_added = Population::last_individual_added;
+//    //        assert(last_added->valid());
+//    //        std::any result_as_any = last_added->tree().eval();
+//            std::any result_as_any = last_added->treeValue();
+//            Texture* result = std::any_cast<Texture*>(result_as_any);
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//            // TODO just for debugging
+//            result = tournament_best;
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//            assert(result->valid());
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//    // TODO super temp
+//    //        Texture::displayAndFile(*result);
+//            Texture::displayAndFile(*result, "", 99);
+//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//    //        debugPrint(Population::last_individual_added->tree().size());
+//    //        debugPrint(i);
+//
+//    //        debugPrint(average_color_of_population(population));
+//    //        Color c = average_color_of_population(population);
+//    //        std::cout << c.r() << "," << c.g() << "," << c.b() << std::endl;
+//    //        population.findBestIndividual();
+//
+//
+//
+//            Color ac = average_color_of_population(population);
+//            std::cout << ac.r() << "," << ac.g() << "," << ac.b() << ",";
+//            Individual* best_individual = population.findBestIndividual();
+//            Texture* best_texture = texture_from_individual(best_individual);
+//            Color bc = average_color_of_texture(best_texture);
+//            std::cout << bc.r() << "," << bc.g() << "," << bc.b() << std::endl;
+//
+//            Texture::waitKey(1);
+//            Texture::closeAllWindows();
+//
+//
+//
+//        }
+//    //    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing evolution runs, “colorful, well exposed”
+    std::cout << "October 21, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201021_";
     
     Timer t("evolution run");
     const FunctionSet& function_set = GP::fs();
-//    int population_size = 10;
     int population_size = 50;
     int generation_equivalents = 100;
     int max_tree_size = 100;
@@ -3889,96 +4060,73 @@ int main(int argc, const char * argv[])
     
     for (int i = 0; i < (population_size * generation_equivalents); i++)
     {
-        // TODO would it be any better to use the same samples for all three
-        //      textures?
-        
-//        auto texture_from_individual = [](Individual* i)
-        auto texture_from_individual = [](Individual* individual)
-        {
-//            std::any result_as_any = i->treeValue();
-//            Texture* result = std::any_cast<Texture*>(result_as_any);
-//            return result;
-            return std::any_cast<Texture*>(individual->treeValue());
-        };
 
-        
-//            auto average_color_metric = []
-//            (Texture* texture, std::function<float(const Color&)> color_metric)
-//            {
-//                int n = 10;
-//                std::vector<Vec2> samples;
-//    //            jittered_grid_NxN_in_square(10, 1.4, LPRS(), samples);
-//                jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
-//                float sum = 0;
-//                for (auto s : samples) sum += color_metric(texture->getColor(s));
-//                return sum / sq(n);
-//            };
-        
-        // Added this several days after average_color_metric()
-        // Maybe that should be written in terms of this, or maybe not worth it?
-        auto average_color_of_texture = [] (Texture* texture)
-        {
-            int n = 10;
-            std::vector<Vec2> samples;
-            jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
-            Color sum;
-//            for (auto s : samples) sum += texture->getColor(s);
-            for (auto s : samples) sum += texture->getColor(s).clipToUnitRGB();
-            return sum / sq(n);
-        };
-        
-        auto average_color_of_population = [&](Population& population)
-        {
-            Color sum;
-            for (auto individual : population.individuals())
-            {
-                Texture* texture = texture_from_individual(individual);
-                sum += average_color_of_texture(texture);
-            }
-            return sum / population.individuals().size();
-        };
-        
-//        auto average_color_metric = [&]
-//        (Texture* texture, std::function<float(const Color&)> color_metric)
+//        auto average_color_of_texture = [] (Texture* texture)
 //        {
-//            return color_metric(average_color_of_texture(texture));
+//            int n = 10;
+//            std::vector<Vec2> samples;
+//            jittered_grid_NxN_in_square(n, 1.4, LPRS(), samples);
+//            Color sum;
+//            for (auto s : samples) sum += texture->getColor(s).clipToUnitRGB();
+//            return sum / sq(n);
 //        };
-
-
-//            auto texture_from_individual = [](Individual* i)
+        
+//            auto average_color_of_population = [&](Population& population)
 //            {
-//    //            std::any result_as_any = i->tree().eval();
-//                std::any result_as_any = i->treeValue();
-//                Texture* result = std::any_cast<Texture*>(result_as_any);
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    //            assert(result->valid());
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                return result;
+//                Color sum;
+//                for (auto individual : population.individuals())
+//                {
+//    //                Texture* texture = texture_from_individual(individual);
+//                    Texture* texture = GP::textureFromIndividual(individual);
+//    //                sum += average_color_of_texture(texture);
+//                    sum += GP::ygAverageColorOfTexture(texture);
+//                }
+//                return sum / population.individuals().size();
 //            };
         
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // TODO just for debugging
+        
+        
+// #define CHANGE_TOURNAMENT_BEST
+        
+#ifndef CHANGE_TOURNAMENT_BEST
         Texture* tournament_best;
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+#else  // CHANGE_TOURNAMENT_BEST
+        Individual* tournament_best;
+#endif  // CHANGE_TOURNAMENT_BEST
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
         auto lowest_average_metric = [&]
         (Individual* a, Individual* b, Individual* c,
          Texture* at, Texture* bt, Texture* ct,
          std::function<float(const Color&)> color_metric)
         {
-//            float am = average_color_metric(at, color_metric);
-//            float bm = average_color_metric(bt, color_metric);
-//            float cm = average_color_metric(ct, color_metric);
-            float am = color_metric(average_color_of_texture(at));
-            float bm = color_metric(average_color_of_texture(bt));
-            float cm = color_metric(average_color_of_texture(ct));
+            assert(a);
+            assert(b);
+            assert(c);
 
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+            
+//            float am = color_metric(average_color_of_texture(at));
+//            float bm = color_metric(average_color_of_texture(bt));
+//            float cm = color_metric(average_color_of_texture(ct));
+            float am = color_metric(GP::ygAverageColorOfTexture(at));
+            float bm = color_metric(GP::ygAverageColorOfTexture(bt));
+            float cm = color_metric(GP::ygAverageColorOfTexture(ct));
+
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             // TODO just for debugging
+#ifndef CHANGE_TOURNAMENT_BEST
             tournament_best = ct;
             if ((am > bm) && (am > cm)) tournament_best = at;
             if ((bm > am) && (bm > cm)) tournament_best = bt;
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+#else  // CHANGE_TOURNAMENT_BEST
+            tournament_best = c;
+            if ((am > bm) && (am > cm)) tournament_best = a;
+            if ((bm > am) && (bm > cm)) tournament_best = b;
+#endif  // CHANGE_TOURNAMENT_BEST
+            assert(tournament_best);
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             if ((am < bm) && (am < cm)) return a;
             if ((bm < am) && (bm < cm)) return b;
             return c;
@@ -3987,9 +4135,12 @@ int main(int argc, const char * argv[])
         auto tournament_function = [&]
         (Individual* a, Individual* b, Individual* c)
         {
-            Texture* at = texture_from_individual(a);
-            Texture* bt = texture_from_individual(b);
-            Texture* ct = texture_from_individual(c);
+//            Texture* at = texture_from_individual(a);
+//            Texture* bt = texture_from_individual(b);
+//            Texture* ct = texture_from_individual(c);
+            Texture* at = GP::textureFromIndividual(a);
+            Texture* bt = GP::textureFromIndividual(b);
+            Texture* ct = GP::textureFromIndividual(c);
             if (LPRS().frandom01() < 0.5)
             {
                 auto high_green = [](const Color& c){ return c.green(); };
@@ -4004,46 +4155,23 @@ int main(int argc, const char * argv[])
         };
 
         population.evolutionStep(tournament_function, function_set);
-        
-        Individual* last_added = Population::last_individual_added;
-//        assert(last_added->valid());
-//        std::any result_as_any = last_added->tree().eval();
-        std::any result_as_any = last_added->treeValue();
-        Texture* result = std::any_cast<Texture*>(result_as_any);
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        // TODO just for debugging
-        result = tournament_best;
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        assert(result->valid());
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-// TODO super temp
-//        Texture::displayAndFile(*result);
-        Texture::displayAndFile(*result, "", 99);
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        debugPrint(Population::last_individual_added->tree().size());
-//        debugPrint(i);
-        
-//        debugPrint(average_color_of_population(population));
-//        Color c = average_color_of_population(population);
-//        std::cout << c.r() << "," << c.g() << "," << c.b() << std::endl;
-//        population.findBestIndividual();
+        assert(tournament_best);
         
         
-        
-        Color ac = average_color_of_population(population);
-        std::cout << ac.r() << "," << ac.g() << "," << ac.b() << ",";
-        Individual* best_individual = population.findBestIndividual();
-        Texture* best_texture = texture_from_individual(best_individual);
-        Color bc = average_color_of_texture(best_texture);
-        std::cout << bc.r() << "," << bc.g() << "," << bc.b() << std::endl;
+#ifndef CHANGE_TOURNAMENT_BEST
+        debugPrint(i);
+        Texture* result = tournament_best;
+#else  // CHANGE_TOURNAMENT_BEST
+        Texture* result = GP::textureFromIndividual(tournament_best);
+        std::cout << "step " << i << ", winner size ";
+        std::cout << tournament_best->tree().size() << std::endl;
+#endif  // CHANGE_TOURNAMENT_BEST
 
+        Texture::displayAndFile(*result, "", 99);
         Texture::waitKey(1);
         Texture::closeAllWindows();
-        
-         
-         
     }
-//    Texture::waitKey();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;
