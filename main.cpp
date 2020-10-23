@@ -4051,67 +4051,7 @@ int main(int argc, const char * argv[])
     std::cout << "October 22, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201022_";
     
-    Timer t("evolution run");
-    const FunctionSet& function_set = GP::fs();
-    int population_size = 50;
-    int generation_equivalents = 100;
-    int max_tree_size = 100;
-    Population population(population_size, max_tree_size, function_set);
-    for (int i = 0; i < (population_size * generation_equivalents); i++)
-    {
-        // Print log and render Texture.
-        auto logger = [&](Individual* a, Individual* b, Individual* c,
-                          float am, float bm, float cm)
-        {
-            Individual* tournament_best = c;
-            if ((am > bm) && (am > cm)) tournament_best = a;
-            if ((bm > am) && (bm > cm)) tournament_best = b;
-            std::cout << std::endl << "step " << i << std::endl;
-            std::cout << "winner size ";
-            std::cout << tournament_best->tree().size();
-            std::cout << ", winner tournaments survived ";
-            std::cout << tournament_best->getTournamentsSurvived();
-            std::cout << std::endl;
-            Texture* t = GP::textureFromIndividual(tournament_best);
-            Texture::displayAndFile(*t, "", 99);
-        };
-        // Given 3 Individuals and metric, find Individual with lowest metric.
-        auto lowest_average_metric = [&]
-        (Individual* a, Individual* b, Individual* c,
-         std::function<float(const Color&)> color_metric)
-        {
-            Texture* at = GP::textureFromIndividual(a);
-            Texture* bt = GP::textureFromIndividual(b);
-            Texture* ct = GP::textureFromIndividual(c);
-            float am = color_metric(GP::ygAverageColorOfTexture(at));
-            float bm = color_metric(GP::ygAverageColorOfTexture(bt));
-            float cm = color_metric(GP::ygAverageColorOfTexture(ct));
-            logger(a, b, c, am, bm, cm);
-            if ((am < bm) && (am < cm)) return a;
-            if ((bm < am) && (bm < cm)) return b;
-            return c;
-        };
-        // Run tournament for 3 Individuals, random choice from 2 cases.
-        auto tournament_function = [&]
-        (Individual* a, Individual* b, Individual* c)
-        {
-            if (LPRS().frandom01() < 0.5)
-            {
-                auto high_green = [](const Color& c){ return c.green(); };
-                return lowest_average_metric(a, b, c, high_green);
-            }
-            else
-            {
-                auto low_blue = [](const Color& c)
-                    { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
-                return lowest_average_metric(a, b, c, low_blue);
-            }
-        };
-        // Run evolution step with given tournament and function set.
-        population.evolutionStep(tournament_function, function_set);
-        Texture::waitKey(1);
-        Texture::closeAllWindows();
-    }
+    GP::runYellowGreenTest();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
