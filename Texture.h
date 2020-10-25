@@ -44,11 +44,9 @@ public:
                                 bool wait = true);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
     static void windowPlacementTool(cv::Mat& mat);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static inline int window_counter = 0;
     static inline int window_x = 0;
     static inline int window_y = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
     void rasterizeToImageCache(int size, bool disk) const;
@@ -84,13 +82,11 @@ public:
     static void displayAndFile(const Texture& texture,
                                std::string pathname = "",
                                int size = getDefaultRenderSize());
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static void waitKey();
     static void waitKey(int delay_in_milliseconds);
     // close the window
     //static void closeWindow(const std::string name);
     static void closeAllWindows();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
     // is called ONLY from constructors providing backward compatibility. The

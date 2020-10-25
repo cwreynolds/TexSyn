@@ -1242,7 +1242,7 @@ public:
         disk_occupancy_grid
             (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
     {
-        Timer timer("LotsOfSpots constructor");  // TODO temp
+        //Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
         disk_occupancy_grid->reduceDiskOverlap(200, spots);
     }

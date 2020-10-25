@@ -3950,16 +3950,12 @@ int main(int argc, const char * argv[])
 //    //    //            std::any result_as_any = i->tree().eval();
 //    //                std::any result_as_any = i->treeValue();
 //    //                Texture* result = std::any_cast<Texture*>(result_as_any);
-//    //                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    //    //            assert(result->valid());
-//    //                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    //                return result;
 //    //            };
 //
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //            // TODO just for debugging
 //            Texture* tournament_best;
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //
 //            auto lowest_average_metric = [&]
 //            (Individual* a, Individual* b, Individual* c,
@@ -3973,12 +3969,10 @@ int main(int argc, const char * argv[])
 //                float bm = color_metric(average_color_of_texture(bt));
 //                float cm = color_metric(average_color_of_texture(ct));
 //
-//                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //                // TODO just for debugging
 //                tournament_best = ct;
 //                if ((am > bm) && (am > cm)) tournament_best = at;
 //                if ((bm > am) && (bm > cm)) tournament_best = bt;
-//                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //                if ((am < bm) && (am < cm)) return a;
 //                if ((bm < am) && (bm < cm)) return b;
 //                return c;
@@ -4010,16 +4004,12 @@ int main(int argc, const char * argv[])
 //    //        std::any result_as_any = last_added->tree().eval();
 //            std::any result_as_any = last_added->treeValue();
 //            Texture* result = std::any_cast<Texture*>(result_as_any);
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //            // TODO just for debugging
 //            result = tournament_best;
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //            assert(result->valid());
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //    // TODO super temp
 //    //        Texture::displayAndFile(*result);
 //            Texture::displayAndFile(*result, "", 99);
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //    //        debugPrint(Population::last_individual_added->tree().size());
 //    //        debugPrint(i);
 //
@@ -4047,12 +4037,20 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing evolution runs, “colorful, well exposed”
-    std::cout << "October 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201022_";
+//    // Improving evolution API, “colorful, well exposed”
+//    std::cout << "October 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201022_";
+//
+//    GP::runYellowGreenTest();
     
-    GP::runYellowGreenTest();
-
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing evolution runs, “colorful, well exposed”
+    std::cout << "October 24, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201024_";
+    
+    CWE::run();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

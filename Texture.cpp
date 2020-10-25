@@ -45,11 +45,6 @@ void Texture::displayInWindow(int size, bool wait) const
 // Display cv::Mat in pop-up window. Stack diagonally from upper left.
 void Texture::windowPlacementTool(cv::Mat& mat)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    static int window_counter = 0;
-//    static int window_x = 0;
-//    static int window_y = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
     int tm = 23;  // TODO approximate top margin height
@@ -65,7 +60,7 @@ void Texture::windowPlacementTool(cv::Mat& mat)
 // draw a round image, otherwise a square. Run parallel threads for speed.
 void Texture::rasterizeToImageCache(int size, bool disk) const
 {
-    Timer t("rasterizeToImageCache");
+    //Timer t("rasterizeToImageCache");
     // If size changed, including from initial value of 0x0, generate raster.
     // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
     if ((size != raster_->rows) || (size != raster_->cols))
@@ -200,8 +195,6 @@ void Texture::waitKey()
     cv::waitKey(0);
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 void Texture::waitKey(int delay_in_milliseconds)
 {
     cv::waitKey(delay_in_milliseconds);
@@ -218,9 +211,6 @@ void Texture::closeAllWindows()
     window_x = 0;
     window_y = 0;
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Reset statistics for debugging.
 void Texture::resetStatistics() const
