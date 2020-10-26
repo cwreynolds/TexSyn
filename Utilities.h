@@ -430,3 +430,6 @@ template<typename T> std::string any_to_string(std::any a)
     ss << std::any_cast<T>(a);
     return ss.str();
 }
+
+// Like std::isnormal() but allows zero. TODO hmm maybe I want std::isfinite()?
+inline bool is_normal(float x) { return !(std::isnan(x) || std::isinf(x)); }

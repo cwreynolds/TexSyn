@@ -64,6 +64,11 @@ public:
     Color clipToUnitRGB() const;
     // Exponentiate the RGB components by given gamma value ("exponent")
     Color gamma(float g) const;
+    // Test that the RGB components are "normal" (neither infinite nor NaN).
+    bool isNormal() const
+        { return (is_normal(r()) && is_normal(g()) && is_normal(b())); }
+    // Assert RGB components are "normal".
+    void assertNormal() const { assert(isNormal()); }
     static Color gray(float value) { return { value, value, value }; }
     // Accessors:
     float red() const { return red_; }

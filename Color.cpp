@@ -91,6 +91,7 @@ Color Color::operator*(float s) const
 void Color::convertRGBtoHSV (float red, float green, float blue,
                              float& H, float& S, float& V)
 {
+    Color(red, green, blue).assertNormal();
     const float R = 255.0f * red;
     const float G = 255.0f * green;
     const float B = 255.0f * blue;
@@ -233,12 +234,17 @@ Color Color::clipToUnitRGB() const
     return result;
 }
 
-// Exponentiate the RGB components by given gamma value ("exponent")
+// Exponentiate the RGB components by given gamma value ("exponent").
+// Also clips RGB components to be non-negative before exponentiation, and if
+// any RGB values are so large that they "overflow", clips result to white.
 Color Color::gamma(float exponent) const
 {
-    return Color(pow(std::max(r(), 0.0f), exponent),
-                 pow(std::max(g(), 0.0f), exponent),
-                 pow(std::max(b(), 0.0f), exponent));
+    Color original = *this;
+    Color exponentiated(pow(std::max(r(), 0.0f), exponent),
+                        pow(std::max(g(), 0.0f), exponent),
+                        pow(std::max(b(), 0.0f), exponent));
+    bool valid = original.isNormal() && exponentiated.isNormal();
+    return valid ? exponentiated : Color(1, 1, 1);
 }
 
 // TODO experimental version in RandomSequence instead of in Color.

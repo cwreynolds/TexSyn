@@ -447,13 +447,15 @@ namespace CWE
 {
 
 static inline Population* POP;
+
+// TODO is this computed corectly now that there are multiple fitness cases?
 static inline Individual* tournament_best;
 
 // Print log and render Texture.
 void logger(const Population& population)
 {
     static int step_count = 0;
-//    Individual* best = population.findBestIndividual();
+    //Individual* best = population.findBestIndividual();
     Individual* best = tournament_best;
     std::cout << std::endl << "step " << step_count++ << std::endl;
     std::cout << "winner size ";
@@ -463,7 +465,6 @@ void logger(const Population& population)
     std::cout << std::endl;
     Texture* t = GP::textureFromIndividual(best);
     Texture::displayAndFile(*t, "", 99);
-    
     Texture::window_x = 0;
     Texture::window_y = 150;
 
@@ -485,61 +486,30 @@ void sampleColors(Individual* individual, std::vector<Color>& samples)
         samples.push_back(texture->getColor(p).clipToUnitRGB());
 }
 
-//    float measureExposure(Individual* individual)
-//    {
-//        std::vector<Color> samples;
-//        sampleColors(individual, samples);
-//        int bucket_count = 5;
-//        std::vector<int> buckets(bucket_count, 0);
-//
-//        for (auto& color : samples)
-//        {
-//            float luminance = color.luminance();
-//            assert(between(luminance, 0, 1));
-//            int bucket_index = luminance * bucket_count;
-//            if (bucket_index == bucket_count) bucket_index--;
-//            assert();
-//            buckets.at(bucket_index)++;
-//        }
-//
-//        for (int b : buckets) std::cout << b << " ";
-//        std::cout << std::endl;
-//
-//        int target = int(samples.size()) / bucket_count;
-//        float score = 0;
-//        for (int b : buckets) score += std::abs(b - target);
-//
-//        debugPrint(score);
-//
-//    //    return score;
-//        return -score;
-//    }
-
-float measureExposure(Individual* individual)
+float measureScalarHistogram(Individual* individual,
+                             int bucket_count,
+                             float min_metric,
+                             float max_metric,
+                             std::function<float(Color)> metric)
 {
+    // Generate a jittered grid of Color samples
     std::vector<Color> samples;
     sampleColors(individual, samples);
-    int bucket_count = 5;
+    // Set up histogram with "bucket_count" buckets
     std::vector<int> buckets(bucket_count, 0);
-    
+    // For each color sample, increment the corresponding histogram bucket.
     for (auto& color : samples)
     {
-        float luminance = color.luminance();
-        assert(between(luminance, 0, 1));
-        int bucket_index = luminance * bucket_count;
+        float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+        int bucket_index = value * bucket_count;
         if (bucket_index == bucket_count) bucket_index--;
-        assert((bucket_index >= 0) && (bucket_index < bucket_count));
         buckets.at(bucket_index)++;
     }
-    
-//    for (int b : buckets) std::cout << b << " ";
-//    std::cout << std::endl;
-    
-    int target = int(samples.size()) / bucket_count;
+    // Determine score (sum of abs error from target bucket size, neg for error)
     float score = 0;
+    int target = int(samples.size()) / bucket_count;
     for (int b : buckets) score -= sq(std::abs(b - target));
-//    debugPrint(score);
-    
+    // TODO debug print of score and buckets.
     std::cout << "score = " << score << " (";
     for (int b : buckets) std::cout << b << " ";
     std::cout << ")" << std::endl;
@@ -547,48 +517,65 @@ float measureExposure(Individual* individual)
     return score;
 }
 
+float measureExposure(Individual* individual)
+{
+    auto exposure = [](Color c){ return c.luminance(); };
+    return measureScalarHistogram(individual, 5, 0, 1, exposure);
+}
+
 float measureSaturation(Individual* individual)
 {
-    return 0;
+    auto saturation = [](Color c){ return c.getS(); };
+    return measureScalarHistogram(individual, 3, 0, 1, saturation);
 }
 
+// Given 3 Individuals and scalar metric, return Individual with lowest metric.
+Individual* worstMetric(Individual* a, Individual* b, Individual* c,
+                        std::function<float(Individual*)> metric)
+{
+    
+    float am = metric(a);
+    float bm = metric(b);
+    float cm = metric(c);
+    Individual* worst = a;
+    if ((bm < am) && (bm < cm)) worst = b;
+    if ((cm < am) && (cm < bm)) worst = c;
+    // Primarily for the sake of debugging, also compute the best:
+    {
+        tournament_best = a;
+        if ((bm > am) && (bm > cm)) tournament_best = b;
+        if ((cm > am) && (cm > bm)) tournament_best = c;
+    }
+    return worst;
+}
+
+// Given 3 Individuals, return the one with the worse exposure histogram.
 Individual* worstExposure(Individual* a, Individual* b, Individual* c)
 {
-    
-    float ae = measureExposure(a);
-    float be = measureExposure(b);
-    float ce = measureExposure(c);
-    Individual* worst = a;
-    if ((be < ae) && (be < ce)) worst = b;
-    if ((ce < ae) && (ce < be)) worst = c;
-    
-    tournament_best = a;
-    if ((be > ae) && (be > ce)) tournament_best = b;
-    if ((ce > ae) && (ce > be)) tournament_best = c;
-
-    return worst;
+    return worstMetric(a, b, c, measureExposure);
 }
 
+// Given 3 Individuals, return the one with the worse saturation histogram.
 Individual* worstSaturation(Individual* a, Individual* b, Individual* c)
 {
-    Individual* worst = nullptr;
-    return worst;
+    return worstMetric(a, b, c, measureSaturation);
 }
 
-
+// Hold tournament for 3 Individuals, return the worst performing one ("loser").
 Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
 {
     Individual* worst = nullptr;
-//    float select = LPRS().frandom01();
-//    if (select < 0.5)
+    float select = LPRS().frandom01();
+    if (select < 0.5)
     {
         worst = worstExposure(a, b, c);
+        assert(worst);
     }
-//    else
-//    {
-//        worst = worstSaturation(a, b, c);
-//    }
-    
+    else
+    {
+        worst = worstSaturation(a, b, c);
+        assert(worst);
+    }
     logger(*POP);
     return worst;
 }
@@ -598,13 +585,14 @@ void run()
 {
     Timer t("CWE test");
     const FunctionSet& function_set = GP::fs();
-    int population_size = 50;
+//    int population_size = 50;
+    int population_size = 100;
     int generation_equivalents = 100;
     int steps = population_size * generation_equivalents;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
-    POP = &population;
+    POP = &population; // TODO for debugging
     
     population.run(steps, function_set, tournamentFunction);
 }
