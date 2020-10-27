@@ -529,24 +529,23 @@ float measureSaturation(Individual* individual)
     return measureScalarHistogram(individual, 3, 0, 1, saturation);
 }
 
+typedef std::pair<float, Individual*> ScoredIndividual;
+
 // Given 3 Individuals and scalar metric, return Individual with lowest metric.
 Individual* worstMetric(Individual* a, Individual* b, Individual* c,
                         std::function<float(Individual*)> metric)
 {
-    
-    float am = metric(a);
-    float bm = metric(b);
-    float cm = metric(c);
-    Individual* worst = a;
-    if ((bm < am) && (bm < cm)) worst = b;
-    if ((cm < am) && (cm < bm)) worst = c;
-    // Primarily for the sake of debugging, also compute the best:
-    {
-        tournament_best = a;
-        if ((bm > am) && (bm > cm)) tournament_best = b;
-        if ((cm > am) && (cm > bm)) tournament_best = c;
-    }
-    return worst;
+    // Create a vector of {metric, Individual*} pairs
+    std::vector<ScoredIndividual> rankings = { {metric(a), a},
+                                               {metric(b), b},
+                                               {metric(c), c} };
+    // Sort rankings by ascending score.
+    std::sort(rankings.begin(), rankings.end(),
+              [](const ScoredIndividual &a, const ScoredIndividual &b)
+                  { return a.first < b.first; });
+    // Primarily for the sake of debugging, remember the best:
+    tournament_best = rankings.at(2).second;
+    return rankings.at(0).second;
 }
 
 // Given 3 Individuals, return the one with the worse exposure histogram.
@@ -585,8 +584,8 @@ void run()
 {
     Timer t("CWE test");
     const FunctionSet& function_set = GP::fs();
-//    int population_size = 50;
-    int population_size = 100;
+    int population_size = 50;
+    // int population_size = 100;
     int generation_equivalents = 100;
     int steps = population_size * generation_equivalents;
     int max_tree_size = 100;
