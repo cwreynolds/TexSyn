@@ -239,11 +239,10 @@ Color Color::clipToUnitRGB() const
 // any RGB values are so large that they "overflow", clips result to white.
 Color Color::gamma(float exponent) const
 {
-    Color original = *this;
     Color exponentiated(pow(std::max(r(), 0.0f), exponent),
                         pow(std::max(g(), 0.0f), exponent),
                         pow(std::max(b(), 0.0f), exponent));
-    bool valid = original.isNormal() && exponentiated.isNormal();
+    bool valid = isNormal() && exponentiated.isNormal();
     return valid ? exponentiated : Color(1, 1, 1);
 }
 

@@ -565,7 +565,8 @@ Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
 {
     Individual* worst = nullptr;
     float select = LPRS().frandom01();
-    if (select < 0.5)
+//    if (select < 0.5)
+    if (select < 0.66)
     {
         worst = worstExposure(a, b, c);
         assert(worst);

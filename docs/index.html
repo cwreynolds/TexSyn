@@ -81,6 +81,40 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20201027"> <a href="#20201027" class="date">October
+        27, 2020</a>
+      <h1>Gamma overflow</h1>
+      <p>While experimenting with evolution and the structure of tournament
+        selection in LazyPredator, I ran into a TexSyn bug. In one run, after
+        about 5000 steps I hit an <code>assert</code> failure in <code>Color::convertRGBtoHSV()</code>.
+        The problem was an <code>inf</code> as one of the input RGB components.
+        This was coming from the output of a <em>Gamma</em> texture operator,
+        which had raised ~200,000 to the ~8.5 power which is outside the <code>float</code>
+        range. (I suppose if I had been using 64 bit floats (“<code>double</code>”)
+        this case would have been ok.) But in general, TexSyn allows RGB color
+        components to range over the entire <code>float</code> range, so <em>Gamma</em>
+        would eventually hit a large enough input value and exponent to cause
+        this kind of range overflow. I fixed the bug by adding a special case in
+        function <code>Color::gamma()</code> — if the input is finite (<code>std::finite()</code>)
+        but the result of exponentiation is <strong>not</strong> finite, then
+        it returns white. </p>
+      <p>To recap why <code>Colors</code> are allowed to have “infinite” range:
+        the idea is to allow composition of texture operators without regard to
+        order. I want it to work, for example, to add two textures in the range
+        [0, 1] — the “unit positive RGB color cube” — producing a texture whose
+        colors range on [0, 2], <strong>then</strong> scale the brightness back
+        into [0, 1]:</p>
+      <pre>AdjustBrightness(0.5, Add(ColorNoise(...), ColorNoise(...)))</pre>
+      <p>The expression above computes the average of those two noise patterns.
+        Similarly, the subtraction below produces RGB values ranging on [-1, 1],
+        adding white offsets it to [0, 2], which is then scaled to [0, 1]:</p>
+      <pre>AdjustBrightness(0.5, Add(white, Subtract(ColorNoise(...), ColorNoise(...))))</pre>
+      <p>If color values were clipped to the unit interval after each operator
+        it would cause texture synthesis to require certain operator ordering.
+        (E.G. scaling before adding to keep the result in range.) My goal is to
+        remove that constraint and so allow evolution to more easily optimize
+        the textures.</p>
+    </div>
     <div class="post" id="20201005"> <a href="#20201005" class="date">October
         5, 2020</a>
       <h1>Experiment: minimum size for crossover snippet</h1>
