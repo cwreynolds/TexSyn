@@ -4037,7 +4037,7 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    // Improving evolution API, “colorful, well exposed”
+//    // Improving evolution API, “yellow/green test”
 //    std::cout << "October 22, 2020" << std::endl;
 //    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201022_";
 //

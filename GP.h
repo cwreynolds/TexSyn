@@ -417,6 +417,8 @@ public:
             return c;
         };
         // Run tournament for 3 Individuals, random choice between 2 cases.
+        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+#ifndef USE_TOURNAMENT_GROUP
         auto tournament_function = [&]
         (Individual* a, Individual* b, Individual* c)
         {
@@ -434,6 +436,27 @@ public:
         };
         // Perform evolution run.
         population.run(steps, function_set, tournament_function);
+#else // USE_TOURNAMENT_GROUP
+//    //        auto tournament_function = [&]
+//    //        (Individual* a, Individual* b, Individual* c)
+//            auto tournament_function = [&](TournamentGroup group)
+//            {
+//                if (LPRS().frandom01() < 0.5)
+//                {
+//                    auto high_green = [](const Color& c){ return c.green(); };
+//                    return lowest_average_metric(a, b, c, high_green);
+//                }
+//                else
+//                {
+//                    auto low_blue = [](const Color& c)
+//                    { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
+//                    return lowest_average_metric(a, b, c, low_blue);
+//                }
+//            };
+//        // Perform evolution run.
+//        population.run(steps, function_set, tournament_function);
+#endif // USE_TOURNAMENT_GROUP
+        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
     }
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     
@@ -529,6 +552,8 @@ float measureSaturation(Individual* individual)
     return measureScalarHistogram(individual, 3, 0, 1, saturation);
 }
 
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+#ifndef USE_TOURNAMENT_GROUP
 typedef std::pair<float, Individual*> ScoredIndividual;
 
 // Given 3 Individuals and scalar metric, return Individual with lowest metric.
@@ -547,7 +572,44 @@ Individual* worstMetric(Individual* a, Individual* b, Individual* c,
     tournament_best = rankings.at(2).second;
     return rankings.at(0).second;
 }
+#else // USE_TOURNAMENT_GROUP
+//typedef std::pair<float, Individual*> ScoredIndividual;
 
+// Given 3 Individuals and scalar metric, return Individual with lowest metric.
+//Individual* worstMetric(Individual* a, Individual* b, Individual* c,
+//                        std::function<float(Individual*)> metric)
+TournamentGroup worstMetric(TournamentGroup group,
+                            std::function<float(Individual*)> metric)
+{
+//    // Create a vector of {metric, Individual*} pairs
+//    std::vector<ScoredIndividual> rankings = { {metric(a), a},
+//                                               {metric(b), b},
+//                                               {metric(c), c} };
+    
+    for (int i = 0; i < group.size(); i++)
+    {
+        Individual* individual = group.at(i).individual;
+        group.setMetric(i, metric(individual));
+    }
+    
+    // Sort rankings by ascending score.
+//    std::sort(rankings.begin(), rankings.end(),
+//              [](const ScoredIndividual &a, const ScoredIndividual &b)
+//                  { return a.first < b.first; });
+    
+    group.sort();
+    
+    // Primarily for the sake of debugging, remember the best:
+//    tournament_best = rankings.at(2).second;
+//    return rankings.at(0).second;
+    tournament_best = group.bestIndividual();
+    return group;
+}
+#endif // USE_TOURNAMENT_GROUP
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+#ifndef USE_TOURNAMENT_GROUP
 // Given 3 Individuals, return the one with the worse exposure histogram.
 Individual* worstExposure(Individual* a, Individual* b, Individual* c)
 {
@@ -559,13 +621,28 @@ Individual* worstSaturation(Individual* a, Individual* b, Individual* c)
 {
     return worstMetric(a, b, c, measureSaturation);
 }
+#else // USE_TOURNAMENT_GROUP
+// Given 3 Individuals, return the one with the worse exposure histogram.
+TournamentGroup worstExposure(TournamentGroup group)
+{
+    return worstMetric(group, measureExposure);
+}
 
+// Given 3 Individuals, return the one with the worse saturation histogram.
+TournamentGroup worstSaturation(TournamentGroup group)
+{
+    return worstMetric(group, measureSaturation);
+}
+#endif // USE_TOURNAMENT_GROUP
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+#ifndef USE_TOURNAMENT_GROUP
 // Hold tournament for 3 Individuals, return the worst performing one ("loser").
 Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
 {
     Individual* worst = nullptr;
     float select = LPRS().frandom01();
-//    if (select < 0.5)
     if (select < 0.66)
     {
         worst = worstExposure(a, b, c);
@@ -579,6 +656,32 @@ Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
     logger(*POP);
     return worst;
 }
+#else // USE_TOURNAMENT_GROUP
+// Hold tournament for 3 Individuals, return the worst performing one ("loser").
+//Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
+TournamentGroup tournamentFunction(TournamentGroup group)
+{
+//    Individual* worst = nullptr;
+    TournamentGroup ranked_group;
+    float select = LPRS().frandom01();
+    if (select < 0.66)
+    {
+//        worst = worstExposure(a, b, c);
+//        assert(worst);
+        ranked_group = worstExposure(group);
+    }
+    else
+    {
+//        worst = worstSaturation(a, b, c);
+//        assert(worst);
+        ranked_group = worstSaturation(group);
+    }
+    logger(*POP);
+//    return worst;
+    return ranked_group;
+}
+#endif // USE_TOURNAMENT_GROUP
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
 
 
 void run()
@@ -587,8 +690,9 @@ void run()
     const FunctionSet& function_set = GP::fs();
     int population_size = 50;
     // int population_size = 100;
-    int generation_equivalents = 100;
-    int steps = population_size * generation_equivalents;
+//    int generation_equivalents = 100;
+//    int steps = population_size * generation_equivalents;
+    int steps = 100;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
