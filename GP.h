@@ -677,6 +677,15 @@ TournamentGroup tournamentFunction(TournamentGroup group)
         ranked_group = worstSaturation(group);
     }
     logger(*POP);
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+//    ranked_group.print();
+//    debugPrint(ranked_group.bestIndividual());
+//    debugPrint(ranked_group.worstIndividual());
+//    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //    return worst;
     return ranked_group;
 }
@@ -690,9 +699,9 @@ void run()
     const FunctionSet& function_set = GP::fs();
     int population_size = 50;
     // int population_size = 100;
-//    int generation_equivalents = 100;
-//    int steps = population_size * generation_equivalents;
-    int steps = 100;
+    int generation_equivalents = 100;
+    int steps = population_size * generation_equivalents;
+//    int steps = 100;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
     
