@@ -183,13 +183,18 @@ void Color::convertHSVtoRGB(float h, float s, float v,
     else
     {
         const float hf = H / 60.0;
-        const int i  = (int) floor( hf );
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        const int i  = (int) floor( hf );
         
-        // XXX20091119 oops found a bug for HSV=111  (remove this when I'm sure its fixed)
-        if ((i<0) || (i>5))
-            std::cout<<"convertHSVtoRGB: i="<< i<<", h,s,v = "<<h<<","<<s<<","<< v<<std::endl;
-        assert (!((i<0) || (i>5)));
+//        // XXX20091119 oops found a bug for HSV=111  (remove this when I'm sure its fixed)
+//        if ((i<0) || (i>5))
+//            std::cout<<"convertHSVtoRGB: i="<< i<<", h,s,v = "<<h<<","<<s<<","<< v<<std::endl;
+//        assert (!((i<0) || (i>5)));
         
+        int i = std::max(0, std::min(5, int(std::floor(hf))));
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         const float f  = hf - i;
         const float pv  = V * ( 1 - S );
         const float qv  = V * ( 1 - S * f );
@@ -202,17 +207,19 @@ void Color::convertHSVtoRGB(float h, float s, float v,
             case 3: R = pv; G = qv; B = V;  break; // Blue is the dominant color
             case 4: R = tv; G = pv; B = V;  break;
             case 5: R = V;  G = pv; B = qv; break; // Red is the dominant color
-                // Just in case we overshoot on our math by a little, we putthese here.
-                // Since its a switch it won't slow us down at all to put these here.
-            case 6: R = V;  G = tv; B = pv; break;
-            case -1: R = V; G = pv; B = qv; break;
-//            default:
-//                // The color is not defined, we should throw an error.
-// //            std::cout << "i Value error in Pixel conversion, Value is " << i << std::endl;
-//                std::cout << "i Value error in Pixel conversion, Value is " << i
-//                          << " Input h,s,v = " << h << "," << s << "," << v << std::endl; // XXX20090913
-//                exit (-1);
-//                break;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                    // Just in case we overshoot on our math by a little, we putthese here.
+//                    // Since its a switch it won't slow us down at all to put these here.
+//                case 6: R = V;  G = tv; B = pv; break;
+//                case -1: R = V; G = pv; B = qv; break;
+//    //            default:
+//    //                // The color is not defined, we should throw an error.
+//    // //            std::cout << "i Value error in Pixel conversion, Value is " << i << std::endl;
+//    //                std::cout << "i Value error in Pixel conversion, Value is " << i
+//    //                          << " Input h,s,v = " << h << "," << s << "," << v << std::endl; // XXX20090913
+//    //                exit (-1);
+//    //                break;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
     }
 }
