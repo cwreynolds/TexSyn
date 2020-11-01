@@ -159,7 +159,6 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
     assert_Valid_Float (H);
 }
 
-
 // Transform color space from "Hue Saturation Value" to "Red Green Blue"
 //
 // Method due to Alvy Ray Smith, first published in 1978.
@@ -170,58 +169,38 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
 //
 // I made all six parameters (RGBHSV) range on [0 1] and cosmetic changes.
 //
+// I removed some work-arounds dated "20091119", cleaning them up and adding a
+// single numeric validity check at the end.
+//
 void Color::convertHSVtoRGB(float h, float s, float v,
                             float& R, float& G, float& B)
 {
     const float H = fmod_floor(h, 1) * 360;
     const float S = s;
     const float V = v;
-    if( V == 0 )
-    { R = 0; G = 0; B = 0; }
-    else if( S == 0 )
-    { R = V; G = V; B = V; }
+    if (V == 0)
+        { R = 0; G = 0; B = 0; }
+    else if (S == 0)
+        { R = V; G = V; B = V; }
     else
     {
         const float hf = H / 60.0;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        const int i  = (int) floor( hf );
-        
-//        // XXX20091119 oops found a bug for HSV=111  (remove this when I'm sure its fixed)
-//        if ((i<0) || (i>5))
-//            std::cout<<"convertHSVtoRGB: i="<< i<<", h,s,v = "<<h<<","<<s<<","<< v<<std::endl;
-//        assert (!((i<0) || (i>5)));
-        
         int i = std::max(0, std::min(5, int(std::floor(hf))));
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
         const float f  = hf - i;
         const float pv  = V * ( 1 - S );
         const float qv  = V * ( 1 - S * f );
         const float tv  = V * ( 1 - S * ( 1 - f ) );
-        switch( i )
+        switch (i)
         {
-            case 0: R = V;  G = tv; B = pv; break; // Red is the dominant color
-            case 1: R = qv; G = V;  B = pv; break; // Green is the dominant color
+            case 0: R = V;  G = tv; B = pv; break; // Red is dominant color
+            case 1: R = qv; G = V;  B = pv; break; // Green is dominant color
             case 2: R = pv; G = V;  B = tv; break;
-            case 3: R = pv; G = qv; B = V;  break; // Blue is the dominant color
+            case 3: R = pv; G = qv; B = V;  break; // Blue is dominant color
             case 4: R = tv; G = pv; B = V;  break;
-            case 5: R = V;  G = pv; B = qv; break; // Red is the dominant color
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                    // Just in case we overshoot on our math by a little, we putthese here.
-//                    // Since its a switch it won't slow us down at all to put these here.
-//                case 6: R = V;  G = tv; B = pv; break;
-//                case -1: R = V; G = pv; B = qv; break;
-//    //            default:
-//    //                // The color is not defined, we should throw an error.
-//    // //            std::cout << "i Value error in Pixel conversion, Value is " << i << std::endl;
-//    //                std::cout << "i Value error in Pixel conversion, Value is " << i
-//    //                          << " Input h,s,v = " << h << "," << s << "," << v << std::endl; // XXX20090913
-//    //                exit (-1);
-//    //                break;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            case 5: R = V;  G = pv; B = qv; break; // Red is dominant color
         }
     }
+    Color(R, G, B).assertNormal();
 }
 
 // Get corresponding color value clipped to unit RGB cube.

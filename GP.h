@@ -383,60 +383,6 @@ public:
         int max_tree_size = 100;
         Population population(population_size, max_tree_size, function_set);
         int step_count = 0;
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-        // Print log and render Texture.
-        auto logger = [&](Individual* a, Individual* b, Individual* c,
-                          float am, float bm, float cm)
-        {
-            Individual* tournament_best = c;
-            if ((am > bm) && (am > cm)) tournament_best = a;
-            if ((bm > am) && (bm > cm)) tournament_best = b;
-            std::cout << std::endl << "step " << step_count++ << std::endl;
-            std::cout << "winner size ";
-            std::cout << tournament_best->tree().size();
-            std::cout << ", winner tournaments survived ";
-            std::cout << tournament_best->getTournamentsSurvived();
-            std::cout << std::endl;
-            Texture* t = GP::textureFromIndividual(tournament_best);
-            Texture::displayAndFile(*t, "", 99);
-            Texture::waitKey(1);
-            Texture::closeAllWindows();
-        };
-#else // USE_TOURNAMENT_GROUP
-//        // Print log and render Texture.
-//        auto logger = [&](Individual* a, Individual* b, Individual* c,
-//                          float am, float bm, float cm)
-//        {
-//            Individual* tournament_best = c;
-//            if ((am > bm) && (am > cm)) tournament_best = a;
-//            if ((bm > am) && (bm > cm)) tournament_best = b;
-//            if (true)
-//            {
-//                std::cout << std::endl << "step " << step_count++ << std::endl;
-//                std::cout << "winner size ";
-//                std::cout << tournament_best->tree().size();
-//                std::cout << ", winner tournaments survived ";
-//                std::cout << tournament_best->getTournamentsSurvived();
-//                std::cout << std::endl;
-//                Texture* t = GP::textureFromIndividual(tournament_best);
-//                Texture::displayAndFile(*t, "", 99);
-//                Texture::waitKey(1);
-//                Texture::closeAllWindows();
-//            }
-//            else
-//            {
-//                // for plotting:
-//                step_count++;
-//                Color ac = ygAverageColorOfPopulation(population);
-//                std::cout << ac.r() << "," << ac.g() << "," << ac.b() << ",";
-//                Individual* best_individual = population.findBestIndividual();
-//                Texture* best_texture = GP::textureFromIndividual(best_individual);
-//                Color bc = ygAverageColorOfTexture(best_texture);
-//                std::cout << bc.r() << "," << bc.g() << "," << bc.b() << std::endl;
-//            }
-//        };
-        
         // Print log and render Texture.
         auto logger = [&](TournamentGroup group)
         {
@@ -466,124 +412,40 @@ public:
             }
         };
 
-#endif // USE_TOURNAMENT_GROUP
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-        // Given 3 Individuals and metric, find the one with lowest metric.
-        auto lowest_average_metric = [&]
-        (Individual* a, Individual* b, Individual* c,
-         std::function<float(const Color&)> color_metric)
-        {
-            Texture* at = GP::textureFromIndividual(a);
-            Texture* bt = GP::textureFromIndividual(b);
-            Texture* ct = GP::textureFromIndividual(c);
-            float am = color_metric(GP::ygAverageColorOfTexture(at));
-            float bm = color_metric(GP::ygAverageColorOfTexture(bt));
-            float cm = color_metric(GP::ygAverageColorOfTexture(ct));
-            logger(a, b, c, am, bm, cm);
-            if ((am < bm) && (am < cm)) return a;
-            if ((bm < am) && (bm < cm)) return b;
-            return c;
-        };
-#else // USE_TOURNAMENT_GROUP
         // Given 3 Individuals and metric, find the one with lowest metric.
         auto lowest_average_metric = [&]
         (TournamentGroup group, std::function<float(const Color&)> color_metric)
         {
-//            Texture* at = GP::textureFromIndividual(a);
-//            Texture* bt = GP::textureFromIndividual(b);
-//            Texture* ct = GP::textureFromIndividual(c);
-//            float am = color_metric(GP::ygAverageColorOfTexture(at));
-//            float bm = color_metric(GP::ygAverageColorOfTexture(bt));
-//            float cm = color_metric(GP::ygAverageColorOfTexture(ct));
-            
-            for (int i = 0; i < group.size(); i++)
+            group.setAllMetrics([&](Individual* i)
             {
-                Individual* individual = group.at(i).individual;
-                Texture* texture = GP::textureFromIndividual(individual);
-                float metric = color_metric(GP::ygAverageColorOfTexture(texture));
-                group.setMetric(i, metric);
-            }
-
-            
-            
-//            logger(a, b, c, am, bm, cm);
-
-//            logger(group.at(0).individual,
-//                   group.at(1).individual,
-//                   group.at(2).individual,
-//                   group.at(0).metric,
-//                   group.at(1).metric,
-//                   group.at(2).metric);
-            
+                Texture* texture = GP::textureFromIndividual(i);
+                return color_metric(GP::ygAverageColorOfTexture(texture));
+            });
             logger(group);
-
-            
-//            if ((am < bm) && (am < cm)) return a;
-//            if ((bm < am) && (bm < cm)) return b;
-//            return c;
-            
-            group.sort();
-
             return group;
+        };
 
-        };
-#endif // USE_TOURNAMENT_GROUP
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-        // Run tournament for 3 Individuals, random choice between 2 cases.
-        auto tournament_function = [&]
-        (Individual* a, Individual* b, Individual* c)
-        {
-            if (LPRS().frandom01() < 0.5)
-            {
-                auto high_green = [](const Color& c){ return c.green(); };
-                return lowest_average_metric(a, b, c, high_green);
-            }
-            else
-            {
-                auto low_blue = [](const Color& c)
-                { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
-                return lowest_average_metric(a, b, c, low_blue);
-            }
-        };
-        // Perform evolution run.
-        population.run(steps, function_set, tournament_function);
-#else // USE_TOURNAMENT_GROUP
-        // Run tournament for 3 Individuals, random choice between 2 cases.
-//        auto tournament_function = [&]
-//        (Individual* a, Individual* b, Individual* c)
         auto tournament_function = [&](TournamentGroup group)
         {
             if (LPRS().frandom01() < 0.5)
             {
                 auto high_green = [](const Color& c){ return c.green(); };
-//                return lowest_average_metric(a, b, c, high_green);
                 return lowest_average_metric(group, high_green);
             }
             else
             {
                 auto low_blue = [](const Color& c)
                     { return remapIntervalClip(c.blue(), 0, 1, 1, 0); };
-//                return lowest_average_metric(a, b, c, low_blue);
                 return lowest_average_metric(group, low_blue);
             }
         };
     // Perform evolution run.
     population.run(steps, function_set, tournament_function);
-#endif // USE_TOURNAMENT_GROUP
-        //~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
     }
-    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // “colorful, well exposed” evolution test
-
 namespace CWE
 {
 
@@ -675,94 +537,29 @@ float measureSize(Individual* individual)
     return -(individual->tree().size());
 }
 
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-typedef std::pair<float, Individual*> ScoredIndividual;
-
-// Given 3 Individuals and scalar metric, return Individual with lowest metric.
-Individual* worstMetric(Individual* a, Individual* b, Individual* c,
-                        std::function<float(Individual*)> metric)
-{
-    // Create a vector of {metric, Individual*} pairs
-    std::vector<ScoredIndividual> rankings = { {metric(a), a},
-                                               {metric(b), b},
-                                               {metric(c), c} };
-    // Sort rankings by ascending score.
-    std::sort(rankings.begin(), rankings.end(),
-              [](const ScoredIndividual &a, const ScoredIndividual &b)
-                  { return a.first < b.first; });
-    // Primarily for the sake of debugging, remember the best:
-    tournament_best = rankings.at(2).second;
-    return rankings.at(0).second;
-}
-#else // USE_TOURNAMENT_GROUP
-//typedef std::pair<float, Individual*> ScoredIndividual;
-
-// Given 3 Individuals and scalar metric, return Individual with lowest metric.
-//Individual* worstMetric(Individual* a, Individual* b, Individual* c,
-//                        std::function<float(Individual*)> metric)
+// Score TournamentGroup according to histogram flatness for given metric.
 TournamentGroup worstMetric(TournamentGroup group,
                             std::function<float(Individual*)> metric)
 {
-//    // Create a vector of {metric, Individual*} pairs
-//    std::vector<ScoredIndividual> rankings = { {metric(a), a},
-//                                               {metric(b), b},
-//                                               {metric(c), c} };
-    
-    for (int i = 0; i < group.size(); i++)
-    {
-        Individual* individual = group.at(i).individual;
-        group.setMetric(i, metric(individual));
-    }
-    
-    // Sort rankings by ascending score.
-//    std::sort(rankings.begin(), rankings.end(),
-//              [](const ScoredIndividual &a, const ScoredIndividual &b)
-//                  { return a.first < b.first; });
-    
-    group.sort();
-    
+    group.setAllMetrics([&](Individual* i){ return metric(i); });
     // Primarily for the sake of debugging, remember the best:
-//    tournament_best = rankings.at(2).second;
-//    return rankings.at(0).second;
     tournament_best = group.bestIndividual();
     return group;
 }
-#endif // USE_TOURNAMENT_GROUP
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
 
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-// Given 3 Individuals, return the one with the worse exposure histogram.
-Individual* worstExposure(Individual* a, Individual* b, Individual* c)
-{
-    return worstMetric(a, b, c, measureExposure);
-}
-
-// Given 3 Individuals, return the one with the worse saturation histogram.
-Individual* worstSaturation(Individual* a, Individual* b, Individual* c)
-{
-    return worstMetric(a, b, c, measureSaturation);
-}
-#else // USE_TOURNAMENT_GROUP
-// TODO update doc
-// Given 3 Individuals, return the one with the worse exposure histogram.
+// Score TournamentGroup according to worst "exposure" histogram.
 TournamentGroup worstExposure(TournamentGroup group)
 {
     return worstMetric(group, measureExposure);
 }
 
-// TODO update doc
-// Given 3 Individuals, return the one with the worse saturation histogram.
+// Score TournamentGroup according to worst "saturation" histogram.
 TournamentGroup worstSaturation(TournamentGroup group)
 {
     return worstMetric(group, measureSaturation);
 }
-#endif // USE_TOURNAMENT_GROUP
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
 
-// TODO update doc
-// Given 3 Individuals, return the one with the worse saturation histogram.
+// Score TournamentGroup according to worst size.
 TournamentGroup worstSize(TournamentGroup group)
 {
     TournamentGroup ranked = worstMetric(group, measureSize);
@@ -772,126 +569,7 @@ TournamentGroup worstSize(TournamentGroup group)
     return ranked;
 }
 
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-#ifndef USE_TOURNAMENT_GROUP
-// Hold tournament for 3 Individuals, return the worst performing one ("loser").
-Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
-{
-    Individual* worst = nullptr;
-    float select = LPRS().frandom01();
-    if (select < 0.66)
-    {
-        worst = worstExposure(a, b, c);
-        assert(worst);
-    }
-    else
-    {
-        worst = worstSaturation(a, b, c);
-        assert(worst);
-    }
-    logger(*POP);
-    return worst;
-}
-#else // USE_TOURNAMENT_GROUP
-
-//    // Hold tournament for 3 Individuals, return the worst performing one ("loser").
-//    //Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
-//    TournamentGroup tournamentFunction(TournamentGroup group)
-//    {
-//    //    Individual* worst = nullptr;
-//        TournamentGroup ranked_group;
-//        float select = LPRS().frandom01();
-//        if (select < 0.66)
-//        {
-//    //        worst = worstExposure(a, b, c);
-//    //        assert(worst);
-//            ranked_group = worstExposure(group);
-//        }
-//        else
-//        {
-//    //        worst = worstSaturation(a, b, c);
-//    //        assert(worst);
-//            ranked_group = worstSaturation(group);
-//        }
-//        logger(*POP);
-//
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    //    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-//    //    ranked_group.print();
-//    //    debugPrint(ranked_group.bestIndividual());
-//    //    debugPrint(ranked_group.worstIndividual());
-//    //    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//    //    return worst;
-//        return ranked_group;
-//    }
-
-//    // Hold tournament for 3 Individuals, return the worst performing one ("loser").
-//    //Individual* tournamentFunction(Individual* a, Individual* b, Individual* c)
-//    TournamentGroup tournamentFunction(TournamentGroup group)
-//    {
-//        TournamentGroup ranked_group;
-//        float select = LPRS().frandom01();
-//        if (select < 0.65)                        // 65% exposure control
-//        {
-//            ranked_group = worstExposure(group);
-//        }
-//        else if (select < 0.95)                   // 30% saturation control
-//        {
-//            ranked_group = worstSaturation(group);
-//        }
-//        else                                      // 5% size control
-//        {
-//            ranked_group = worstSize(group);
-//        }
-//        logger(*POP);
-//        return ranked_group;
-//    }
-
-//    // Hold tournament for 3 Individuals, return the worst performing one ("loser").
-//    TournamentGroup tournamentFunction(TournamentGroup group)
-//    {
-//        TournamentGroup ranked_group;
-//        float select = LPRS().frandom01();
-//        if (select < 0.5)                        // 50% exposure control
-//        {
-//            ranked_group = worstExposure(group);
-//        }
-//        else if (select < 0.8)                   // 30% saturation control
-//        {
-//            ranked_group = worstSaturation(group);
-//        }
-//        else                                      // 20% size control
-//        {
-//            ranked_group = worstSize(group);
-//        }
-//        logger(*POP);
-//        return ranked_group;
-//    }
-
-//// Hold tournament for 3 Individuals, return the worst performing one ("loser").
-//TournamentGroup tournamentFunction(TournamentGroup group)
-//{
-//    TournamentGroup ranked_group;
-//    float select = LPRS().frandom01();
-//    if (select < 0.5)                        // 50% exposure control
-//    {
-//        ranked_group = worstExposure(group);
-//    }
-//    else if (select < 0.9)                   // 40% saturation control
-//    {
-//        ranked_group = worstSaturation(group);
-//    }
-//    else                                      // 10% size control
-//    {
-//        ranked_group = worstSize(group);
-//    }
-//    logger(*POP);
-//    return ranked_group;
-//}
-
-// Hold tournament for 3 Individuals, return the worst performing one ("loser").
+// Hold tournament for 3 Individuals, scoring by various metrics.
 TournamentGroup tournamentFunction(TournamentGroup group)
 {
     TournamentGroup ranked_group;
@@ -912,46 +590,20 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     return ranked_group;
 }
 
-#endif // USE_TOURNAMENT_GROUP
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-
-
-//void run()
-//{
-//    Timer t("CWE test");
-//    const FunctionSet& function_set = GP::fs();
-//    int population_size = 50;
-//    // int population_size = 100;
-//    int generation_equivalents = 100;
-//    int steps = population_size * generation_equivalents;
-////    int steps = 100;
-//    int max_tree_size = 100;
-//    Population population(population_size, max_tree_size, function_set);
-//
-//    POP = &population; // TODO for debugging
-//
-//    population.run(steps, function_set, tournamentFunction);
-//}
-
 void run()
 {
     Timer t("CWE test");
     const FunctionSet& function_set = GP::fs();
-//    int population_size = 50;
-//    int generation_equivalents = 100;
     int population_size = 100;
     int generation_equivalents = 50;
     int steps = population_size * generation_equivalents;
     int max_tree_size = 100;
     Population population(population_size, max_tree_size, function_set);
-    
     POP = &population; // TODO for debugging
-    
     population.run(steps, function_set, tournamentFunction);
 }
 
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #undef argFloat
 #undef argVec2
