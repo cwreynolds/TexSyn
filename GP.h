@@ -449,41 +449,14 @@ public:
 namespace CWE
 {
 
-static inline Population* POP;
-
-// TODO is this computed corectly now that there are multiple fitness cases?
-static inline Individual* tournament_best;
+// Global Population instance. (TODO maybe should be shared_ptr?)
+// TODO refactor to share via lexical capture?
+static inline Population* population = nullptr;
 
 // Print log and render Texture.
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    void logger(const Population& population)
-//    {
-//        static int step_count = 0;
-//        //Individual* best = population.findBestIndividual();
-//        Individual* best = tournament_best;
-//        std::cout << std::endl << "step " << step_count++ << std::endl;
-//        std::cout << "winner size ";
-//        std::cout << best->tree().size();
-//        std::cout << ", winner tournaments survived ";
-//        std::cout << best->getTournamentsSurvived();
-//        std::cout << std::endl;
-//        Texture* t = GP::textureFromIndividual(best);
-//        Texture::displayAndFile(*t, "", 99);
-//        Texture::window_x = 0;
-//        Texture::window_y = 150;
-//
-//        Texture* b = GP::textureFromIndividual(POP->findBestIndividual());
-//        Texture::displayAndFile(*b, "", 99);
-//
-//        Texture::waitKey(1);
-//        Texture::closeAllWindows();
-//    };
-
-//void logger(const Population& population)
 void logger(TournamentGroup group)
 {
     static int step_count = 0;
-//    Individual* best = tournament_best;
     Individual* best = group.bestIndividual();
     Individual* best2 = group.secondBestIndividual();
     Individual* worst = group.worstIndividual();
@@ -495,47 +468,30 @@ void logger(TournamentGroup group)
     std::cout << best->getTournamentsSurvived();
     std::cout << std::endl;
     
-//    //    Texture* t = GP::textureFromIndividual(best);
-//    //    Texture::displayAndFile(*t, "", 99);
-//        Texture::displayAndFile3(*GP::textureFromIndividual(best),
-//                                 *GP::textureFromIndividual(best2),
-//                                 *GP::textureFromIndividual(worst),
-//                                 "", 99);
-//        Texture::window_x = 0;
-//    //    Texture::window_y = 150;
-//    //    Texture::window_y = 120;
-//    //    Texture::window_y = 121;
-//        Texture::window_y = 100;
-//
-//    //    Texture* b = GP::textureFromIndividual(POP->findBestIndividual());
-//    //    Texture::displayAndFile(*b, "", 99);
-//    //    {
-//    //        Timer t("call to Population::nMostTournamentsSurvived");
-//    //        std::vector<Individual*> tops = POP->nMostTournamentsSurvived(3);
-//    //    }
-//        std::vector<Individual*> tops = POP->nMostTournamentsSurvived(3);
-//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
-//                                 *GP::textureFromIndividual(tops.at(1)),
-//                                 *GP::textureFromIndividual(tops.at(2)),
-//                                 "", 99);
-    
+    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
+    std::string pathname = "";
+    int render_size = 99;
     Texture::window_x = 0;
-    Texture::window_y = 99;
-    std::vector<Individual*> tops = POP->nMostTournamentsSurvived(3);
+    Texture::window_y = render_size * 2;
+    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
+                             *GP::textureFromIndividual(tops.at(4)),
+                             *GP::textureFromIndividual(tops.at(5)),
+                             pathname, render_size);
+    Texture::window_x = 0;
+    Texture::window_y = render_size;
     Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
                              *GP::textureFromIndividual(tops.at(1)),
                              *GP::textureFromIndividual(tops.at(2)),
-                             "", 99);
+                             pathname, render_size);
     Texture::window_x = 0;
     Texture::window_y = 0;
     Texture::displayAndFile3(*GP::textureFromIndividual(best),
                              *GP::textureFromIndividual(best2),
                              *GP::textureFromIndividual(worst),
-                             "", 99);
+                             pathname, render_size);
     Texture::waitKey(1);
     Texture::closeAllWindows();
 };
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 void sampleColors(Individual* individual, std::vector<Color>& samples)
 {
@@ -601,8 +557,6 @@ TournamentGroup worstMetric(TournamentGroup group,
                             std::function<float(Individual*)> metric)
 {
     group.setAllMetrics([&](Individual* i){ return metric(i); });
-    // Primarily for the sake of debugging, remember the best:
-    tournament_best = group.bestIndividual();
     return group;
 }
 
@@ -645,27 +599,22 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     {
         ranked_group = worstSize(group);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    logger(*POP);
     logger(ranked_group);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     return ranked_group;
 }
 
 void run()
 {
     Timer t("CWE test");
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LPRS().setSeed(20201101);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const FunctionSet& function_set = GP::fs();
     int population_size = 100;
     int generation_equivalents = 50;
     int steps = population_size * generation_equivalents;
     int max_tree_size = 100;
-    Population population(population_size, max_tree_size, function_set);
-    POP = &population; // TODO for debugging
-    population.run(steps, function_set, tournamentFunction);
+    population = new Population(population_size, max_tree_size, function_set);
+    population->run(steps, function_set, tournamentFunction);
+    population = nullptr;
 }
 
 }

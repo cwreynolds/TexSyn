@@ -103,7 +103,6 @@ public:
         { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)
         { diff(t0, t1, "", getDiffSize()); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Display row of three textures, at given size, optionally saving to file.
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
@@ -114,14 +113,13 @@ public:
                                 const Texture& t2,
                                 const Texture& t3,
                                 std::string pathname)
-        { displayAndFile3(t1, t2, t3, pathname, 333); }
+        { displayAndFile3(t1, t2, t3, pathname, getDiffSize()); }
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3)
         { displayAndFile3(t1, t2, t3, ""); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
-    static int sqrt_of_aa_subsample_count;
+    static inline int sqrt_of_aa_subsample_count = 1;
     // Get/set global default render size.
     static int getDefaultRenderSize() { return render_size_; }
     static void setDefaultRenderSize(int size) { render_size_ = size; }
@@ -143,7 +141,7 @@ private:
     std::shared_ptr<cv::Mat> emptyCvMat() const;
     const std::shared_ptr<cv::Mat> raster_;
     // Global default render size.
-    static int render_size_;
-    // Global default "render as disk" flag: disk if true, else square.
-    static bool render_as_disk_;
+    static inline int render_size_ = 511;
+    // Global default "render as disk" flag: render disk if true, else square.
+    static inline bool render_as_disk_ = true;
 };

@@ -304,12 +304,3 @@ void Texture::displayAndFile3(const Texture& t1,
     // Display "mat" in the TexSyn fashion.
     windowPlacementTool(mat);
 }
-
-// Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
-int Texture::sqrt_of_aa_subsample_count = 1;
-
-// Global default render size.
-int Texture::render_size_ = 511;
-
-// Global default "render as disk" flag: disk if true, else square.
-bool Texture::render_as_disk_ = true;
