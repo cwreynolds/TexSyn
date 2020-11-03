@@ -103,11 +103,23 @@ public:
         { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)
         { diff(t0, t1, "", getDiffSize()); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Display row of three textures, at given size, optionally saving to file.
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
-                                std::string pathname = "",
-                                int size = 333);
+                                std::string pathname,
+                                int size);
+    static void displayAndFile3(const Texture& t1,
+                                const Texture& t2,
+                                const Texture& t3,
+                                std::string pathname)
+        { displayAndFile3(t1, t2, t3, pathname, 333); }
+    static void displayAndFile3(const Texture& t1,
+                                const Texture& t2,
+                                const Texture& t3)
+        { displayAndFile3(t1, t2, t3, ""); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
     static int sqrt_of_aa_subsample_count;
     // Get/set global default render size.
