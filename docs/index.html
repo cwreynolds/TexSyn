@@ -81,7 +81,6 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
-    <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="20201104"> <a href="#20201104" class="date">November
         4, 2020</a>
       <h1>Hard limit on <code>LotsOfSpotsBase</code> constructor runtime</h1>
@@ -117,8 +116,8 @@
                     Uniform(1, 1, 0),   // spot color
                     Uniform(0, 0, 0.8)) // background color</pre>
       <p>The high density combined with the small radii lead to a texture with
-        21694 spots, which it tries to “relax” any overlaps 200 times. On my
-        laptop that ran for about 6.7 seconds. For reference here is that <code>spots</code>
+        21694 spots, which it tries up to 200 times to “relax” any overlaps. On
+        my laptop that ran for about 6.7 seconds. For reference here is that <code>spots</code>
         texture, and it “zoomed out” with <code>Scale(0.2, spots)</code> to see
         the whole of the tiling texture. (Normally the tile is five times larger
         than the default render range of [-1, +1], so the second image show the
@@ -128,35 +127,37 @@
         title="Scale(0.2, spots)" height="511" width="511">
       <p>Those were rendered with:</p>
       <pre>LotsOfSpotsBase::max_spots_allowed = std::numeric_limits&lt;int&gt;::max();</pre>
-      <p>While these are the exact same texture specification, but with the new
+      <p>which is the new way of getting the old behavior. The two corresponding
+        images below are the exact same texture specification, but with the new
         default <code>max_spots_allowed</code> of 5000:</p>
       <img src="images/20201104_limit_spots_1_0.png" alt="spots (with limit)" title="spots (with limit)"
         height="511" width="511">&nbsp; <img src="images/20201104_limit_spots_0_2.png"
         alt="Scale(0.2, spots) (with limit)" title="Scale(0.2, spots) (with limit)"
         height="511" width="511">
       <p>While the original version with 21694 spots took 6.7 seconds, this
-        version with 5000 spots took 0.36 seconds.</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
-      <p>...</p>
-      <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511"> </div>
-    <!-- --------------------------------------------------------------------------- -->
+        version with 5000 spots took 0.36 seconds. Still kind of slow, but I am
+        willing to live with it for now. Note that the overlap minimization
+        process runs multi-threaded, so typically runs up to eight threads on my
+        laptop.</p>
+      <p><br>
+        <strong>Unfortunately</strong>, in the process of working on this
+        change, I observed an annoying artifact, which I assume is a bug. The
+        texture below is like the second one above (in the older no-limit case)
+        but with a smaller scale: 0.09 versus 0.2. In this case, the boundaries
+        of the tiling patter become visible. (In this view, one full tile is in
+        the center with eight partial tiles around it. The artifact forms a
+        subtle “#” pattern.) The <code>LotsOfSpotsBase</code> class goes to
+        considerable effort to form a pattern which tiles seamlessly. Given I
+        have rendered many zoomed-out spots textures before without obvious
+        artifacts (e.g. on <a href="#20200419">April 19</a>) I suspect this may
+        have to do either with the relatively small size of these spots, or the
+        <code>margin</code> (spacing between spots) parameter which was added
+        late in the development of the “spots family” of operators. I've put
+        this issue on the bug list.</p>
+      <pre>LotsOfSpotsBase::max_spots_allowed = std::numeric_limits&lt;int&gt;::max()
+Scale(<strong>0.09</strong>, spots)</pre>
+      <img src="images/20201104_spots_0_09.png" alt="annoying artifact" title="annoying artifact"
+        height="511" width="511"> </div>
     <div class="post" id="20201027"> <a href="#20201027" class="date">October
         27, 2020</a>
       <h1>Gamma overflow</h1>
