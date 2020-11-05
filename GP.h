@@ -588,14 +588,20 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     TournamentGroup ranked_group;
     float select = LPRS().frandom01();
     if (select < 0.6)                        // 60% exposure control
+//    if (select < 0.55)                        // 55% exposure control
+//    if (select < 0.58)                        // 58% exposure control
     {
         ranked_group = worstExposure(group);
     }
     else if (select < 0.9)                   // 30% saturation control
+//    else if (select < 0.8)                   // 25% saturation control
+//    else if (select < 0.86)                   // 28% saturation control
     {
         ranked_group = worstSaturation(group);
     }
     else                                      // 10% size control
+//    else                                      // 20% size control
+//    else                                      // 14% size control
     {
         ranked_group = worstSize(group);
     }

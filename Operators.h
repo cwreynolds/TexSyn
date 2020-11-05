@@ -1242,10 +1242,19 @@ public:
         disk_occupancy_grid
             (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
     {
-        //Timer timer("LotsOfSpots constructor");  // TODO temp
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Timer timer("LotsOfSpots constructor");  // TODO temp
         insertRandomSpots();
-        disk_occupancy_grid->reduceDiskOverlap(200, spots);
+//        debugPrint(spots.size());
+//        disk_occupancy_grid->reduceDiskOverlap(200, spots);
+        disk_occupancy_grid->reduceDiskOverlap(max_overlap_reductions, spots);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // To remove limits, these can be set to std::numeric_limits<int>::max().
+    static inline int max_spots_allowed = 5000;
+    static inline int max_overlap_reductions = 200;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Find nearest spot (Dot) and the soft-edged opacity at "position".
     typedef std::pair<Disk, float> DiskAndSoft;
     DiskAndSoft getSpot(Vec2 position) const
@@ -1287,7 +1296,11 @@ private:
     std::vector<Disk> spots;
     std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
     const float tile_size = 10;
-    const int move_count = 200;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO perhaps this was supposed to be like max_overlap_reductions?
+    //      as of now it is never used
+//    const int move_count = 200;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const float spot_density;
     const float min_radius;
     const float max_radius;

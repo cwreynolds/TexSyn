@@ -81,6 +81,82 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="20201104"> <a href="#20201104" class="date">November
+        4, 2020</a>
+      <h1>Hard limit on <code>LotsOfSpotsBase</code> constructor runtime</h1>
+      <p>Back around <a href="#20200403">April 3</a> when I started working on
+        the <em>LotsOfSpots</em> family of texture operators (with <em>ColoredSpots</em>
+        and <em>LotsOfButtons</em>, all now derived from <code>LotsOfSpotsBase</code>)
+        it was hard to know how they would actually get used in evolutionary
+        optimization. A texture render time that is “ok” in ones and twos starts
+        to become uncomfortable in the thousands. On <a href="#20200927">September
+          27</a> I used a big hammer to prevent unreasonable runtime while
+        rendering textures with nested <em>Blur</em> operations. Recently I
+        have found that the embarrassingly long pauses during evolution test
+        runs are caused by the constructor for <code>LotsOfSpotsBase</code>
+        which builds the random pattern of “spots” then runs a relaxation
+        process to reduce any overlap between these randomly places spots. The
+        basic problem is an O(<em>n²</em>) algorithm, and a possibility that <em>n</em>
+        can get fairly large, depending on the interactions of several other
+        parameters. There were 11,000 “spots” in one case that ran so long I
+        paused the run to poke around with my debugger. (It is not literally an
+        O(<em>n²</em>) algorithm, but not worth getting into here.)</p>
+      <p>I decided that I ought to put a hard ceiling on the number of spots in
+        these textures. It is in a global variable, so can be changed, or set to
+        “infinity” if needed, but by default I have decide there will be no more
+        than 5000 spots. Similarly I put the parameter controlling the max
+        number of relaxation steps in a global variable. Its value remains 200.
+        To work on this I defined a test case whose parameters produce a large
+        number of spots:</p>
+      <pre>spots = LotsOfSpots(0.95,               // density
+                    0.02,               // min radius
+                    0.05,               // max radius
+                    0.01,               // soft edge width
+                    0.01,               // margin
+                    Uniform(1, 1, 0),   // spot color
+                    Uniform(0, 0, 0.8)) // background color</pre>
+      <p>The high density combined with the small radii lead to a texture with
+        21694 spots, which it tries to “relax” any overlaps 200 times. On my
+        laptop that ran for about 6.7 seconds. For reference here is that <code>spots</code>
+        texture, and it “zoomed out” with <code>Scale(0.2, spots)</code> to see
+        the whole of the tiling texture. (Normally the tile is five times larger
+        than the default render range of [-1, +1], so the second image show the
+        full tiling range of [-5, +5]:</p>
+      <img src="images/20201104_spots_1_0.png" alt="spots" title="spots" height="511"
+        width="511">&nbsp; <img src="images/20201104_spots_0_2.png" alt="Scale(0.2, spots)"
+        title="Scale(0.2, spots)" height="511" width="511">
+      <p>Those were rendered with:</p>
+      <pre>LotsOfSpotsBase::max_spots_allowed = std::numeric_limits&lt;int&gt;::max();</pre>
+      <p>While these are the exact same texture specification, but with the new
+        default <code>max_spots_allowed</code> of 5000:</p>
+      <img src="images/20201104_limit_spots_1_0.png" alt="spots (with limit)" title="spots (with limit)"
+        height="511" width="511">&nbsp; <img src="images/20201104_limit_spots_0_2.png"
+        alt="Scale(0.2, spots) (with limit)" title="Scale(0.2, spots) (with limit)"
+        height="511" width="511">
+      <p>While the original version with 21694 spots took 6.7 seconds, this
+        version with 5000 spots took 0.36 seconds.</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <p>...</p>
+      <pre>x</pre>
+      <img src="images/xxx" alt="" title="" height="511" width="511"> </div>
+    <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="20201027"> <a href="#20201027" class="date">October
         27, 2020</a>
       <h1>Gamma overflow</h1>

@@ -72,6 +72,9 @@ void LotsOfSpotsBase::insertRandomSpots()
         Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
         spots.push_back(Disk(radius, center));
         total_area += spots.back().area();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (spots.size() >= max_spots_allowed) break;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Insert each new random Disk into the DiskOccupancyGrid.
     // (NB: very important this happens AFTER all Disks added to std::vector
