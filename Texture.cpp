@@ -12,6 +12,10 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #include <opencv2/core/core.hpp>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO temp(?) for fft_test()
+#include <opencv2/imgproc/imgproc.hpp>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
@@ -304,3 +308,80 @@ void Texture::displayAndFile3(const Texture& t1,
     // Display "mat" in the TexSyn fashion.
     windowPlacementTool(mat);
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+//CV_32FC3
+
+void Texture::fft_test() const
+{
+    // Read image from file
+    // Make sure that the image is in grayscale
+//    cv::Mat img = cv::imread("lena.JPG",0);
+//    cv::Mat& img = *raster_;
+//    cv::Mat img = *raster_;
+//    cv::Mat img(*raster_);
+    cv::Mat img;
+    
+//    img.convertTo(img, CV_32F);
+    raster_->convertTo(img, CV_32F);
+    
+//    cv::cvtColor(img, *raster_, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
+
+    debugPrint(raster_->cols);
+    debugPrint(raster_->rows);
+    debugPrint(img.cols);
+    debugPrint(img.rows);
+    debugPrint(cv::Mat_<float>(img).cols);
+    debugPrint(cv::Mat_<float>(img).rows);
+
+    cv::imshow("img", img);
+//    cv::imshow("cv::Mat_<float>(img)", cv::Mat_<float>(img));
+//    Texture::waitKey();
+
+    //Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//    cv::Mat planes[] = {cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F)};
+//    cv::Mat complexI;
+//    cv::merge(planes, 2, complexI);
+//    std::vector<cv::Mat> planes =
+//        { cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F) };
+    std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
+    cv::Mat complexI;
+    cv::merge(planes, complexI);
+
+    // Applying DFT
+    cv::dft(complexI, complexI);
+
+    // Reconstructing original image from the DFT coefficients
+    cv::Mat invDFT, invDFTcvt;
+    // Applying IDFT
+    cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
+    
+//    invDFT.convertTo(invDFTcvt, CV_8U);
+    invDFT.convertTo(invDFTcvt, CV_8U, 256);
+    cv::imshow("Output", invDFTcvt);
+    
+    
+    // Split the image into different channels
+    std::vector<cv::Mat> fftChannels(2);
+    split(complexI, fftChannels);
+    
+
+//    cv::imshow("complexI[0]", complexI[0]);
+    cv::imshow("fftChannels[0]", fftChannels[0]);
+    cv::imshow("fftChannels[1]", fftChannels[1]);
+
+
+//    //show the image
+//    cv::imshow("Original Image", img);
+
+//    // Wait until user press some key
+//    cv::waitKey(0);
+//    return 0;
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

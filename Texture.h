@@ -129,6 +129,9 @@ public:
     static bool getDefaultRenderAsDisk() { return render_as_disk_; }
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
     thread_local static inline int expensive_to_nest = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    void fft_test() const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer

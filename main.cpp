@@ -4053,43 +4053,63 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Hard limit on LotsOfSpotsBase constructor runtime.
-    std::cout << "November 4, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201104_";
-    
-    // Use new default limit on number of spots
-    // LotsOfSpotsBase::max_spots_allowed = 5000;
-    [&](const Texture& spots)
-    {
-        Texture::displayAndFile(spots, path + "limit_spots_1_0");
-        Texture::displayAndFile(Scale(0.2, spots), path + "limit_spots_0_2");
-        Texture::displayAndFile(Scale(0.1, spots), path + "limit_spots_0_1");
-        Texture::displayAndFile(Scale(0.09, spots), path + "limit_spots_0_09");
-    }
-    (LotsOfSpots(0.95,  // density
-                 0.02,  // min radius
-                 0.05,  // max radius
-                 0.01,  // soft edge width
-                 0.01,  // margin
-                 Uniform(1, 1, 0),
-                 Uniform(0, 0, 0.8)));
+//    // Hard limit on LotsOfSpotsBase constructor runtime.
+//    std::cout << "November 4, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201104_";
+//
+//    // Use new default limit on number of spots
+//    // LotsOfSpotsBase::max_spots_allowed = 5000;
+//    [&](const Texture& spots)
+//    {
+//        Texture::displayAndFile(spots, path + "limit_spots_1_0");
+//        Texture::displayAndFile(Scale(0.2, spots), path + "limit_spots_0_2");
+//        Texture::displayAndFile(Scale(0.1, spots), path + "limit_spots_0_1");
+//        Texture::displayAndFile(Scale(0.09, spots), path + "limit_spots_0_09");
+//    }
+//    (LotsOfSpots(0.95,  // density
+//                 0.02,  // min radius
+//                 0.05,  // max radius
+//                 0.01,  // soft edge width
+//                 0.01,  // margin
+//                 Uniform(1, 1, 0),
+//                 Uniform(0, 0, 0.8)));
+//
+//    // Allow "natural" density of spots given by these parameters.
+//    LotsOfSpotsBase::max_spots_allowed = std::numeric_limits<int>::max();
+//    [&](const Texture& spots)
+//    {
+//        Texture::displayAndFile(spots, path + "spots_1_0");
+//        Texture::displayAndFile(Scale(0.2, spots), path + "spots_0_2");
+//        Texture::displayAndFile(Scale(0.1, spots), path + "spots_0_1");
+//        Texture::displayAndFile(Scale(0.09, spots), path + "spots_0_09");
+//    }
+//    (LotsOfSpots(0.95,  // density
+//                 0.02,  // min radius
+//                 0.05,  // max radius
+//                 0.01,  // soft edge width
+//                 0.01,  // margin
+//                 Uniform(1, 1, 0),
+//                 Uniform(0, 0, 0.8)));
+//
+//    Texture::waitKey();
 
-    // Allow "natural" density of spots given by these parameters.
-    LotsOfSpotsBase::max_spots_allowed = std::numeric_limits<int>::max();
-    [&](const Texture& spots)
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototype simple Fourier transform
+    std::cout << "November 6, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201106_";
+    
+    [&](const Texture& texture)
     {
-        Texture::displayAndFile(spots, path + "spots_1_0");
-        Texture::displayAndFile(Scale(0.2, spots), path + "spots_0_2");
-        Texture::displayAndFile(Scale(0.1, spots), path + "spots_0_1");
-        Texture::displayAndFile(Scale(0.09, spots), path + "spots_0_09");
+//        Texture::displayAndFile(texture);
+        Texture::displayAndFile(texture, "", 301);
+        Texture::waitKey(1);
+        texture.fft_test();
     }
-    (LotsOfSpots(0.95,  // density
-                 0.02,  // min radius
-                 0.05,  // max radius
-                 0.01,  // soft edge width
-                 0.01,  // margin
-                 Uniform(1, 1, 0),
-                 Uniform(0, 0, 0.8)));
+    (Grating(Vec2(-0.05, 0), Uniform(0),
+             Vec2(+0.05, 0), Uniform(0, 1, 0),
+             0.1, 0.5));
+//    (Noise(Vec2(-0.05, 0), Vec2(0.05, 0), Uniform(0), Uniform(1, 1, 0)));
 
     Texture::waitKey();
 
