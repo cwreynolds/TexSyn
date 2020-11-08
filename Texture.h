@@ -131,6 +131,8 @@ public:
     thread_local static inline int expensive_to_nest = 0;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void fft_test() const;
+    float highFrequencyScore() const;
+//    float highFrequencyScore(int render_size) const;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // TODO maybe we need a OOBB Bounds2d class?

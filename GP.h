@@ -453,6 +453,10 @@ namespace CWE
 // TODO refactor to share via lexical capture?
 static inline Population* population = nullptr;
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//static inline int render_size = 99;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Print log and render Texture.
 void logger(TournamentGroup group)
 {
@@ -470,7 +474,11 @@ void logger(TournamentGroup group)
     
     std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
     std::string pathname = "";
-    int render_size = 99;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    int render_size = 99;
+//    int render_size = 251;
+    int render_size = 151;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Texture::window_x = 0;
     Texture::window_y = render_size * 2;
     Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
@@ -582,32 +590,85 @@ TournamentGroup worstSize(TournamentGroup group)
     return ranked;
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+// Score TournamentGroup according to worst size.
+TournamentGroup worstNoise(TournamentGroup group)
+{
+//    auto metric = [](Individual* i)
+//    {
+//        return -GP::textureFromIndividual(i)->highFrequencyScore();
+//    };
+//    auto metric = [&](Individual* i)
+//    {
+//        return -GP::textureFromIndividual(i)->highFrequencyScore(render_size);
+//    };
+    auto metric = [&](Individual* i)
+    {
+        return -(GP::textureFromIndividual(i)->highFrequencyScore());
+    };
+    TournamentGroup ranked = worstMetric(group, metric);
+    std::cout << "worstNoise: ";
+    for (auto& m : ranked.members()) std::cout << m.metric << " ";
+    std::cout << std::endl;
+    return ranked;
+}
+
+
+//    // Hold tournament for 3 Individuals, scoring by various metrics.
+//    TournamentGroup tournamentFunction(TournamentGroup group)
+//    {
+//        TournamentGroup ranked_group;
+//        float select = LPRS().frandom01();
+//        if (select < 0.6)                        // 60% exposure control
+//    //    if (select < 0.55)                        // 55% exposure control
+//    //    if (select < 0.58)                        // 58% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//        else if (select < 0.9)                   // 30% saturation control
+//    //    else if (select < 0.8)                   // 25% saturation control
+//    //    else if (select < 0.86)                   // 28% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//        else                                      // 10% size control
+//    //    else                                      // 20% size control
+//    //    else                                      // 14% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+//        logger(ranked_group);
+//        return ranked_group;
+//    }
+
 // Hold tournament for 3 Individuals, scoring by various metrics.
 TournamentGroup tournamentFunction(TournamentGroup group)
 {
     TournamentGroup ranked_group;
     float select = LPRS().frandom01();
-    if (select < 0.6)                        // 60% exposure control
-//    if (select < 0.55)                        // 55% exposure control
-//    if (select < 0.58)                        // 58% exposure control
+    if (select < 0.5)                        // 50% exposure control
     {
         ranked_group = worstExposure(group);
     }
-    else if (select < 0.9)                   // 30% saturation control
-//    else if (select < 0.8)                   // 25% saturation control
-//    else if (select < 0.86)                   // 28% saturation control
+    else if (select < 0.8)                   // 30% saturation control
     {
         ranked_group = worstSaturation(group);
     }
+    else if (select < 0.9)                   // 10% noise reduction
+    {
+        ranked_group = worstNoise(group);
+    }
     else                                      // 10% size control
-//    else                                      // 20% size control
-//    else                                      // 14% size control
     {
         ranked_group = worstSize(group);
     }
     logger(ranked_group);
     return ranked_group;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 void run()
 {

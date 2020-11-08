@@ -312,42 +312,103 @@ void Texture::displayAndFile3(const Texture& t1,
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-//CV_32FC3
+//    //CV_32FC3
+//
+//    void Texture::fft_test() const
+//    {
+//        // Read image from file
+//        // Make sure that the image is in grayscale
+//    //    cv::Mat img = cv::imread("lena.JPG",0);
+//    //    cv::Mat& img = *raster_;
+//    //    cv::Mat img = *raster_;
+//    //    cv::Mat img(*raster_);
+//        cv::Mat img;
+//
+//    //    img.convertTo(img, CV_32F);
+//        raster_->convertTo(img, CV_32F);
+//
+//    //    cv::cvtColor(img, *raster_, cv::COLOR_BGR2GRAY);
+//        cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
+//
+//        debugPrint(raster_->cols);
+//        debugPrint(raster_->rows);
+//        debugPrint(img.cols);
+//        debugPrint(img.rows);
+//        debugPrint(cv::Mat_<float>(img).cols);
+//        debugPrint(cv::Mat_<float>(img).rows);
+//
+//        cv::imshow("img", img);
+//    //    cv::imshow("cv::Mat_<float>(img)", cv::Mat_<float>(img));
+//    //    Texture::waitKey();
+//
+//        //Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//    //    cv::Mat planes[] = {cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F)};
+//    //    cv::Mat complexI;
+//    //    cv::merge(planes, 2, complexI);
+//    //    std::vector<cv::Mat> planes =
+//    //        { cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F) };
+//        std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
+//        cv::Mat complexI;
+//        cv::merge(planes, complexI);
+//
+//        // Applying DFT
+//        cv::dft(complexI, complexI);
+//
+//        // Reconstructing original image from the DFT coefficients
+//        cv::Mat invDFT, invDFTcvt;
+//        // Applying IDFT
+//        cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
+//
+//    //    invDFT.convertTo(invDFTcvt, CV_8U);
+//        invDFT.convertTo(invDFTcvt, CV_8U, 256);
+//        cv::imshow("Output", invDFTcvt);
+//
+//
+//        // Split the image into different channels
+//        std::vector<cv::Mat> fftChannels(2);
+//        split(complexI, fftChannels);
+//
+//
+//    //    cv::imshow("complexI[0]", complexI[0]);
+//        cv::imshow("fftChannels[0]", fftChannels[0]);
+//        cv::imshow("fftChannels[1]", fftChannels[1]);
+//
+//
+//    //    //show the image
+//    //    cv::imshow("Original Image", img);
+//
+//    //    // Wait until user press some key
+//    //    cv::waitKey(0);
+//    //    return 0;
+//    }
 
 void Texture::fft_test() const
 {
-    // Read image from file
-    // Make sure that the image is in grayscale
-//    cv::Mat img = cv::imread("lena.JPG",0);
-//    cv::Mat& img = *raster_;
-//    cv::Mat img = *raster_;
-//    cv::Mat img(*raster_);
-    cv::Mat img;
+//    Texture::rasterizeToImageCache(251, false);
+//    Texture::rasterizeToImageCache(101, false);
+    Texture::rasterizeToImageCache(201, false);
+
     
-//    img.convertTo(img, CV_32F);
-    raster_->convertTo(img, CV_32F);
-    
-//    cv::cvtColor(img, *raster_, cv::COLOR_BGR2GRAY);
-    cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
+//    cv::Mat img;
+    cv::Mat monochrome;
+//    raster_->convertTo(img, CV_32F);
+//    cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
 
-    debugPrint(raster_->cols);
-    debugPrint(raster_->rows);
-    debugPrint(img.cols);
-    debugPrint(img.rows);
-    debugPrint(cv::Mat_<float>(img).cols);
-    debugPrint(cv::Mat_<float>(img).rows);
+//    debugPrint(raster_->cols);
+//    debugPrint(raster_->rows);
+//    debugPrint(img.cols);
+//    debugPrint(img.rows);
+//    debugPrint(cv::Mat_<float>(img).cols);
+//    debugPrint(cv::Mat_<float>(img).rows);
+//    cv::imshow("img", img);
+    cv::imshow("monochrome", monochrome);
 
-    cv::imshow("img", img);
-//    cv::imshow("cv::Mat_<float>(img)", cv::Mat_<float>(img));
-//    Texture::waitKey();
-
-    //Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//    cv::Mat planes[] = {cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F)};
-//    cv::Mat complexI;
-//    cv::merge(planes, 2, complexI);
-//    std::vector<cv::Mat> planes =
-//        { cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F) };
-    std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
+    // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//    std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
+//    std::vector<cv::Mat> planes = { monochrome, cv::Mat::zeros(monochrome.size(), CV_32F) };
+    cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+    std::vector<cv::Mat> planes = { monochrome, zeros };
     cv::Mat complexI;
     cv::merge(planes, complexI);
 
@@ -355,31 +416,115 @@ void Texture::fft_test() const
     cv::dft(complexI, complexI);
 
     // Reconstructing original image from the DFT coefficients
-    cv::Mat invDFT, invDFTcvt;
+//    cv::Mat invDFT, invDFTcvt;
+    cv::Mat invDFT;
     // Applying IDFT
     cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
     
-//    invDFT.convertTo(invDFTcvt, CV_8U);
-    invDFT.convertTo(invDFTcvt, CV_8U, 256);
-    cv::imshow("Output", invDFTcvt);
+//    invDFT.convertTo(invDFTcvt, CV_8U, 256);
+//    cv::imshow("Output", invDFTcvt);
+//    cv::imshow("Output", invDFT);
+    cv::imshow("DFT-iDFT reconstruction", invDFT);
+
+    // Split the image into different channels
+    std::vector<cv::Mat> fftChannels(2);
+    split(complexI, fftChannels);
+//    cv::imshow("fftChannels[0]", fftChannels[0]);
+//    cv::imshow("fftChannels[1]", fftChannels[1]);
+    cv::imshow("DFT real part", fftChannels[0]);
+    cv::imshow("DFT imginary part", fftChannels[1]);
     
+    cv::Mat& real = fftChannels[0];
+    int width = real.rows;
+    int y = width / 2;
+
+//        for (int x = real.cols / 2; x < real.cols; x++)
+//        {
+//    //        std::cout << real.at<float>(y, x) << " ";
+//    //        int v = (real.at<float>(y, x) * 10) + 50;
+//            int v = real.at<float>(y, x) * 10;
+//            std::cout << v << " ";
+//        }
+    for (int x = width / 2; x < width; x++)
+    {
+        std::cout << real.at<float>(y, x) << " ";
+    }
+    std::cout << std::endl << std::endl;
+    for (int x = width / 2; x < width; x++)
+    {
+        std::cout << int(10 * real.at<float>(y, x)) << " ";
+    }
+    std::cout << std::endl << std::endl;
+    
+    
+//        float score = 0;
+//        for (int x = width / 2; x < width; x++)
+//        {
+//            float real_part = real.at<float>(y, x);
+//    //        float weight = float(x - (real.cols / 2)) / (real.cols / 2);
+//    //        float weight = remapInterval(x, width / 2, width, 0, 1);
+//            float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+//    //        score += real_part * weight;
+//            score += std::abs(real_part * weight);
+//        }
+//        debugPrint(score);
+
+    debugPrint(highFrequencyScore());
+}
+
+ 
+float Texture::highFrequencyScore() const
+//{
+//    return highFrequencyScore(getDefaultRenderSize());
+//}
+//float Texture::highFrequencyScore(int render_size) const
+{
+//    // TODO no this wastes a lot of re-rendering time during GP run
+//    // but how to make sure there is a correctly-sized raster?
+//    // Render this texture to monochrome (square image, 201x201).
+//    Texture::rasterizeToImageCache(201, false);
+//    if (raster_->empty()) Texture::rasterizeToImageCache(201, false);
+    
+    // TODO, no, still wrong, some images displayed with square shape.
+    // Render this texture to monochrome, at given render_size, square shape.
+//    Texture::rasterizeToImageCache(render_size, false);
+//    Texture::rasterizeToImageCache(render_size, getDefaultRenderAsDisk());
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Timer t("....................................Texture::highFrequencyScore");
+    cv::Mat temp = *raster_;
+    Texture::rasterizeToImageCache(101, false);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    cv::Mat monochrome;
+    cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    *raster_ = temp;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+    cv::Mat complexI;
+    cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+    std::vector<cv::Mat> planes = { monochrome, zeros };
+    cv::merge(planes, complexI);
+
+    // Applying DFT
+    cv::dft(complexI, complexI);
     
     // Split the image into different channels
     std::vector<cv::Mat> fftChannels(2);
     split(complexI, fftChannels);
     
-
-//    cv::imshow("complexI[0]", complexI[0]);
-    cv::imshow("fftChannels[0]", fftChannels[0]);
-    cv::imshow("fftChannels[1]", fftChannels[1]);
-
-
-//    //show the image
-//    cv::imshow("Original Image", img);
-
-//    // Wait until user press some key
-//    cv::waitKey(0);
-//    return 0;
+    cv::Mat& real = fftChannels[0];
+    int width = real.rows;
+    int y = width / 2;
+    float score = 0;
+    for (int x = width / 2; x < width; x++)
+    {
+        float real_part = real.at<float>(y, x);
+        float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+        score += std::abs(real_part * weight);
+    }
+    return score;
 }
 
 
