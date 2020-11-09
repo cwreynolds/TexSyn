@@ -382,7 +382,7 @@ void Texture::displayAndFile3(const Texture& t1,
 //    //    return 0;
 //    }
 
-void Texture::fft_test() const
+void Texture::fft_test() // const
 {
 //    Texture::rasterizeToImageCache(251, false);
 //    Texture::rasterizeToImageCache(101, false);
@@ -473,60 +473,138 @@ void Texture::fft_test() const
 }
 
  
-float Texture::highFrequencyScore() const
-//{
-//    return highFrequencyScore(getDefaultRenderSize());
-//}
-//float Texture::highFrequencyScore(int render_size) const
+//    float Texture::highFrequencyScore() const
+//    //{
+//    //    return highFrequencyScore(getDefaultRenderSize());
+//    //}
+//    //float Texture::highFrequencyScore(int render_size) const
+//    {
+//    //    // TODO no this wastes a lot of re-rendering time during GP run
+//    //    // but how to make sure there is a correctly-sized raster?
+//    //    // Render this texture to monochrome (square image, 201x201).
+//    //    Texture::rasterizeToImageCache(201, false);
+//    //    if (raster_->empty()) Texture::rasterizeToImageCache(201, false);
+//
+//        // TODO, no, still wrong, some images displayed with square shape.
+//        // Render this texture to monochrome, at given render_size, square shape.
+//    //    Texture::rasterizeToImageCache(render_size, false);
+//    //    Texture::rasterizeToImageCache(render_size, getDefaultRenderAsDisk());
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        Timer t("....................................Texture::highFrequencyScore");
+//        cv::Mat temp = *raster_;
+//        Texture::rasterizeToImageCache(101, false);
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//        cv::Mat monochrome;
+//        cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        *raster_ = temp;
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//        // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//        cv::Mat complexI;
+//        cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+//        std::vector<cv::Mat> planes = { monochrome, zeros };
+//        cv::merge(planes, complexI);
+//
+//        // Applying DFT
+//        cv::dft(complexI, complexI);
+//
+//        // Split the image into different channels
+//        std::vector<cv::Mat> fftChannels(2);
+//        split(complexI, fftChannels);
+//
+//        cv::Mat& real = fftChannels[0];
+//        int width = real.rows;
+//        int y = width / 2;
+//        float score = 0;
+//        for (int x = width / 2; x < width; x++)
+//        {
+//            float real_part = real.at<float>(y, x);
+//            float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+//            score += std::abs(real_part * weight);
+//        }
+//        return score;
+//    }
+
+float Texture::highFrequencyScore() // const
 {
-//    // TODO no this wastes a lot of re-rendering time during GP run
-//    // but how to make sure there is a correctly-sized raster?
-//    // Render this texture to monochrome (square image, 201x201).
-//    Texture::rasterizeToImageCache(201, false);
-//    if (raster_->empty()) Texture::rasterizeToImageCache(201, false);
-    
-    // TODO, no, still wrong, some images displayed with square shape.
-    // Render this texture to monochrome, at given render_size, square shape.
-//    Texture::rasterizeToImageCache(render_size, false);
-//    Texture::rasterizeToImageCache(render_size, getDefaultRenderAsDisk());
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO maybe cache the rendered image used here, or just case the score?
     Timer t("....................................Texture::highFrequencyScore");
-    cv::Mat temp = *raster_;
-    Texture::rasterizeToImageCache(101, false);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    cv::Mat monochrome;
-    cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    *raster_ = temp;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-    cv::Mat complexI;
-    cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-    std::vector<cv::Mat> planes = { monochrome, zeros };
-    cv::merge(planes, complexI);
-
-    // Applying DFT
-    cv::dft(complexI, complexI);
-    
-    // Split the image into different channels
-    std::vector<cv::Mat> fftChannels(2);
-    split(complexI, fftChannels);
-    
-    cv::Mat& real = fftChannels[0];
-    int width = real.rows;
-    int y = width / 2;
-    float score = 0;
-    for (int x = width / 2; x < width; x++)
+    float score = cached_high_frequency_score_;
+    if (score == 0)
     {
-        float real_part = real.at<float>(y, x);
-        float weight = sq(remapInterval(x, width / 2, width, 0, 1));
-        score += std::abs(real_part * weight);
+        // Render this texture to monochrome (square image, size x size).
+        int size = 101;
+        cv::Mat temp = *raster_;  // Save raster_
+        Texture::rasterizeToImageCache(size, false);
+        cv::Mat monochrome;
+        cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+        // restore raster_
+        *raster_ = temp;
+        
+        // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+        cv::Mat complexI;
+        cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+        std::vector<cv::Mat> planes = { monochrome, zeros };
+        cv::merge(planes, complexI);
+        
+        // Applying DFT
+        cv::dft(complexI, complexI);
+        
+        // Split the image into different channels
+        std::vector<cv::Mat> fftChannels(2);
+        split(complexI, fftChannels);
+        
+        cv::Mat& real = fftChannels[0];
+        int width = real.rows;
+        for (int x = width / 2; x < width; x++)
+        {
+            for (int y = width / 2; y < width; y++)
+            {
+                float real_part = real.at<float>(y, x);
+                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+                score += std::abs(real_part * weight);
+            }
+        }
+        cached_high_frequency_score_ = score;
     }
     return score;
 }
 
+
+//    void sampleColors(Individual* individual, std::vector<Color>& samples)
+//    {
+//        int n = 10;
+//        samples.clear();
+//        std::vector<Vec2> positions;
+//        jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
+//        Texture* texture = GP::textureFromIndividual(individual);
+//        for (auto& p : positions)
+//            samples.push_back(texture->getColor(p).clipToUnitRGB());
+//    }
+
+// TODO just a prototype
+// Optional cache of 100 colors randomly sampled in unit-diameter disk.
+const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
+{
+    if (cached_random_color_samples_.empty())
+    {
+        int n = 10;
+//        samples.clear();
+        std::vector<Vec2> positions;
+//        jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
+        jittered_grid_NxN_in_square(n, 1.4, rs, positions);
+//        Texture* texture = GP::textureFromIndividual(individual);
+        for (auto& p : positions)
+        {
+            Color sample = getColor(p).clipToUnitRGB();
+            cached_random_color_samples_.push_back(sample);
+        }
+    }
+    return cached_random_color_samples_;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

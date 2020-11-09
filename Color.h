@@ -17,7 +17,10 @@ public:
     // Constructors:
     Color() : Color(0, 0, 0) {};
     Color(float gray) : Color(gray, gray, gray) {}
-    Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
+    Color(float r, float g, float b):red_(r),green_(g),blue_(b){assertNormal();}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // assignment, set RGB components
     Color operator=(const Color& c)
     {

@@ -14,7 +14,10 @@ class Vec2
 public:
     // Constructors
     Vec2() {}
-    Vec2(float x, float y) : x_(x), y_(y) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Vec2(float x, float y) : x_(x), y_(y) {}
+    Vec2(float x, float y) : x_(x), y_(y){assert(is_normal(x) && is_normal(x));}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Accessors
     float x() const { return x_; }
     float y() const { return y_; }

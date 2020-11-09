@@ -91,7 +91,17 @@ Color Color::operator*(float s) const
 void Color::convertRGBtoHSV (float red, float green, float blue,
                              float& H, float& S, float& V)
 {
-    Color(red, green, blue).assertNormal();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Color(red, green, blue).assertNormal();
+    
+    if (!Color(red, green, blue).isNormal())
+    {
+        std::cout << "TODO bad input to Color::convertRGBtoHSV()" << std::endl;
+        red = 0;
+        green = 0;
+        blue = 0;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const float R = 255.0f * red;
     const float G = 255.0f * green;
     const float B = 255.0f * blue;

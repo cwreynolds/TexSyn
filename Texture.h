@@ -130,10 +130,21 @@ public:
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
     thread_local static inline int expensive_to_nest = 0;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    void fft_test() const;
-    float highFrequencyScore() const;
+//    void fft_test() const;
+//    float highFrequencyScore() const;
+    void fft_test();
+    float highFrequencyScore();
 //    float highFrequencyScore(int render_size) const;
+    float cached_high_frequency_score_ = 0;
+    
+    //======================
+    
+    // TODO just a prototype
+    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
+    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
 private:
     // TODO maybe we need a OOBB Bounds2d class?
     // TODO maybe should be stored in external std::map keyed on Texture pointer
@@ -145,6 +156,11 @@ private:
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const;
     const std::shared_ptr<cv::Mat> raster_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO just a prototype
+    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
+    std::vector<Color> cached_random_color_samples_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Global default render size.
     static inline int render_size_ = 511;
     // Global default "render as disk" flag: render disk if true, else square.

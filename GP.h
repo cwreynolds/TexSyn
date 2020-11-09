@@ -471,7 +471,10 @@ void logger(TournamentGroup group)
     std::cout << ", winner tournaments survived ";
     std::cout << best->getTournamentsSurvived();
     std::cout << std::endl;
-    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    std::cout << std::endl << best->tree().to_string() << std::endl << std::endl;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
     std::string pathname = "";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -501,16 +504,18 @@ void logger(TournamentGroup group)
     Texture::closeAllWindows();
 };
 
-void sampleColors(Individual* individual, std::vector<Color>& samples)
-{
-    int n = 10;
-    samples.clear();
-    std::vector<Vec2> positions;
-    jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
-    Texture* texture = GP::textureFromIndividual(individual);
-    for (auto& p : positions)
-        samples.push_back(texture->getColor(p).clipToUnitRGB());
-}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//void sampleColors(Individual* individual, std::vector<Color>& samples)
+//{
+//    int n = 10;
+//    samples.clear();
+//    std::vector<Vec2> positions;
+//    jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
+//    Texture* texture = GP::textureFromIndividual(individual);
+//    for (auto& p : positions)
+//        samples.push_back(texture->getColor(p).clipToUnitRGB());
+//}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 float measureScalarHistogram(Individual* individual,
                              int bucket_count,
@@ -518,9 +523,15 @@ float measureScalarHistogram(Individual* individual,
                              float max_metric,
                              std::function<float(Color)> metric)
 {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Generate a jittered grid of Color samples
-    std::vector<Color> samples;
-    sampleColors(individual, samples);
+//    std::vector<Color> samples;
+//    sampleColors(individual, samples);
+
+    // Get random color samples from Texture, cached if previously needed.
+    Texture& texture = *GP::textureFromIndividual(individual);
+    const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Set up histogram with "bucket_count" buckets
     std::vector<int> buckets(bucket_count, 0);
     // For each color sample, increment the corresponding histogram bucket.
@@ -545,20 +556,26 @@ float measureScalarHistogram(Individual* individual,
 
 float measureExposure(Individual* individual)
 {
+    std::cout << "worstExposure: ";
     auto exposure = [](Color c){ return c.luminance(); };
-    return measureScalarHistogram(individual, 5, 0, 1, exposure);
+//    return measureScalarHistogram(individual, 5, 0, 1, exposure);
+    return measureScalarHistogram(individual, 10, 0, 1, exposure);
 }
 
 float measureSaturation(Individual* individual)
 {
+    std::cout << "worstSaturation: ";
     auto saturation = [](Color c){ return c.getS(); };
-    return measureScalarHistogram(individual, 3, 0, 1, saturation);
+//    return measureScalarHistogram(individual, 3, 0, 1, saturation);
+    return measureScalarHistogram(individual, 10, 0, 1, saturation);
 }
 
-float measureSize(Individual* individual)
-{
-    return -(individual->tree().size());
-}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//float measureSize(Individual* individual)
+//{
+//    return -(individual->tree().size());
+//}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Score TournamentGroup according to histogram flatness for given metric.
 TournamentGroup worstMetric(TournamentGroup group,
@@ -580,30 +597,99 @@ TournamentGroup worstSaturation(TournamentGroup group)
     return worstMetric(group, measureSaturation);
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    // Score TournamentGroup according to worst size.
+//    TournamentGroup worstSize(TournamentGroup group)
+//    {
+//        TournamentGroup ranked = worstMetric(group, measureSize);
+//        std::cout << "worstSize: ";
+//        for (auto& m : ranked.members()) std::cout << m.metric << " ";
+//        std::cout << std::endl;
+//        return ranked;
+//    }
+
+//    // TODO maybe this skipping for all-too-small should happen elsewhere?
+//    // Score TournamentGroup according to worst size.
+//    TournamentGroup worstSize(TournamentGroup group)
+//    {
+//        int biggest_size = std::numeric_limits<int>::min();
+//        auto metric = [&](Individual* i)
+//        {
+//            int tree_size = i->tree().size();
+//            if (biggest_size < tree_size) biggest_size = tree_size;
+//            return -tree_size;
+//        };
+//        TournamentGroup ranked = worstMetric(group, metric);
+//        if (biggest_size < 100) // TODO need to make this value smarter
+//        {
+//            ranked.setNevermind();
+//        }
+//        else
+//        {
+//            std::cout << "worstSize: ";
+//            for (auto& m : ranked.members()) std::cout << m.metric << " ";
+//            std::cout << std::endl;
+//        }
+//        return ranked;
+//    }
+
+//    // TODO maybe this skipping for all-too-small should happen elsewhere?
+//    // Score TournamentGroup according to worst size.
+//    TournamentGroup worstSize(TournamentGroup group)
+//    {
+//        int biggest_size = std::numeric_limits<int>::min();
+//        auto metric = [&](Individual* i)
+//        {
+//            int tree_size = i->tree().size();
+//            if (biggest_size < tree_size) biggest_size = tree_size;
+//            return -tree_size;
+//        };
+//        TournamentGroup ranked = worstMetric(group, metric);
+//        if (biggest_size < 100) // TODO need to make this value smarter
+//        {
+//            ranked.setNevermind();
+//        }
+//        else
+//        {
+//            std::cout << "worstSize: ";
+//            for (auto& m : ranked.members()) std::cout << m.metric << " ";
+//            std::cout << std::endl;
+//        }
+//        return ranked;
+//    }
+
+// TODO maybe this skipping for all-too-small should happen elsewhere?
 // Score TournamentGroup according to worst size.
 TournamentGroup worstSize(TournamentGroup group)
 {
-    TournamentGroup ranked = worstMetric(group, measureSize);
-    std::cout << "worstSize: ";
-    for (auto& m : ranked.members()) std::cout << m.metric << " ";
-    std::cout << std::endl;
+//    int biggest_size = std::numeric_limits<int>::min();
+//    auto metric = [&](Individual* i)
+//    {
+//        int tree_size = i->tree().size();
+//        if (biggest_size < tree_size) biggest_size = tree_size;
+//        return -tree_size;
+//    };
+    auto metric = [&](Individual* i) { return -(i->tree().size()); };
+    TournamentGroup ranked = worstMetric(group, metric);
+//    if (biggest_size < 100) // TODO need to make this value smarter
+//    {
+//        ranked.setNevermind();
+//    }
+//    else
+//    {
+        std::cout << "worstSize: ";
+        for (auto& m : ranked.members()) std::cout << m.metric << " ";
+        std::cout << std::endl;
+//    }
     return ranked;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 // Score TournamentGroup according to worst size.
 TournamentGroup worstNoise(TournamentGroup group)
 {
-//    auto metric = [](Individual* i)
-//    {
-//        return -GP::textureFromIndividual(i)->highFrequencyScore();
-//    };
-//    auto metric = [&](Individual* i)
-//    {
-//        return -GP::textureFromIndividual(i)->highFrequencyScore(render_size);
-//    };
     auto metric = [&](Individual* i)
     {
         return -(GP::textureFromIndividual(i)->highFrequencyScore());
@@ -643,20 +729,53 @@ TournamentGroup worstNoise(TournamentGroup group)
 //        return ranked_group;
 //    }
 
+//    // Hold tournament for 3 Individuals, scoring by various metrics.
+//    TournamentGroup tournamentFunction(TournamentGroup group)
+//    {
+//        TournamentGroup ranked_group;
+//        float select = LPRS().frandom01();
+//    //    if (select < 0.5)                        // 50% exposure control
+//        if (select < 0.4)                        // 40% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//    //    else if (select < 0.8)                   // 30% saturation control
+//        else if (select < 0.7)                   // 30% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//    //    else if (select < 0.9)                   // 10% noise reduction
+//        else if (select < 0.9)                   // 20% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+//        else                                      // 10% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+//        logger(ranked_group);
+//        return ranked_group;
+//    }
+
 // Hold tournament for 3 Individuals, scoring by various metrics.
 TournamentGroup tournamentFunction(TournamentGroup group)
 {
     TournamentGroup ranked_group;
+    bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
     float select = LPRS().frandom01();
-    if (select < 0.5)                        // 50% exposure control
+//    if (select < 0.5)                        // 50% exposure control
+    if (select < 0.4)                        // 40% exposure control
     {
         ranked_group = worstExposure(group);
     }
-    else if (select < 0.8)                   // 30% saturation control
+//    else if (select < 0.8)                   // 30% saturation control
+    else if (select < 0.7)                   // 30% saturation control
     {
         ranked_group = worstSaturation(group);
     }
-    else if (select < 0.9)                   // 10% noise reduction
+//    else if (select < 0.9)                   // 10% noise reduction
+//    else if (select < 0.9)                   // 20% noise reduction
+    else if (too_small || (select < 0.9))      // 20% noise reduction
     {
         ranked_group = worstNoise(group);
     }
