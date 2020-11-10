@@ -563,7 +563,12 @@ float Texture::highFrequencyScore() // const
             for (int y = width / 2; y < width; y++)
             {
                 float real_part = real.at<float>(y, x);
-                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // TODO I think this is left over form the 1d version several days ago
+//                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+                Vec2 offset = Vec2(x, y) - Vec2(width / 2, width / 2);
+                float weight = sq(offset.length() / (width * 0.5));
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 score += std::abs(real_part * weight);
             }
         }

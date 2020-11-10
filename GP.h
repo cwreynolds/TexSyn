@@ -517,21 +517,55 @@ void logger(TournamentGroup group)
 //}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    float measureScalarHistogram(Individual* individual,
+//                             int bucket_count,
+//                             float min_metric,
+//                             float max_metric,
+//                             std::function<float(Color)> metric)
+//    {
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // Generate a jittered grid of Color samples
+//    //    std::vector<Color> samples;
+//    //    sampleColors(individual, samples);
+//
+//    // Get random color samples from Texture, cached if previously needed.
+//    Texture& texture = *GP::textureFromIndividual(individual);
+//    const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // Set up histogram with "bucket_count" buckets
+//    std::vector<int> buckets(bucket_count, 0);
+//    // For each color sample, increment the corresponding histogram bucket.
+//    for (auto& color : samples)
+//    {
+//        float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+//        int bucket_index = value * bucket_count;
+//        if (bucket_index == bucket_count) bucket_index--;
+//        buckets.at(bucket_index)++;
+//    }
+//    // Determine score (sum of abs error from target bucket size, neg for error)
+//    float score = 0;
+//    int target = int(samples.size()) / bucket_count;
+//    for (int b : buckets) score -= sq(std::abs(b - target));
+//    // TODO debug print of score and buckets.
+//    std::cout << "score = " << score << " (";
+//    for (int b : buckets) std::cout << b << " ";
+//    std::cout << ")" << std::endl;
+//
+//    return score;
+//    }
+
 float measureScalarHistogram(Individual* individual,
                              int bucket_count,
+                             int must_be_near_zero,
                              float min_metric,
                              float max_metric,
                              std::function<float(Color)> metric)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Generate a jittered grid of Color samples
-//    std::vector<Color> samples;
-//    sampleColors(individual, samples);
-
-    // Get random color samples from Texture, cached if previously needed.
+    assert(bucket_count > must_be_near_zero);
+    // Get random color samples from Texture, cached if previously generated.
     Texture& texture = *GP::textureFromIndividual(individual);
     const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Set up histogram with "bucket_count" buckets
     std::vector<int> buckets(bucket_count, 0);
     // For each color sample, increment the corresponding histogram bucket.
@@ -542,33 +576,88 @@ float measureScalarHistogram(Individual* individual,
         if (bucket_index == bucket_count) bucket_index--;
         buckets.at(bucket_index)++;
     }
+    
+    
+//    // Determine score (sum of abs error from target bucket size, neg for error)
+//    float score = 0;
+//    int target = int(samples.size()) / bucket_count;
+//    for (int b : buckets) score -= sq(std::abs(b - target));
+    
     // Determine score (sum of abs error from target bucket size, neg for error)
     float score = 0;
-    int target = int(samples.size()) / bucket_count;
-    for (int b : buckets) score -= sq(std::abs(b - target));
+//    int target = int(samples.size()) / bucket_count;
+    int big_buckets = bucket_count - must_be_near_zero;
+    int target = int(samples.size()) / big_buckets;
+    if (must_be_near_zero == 0)
+    {
+        for (int b : buckets) score -= sq(std::abs(b - target));
+    }
+    else
+    {
+        auto biggest_first = [](int a, int b){ return a > b; };
+        std::sort(buckets.begin(), buckets.end(), biggest_first);
+        
+        for (int i = 0; i < bucket_count; i++)
+        {
+            int ith_target = (i < big_buckets) ? target : 0;
+            score -= sq(std::abs(buckets.at(i) - ith_target));
+        }
+    }
     // TODO debug print of score and buckets.
     std::cout << "score = " << score << " (";
     for (int b : buckets) std::cout << b << " ";
     std::cout << ")" << std::endl;
-
+    
     return score;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    float measureExposure(Individual* individual)
+//    {
+//        std::cout << "worstExposure: ";
+//        auto exposure = [](Color c){ return c.luminance(); };
+//    //    return measureScalarHistogram(individual, 5, 0, 1, exposure);
+//        return measureScalarHistogram(individual, 10, 0, 1, exposure);
+//    }
+//
+//    float measureSaturation(Individual* individual)
+//    {
+//        std::cout << "worstSaturation: ";
+//        auto saturation = [](Color c){ return c.getS(); };
+//    //    return measureScalarHistogram(individual, 3, 0, 1, saturation);
+//        return measureScalarHistogram(individual, 10, 0, 1, saturation);
+//    }
 
 float measureExposure(Individual* individual)
 {
     std::cout << "worstExposure: ";
     auto exposure = [](Color c){ return c.luminance(); };
-//    return measureScalarHistogram(individual, 5, 0, 1, exposure);
-    return measureScalarHistogram(individual, 10, 0, 1, exposure);
+//    return measureScalarHistogram(individual, 10, 0, 1, exposure);
+    return measureScalarHistogram(individual, 10, 0, 0, 1, exposure);
 }
 
 float measureSaturation(Individual* individual)
 {
     std::cout << "worstSaturation: ";
     auto saturation = [](Color c){ return c.getS(); };
-//    return measureScalarHistogram(individual, 3, 0, 1, saturation);
-    return measureScalarHistogram(individual, 10, 0, 1, saturation);
+//    return measureScalarHistogram(individual, 10, 0, 1, saturation);
+    return measureScalarHistogram(individual, 10, 0 , 0, 1, saturation);
 }
+
+
+
+
+float measureHue(Individual* individual)
+{
+    std::cout << "measureHue: ";
+    auto hue = [](Color c){ return c.getH(); };
+//    return measureScalarHistogram(individual, 12, 4, 0, 1, hue);
+    return measureScalarHistogram(individual, 12, 3, 0, 1, hue);
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //float measureSize(Individual* individual)
@@ -596,6 +685,16 @@ TournamentGroup worstSaturation(TournamentGroup group)
 {
     return worstMetric(group, measureSaturation);
 }
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Score TournamentGroup according to "hue" histogram.
+TournamentGroup worstHue(TournamentGroup group)
+{
+    return worstMetric(group, measureHue);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -757,32 +856,218 @@ TournamentGroup worstNoise(TournamentGroup group)
 //        return ranked_group;
 //    }
 
+//    // Hold tournament for 3 Individuals, scoring by various metrics.
+//    TournamentGroup tournamentFunction(TournamentGroup group)
+//    {
+//        TournamentGroup ranked_group;
+//        bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
+//        float select = LPRS().frandom01();
+//    //    if (select < 0.5)                        // 50% exposure control
+//        if (select < 0.4)                        // 40% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//    //    else if (select < 0.8)                   // 30% saturation control
+//        else if (select < 0.7)                   // 30% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//    //    else if (select < 0.9)                   // 10% noise reduction
+//    //    else if (select < 0.9)                   // 20% noise reduction
+//        else if (too_small || (select < 0.9))      // 20% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+//        else                                      // 10% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+//        logger(ranked_group);
+//        return ranked_group;
+//    }
+
+
 // Hold tournament for 3 Individuals, scoring by various metrics.
 TournamentGroup tournamentFunction(TournamentGroup group)
 {
     TournamentGroup ranked_group;
-    bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
+//    bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
+    bool too_small = group.minTreeSize() < 100; // TODO define threshold better
     float select = LPRS().frandom01();
-//    if (select < 0.5)                        // 50% exposure control
-    if (select < 0.4)                        // 40% exposure control
-    {
-        ranked_group = worstExposure(group);
-    }
-//    else if (select < 0.8)                   // 30% saturation control
-    else if (select < 0.7)                   // 30% saturation control
-    {
-        ranked_group = worstSaturation(group);
-    }
-//    else if (select < 0.9)                   // 10% noise reduction
-//    else if (select < 0.9)                   // 20% noise reduction
-    else if (too_small || (select < 0.9))      // 20% noise reduction
-    {
-        ranked_group = worstNoise(group);
-    }
-    else                                      // 10% size control
+    
+//    if (select < 0.25)                          // 25% exposure control
+//    {
+//        ranked_group = worstExposure(group);
+//    }
+//    else if (select < 0.5)                      // 25% hue control
+//    {
+//        ranked_group = worstHue(group);
+//    }
+//    else if (select < 0.7)                      // 20% saturation control
+//    {
+//        ranked_group = worstSaturation(group);
+//    }
+//    else if (too_small || (select < 0.9))       // 20% noise reduction
+//    {
+//        ranked_group = worstNoise(group);
+//    }
+//    else                                        // 10% size control
+//    {
+//        ranked_group = worstSize(group);
+//    }
+
+//        if (select < 0.25)                          // 25% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//        else if (select < 0.5)                      // 25% hue control
+//        {
+//            ranked_group = worstHue(group);
+//        }
+//    //    else if (select < 0.7)                      // 20% saturation control
+//    //    {
+//    //        ranked_group = worstSaturation(group);
+//    //    }
+//    //    else if (too_small || (select < 0.9))       // 20% noise reduction
+//        else if (select < 0.7)                        // 20% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+//    //    else if (select < 0.7)                      // 20% saturation control
+//        else if (too_small || (select < 0.9))                      // 20% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//        else                                        // 10% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+
+    // TODO maybe cleaner to put worstSize() at the top, and the thing it defaults to just under it?
+    
+    
+//    //    if (select < 0.25)                          // 25% exposure control
+//        if (select < 0.3)                          // 30% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//    //    else if (select < 0.5)                      // 25% hue control
+//        else if (select < 0.5)                      // 20% hue control
+//        {
+//            ranked_group = worstHue(group);
+//        }
+//    //    else if (select < 0.7)                      // 20% noise reduction
+//        else if (select < 0.6)                      // 10% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+//    //    else if (too_small || (select < 0.9))       // 20% saturation control
+//        else if (too_small || (select < 0.9))       // 30% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//        else                                        // 10% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+
+    
+    
+//    //    if (!too_small && (select < 0.1))            // 10% size control
+//        if (!too_small && (select < 0.15))            // 15% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+//    //    if (select < 0.4)                           // 30% exposure control
+//    //    if (select < 0.4)                           // 25% exposure control
+//        else if (select < 0.4)                           // 25% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//        else if (select < 0.6)                      // 20% hue control
+//        {
+//            ranked_group = worstHue(group);
+//        }
+//    //    else if (select < 0.9)                        // 30% saturation control
+//        else if (select < 0.85)                        // 25% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//    //    else                                           // 10% noise reduction
+//        else                                           // 15% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+    
+    
+//    if (!too_small && (select < 0.15))            // 15% size control
+//    {
+//        ranked_group = worstSize(group);
+//    }
+//    else if (select < 0.4)                           // 25% exposure control
+//    {
+//        ranked_group = worstExposure(group);
+//    }
+//    else if (select < 0.6)                      // 20% hue control
+//    {
+//        ranked_group = worstHue(group);
+//    }
+//    else if (select < 0.85)                        // 25% saturation control
+//    {
+//        ranked_group = worstSaturation(group);
+//    }
+//    else                                           // 15% noise reduction
+//    {
+//        ranked_group = worstNoise(group);
+//    }
+
+//    //    if (!too_small && (select < 0.15))              // 15% size control
+//        if (!too_small && (select < 0.2))                 // 20% size control
+//        {
+//            ranked_group = worstSize(group);
+//        }
+//    //    else if (select < 0.4)                          // 25% exposure control
+//        else if (select < 0.4)                            // 20% exposure control
+//        {
+//            ranked_group = worstExposure(group);
+//        }
+//        else if (select < 0.6)                            // 20% hue control
+//        {
+//            ranked_group = worstHue(group);
+//        }
+//    //    else if (select < 0.85)                         // 25% saturation control
+//        else if (select < 0.8)                            // 20% saturation control
+//        {
+//            ranked_group = worstSaturation(group);
+//        }
+//    //    else                                            // 15% noise reduction
+//        else                                              // 20% noise reduction
+//        {
+//            ranked_group = worstNoise(group);
+//        }
+
+    if (!too_small && (select < 0.15))                 // 15% size control
     {
         ranked_group = worstSize(group);
     }
+    else if (select < 0.4)                             // 25% exposure control
+    {
+        ranked_group = worstExposure(group);
+    }
+    else if (select < 0.65)                            // 25% hue control
+    {
+        ranked_group = worstHue(group);
+    }
+    else if (select < 0.85)                            // 20% saturation control
+    {
+        ranked_group = worstSaturation(group);
+    }
+    else                                               // 15% noise reduction
+    {
+        ranked_group = worstNoise(group);
+    }
+
+    
     logger(ranked_group);
     return ranked_group;
 }
@@ -792,7 +1077,8 @@ TournamentGroup tournamentFunction(TournamentGroup group)
 void run()
 {
     Timer t("CWE test");
-    LPRS().setSeed(20201101);
+    //LPRS().setSeed(20201101);
+    LPRS().setSeed(20201109);
     const FunctionSet& function_set = GP::fs();
     int population_size = 100;
     int generation_equivalents = 50;
