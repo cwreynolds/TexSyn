@@ -527,10 +527,125 @@ void Texture::fft_test() // const
 //        return score;
 //    }
 
-float Texture::highFrequencyScore() // const
+//    float Texture::highFrequencyScore() // const
+//    {
+//        // TODO maybe cache the rendered image used here, or just case the score?
+//        Timer t("....................................Texture::highFrequencyScore");
+//        float score = cached_high_frequency_score_;
+//        if (score == 0)
+//        {
+//            // Render this texture to monochrome (square image, size x size).
+//            int size = 101;
+//            cv::Mat temp = *raster_;  // Save raster_
+//            Texture::rasterizeToImageCache(size, false);
+//            cv::Mat monochrome;
+//            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+//            // restore raster_
+//            *raster_ = temp;
+//
+//            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//            cv::Mat complexI;
+//            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+//            std::vector<cv::Mat> planes = { monochrome, zeros };
+//            cv::merge(planes, complexI);
+//
+//            // Applying DFT
+//            cv::dft(complexI, complexI);
+//
+//            // Split the image into different channels
+//            std::vector<cv::Mat> fftChannels(2);
+//            split(complexI, fftChannels);
+//
+//            cv::Mat& real = fftChannels[0];
+//            int width = real.rows;
+//            for (int x = width / 2; x < width; x++)
+//            {
+//                for (int y = width / 2; y < width; y++)
+//                {
+//                    float real_part = real.at<float>(y, x);
+//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                    // TODO I think this is left over form the 1d version several days ago
+//    //                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
+//                    Vec2 offset = Vec2(x, y) - Vec2(width / 2, width / 2);
+//                    float weight = sq(offset.length() / (width * 0.5));
+//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                    score += std::abs(real_part * weight);
+//                }
+//            }
+//            cached_high_frequency_score_ = score;
+//        }
+//        return score;
+//    }
+
+// TODO rewrite to score entire real plane (all four quadrants)
+//      wondered if this is why slice gratings at a diagonal were so popular
+
+//    float Texture::highFrequencyScore()
+//    {
+//        // TODO maybe cache the rendered image used here, or just case the score?
+//        Timer t("    highFrequencyScore");
+//        float score = cached_high_frequency_score_;
+//        if (score == 0)
+//        {
+//            // Render this texture to monochrome (square image, size x size).
+//            int size = 101;
+//            cv::Mat temp = *raster_;  // Save raster_
+//            Texture::rasterizeToImageCache(size, false);
+//            cv::Mat monochrome;
+//            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+//            // restore raster_
+//            *raster_ = temp;
+//
+//            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+//            cv::Mat complexI;
+//            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+//            std::vector<cv::Mat> planes = { monochrome, zeros };
+//            cv::merge(planes, complexI);
+//
+//            // Applying DFT
+//            cv::dft(complexI, complexI);
+//
+//            // Split the image into different channels
+//            std::vector<cv::Mat> fftChannels(2);
+//            split(complexI, fftChannels);
+//
+//            cv::Mat& real = fftChannels[0];
+//            int width = real.rows;
+//            float half_width = width * 0.5;
+//
+//            Vec2 center(half_width, half_width);
+//
+//    //        for (int x = width / 2; x < width; x++)
+//            for (int x = 0; x < width; x++)
+//            {
+//    //            for (int y = width / 2; y < width; y++)
+//                for (int y = 0; y < width; y++)
+//                {
+//    //                float real_part = real.at<float>(y, x);
+//    //                Vec2 offset = Vec2(x, y) - Vec2(half_width, half_width);
+//    //                float weight = sq(offset.length() / (width * 0.5));
+//    //                score += std::abs(real_part * weight);
+//
+//    //                Vec2 offset = Vec2(x, y) - center;
+//    //                float length = offset.length();
+//                    float length = (Vec2(x, y) - center).length();
+//                    float weight = sq(length / half_width);
+//                    if (weight < 1)
+//                    {
+//                        float real_part = real.at<float>(y, x);
+//                        score += std::abs(real_part * weight);
+//                    }
+//                }
+//            }
+//            cached_high_frequency_score_ = score;
+//        }
+//        return score;
+//    }
+
+float Texture::highFrequencyScore()
 {
     // TODO maybe cache the rendered image used here, or just case the score?
-    Timer t("....................................Texture::highFrequencyScore");
+    Timer t("    highFrequencyScore");
     float score = cached_high_frequency_score_;
     if (score == 0)
     {
@@ -558,18 +673,20 @@ float Texture::highFrequencyScore() // const
         
         cv::Mat& real = fftChannels[0];
         int width = real.rows;
-        for (int x = width / 2; x < width; x++)
+        float half_width = width * 0.5;
+        Vec2 center(half_width, half_width);
+        for (int x = 0; x < width; x++)
         {
-            for (int y = width / 2; y < width; y++)
+            for (int y = 0; y < width; y++)
             {
-                float real_part = real.at<float>(y, x);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                // TODO I think this is left over form the 1d version several days ago
-//                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
-                Vec2 offset = Vec2(x, y) - Vec2(width / 2, width / 2);
-                float weight = sq(offset.length() / (width * 0.5));
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                score += std::abs(real_part * weight);
+                float length = (Vec2(x, y) - center).length();
+//                float weight = sq(length / half_width);
+                float weight = length / half_width;
+                if (weight < 1)
+                {
+                    float real_part = real.at<float>(y, x);
+                    score += std::abs(real_part * weight);
+                }
             }
         }
         cached_high_frequency_score_ = score;

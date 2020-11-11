@@ -455,6 +455,9 @@ static inline Population* population = nullptr;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //static inline int render_size = 99;
+
+std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Print log and render Texture.
@@ -465,15 +468,31 @@ void logger(TournamentGroup group)
     Individual* best2 = group.secondBestIndividual();
     Individual* worst = group.worstIndividual();
 
-    std::cout << std::endl << "step " << step_count++ << std::endl;
-    std::cout << "winner size ";
-    std::cout << best->tree().size();
-    std::cout << ", winner tournaments survived ";
-    std::cout << best->getTournamentsSurvived();
+    //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
+
+//    std::cout << std::endl << "step " << step_count++ << std::endl;
+//    std::cout << "winner size ";
+//    std::cout << best->tree().size();
+//    std::cout << ", winner tournaments survived ";
+//    std::cout << best->getTournamentsSurvived();
+//    std::cout << std::endl;
+    
+    
+    std::chrono::time_point<std::chrono::high_resolution_clock>
+        now_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = now_time - start_time;
+    start_time = now_time;
+    
+    // 1527: t=0.7, winner size=85 won=7, pop ave size=107 won=2,
+    std::cout << step_count++ << ": ";
+    std::cout << "t=" << elapsed_time.count() << ", ";
+    std::cout << "winner size=" << best->tree().size();
+    std::cout << " won=" << best->getTournamentsSurvived() << ", ";
+    std::cout << "pop ave size=" << population->averageTreeSize();
+    std::cout << " won=" << population->averageTournamentsSurvived();
     std::cout << std::endl;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    std::cout << std::endl << best->tree().to_string() << std::endl << std::endl;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
 
     std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
     std::string pathname = "";
@@ -632,7 +651,7 @@ float measureScalarHistogram(Individual* individual,
 
 float measureExposure(Individual* individual)
 {
-    std::cout << "worstExposure: ";
+    std::cout << "    brightness: ";
     auto exposure = [](Color c){ return c.luminance(); };
 //    return measureScalarHistogram(individual, 10, 0, 1, exposure);
     return measureScalarHistogram(individual, 10, 0, 0, 1, exposure);
@@ -640,7 +659,7 @@ float measureExposure(Individual* individual)
 
 float measureSaturation(Individual* individual)
 {
-    std::cout << "worstSaturation: ";
+    std::cout << "    saturation: ";
     auto saturation = [](Color c){ return c.getS(); };
 //    return measureScalarHistogram(individual, 10, 0, 1, saturation);
     return measureScalarHistogram(individual, 10, 0 , 0, 1, saturation);
@@ -651,7 +670,7 @@ float measureSaturation(Individual* individual)
 
 float measureHue(Individual* individual)
 {
-    std::cout << "measureHue: ";
+    std::cout << "    hue: ";
     auto hue = [](Color c){ return c.getH(); };
 //    return measureScalarHistogram(individual, 12, 4, 0, 1, hue);
     return measureScalarHistogram(individual, 12, 3, 0, 1, hue);
@@ -758,29 +777,46 @@ TournamentGroup worstHue(TournamentGroup group)
 //        return ranked;
 //    }
 
-// TODO maybe this skipping for all-too-small should happen elsewhere?
+//    // TODO maybe this skipping for all-too-small should happen elsewhere?
+//    // Score TournamentGroup according to worst size.
+//    TournamentGroup worstSize(TournamentGroup group)
+//    {
+//    //    int biggest_size = std::numeric_limits<int>::min();
+//    //    auto metric = [&](Individual* i)
+//    //    {
+//    //        int tree_size = i->tree().size();
+//    //        if (biggest_size < tree_size) biggest_size = tree_size;
+//    //        return -tree_size;
+//    //    };
+//        auto metric = [&](Individual* i) { return -(i->tree().size()); };
+//        TournamentGroup ranked = worstMetric(group, metric);
+//    //    if (biggest_size < 100) // TODO need to make this value smarter
+//    //    {
+//    //        ranked.setNevermind();
+//    //    }
+//    //    else
+//    //    {
+//            std::cout << "worstSize: ";
+//            for (auto& m : ranked.members()) std::cout << m.metric << " ";
+//            std::cout << std::endl;
+//    //    }
+//        return ranked;
+//    }
+
 // Score TournamentGroup according to worst size.
 TournamentGroup worstSize(TournamentGroup group)
 {
-//    int biggest_size = std::numeric_limits<int>::min();
-//    auto metric = [&](Individual* i)
-//    {
-//        int tree_size = i->tree().size();
-//        if (biggest_size < tree_size) biggest_size = tree_size;
-//        return -tree_size;
-//    };
     auto metric = [&](Individual* i) { return -(i->tree().size()); };
     TournamentGroup ranked = worstMetric(group, metric);
-//    if (biggest_size < 100) // TODO need to make this value smarter
-//    {
-//        ranked.setNevermind();
-//    }
-//    else
-//    {
-        std::cout << "worstSize: ";
-        for (auto& m : ranked.members()) std::cout << m.metric << " ";
-        std::cout << std::endl;
-//    }
+//    std::cout << "worstSize: ";
+    std::cout << "    size: ";
+    for (auto& m : ranked.members()) std::cout << m.metric << " ";
+    
+    
+//    std::cout << "  best tree size:" << ranked.bestIndividual()->tree().size();
+
+    
+    std::cout << std::endl;
     return ranked;
 }
 
@@ -794,7 +830,8 @@ TournamentGroup worstNoise(TournamentGroup group)
         return -(GP::textureFromIndividual(i)->highFrequencyScore());
     };
     TournamentGroup ranked = worstMetric(group, metric);
-    std::cout << "worstNoise: ";
+//    std::cout << "worstNoise: ";
+    std::cout << "    noise: ";
     for (auto& m : ranked.members()) std::cout << m.metric << " ";
     std::cout << std::endl;
     return ranked;
@@ -887,189 +924,258 @@ TournamentGroup worstNoise(TournamentGroup group)
 //    }
 
 
-// Hold tournament for 3 Individuals, scoring by various metrics.
-TournamentGroup tournamentFunction(TournamentGroup group)
-{
-    TournamentGroup ranked_group;
-//    bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
-    bool too_small = group.minTreeSize() < 100; // TODO define threshold better
-    float select = LPRS().frandom01();
-    
-//    if (select < 0.25)                          // 25% exposure control
+//    // Hold tournament for 3 Individuals, scoring by various metrics.
+//    TournamentGroup tournamentFunction(TournamentGroup group)
 //    {
-//        ranked_group = worstExposure(group);
-//    }
-//    else if (select < 0.5)                      // 25% hue control
-//    {
-//        ranked_group = worstHue(group);
-//    }
-//    else if (select < 0.7)                      // 20% saturation control
-//    {
-//        ranked_group = worstSaturation(group);
-//    }
-//    else if (too_small || (select < 0.9))       // 20% noise reduction
-//    {
-//        ranked_group = worstNoise(group);
-//    }
-//    else                                        // 10% size control
-//    {
-//        ranked_group = worstSize(group);
-//    }
-
-//        if (select < 0.25)                          // 25% exposure control
-//        {
-//            ranked_group = worstExposure(group);
-//        }
-//        else if (select < 0.5)                      // 25% hue control
-//        {
-//            ranked_group = worstHue(group);
-//        }
+//        TournamentGroup ranked_group;
+//    //    bool too_small = group.maxTreeSize() < 100; // TODO define threshold better
+//        bool too_small = group.minTreeSize() < 100; // TODO define threshold better
+//        float select = LPRS().frandom01();
+//
+//    //    if (select < 0.25)                          // 25% exposure control
+//    //    {
+//    //        ranked_group = worstExposure(group);
+//    //    }
+//    //    else if (select < 0.5)                      // 25% hue control
+//    //    {
+//    //        ranked_group = worstHue(group);
+//    //    }
 //    //    else if (select < 0.7)                      // 20% saturation control
 //    //    {
 //    //        ranked_group = worstSaturation(group);
 //    //    }
 //    //    else if (too_small || (select < 0.9))       // 20% noise reduction
-//        else if (select < 0.7)                        // 20% noise reduction
-//        {
-//            ranked_group = worstNoise(group);
-//        }
-//    //    else if (select < 0.7)                      // 20% saturation control
-//        else if (too_small || (select < 0.9))                      // 20% saturation control
-//        {
-//            ranked_group = worstSaturation(group);
-//        }
-//        else                                        // 10% size control
+//    //    {
+//    //        ranked_group = worstNoise(group);
+//    //    }
+//    //    else                                        // 10% size control
+//    //    {
+//    //        ranked_group = worstSize(group);
+//    //    }
+//
+//    //        if (select < 0.25)                          // 25% exposure control
+//    //        {
+//    //            ranked_group = worstExposure(group);
+//    //        }
+//    //        else if (select < 0.5)                      // 25% hue control
+//    //        {
+//    //            ranked_group = worstHue(group);
+//    //        }
+//    //    //    else if (select < 0.7)                      // 20% saturation control
+//    //    //    {
+//    //    //        ranked_group = worstSaturation(group);
+//    //    //    }
+//    //    //    else if (too_small || (select < 0.9))       // 20% noise reduction
+//    //        else if (select < 0.7)                        // 20% noise reduction
+//    //        {
+//    //            ranked_group = worstNoise(group);
+//    //        }
+//    //    //    else if (select < 0.7)                      // 20% saturation control
+//    //        else if (too_small || (select < 0.9))                      // 20% saturation control
+//    //        {
+//    //            ranked_group = worstSaturation(group);
+//    //        }
+//    //        else                                        // 10% size control
+//    //        {
+//    //            ranked_group = worstSize(group);
+//    //        }
+//
+//        // TODO maybe cleaner to put worstSize() at the top, and the thing it defaults to just under it?
+//
+//
+//    //    //    if (select < 0.25)                          // 25% exposure control
+//    //        if (select < 0.3)                          // 30% exposure control
+//    //        {
+//    //            ranked_group = worstExposure(group);
+//    //        }
+//    //    //    else if (select < 0.5)                      // 25% hue control
+//    //        else if (select < 0.5)                      // 20% hue control
+//    //        {
+//    //            ranked_group = worstHue(group);
+//    //        }
+//    //    //    else if (select < 0.7)                      // 20% noise reduction
+//    //        else if (select < 0.6)                      // 10% noise reduction
+//    //        {
+//    //            ranked_group = worstNoise(group);
+//    //        }
+//    //    //    else if (too_small || (select < 0.9))       // 20% saturation control
+//    //        else if (too_small || (select < 0.9))       // 30% saturation control
+//    //        {
+//    //            ranked_group = worstSaturation(group);
+//    //        }
+//    //        else                                        // 10% size control
+//    //        {
+//    //            ranked_group = worstSize(group);
+//    //        }
+//
+//
+//
+//    //    //    if (!too_small && (select < 0.1))            // 10% size control
+//    //        if (!too_small && (select < 0.15))            // 15% size control
+//    //        {
+//    //            ranked_group = worstSize(group);
+//    //        }
+//    //    //    if (select < 0.4)                           // 30% exposure control
+//    //    //    if (select < 0.4)                           // 25% exposure control
+//    //        else if (select < 0.4)                           // 25% exposure control
+//    //        {
+//    //            ranked_group = worstExposure(group);
+//    //        }
+//    //        else if (select < 0.6)                      // 20% hue control
+//    //        {
+//    //            ranked_group = worstHue(group);
+//    //        }
+//    //    //    else if (select < 0.9)                        // 30% saturation control
+//    //        else if (select < 0.85)                        // 25% saturation control
+//    //        {
+//    //            ranked_group = worstSaturation(group);
+//    //        }
+//    //    //    else                                           // 10% noise reduction
+//    //        else                                           // 15% noise reduction
+//    //        {
+//    //            ranked_group = worstNoise(group);
+//    //        }
+//
+//
+//    //    if (!too_small && (select < 0.15))            // 15% size control
+//    //    {
+//    //        ranked_group = worstSize(group);
+//    //    }
+//    //    else if (select < 0.4)                           // 25% exposure control
+//    //    {
+//    //        ranked_group = worstExposure(group);
+//    //    }
+//    //    else if (select < 0.6)                      // 20% hue control
+//    //    {
+//    //        ranked_group = worstHue(group);
+//    //    }
+//    //    else if (select < 0.85)                        // 25% saturation control
+//    //    {
+//    //        ranked_group = worstSaturation(group);
+//    //    }
+//    //    else                                           // 15% noise reduction
+//    //    {
+//    //        ranked_group = worstNoise(group);
+//    //    }
+//
+//    //    //    if (!too_small && (select < 0.15))              // 15% size control
+//    //        if (!too_small && (select < 0.2))                 // 20% size control
+//    //        {
+//    //            ranked_group = worstSize(group);
+//    //        }
+//    //    //    else if (select < 0.4)                          // 25% exposure control
+//    //        else if (select < 0.4)                            // 20% exposure control
+//    //        {
+//    //            ranked_group = worstExposure(group);
+//    //        }
+//    //        else if (select < 0.6)                            // 20% hue control
+//    //        {
+//    //            ranked_group = worstHue(group);
+//    //        }
+//    //    //    else if (select < 0.85)                         // 25% saturation control
+//    //        else if (select < 0.8)                            // 20% saturation control
+//    //        {
+//    //            ranked_group = worstSaturation(group);
+//    //        }
+//    //    //    else                                            // 15% noise reduction
+//    //        else                                              // 20% noise reduction
+//    //        {
+//    //            ranked_group = worstNoise(group);
+//    //        }
+//
+//        if (!too_small && (select < 0.15))                 // 15% size control
 //        {
 //            ranked_group = worstSize(group);
 //        }
-
-    // TODO maybe cleaner to put worstSize() at the top, and the thing it defaults to just under it?
-    
-    
-//    //    if (select < 0.25)                          // 25% exposure control
-//        if (select < 0.3)                          // 30% exposure control
+//        else if (select < 0.4)                             // 25% exposure control
 //        {
 //            ranked_group = worstExposure(group);
 //        }
-//    //    else if (select < 0.5)                      // 25% hue control
-//        else if (select < 0.5)                      // 20% hue control
+//        else if (select < 0.65)                            // 25% hue control
 //        {
 //            ranked_group = worstHue(group);
 //        }
-//    //    else if (select < 0.7)                      // 20% noise reduction
-//        else if (select < 0.6)                      // 10% noise reduction
-//        {
-//            ranked_group = worstNoise(group);
-//        }
-//    //    else if (too_small || (select < 0.9))       // 20% saturation control
-//        else if (too_small || (select < 0.9))       // 30% saturation control
+//        else if (select < 0.85)                            // 20% saturation control
 //        {
 //            ranked_group = worstSaturation(group);
 //        }
-//        else                                        // 10% size control
+//        else                                               // 15% noise reduction
 //        {
-//            ranked_group = worstSize(group);
+//            ranked_group = worstNoise(group);
 //        }
+//
+//
+//        logger(ranked_group);
+//        return ranked_group;
+//    }
 
-    
-    
-//    //    if (!too_small && (select < 0.1))            // 10% size control
-//        if (!too_small && (select < 0.15))            // 15% size control
+//    // Hold tournament for 3 Individuals, scoring by various metrics.
+//    TournamentGroup tournamentFunction(TournamentGroup group)
+//    {
+//        TournamentGroup ranked_group;
+//        bool too_small = group.minTreeSize() < 100; // TODO define threshold better
+//        float select = LPRS().frandom01();
+//        if (!too_small && (select < 0.15))                 // 15% size control
 //        {
 //            ranked_group = worstSize(group);
 //        }
-//    //    if (select < 0.4)                           // 30% exposure control
-//    //    if (select < 0.4)                           // 25% exposure control
-//        else if (select < 0.4)                           // 25% exposure control
+//        else if (select < 0.4)                             // 25% exposure control
 //        {
 //            ranked_group = worstExposure(group);
 //        }
-//        else if (select < 0.6)                      // 20% hue control
+//        else if (select < 0.65)                            // 25% hue control
 //        {
 //            ranked_group = worstHue(group);
 //        }
-//    //    else if (select < 0.9)                        // 30% saturation control
-//        else if (select < 0.85)                        // 25% saturation control
+//        else if (select < 0.85)                            // 20% saturation control
 //        {
 //            ranked_group = worstSaturation(group);
 //        }
-//    //    else                                           // 10% noise reduction
-//        else                                           // 15% noise reduction
+//        else                                               // 15% noise reduction
 //        {
 //            ranked_group = worstNoise(group);
 //        }
-    
-    
-//    if (!too_small && (select < 0.15))            // 15% size control
-//    {
-//        ranked_group = worstSize(group);
-//    }
-//    else if (select < 0.4)                           // 25% exposure control
-//    {
-//        ranked_group = worstExposure(group);
-//    }
-//    else if (select < 0.6)                      // 20% hue control
-//    {
-//        ranked_group = worstHue(group);
-//    }
-//    else if (select < 0.85)                        // 25% saturation control
-//    {
-//        ranked_group = worstSaturation(group);
-//    }
-//    else                                           // 15% noise reduction
-//    {
-//        ranked_group = worstNoise(group);
+//        logger(ranked_group);
+//        return ranked_group;
 //    }
 
-//    //    if (!too_small && (select < 0.15))              // 15% size control
-//        if (!too_small && (select < 0.2))                 // 20% size control
-//        {
-//            ranked_group = worstSize(group);
-//        }
-//    //    else if (select < 0.4)                          // 25% exposure control
-//        else if (select < 0.4)                            // 20% exposure control
-//        {
-//            ranked_group = worstExposure(group);
-//        }
-//        else if (select < 0.6)                            // 20% hue control
-//        {
-//            ranked_group = worstHue(group);
-//        }
-//    //    else if (select < 0.85)                         // 25% saturation control
-//        else if (select < 0.8)                            // 20% saturation control
-//        {
-//            ranked_group = worstSaturation(group);
-//        }
-//    //    else                                            // 15% noise reduction
-//        else                                              // 20% noise reduction
-//        {
-//            ranked_group = worstNoise(group);
-//        }
 
-    if (!too_small && (select < 0.15))                 // 15% size control
+// Hold tournament for 3 Individuals, scoring by various metrics.
+TournamentGroup tournamentFunction(TournamentGroup group)
+{
+    std::cout << std::endl;
+    std::vector<TournamentGroup> ranked_groups =
     {
-        ranked_group = worstSize(group);
-    }
-    else if (select < 0.4)                             // 25% exposure control
-    {
-        ranked_group = worstExposure(group);
-    }
-    else if (select < 0.65)                            // 25% hue control
-    {
-        ranked_group = worstHue(group);
-    }
-    else if (select < 0.85)                            // 20% saturation control
-    {
-        ranked_group = worstSaturation(group);
-    }
-    else                                               // 15% noise reduction
-    {
-        ranked_group = worstNoise(group);
-    }
-
+        worstExposure(group),
+        worstSaturation(group),
+        worstHue(group),
+    };
     
-    logger(ranked_group);
-    return ranked_group;
+    if (group.minTreeSize() > 100) ranked_groups.push_back(worstSize(group));
+//    if (LPRS().frandom01() > 0.5) ranked_groups.push_back(worstNoise(group));
+
+    // std::function<float (Individual *)>
+    auto combine = [&](Individual* individual)
+    {
+        float score = 1;
+        for (auto& group : ranked_groups)
+        {
+            int rank = group.rankOfIndividual(individual);
+            assert((rank == 1) || (rank == 2) || (rank == 3));
+            score *= 1.0 / rank;
+        }
+        return score;
+    };
+    
+    TournamentGroup combined_result = group;
+    combined_result.setAllMetrics(combine);
+    
+    std::cout << "    combined scores = ";
+    for (auto& m : combined_result.members()) std::cout << m.metric << " ";
+    std::cout << std::endl << std::endl;
+
+    logger(combined_result);
+    return combined_result;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1077,8 +1183,8 @@ TournamentGroup tournamentFunction(TournamentGroup group)
 void run()
 {
     Timer t("CWE test");
-    //LPRS().setSeed(20201101);
-    LPRS().setSeed(20201109);
+    LPRS().setSeed(20201101);
+    //LPRS().setSeed(20201109);
     const FunctionSet& function_set = GP::fs();
     int population_size = 100;
     int generation_equivalents = 50;
