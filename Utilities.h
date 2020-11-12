@@ -433,3 +433,22 @@ template<typename T> std::string any_to_string(std::any a)
 
 // Like std::isnormal() but allows zero. TODO hmm maybe I want std::isfinite()?
 inline bool is_normal(float x) { return !(std::isnan(x) || std::isinf(x)); }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO add a unit test. search for ", " to find places where this could be used
+
+// Convert an std::vector into an std::string as a "comma separated list".
+template <typename T> std::string vec_to_string(const std::vector<T>& vector)
+{
+    std::stringstream s;
+    bool first = true;
+    for (auto& element : vector)
+    {
+        if (first) first = false; else s << ", ";
+        s << element;
+    }
+    return s.str();
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
