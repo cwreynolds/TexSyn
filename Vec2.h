@@ -38,7 +38,13 @@ public:
     Vec2 operator+=(const Vec2& rhs) { return *this = *this + rhs; }
     Vec2 operator*=(float s) { return *this = *this * s; }
     // Rotation about origin by angle in radians (or by precomputed sin/cos).
-    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
+    // TODO is this how I want to fix it?
+    //      Twist::gatColor() one passed in an INF angle.
+    Vec2 rotate(float a) const
+        { if (!is_normal(a)) a = 0; return rotate(std::sin(a), std::cos(a)); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     inline Vec2 rotate(float sin, float cos) const
         { return Vec2(x() * cos + y() * sin, y() * cos - x() * sin); }
     // 90° (π/2) rotation

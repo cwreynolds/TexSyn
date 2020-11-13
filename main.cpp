@@ -4095,33 +4095,38 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototype simple Fourier transform
-    std::cout << "November 6, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201106_";
-        
-    Vec2 p05(0.05, 0);
-    Vec2 m05 = -p05;
-    Vec2 p02(0.02, 0);
-    Vec2 m02 = -p02;
-    Vec2 p2(0.2, 0);
-    Vec2 m2 = -p2;
-/*
-    [&](const Texture& texture)
-    {
-        Texture::displayAndFile(texture);
-        texture.fft_test();
-    }
-    (Grating(m05, Uniform(0), p05, Uniform(1), 1, 0.5)); // s=0.000108417
-//    (Grating(m05, Uniform(0), p05, Uniform(1), 0, 0.5)); // s=8.04907e-05
-//    (Noise(m05, p05, Uniform(0), Uniform(1))); // s=21.129
-//    (Noise(m02, p02, Uniform(0), Uniform(1))); // s=41.122
-//    (LotsOfSpots(0.85,0.1,0.3,0.050,0.05,Uniform(0),Uniform(1))); // s=88.3468
-//    (LotsOfSpots(0.85,0.1,0.3,0.005,0.05,Uniform(0),Uniform(1))); // s=348.793
-//    (Wrapulence(p2, m2, Uniform(0), Uniform(1))); // s=282.057
-
-    Texture::waitKey();
-*/
-    CWE::run();
+//        // Prototype simple Fourier transform
+//        std::cout << "November 6, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201106_";
+//
+//        Vec2 p05(0.05, 0);
+//        Vec2 m05 = -p05;
+//        Vec2 p02(0.02, 0);
+//        Vec2 m02 = -p02;
+//        Vec2 p2(0.2, 0);
+//        Vec2 m2 = -p2;
+//        [&](const Texture& texture)
+//        {
+//            Texture::displayAndFile(texture);
+//            texture.fft_test();
+//        }
+//        (Grating(m05, Uniform(0), p05, Uniform(1), 1, 0.5)); // s=0.000108417
+//    //    (Grating(m05, Uniform(0), p05, Uniform(1), 0, 0.5)); // s=8.04907e-05
+//    //    (Noise(m05, p05, Uniform(0), Uniform(1))); // s=21.129
+//    //    (Noise(m02, p02, Uniform(0), Uniform(1))); // s=41.122
+//    //    (LotsOfSpots(0.85,0.1,0.3,0.050,0.05,Uniform(0),Uniform(1))); // s=88.3468
+//    //    (LotsOfSpots(0.85,0.1,0.3,0.005,0.05,Uniform(0),Uniform(1))); // s=348.793
+//    //    (Wrapulence(p2, m2, Uniform(0), Uniform(1))); // s=282.057
+//
+//        Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Test absolute (non-relative) fitness evolution: "LimitHue"
+    std::cout << "November 12, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201112_";
+    
+    LimitHue::run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

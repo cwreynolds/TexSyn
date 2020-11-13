@@ -444,6 +444,10 @@ public:
     }
 };
 
+#undef argFloat
+#undef argVec2
+#undef argTexture
+#undef evalTexture
 
 // “colorful, well exposed” evolution test
 namespace CWE
@@ -463,10 +467,14 @@ std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 // Print log and render Texture.
 void logger(TournamentGroup group)
 {
-    static int step_count = 0;
+//    static int step_count = 0;
     Individual* best = group.bestIndividual();
     Individual* best2 = group.secondBestIndividual();
     Individual* worst = group.worstIndividual();
+    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+//    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
+    std::vector<Individual*> tops = population->nTopFitness(6);
+    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
 
     //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
 
@@ -478,23 +486,33 @@ void logger(TournamentGroup group)
 //    std::cout << std::endl;
     
     
-    std::chrono::time_point<std::chrono::high_resolution_clock>
-        now_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed_time = now_time - start_time;
-    start_time = now_time;
-    
-    // 1527: t=0.7, winner size=85 won=7, pop ave size=107 won=2,
-    std::cout << step_count++ << ": ";
-    std::cout << "t=" << elapsed_time.count() << ", ";
-    std::cout << "winner size=" << best->tree().size();
-    std::cout << " won=" << best->getTournamentsSurvived() << ", ";
-    std::cout << "pop ave size=" << population->averageTreeSize();
-    std::cout << " won=" << population->averageTournamentsSurvived();
-    std::cout << std::endl;
+//        std::chrono::time_point<std::chrono::high_resolution_clock>
+//            now_time = std::chrono::high_resolution_clock::now();
+//        std::chrono::duration<double> elapsed_time = now_time - start_time;
+//        start_time = now_time;
+//
+//        // 1527: t=0.7, winner size=85 won=7, pop ave size=107 won=2,
+//        std::cout << step_count++ << ": ";
+//        std::cout << "t=" << elapsed_time.count() << ", ";
+//        std::cout << "winner size=" << best->tree().size();
+//        std::cout << " won=" << best->getTournamentsSurvived() << ", ";
+//        std::cout << "pop ave size=" << population->averageTreeSize();
+//        //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+//    //    std::cout << " won=" << population->averageTournamentsSurvived();
+//        std::cout << " won=" << population->averageTournamentsSurvived() << ", ";
+//
+//        std::vector<float> fits;
+//        for (auto i : tops) fits.push_back(i->getTournamentsSurvived());
+//        std::cout << "pop best (" << vec_to_string(fits) << ")";
+//        //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+//        std::cout << std::endl;
 
+    Population::basicLogger(*population);
     //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
 
-    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
+    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+//    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
+    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
     std::string pathname = "";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    int render_size = 99;
@@ -1172,6 +1190,10 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     
     std::cout << "    combined scores = ";
     for (auto& m : combined_result.members()) std::cout << m.metric << " ";
+    Individual* best = group.bestIndividual();
+    std::cout << std::endl;
+    std::cout << "    winner size=" << best->tree().size();
+    std::cout << " won=" << best->getTournamentsSurvived();
     std::cout << std::endl << std::endl;
 
     logger(combined_result);
@@ -1191,13 +1213,197 @@ void run()
     int steps = population_size * generation_equivalents;
     int max_tree_size = 100;
     population = new Population(population_size, max_tree_size, function_set);
+    population->setLoggerFunction(nullptr);
     population->run(steps, function_set, tournamentFunction);
     population = nullptr;
 }
 
 }
 
-#undef argFloat
-#undef argVec2
-#undef argTexture
-#undef evalTexture
+// "LimitHue" evolution test, uses traditional numeric (not relative) fitness.
+namespace LimitHue
+{
+
+// Global Population instance. (TODO maybe should be shared_ptr?)
+// TODO refactor to share via lexical capture?
+static inline Population* population = nullptr;
+
+//    float measureScalarHistogram(Individual* individual,
+//                                 int bucket_count,
+//                                 int must_be_near_zero,
+//                                 float min_metric,
+//                                 float max_metric,
+//                                 std::function<float(Color)> metric)
+//    {
+//        assert(bucket_count > must_be_near_zero);
+//        // Get random color samples from Texture, cached if previously generated.
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+//        // Set up histogram with "bucket_count" buckets
+//        std::vector<int> buckets(bucket_count, 0);
+//        // For each color sample, increment the corresponding histogram bucket.
+//        for (auto& color : samples)
+//        {
+//            float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+//            int bucket_index = value * bucket_count;
+//            if (bucket_index == bucket_count) bucket_index--;
+//            buckets.at(bucket_index)++;
+//        }
+//
+//        // Determine score (sum of abs error from target bucket size, neg for error)
+//        float score = 0;
+//        int big_buckets = bucket_count - must_be_near_zero;
+//        int target = int(samples.size()) / big_buckets;
+//    //    if (must_be_near_zero == 0)
+//    //    {
+//    //        for (int b : buckets) score -= sq(std::abs(b - target));
+//    //    }
+//    //    else
+//    //    {
+//            auto biggest_first = [](int a, int b){ return a > b; };
+//            std::sort(buckets.begin(), buckets.end(), biggest_first);
+//            for (int i = 0; i < bucket_count; i++)
+//            {
+//                int ith_target = (i < big_buckets) ? target : 0;
+//                score -= sq(std::abs(buckets.at(i) - ith_target));
+//            }
+//    //    }
+//    //    // TODO debug print of score and buckets.
+//    //    std::cout << "score = " << score << " (";
+//    //    for (int b : buckets) std::cout << b << " ";
+//    //    std::cout << ")" << std::endl;
+//
+//        return score;
+//    }
+
+float measureScalarHistogram(Individual* individual,
+                             int bucket_count,
+                             int must_be_near_zero,
+                             float min_metric,
+                             float max_metric,
+                             std::function<float(Color)> metric)
+{
+    assert(bucket_count > must_be_near_zero);
+    // Get random color samples from Texture, cached if previously generated.
+    Texture& texture = *GP::textureFromIndividual(individual);
+    const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+    // Set up histogram with "bucket_count" buckets
+    std::vector<int> buckets(bucket_count, 0);
+    // For each color sample, increment the corresponding histogram bucket.
+    for (auto& color : samples)
+    {
+        float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+        int bucket_index = value * bucket_count;
+        if (bucket_index == bucket_count) bucket_index--;
+        buckets.at(bucket_index)++;
+    }
+    // Determine score (sum of abs error from target bucket size, neg for error)
+    float score = 0;
+    int big_buckets = bucket_count - must_be_near_zero;
+    int target = int(samples.size()) / big_buckets;
+    auto biggest_first = [](int a, int b){ return a > b; };
+    std::sort(buckets.begin(), buckets.end(), biggest_first);
+    for (int i = 0; i < bucket_count; i++)
+    {
+        int ith_target = (i < big_buckets) ? target : 0;
+        score -= sq(std::abs(buckets.at(i) - ith_target));
+    }
+    
+    // TODO debug print of score and buckets.
+//    std::cout << "    score = " << score << " (";
+    std::cout << "    sorted hue buckets (";
+    for (int b : buckets) std::cout << b << " ";
+    std::cout << ")" << std::endl;
+
+    return score;
+}
+
+
+float fitness_function(Individual& individual)
+{
+    Texture& texture = *GP::textureFromIndividual(&individual);
+    
+    Texture::closeAllWindows();
+
+    int render_size = 151;
+    std::string pathname = "";
+    std::vector<Individual*> tops = population->nTopFitness(9);
+    Texture::window_x = 0;
+    Texture::window_y = render_size * 3;
+    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
+                             *GP::textureFromIndividual(tops.at(7)),
+                             *GP::textureFromIndividual(tops.at(8)),
+                             pathname, render_size);
+    Texture::window_x = 0;
+    Texture::window_y = render_size * 2;
+    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
+                             *GP::textureFromIndividual(tops.at(4)),
+                             *GP::textureFromIndividual(tops.at(5)),
+                             pathname, render_size);
+    Texture::window_x = 0;
+    Texture::window_y = render_size;
+    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
+                             *GP::textureFromIndividual(tops.at(1)),
+                             *GP::textureFromIndividual(tops.at(2)),
+                             pathname, render_size);
+    Texture::window_x = 0;
+    Texture::window_y = 0;
+    Texture::displayAndFile(texture, pathname, render_size);
+    Texture::waitKey(1);
+
+    Color average;
+    const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+    for (auto& color : samples) average += color;
+    average *= 1.0 / samples.size();
+    float brightness = average.luminance();
+    float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
+    float closeness_to_midrange = 1 - relative_distance_from_midrange;
+    
+    
+    float average_saturation = average.getS();
+    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
+                                                      0, 0.33, 0, 1);
+
+    
+    std::cout << std::endl;
+    float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
+                                         [](Color c){ return c.getH(); });
+    measureScalarHistogram(population->nTopFitness(1).at(0),
+                           12, 8, 0, 1,
+                           [](Color c){ return c.getH(); });
+    std::cout << std::endl;
+    
+    float closeness_to_hue_constraint = 1 + (score / 7500);
+
+//    debugPrint(int(score));
+//    debugPrint(1 + (score / 7500));
+//    return closeness_to_midrange;
+//    return closeness_to_midrange * closeness_to_hue_constraint;
+    
+    return (closeness_to_midrange *
+            closeness_to_hue_constraint *
+            exceeds_33pc_saturation);
+}
+
+void run()
+{
+    const FunctionSet& function_set = GP::fs();
+    int individuals = 100;
+    int generation_equivalents = 50;
+    int steps = individuals * generation_equivalents;
+    int max_tree_size = 100;
+    {
+        Timer t("LimitHue test");
+        population = new Population(individuals, max_tree_size, function_set);
+//        population->run(steps, function_set, tournamentFunction);
+        
+        for (int i = 0; i < steps; i++)
+        {
+            // Run evolution step with given tournament and function set.
+            population->evolutionStep(fitness_function, function_set);
+        }
+    }
+    population = nullptr;
+}
+
+}
