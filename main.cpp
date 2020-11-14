@@ -4123,11 +4123,13 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Test absolute (non-relative) fitness evolution: "LimitHue"
-    std::cout << "November 12, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201112_";
+    std::cout << "November 13, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201113_";
     
-    LimitHue::run();
-    
+    for (int i = 0; i < 100; i++)
+    {
+        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+    }
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     return EXIT_SUCCESS;

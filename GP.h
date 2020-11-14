@@ -1276,6 +1276,50 @@ static inline Population* population = nullptr;
 //        return score;
 //    }
 
+//    float measureScalarHistogram(Individual* individual,
+//                                 int bucket_count,
+//                                 int must_be_near_zero,
+//                                 float min_metric,
+//                                 float max_metric,
+//                                 std::function<float(Color)> metric)
+//    {
+//        assert(bucket_count > must_be_near_zero);
+//        // Get random color samples from Texture, cached if previously generated.
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+//        // Set up histogram with "bucket_count" buckets
+//        std::vector<int> buckets(bucket_count, 0);
+//        // For each color sample, increment the corresponding histogram bucket.
+//        for (auto& color : samples)
+//        {
+//            float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+//            int bucket_index = value * bucket_count;
+//            if (bucket_index == bucket_count) bucket_index--;
+//            buckets.at(bucket_index)++;
+//        }
+//        // Determine score (sum of abs error from target bucket size, neg for error)
+//        float score = 0;
+//        int big_buckets = bucket_count - must_be_near_zero;
+//        int target = int(samples.size()) / big_buckets;
+//        auto biggest_first = [](int a, int b){ return a > b; };
+//        std::sort(buckets.begin(), buckets.end(), biggest_first);
+//        for (int i = 0; i < bucket_count; i++)
+//        {
+//            int ith_target = (i < big_buckets) ? target : 0;
+//            score -= sq(std::abs(buckets.at(i) - ith_target));
+//        }
+//
+//        // TODO debug print of score and buckets.
+//    //    std::cout << "    score = " << score << " (";
+//        std::cout << "    sorted hue buckets (";
+//        for (int b : buckets) std::cout << b << " ";
+//        std::cout << ")" << std::endl;
+//
+//        return score;
+//    }
+
+// TODO use multiplicative fitness (on [0,1]) for each bucket and final score.
+
 float measureScalarHistogram(Individual* individual,
                              int bucket_count,
                              int must_be_near_zero,
@@ -1298,7 +1342,9 @@ float measureScalarHistogram(Individual* individual,
         buckets.at(bucket_index)++;
     }
     // Determine score (sum of abs error from target bucket size, neg for error)
+    // TODO after a lot of fiddling, back to previous version of score.
     float score = 0;
+//    float score = 1;
     int big_buckets = bucket_count - must_be_near_zero;
     int target = int(samples.size()) / big_buckets;
     auto biggest_first = [](int a, int b){ return a > b; };
@@ -1306,18 +1352,37 @@ float measureScalarHistogram(Individual* individual,
     for (int i = 0; i < bucket_count; i++)
     {
         int ith_target = (i < big_buckets) ? target : 0;
+//        score -= sq(std::abs(buckets.at(i) - ith_target));
+//        score *= 1 - (float(std::abs(buckets.at(i) - ith_target)) / samples.size());
+//        float bucket_error = std::abs(buckets.at(i) - ith_target);
+//        score *= 1 - (bucket_error / samples.size());
+//        score *= 1 - sq(bucket_error / samples.size());
+//        score *= 1 - (bucket_error / samples.size());
+//        // TODO less severe
+//        score *= remapInterval(bucket_error / samples.size(), 0, 1, 1, 0.5);
+//        // map relative error on [0, 1] to score on [1, 0.9]
+//        score *= remapInterval(bucket_error / samples.size(), 0, 1, 1, 0.9);
+        
+//        float bucket_error = std::abs(buckets.at(i) - ith_target);
+//        // map relative error on [0, 1] to score on [1, 0.8]
+//        score *= remapInterval(bucket_error / samples.size(), 0, 1, 1, 0.8);
+        
+        // TODO after a lot of fiddling, back to previous version of score.
         score -= sq(std::abs(buckets.at(i) - ith_target));
     }
+    // TODO after a lot of fiddling, back to previous version of score.
+    // TODO warning assumes these params (100 samples, 12 buckets, 8 near zeros)
+    score = 1 + (score / 7500);
+
+    
     
     // TODO debug print of score and buckets.
-//    std::cout << "    score = " << score << " (";
     std::cout << "    sorted hue buckets (";
     for (int b : buckets) std::cout << b << " ";
-    std::cout << ")" << std::endl;
+    std::cout << ") score=" << score << std::endl;
 
     return score;
 }
-
 
 float fitness_function(Individual& individual)
 {
@@ -1361,8 +1426,10 @@ float fitness_function(Individual& individual)
     
     
     float average_saturation = average.getS();
-    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
-                                                      0, 0.33, 0, 1);
+//    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
+//                                                      0, 0.33, 0, 1);
+    float enough_saturation = remapIntervalClip(average_saturation,
+                                                0, 0.5, 0.5, 1);
 
     
     std::cout << std::endl;
@@ -1371,25 +1438,49 @@ float fitness_function(Individual& individual)
     measureScalarHistogram(population->nTopFitness(1).at(0),
                            12, 8, 0, 1,
                            [](Color c){ return c.getH(); });
-    std::cout << std::endl;
+//    std::cout << std::endl;
     
-    float closeness_to_hue_constraint = 1 + (score / 7500);
+//    float closeness_to_hue_constraint = 1 + (score / 7500);
+    float closeness_to_hue_constraint = score;
+//    float size_constraint = remapIntervalClip(individual.tree().size(),
+//                                              100, 200, 1, 0);
+    float size_constraint = remapIntervalClip(individual.tree().size(),
+                                              100, 200, 1, 0.5);
 
-//    debugPrint(int(score));
-//    debugPrint(1 + (score / 7500));
-//    return closeness_to_midrange;
-//    return closeness_to_midrange * closeness_to_hue_constraint;
-    
-    return (closeness_to_midrange *
-            closeness_to_hue_constraint *
-            exceeds_33pc_saturation);
+    float fitness = (closeness_to_midrange *
+                     closeness_to_hue_constraint *
+                     enough_saturation *
+                     size_constraint);
+
+    std::cout << "    fit=" << fitness;
+    std::cout << " (hue=" << closeness_to_hue_constraint;
+    std::cout << ", gray=" << closeness_to_midrange;
+    std::cout << ", sat=" << enough_saturation;
+    std::cout << ", size=" << size_constraint << ")";
+    std::cout << std::endl << std::endl;
+
+//    return (closeness_to_midrange *
+//            closeness_to_hue_constraint *
+//            exceeds_33pc_saturation *
+//            size_constraint);
+    return fitness;
 }
 
-void run()
+// TODO maybe instead: https://en.cppreference.com/w/cpp/io/manip/put_time
+std::string hours_minutes()
+{
+    std::time_t t = std::time(nullptr);
+    char mbstr[100];
+    std::strftime(mbstr, sizeof(mbstr), "%Y%m%d_%I%M", std::localtime(&t));
+    return std::string(mbstr);
+}
+
+void run(std::string path_for_saving)
 {
     const FunctionSet& function_set = GP::fs();
     int individuals = 100;
-    int generation_equivalents = 50;
+//    int generation_equivalents = 50;
+    int generation_equivalents = 20;
     int steps = individuals * generation_equivalents;
     int max_tree_size = 100;
     {
@@ -1403,6 +1494,16 @@ void run()
             population->evolutionStep(fitness_function, function_set);
         }
     }
+    Individual* final_best = population->nTopFitness(1).at(0);
+    std::cout << "Final best in population:" << std::endl;
+    std::cout << final_best->tree().to_string() << std::endl;
+    
+    Texture* texture = GP::textureFromIndividual(final_best);
+    Texture::displayAndFile(*texture,
+                            path_for_saving + hours_minutes() + "_abs_fit",
+                            Texture::getDefaultRenderSize());
+    
+//    Texture::waitKey();
     population = nullptr;
 }
 
