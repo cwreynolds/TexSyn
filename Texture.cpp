@@ -19,6 +19,14 @@
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Texture::~Texture()
+{
+    raster_->release();
+    raster_.reset();
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Utility for getColor(), special-cased for when alpha is 0 or 1.
 Color Texture::interpolatePointOnTextures(float alpha,
                                           Vec2 position0,

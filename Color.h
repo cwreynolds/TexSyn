@@ -19,7 +19,11 @@ public:
     Color(float gray) : Color(gray, gray, gray) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
-    Color(float r, float g, float b):red_(r),green_(g),blue_(b){assertNormal();}
+//    Color(float r, float g, float b):red_(r),green_(g),blue_(b){assertNormal();}
+    Color(float r, float g, float b)
+      : red_(paper_over_abnormal_values(r)),
+        green_(paper_over_abnormal_values(g)),
+        blue_(paper_over_abnormal_values(b)) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // assignment, set RGB components
     Color operator=(const Color& c)

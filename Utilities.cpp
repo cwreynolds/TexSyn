@@ -401,3 +401,33 @@ void jittered_grid_NxN_in_square(int n,
                               Vec2(rs.frandom01() * cell_width,  // jitter
                                    rs.frandom01() * cell_width));
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+int abnormal_value_counter = 0;
+int abnormal_value_counter_per_run = 0;
+
+float paper_over_abnormal_values(float x)
+{
+    if (!is_normal(x))
+    {
+        std::cout << "!!! replacing abnormal float " << x << "with 0.";
+        std::cout << std::endl;
+        abnormal_value_counter_per_run++;
+        x = 0;
+    }
+    return x;
+}
+
+void abnormal_value_report()
+{
+    if (abnormal_value_counter || abnormal_value_counter_per_run)
+    {
+        abnormal_value_counter += abnormal_value_counter_per_run;
+        std::cout << "Abnormal values replaced by zero this run: ";
+        std::cout << abnormal_value_counter_per_run << ", since launch: ";
+        std::cout << abnormal_value_counter << "." << std::endl;
+        abnormal_value_counter_per_run = 0;
+    }
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

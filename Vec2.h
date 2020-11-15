@@ -16,7 +16,9 @@ public:
     Vec2() {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    Vec2(float x, float y) : x_(x), y_(y) {}
-    Vec2(float x, float y) : x_(x), y_(y){assert(is_normal(x) && is_normal(x));}
+//    Vec2(float x, float y) : x_(x), y_(y){assert(is_normal(x) && is_normal(x));}
+    Vec2(float x, float y) : x_(paper_over_abnormal_values(x)),
+                             y_(paper_over_abnormal_values(y)) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Accessors
     float x() const { return x_; }
@@ -39,11 +41,13 @@ public:
     Vec2 operator*=(float s) { return *this = *this * s; }
     // Rotation about origin by angle in radians (or by precomputed sin/cos).
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
+    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
     // TODO is this how I want to fix it?
-    //      Twist::gatColor() one passed in an INF angle.
-    Vec2 rotate(float a) const
-        { if (!is_normal(a)) a = 0; return rotate(std::sin(a), std::cos(a)); }
+    //      Twist::getColor() one passed in an INF angle.
+//    Vec2 rotate(float a) const
+//        { if (!is_normal(a)) a = 0; return rotate(std::sin(a), std::cos(a)); }
+//    Vec2 rotate(float a) const
+//        { return (is_normal(a) ? rotate(std::sin(a), std::cos(a)) : *this); }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     inline Vec2 rotate(float sin, float cos) const
         { return Vec2(x() * cos + y() * sin, y() * cos - x() * sin); }

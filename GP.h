@@ -1384,12 +1384,92 @@ float measureScalarHistogram(Individual* individual,
     return score;
 }
 
+//    float fitness_function(Individual& individual)
+//    {
+//        Texture& texture = *GP::textureFromIndividual(&individual);
+//
+//        Texture::closeAllWindows();
+//
+//        int render_size = 151;
+//        std::string pathname = "";
+//        std::vector<Individual*> tops = population->nTopFitness(9);
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size * 3;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
+//                                 *GP::textureFromIndividual(tops.at(7)),
+//                                 *GP::textureFromIndividual(tops.at(8)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size * 2;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
+//                                 *GP::textureFromIndividual(tops.at(4)),
+//                                 *GP::textureFromIndividual(tops.at(5)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
+//                                 *GP::textureFromIndividual(tops.at(1)),
+//                                 *GP::textureFromIndividual(tops.at(2)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = 0;
+//        Texture::displayAndFile(texture, pathname, render_size);
+//        Texture::waitKey(1);
+//
+//        Color average;
+//        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+//        for (auto& color : samples) average += color;
+//        average *= 1.0 / samples.size();
+//        float brightness = average.luminance();
+//        float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
+//        float closeness_to_midrange = 1 - relative_distance_from_midrange;
+//
+//
+//        float average_saturation = average.getS();
+//    //    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
+//    //                                                      0, 0.33, 0, 1);
+//        float enough_saturation = remapIntervalClip(average_saturation,
+//                                                    0, 0.5, 0.5, 1);
+//
+//
+//        std::cout << std::endl;
+//        float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
+//                                             [](Color c){ return c.getH(); });
+//        measureScalarHistogram(population->nTopFitness(1).at(0),
+//                               12, 8, 0, 1,
+//                               [](Color c){ return c.getH(); });
+//    //    std::cout << std::endl;
+//
+//    //    float closeness_to_hue_constraint = 1 + (score / 7500);
+//        float closeness_to_hue_constraint = score;
+//    //    float size_constraint = remapIntervalClip(individual.tree().size(),
+//    //                                              100, 200, 1, 0);
+//        float size_constraint = remapIntervalClip(individual.tree().size(),
+//                                                  100, 200, 1, 0.5);
+//
+//        float fitness = (closeness_to_midrange *
+//                         closeness_to_hue_constraint *
+//                         enough_saturation *
+//                         size_constraint);
+//
+//        std::cout << "    fit=" << fitness;
+//        std::cout << " (hue=" << closeness_to_hue_constraint;
+//        std::cout << ", gray=" << closeness_to_midrange;
+//        std::cout << ", sat=" << enough_saturation;
+//        std::cout << ", size=" << size_constraint << ")";
+//        std::cout << std::endl << std::endl;
+//
+//    //    return (closeness_to_midrange *
+//    //            closeness_to_hue_constraint *
+//    //            exceeds_33pc_saturation *
+//    //            size_constraint);
+//        return fitness;
+//    }
+
 float fitness_function(Individual& individual)
 {
     Texture& texture = *GP::textureFromIndividual(&individual);
-    
     Texture::closeAllWindows();
-
     int render_size = 151;
     std::string pathname = "";
     std::vector<Individual*> tops = population->nTopFitness(9);
@@ -1422,50 +1502,42 @@ float fitness_function(Individual& individual)
     average *= 1.0 / samples.size();
     float brightness = average.luminance();
     float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
-    float closeness_to_midrange = 1 - relative_distance_from_midrange;
-    
-    
-    float average_saturation = average.getS();
-//    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
-//                                                      0, 0.33, 0, 1);
-    float enough_saturation = remapIntervalClip(average_saturation,
-                                                0, 0.5, 0.5, 1);
+    // TODO make flat near midrance, penalize only very bright or dark.
+//    float closeness_to_midrange = 1 - relative_distance_from_midrange;
+    float closeness_to_midrange = remapIntervalClip(relative_distance_from_midrange,
+                                                    0.8, 1, 1, 0);
 
     
+    float average_saturation = average.getS();
+    float enough_saturation = remapIntervalClip(average_saturation,
+                                                0, 0.5, 0.5, 1);
     std::cout << std::endl;
-    float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
-                                         [](Color c){ return c.getH(); });
+//    float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
+//                                         [](Color c){ return c.getH(); });
+    float closeness_to_hue_constraint =
+    measureScalarHistogram(&individual, 12, 8, 0, 1,
+                           [](Color c){ return c.getH(); });
     measureScalarHistogram(population->nTopFitness(1).at(0),
                            12, 8, 0, 1,
                            [](Color c){ return c.getH(); });
-//    std::cout << std::endl;
-    
-//    float closeness_to_hue_constraint = 1 + (score / 7500);
-    float closeness_to_hue_constraint = score;
+//    float closeness_to_hue_constraint = score;
 //    float size_constraint = remapIntervalClip(individual.tree().size(),
-//                                              100, 200, 1, 0);
-    float size_constraint = remapIntervalClip(individual.tree().size(),
-                                              100, 200, 1, 0.5);
-
+//                                              100, 200, 1, 0.5);
+//    float size_constraint = remapIntervalClip(individual.tree().size(),
+//                                              150, 200, 1, 0.8);
+    float size_constraint = 1;
     float fitness = (closeness_to_midrange *
                      closeness_to_hue_constraint *
                      enough_saturation *
                      size_constraint);
-
     std::cout << "    fit=" << fitness;
     std::cout << " (hue=" << closeness_to_hue_constraint;
     std::cout << ", gray=" << closeness_to_midrange;
     std::cout << ", sat=" << enough_saturation;
     std::cout << ", size=" << size_constraint << ")";
     std::cout << std::endl << std::endl;
-
-//    return (closeness_to_midrange *
-//            closeness_to_hue_constraint *
-//            exceeds_33pc_saturation *
-//            size_constraint);
     return fitness;
 }
-
 // TODO maybe instead: https://en.cppreference.com/w/cpp/io/manip/put_time
 std::string hours_minutes()
 {
@@ -1480,7 +1552,9 @@ void run(std::string path_for_saving)
     const FunctionSet& function_set = GP::fs();
     int individuals = 100;
 //    int generation_equivalents = 50;
-    int generation_equivalents = 20;
+//    int generation_equivalents = 20;
+    int generation_equivalents = 10;
+//    int generation_equivalents = 1;
     int steps = individuals * generation_equivalents;
     int max_tree_size = 100;
     {
@@ -1504,7 +1578,10 @@ void run(std::string path_for_saving)
                             Texture::getDefaultRenderSize());
     
 //    Texture::waitKey();
+    
+    delete population;
     population = nullptr;
+    abnormal_value_report();
 }
 
 }
