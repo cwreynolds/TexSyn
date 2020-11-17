@@ -29,7 +29,7 @@ public:
     // Default constructor.
     Texture() : raster_(emptyCvMat()) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ~Texture();
+    virtual ~Texture();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Provide a default so Texture is a concrete (non-virtual) class.
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }

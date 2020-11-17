@@ -4127,8 +4127,9 @@ int main(int argc, const char * argv[])
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201113_";
     
     //LPRS().setSeed(20201113);
-    // LPRS().setSeed(20201114);
-    LPRS().setSeed(20201114 * 2);
+    //LPRS().setSeed(20201114);
+    //LPRS().setSeed(20201114 * 2);
+    LPRS().setSeed(20201114 * 3);
     for (int i = 0; i < 100; i++)
     {
         LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");

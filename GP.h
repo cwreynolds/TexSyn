@@ -13,8 +13,23 @@
 #define argFloat() tree.evalSubtree<float>(inc_tex_arg())
 #define argVec2() tree.evalSubtree<Vec2>(inc_tex_arg())
 #define argTexture() *tree.evalSubtree<Texture*>(inc_tex_arg())
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201116 very experimental record result of eval() to
+//               assist in deleting all of an Individual.
+//
+// changed all (const GpTree& t) to (/*const*/ GpTree& t)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    #define evalTexture(body)                                \
+//    [](const GpTree& t)                                   \
+//    {                                                        \
+//        int i = 0;                                           \
+//        auto inc_tex_arg = [&](){ int j = i++; return j; };  \
+//        Texture* t = new body;                               \
+//        return std::any(t);                                  \
+//    }
 #define evalTexture(body)                                \
-[](const GpTree& tree)                                   \
+[](GpTree& tree)                                   \
 {                                                        \
     int i = 0;                                           \
     auto inc_tex_arg = [&](){ int j = i++; return j; };  \
@@ -42,7 +57,7 @@ public:
         {
             {
                 "Vec2", "Vec2", {"Float_m5p5", "Float_m5p5"},
-                [](const GpTree& tree)
+                [](/*const*/ GpTree& tree)
                 {
                     return std::any(Vec2(tree.evalSubtree<float>(0),
                                          tree.evalSubtree<float>(1)));
@@ -1553,8 +1568,8 @@ void run(std::string path_for_saving)
     int individuals = 100;
 //    int generation_equivalents = 50;
 //    int generation_equivalents = 20;
-    int generation_equivalents = 10;
-//    int generation_equivalents = 1;
+//    int generation_equivalents = 10;
+    int generation_equivalents = 1;
     int steps = individuals * generation_equivalents;
     int max_tree_size = 100;
     {
@@ -1574,7 +1589,7 @@ void run(std::string path_for_saving)
     
     Texture* texture = GP::textureFromIndividual(final_best);
     Texture::displayAndFile(*texture,
-                            path_for_saving + hours_minutes() + "_abs_fit",
+                            "", // path_for_saving + hours_minutes() + "_abs_fit",
                             Texture::getDefaultRenderSize());
     
 //    Texture::waitKey();
