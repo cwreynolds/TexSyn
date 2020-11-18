@@ -27,8 +27,9 @@ class Texture : public AbstractTexture
 {
 public:
     // Default constructor.
-    Texture() : raster_(emptyCvMat()) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Texture() : raster_(emptyCvMat()) {}
+    Texture() : raster_(emptyCvMat()) { constructor_count_++; }
     virtual ~Texture();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Provide a default so Texture is a concrete (non-virtual) class.
@@ -146,6 +147,17 @@ public:
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
     
+    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+
+    static void leakCheck()
+    {
+        std::cout << "Texture";
+        std::cout << ": constructions=" << constructor_count_;
+        std::cout << ", destructions=" << destructor_count_;
+        std::cout << ", leaked=" << constructor_count_ - destructor_count_;
+        std::cout << std::endl;
+    }
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 private:
@@ -170,4 +182,8 @@ private:
     static inline int render_size_ = 511;
     // Global default "render as disk" flag: render disk if true, else square.
     static inline bool render_as_disk_ = true;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static inline int constructor_count_ = 0;
+    static inline int destructor_count_ = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };

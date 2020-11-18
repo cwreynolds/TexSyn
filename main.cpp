@@ -4138,6 +4138,7 @@ int main(int argc, const char * argv[])
     LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    Texture::leakCheck();
     Individual::leakCheck();
     abnormal_value_report();
     return EXIT_SUCCESS;

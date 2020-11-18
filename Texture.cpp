@@ -27,6 +27,8 @@ Texture::~Texture()
         << std::endl;
     raster_->release();
     raster_.reset();
+    
+    destructor_count_++;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
