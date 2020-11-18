@@ -1589,7 +1589,8 @@ void run(std::string path_for_saving)
     
     Texture* texture = GP::textureFromIndividual(final_best);
     Texture::displayAndFile(*texture,
-                            "", // path_for_saving + hours_minutes() + "_abs_fit",
+                            "",
+                            // path_for_saving + hours_minutes() + "_abs_fit",
                             Texture::getDefaultRenderSize());
     
 //    Texture::waitKey();

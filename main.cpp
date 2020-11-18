@@ -4129,13 +4129,16 @@ int main(int argc, const char * argv[])
     //LPRS().setSeed(20201113);
     //LPRS().setSeed(20201114);
     //LPRS().setSeed(20201114 * 2);
-    LPRS().setSeed(20201114 * 3);
-    for (int i = 0; i < 100; i++)
-    {
-        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
-    }
+    //LPRS().setSeed(20201114 * 3);
+//    LPRS().setSeed(20201116);
+//    for (int i = 0; i < 100; i++)
+//    {
+//        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+//    }
+    LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    Individual::leakCheck();
     abnormal_value_report();
     return EXIT_SUCCESS;
 }
