@@ -4122,20 +4122,55 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Test absolute (non-relative) fitness evolution: "LimitHue"
-    std::cout << "November 13, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201113_";
-    
-    //LPRS().setSeed(20201113);
-    //LPRS().setSeed(20201114);
-    //LPRS().setSeed(20201114 * 2);
-    //LPRS().setSeed(20201114 * 3);
+//    // Test absolute (non-relative) fitness evolution: "LimitHue"
+//    std::cout << "November 13, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201113_";
+//    //LPRS().setSeed(20201113);
+//    //LPRS().setSeed(20201114);
+//    //LPRS().setSeed(20201114 * 2);
+//    //LPRS().setSeed(20201114 * 3);
 //    LPRS().setSeed(20201116);
 //    for (int i = 0; i < 100; i++)
 //    {
 //        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
 //    }
-    LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Investigating Texture-related (?) memory leak.
+    std::cout << "November 19, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201119_";
+    
+    bool render = false;
+    auto test = [&]()
+    {
+        const FunctionSet& function_set = GP::fs();
+        int population_size = 10;
+        int max_tree_size = 100;
+        int generation_equivalents = 10;
+        Population population(population_size, max_tree_size, function_set);
+        Texture::leakCheck();
+        auto fitness = [](Individual& i)
+        {
+            return GP::textureFromIndividual(&i)->getColor(Vec2()).getS();
+        };
+        for (int i = 0; i < population_size * generation_equivalents; i++)
+        {
+            if (render)
+            {
+                Texture::closeAllWindows();
+                Individual* best = population.findBestIndividual();
+                Texture::displayAndFile(*GP::textureFromIndividual(best));
+                Texture::leakCheck();
+                Texture::waitKey(1);
+            }
+            population.evolutionStep(fitness, function_set);
+        }
+        Texture::leakCheck();
+        if (render) Texture::waitKey();
+    };
+    test();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::leakCheck();
