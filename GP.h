@@ -46,8 +46,30 @@ public:
     {
         // GpTypes
         {
-            {"Texture"},
-            {"Vec2"},
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO use experimental "deleter" function. EG for Texture in TexSyn.
+//            {"Texture"},
+//            {"Vec2"},
+            
+            // TODO gets EXC_BAD_ACCESS at end of deleting Population
+            //      Texture: constructions=2163, destructions=1995, leaked=168
+            { "Texture", [](std::any a)
+                {
+                    if (a.has_value())
+                    {
+                        Texture* t = std::any_cast<Texture*>(a);
+                        if (t) delete t;
+                    }
+                }
+            },
+            
+//            // TODO this runs to end but reports:
+//            //      Texture: constructions=2163, destructions=321, leaked=1842
+//            //      (oh, because it is deleting merely the Texture* pointer?)
+//            { "Texture", [](std::any a) { a.reset(); } },
+            
+            { "Vec2" },
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             { "Float_01", 0.0f, 1.0f },
             { "Float_02", 0.0f, 2.0f },
             { "Float_0_10", 0.0f, 10.0f },
