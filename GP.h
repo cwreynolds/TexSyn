@@ -385,7 +385,11 @@ public:
     {
         return std::any_cast<Texture*>(individual->treeValue());
     };
-    
+    static Texture* textureFromIndividual(std::shared_ptr<Individual> individual)
+    {
+        return std::any_cast<Texture*>(individual->treeValue());
+    };
+
     // For yellow/green evolution test.
     static Color ygAverageColorOfTexture(Texture* texture)
     {
@@ -423,7 +427,11 @@ public:
         // Print log and render Texture.
         auto logger = [&](TournamentGroup group)
         {
-            Individual* tournament_best = group.bestIndividual();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201121 try converting Population over to std::shared_ptr
+//            Individual* tournament_best = group.bestIndividual();
+            std::shared_ptr<Individual> tournament_best = group.bestIndividual();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (false)
             {
                 std::cout << std::endl << "step " << step_count++ << std::endl;
@@ -442,7 +450,11 @@ public:
                 step_count++;
                 Color ac = ygAverageColorOfPopulation(population);
                 std::cout << ac.r() << "," << ac.g() << "," << ac.b() << ",";
-                Individual* best_individual = population.findBestIndividual();
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // TODO 20201121 try converting Population over to std::shared_ptr
+//                Individual* best_individual = population.findBestIndividual();
+                std::shared_ptr<Individual> best_individual = population.findBestIndividual();
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 Texture* bt = GP::textureFromIndividual(best_individual);
                 Color bc = ygAverageColorOfTexture(bt);
                 std::cout << bc.r()<<"," << bc.g()<<"," << bc.b() << std::endl;
@@ -453,11 +465,15 @@ public:
         auto lowest_average_metric = [&]
         (TournamentGroup group, std::function<float(const Color&)> color_metric)
         {
-            group.setAllMetrics([&](Individual* i)
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201121 try converting Population over to std::shared_ptr
+//            group.setAllMetrics([&](Individual* i)
+            group.setAllMetrics([&](std::shared_ptr<Individual> i)
             {
                 Texture* texture = GP::textureFromIndividual(i);
                 return color_metric(GP::ygAverageColorOfTexture(texture));
             });
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             logger(group);
             return group;
         };
@@ -504,14 +520,24 @@ std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 // Print log and render Texture.
 void logger(TournamentGroup group)
 {
-//    static int step_count = 0;
-    Individual* best = group.bestIndividual();
-    Individual* best2 = group.secondBestIndividual();
-    Individual* worst = group.worstIndividual();
-    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
-//    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
-    std::vector<Individual*> tops = population->nTopFitness(6);
-    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    //    static int step_count = 0;
+//        Individual* best = group.bestIndividual();
+//        Individual* best2 = group.secondBestIndividual();
+//        Individual* worst = group.worstIndividual();
+//        //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+//    //    std::vector<Individual*> tops = population->nMostTournamentsSurvived(6);
+//        std::vector<Individual*> tops = population->nTopFitness(6);
+//        //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
+
+    std::shared_ptr<Individual> best = group.bestIndividual();
+    std::shared_ptr<Individual> best2 = group.secondBestIndividual();
+    std::shared_ptr<Individual> worst = group.worstIndividual();
+    std::vector<std::shared_ptr<Individual>> tops = population->nTopFitness(6);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
     //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
 
@@ -629,7 +655,11 @@ void logger(TournamentGroup group)
 //    return score;
 //    }
 
-float measureScalarHistogram(Individual* individual,
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
+//float measureScalarHistogram(Individual* individual,
+float measureScalarHistogram(std::shared_ptr<Individual> individual,
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                              int bucket_count,
                              int must_be_near_zero,
                              float min_metric,
@@ -704,7 +734,11 @@ float measureScalarHistogram(Individual* individual,
 //        return measureScalarHistogram(individual, 10, 0, 1, saturation);
 //    }
 
-float measureExposure(Individual* individual)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
+
+//float measureExposure(Individual* individual)
+float measureExposure(std::shared_ptr<Individual> individual)
 {
     std::cout << "    brightness: ";
     auto exposure = [](Color c){ return c.luminance(); };
@@ -712,18 +746,24 @@ float measureExposure(Individual* individual)
     return measureScalarHistogram(individual, 10, 0, 0, 1, exposure);
 }
 
-float measureSaturation(Individual* individual)
+//float measureSaturation(Individual* individual)
+float measureSaturation(std::shared_ptr<Individual> individual)
 {
     std::cout << "    saturation: ";
     auto saturation = [](Color c){ return c.getS(); };
 //    return measureScalarHistogram(individual, 10, 0, 1, saturation);
     return measureScalarHistogram(individual, 10, 0 , 0, 1, saturation);
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
 
-float measureHue(Individual* individual)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
+//float measureHue(Individual* individual)
+float measureHue(std::shared_ptr<Individual> individual)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
     std::cout << "    hue: ";
     auto hue = [](Color c){ return c.getH(); };
@@ -741,12 +781,17 @@ float measureHue(Individual* individual)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Score TournamentGroup according to histogram flatness for given metric.
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
 TournamentGroup worstMetric(TournamentGroup group,
-                            std::function<float(Individual*)> metric)
+//                            std::function<float(Individual*)> metric)
+                            std::function<float(std::shared_ptr<Individual>)> metric)
 {
-    group.setAllMetrics([&](Individual* i){ return metric(i); });
+//    group.setAllMetrics([&](Individual* i){ return metric(i); });
+    group.setAllMetrics([&](std::shared_ptr<Individual> i){ return metric(i); });
     return group;
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Score TournamentGroup according to worst "exposure" histogram.
 TournamentGroup worstExposure(TournamentGroup group)
@@ -861,7 +906,11 @@ TournamentGroup worstHue(TournamentGroup group)
 // Score TournamentGroup according to worst size.
 TournamentGroup worstSize(TournamentGroup group)
 {
-    auto metric = [&](Individual* i) { return -(i->tree().size()); };
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    auto metric = [&](Individual* i) { return -(i->tree().size()); };
+    auto metric = [&](std::shared_ptr<Individual> i) { return -(i->tree().size()); };
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     TournamentGroup ranked = worstMetric(group, metric);
 //    std::cout << "worstSize: ";
     std::cout << "    size: ";
@@ -880,7 +929,11 @@ TournamentGroup worstSize(TournamentGroup group)
 // Score TournamentGroup according to worst size.
 TournamentGroup worstNoise(TournamentGroup group)
 {
-    auto metric = [&](Individual* i)
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    auto metric = [&](Individual* i)
+    auto metric = [&](std::shared_ptr<Individual> i)
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         return -(GP::textureFromIndividual(i)->highFrequencyScore());
     };
@@ -1209,8 +1262,11 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     if (group.minTreeSize() > 100) ranked_groups.push_back(worstSize(group));
 //    if (LPRS().frandom01() > 0.5) ranked_groups.push_back(worstNoise(group));
 
-    // std::function<float (Individual *)>
-    auto combine = [&](Individual* individual)
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    auto combine = [&](Individual* individual)
+    auto combine = [&](std::shared_ptr<Individual> individual)
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         float score = 1;
         for (auto& group : ranked_groups)
@@ -1227,7 +1283,11 @@ TournamentGroup tournamentFunction(TournamentGroup group)
     
     std::cout << "    combined scores = ";
     for (auto& m : combined_result.members()) std::cout << m.metric << " ";
-    Individual* best = group.bestIndividual();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    Individual* best = group.bestIndividual();
+    std::shared_ptr<Individual> best = group.bestIndividual();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << std::endl;
     std::cout << "    winner size=" << best->tree().size();
     std::cout << " won=" << best->getTournamentsSurvived();
@@ -1357,7 +1417,10 @@ static inline Population* population = nullptr;
 
 // TODO use multiplicative fitness (on [0,1]) for each bucket and final score.
 
-float measureScalarHistogram(Individual* individual,
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
+float measureScalarHistogram(std::shared_ptr<Individual> individual,
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                              int bucket_count,
                              int must_be_near_zero,
                              float min_metric,
@@ -1421,95 +1484,22 @@ float measureScalarHistogram(Individual* individual,
     return score;
 }
 
-//    float fitness_function(Individual& individual)
-//    {
-//        Texture& texture = *GP::textureFromIndividual(&individual);
-//
-//        Texture::closeAllWindows();
-//
-//        int render_size = 151;
-//        std::string pathname = "";
-//        std::vector<Individual*> tops = population->nTopFitness(9);
-//        Texture::window_x = 0;
-//        Texture::window_y = render_size * 3;
-//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
-//                                 *GP::textureFromIndividual(tops.at(7)),
-//                                 *GP::textureFromIndividual(tops.at(8)),
-//                                 pathname, render_size);
-//        Texture::window_x = 0;
-//        Texture::window_y = render_size * 2;
-//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
-//                                 *GP::textureFromIndividual(tops.at(4)),
-//                                 *GP::textureFromIndividual(tops.at(5)),
-//                                 pathname, render_size);
-//        Texture::window_x = 0;
-//        Texture::window_y = render_size;
-//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
-//                                 *GP::textureFromIndividual(tops.at(1)),
-//                                 *GP::textureFromIndividual(tops.at(2)),
-//                                 pathname, render_size);
-//        Texture::window_x = 0;
-//        Texture::window_y = 0;
-//        Texture::displayAndFile(texture, pathname, render_size);
-//        Texture::waitKey(1);
-//
-//        Color average;
-//        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
-//        for (auto& color : samples) average += color;
-//        average *= 1.0 / samples.size();
-//        float brightness = average.luminance();
-//        float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
-//        float closeness_to_midrange = 1 - relative_distance_from_midrange;
-//
-//
-//        float average_saturation = average.getS();
-//    //    float exceeds_33pc_saturation = remapIntervalClip(average_saturation,
-//    //                                                      0, 0.33, 0, 1);
-//        float enough_saturation = remapIntervalClip(average_saturation,
-//                                                    0, 0.5, 0.5, 1);
-//
-//
-//        std::cout << std::endl;
-//        float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
-//                                             [](Color c){ return c.getH(); });
-//        measureScalarHistogram(population->nTopFitness(1).at(0),
-//                               12, 8, 0, 1,
-//                               [](Color c){ return c.getH(); });
-//    //    std::cout << std::endl;
-//
-//    //    float closeness_to_hue_constraint = 1 + (score / 7500);
-//        float closeness_to_hue_constraint = score;
-//    //    float size_constraint = remapIntervalClip(individual.tree().size(),
-//    //                                              100, 200, 1, 0);
-//        float size_constraint = remapIntervalClip(individual.tree().size(),
-//                                                  100, 200, 1, 0.5);
-//
-//        float fitness = (closeness_to_midrange *
-//                         closeness_to_hue_constraint *
-//                         enough_saturation *
-//                         size_constraint);
-//
-//        std::cout << "    fit=" << fitness;
-//        std::cout << " (hue=" << closeness_to_hue_constraint;
-//        std::cout << ", gray=" << closeness_to_midrange;
-//        std::cout << ", sat=" << enough_saturation;
-//        std::cout << ", size=" << size_constraint << ")";
-//        std::cout << std::endl << std::endl;
-//
-//    //    return (closeness_to_midrange *
-//    //            closeness_to_hue_constraint *
-//    //            exceeds_33pc_saturation *
-//    //            size_constraint);
-//        return fitness;
-//    }
-
-float fitness_function(Individual& individual)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201121 try converting Population over to std::shared_ptr
+//float fitness_function(Individual& individual)
+float fitness_function(std::shared_ptr<Individual> individual)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
-    Texture& texture = *GP::textureFromIndividual(&individual);
+//    Texture& texture = *GP::textureFromIndividual(&individual);
+    Texture& texture = *GP::textureFromIndividual(individual);
     Texture::closeAllWindows();
     int render_size = 151;
     std::string pathname = "";
-    std::vector<Individual*> tops = population->nTopFitness(9);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    std::vector<Individual*> tops = population->nTopFitness(9);
+    std::vector<std::shared_ptr<Individual>> tops = population->nTopFitness(9);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Texture::window_x = 0;
     Texture::window_y = render_size * 3;
     Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
@@ -1552,8 +1542,13 @@ float fitness_function(Individual& individual)
 //    float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
 //                                         [](Color c){ return c.getH(); });
     float closeness_to_hue_constraint =
-    measureScalarHistogram(&individual, 12, 8, 0, 1,
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    measureScalarHistogram(&individual, 12, 8, 0, 1,
+//                           [](Color c){ return c.getH(); });
+    measureScalarHistogram(individual, 12, 8, 0, 1,
                            [](Color c){ return c.getH(); });
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     measureScalarHistogram(population->nTopFitness(1).at(0),
                            12, 8, 0, 1,
                            [](Color c){ return c.getH(); });
@@ -1605,7 +1600,11 @@ void run(std::string path_for_saving)
             population->evolutionStep(fitness_function, function_set);
         }
     }
-    Individual* final_best = population->nTopFitness(1).at(0);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201121 try converting Population over to std::shared_ptr
+//    Individual* final_best = population->nTopFitness(1).at(0);
+    std::shared_ptr<Individual> final_best = population->nTopFitness(1).at(0);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << "Final best in population:" << std::endl;
     std::cout << final_best->tree().to_string() << std::endl;
     
