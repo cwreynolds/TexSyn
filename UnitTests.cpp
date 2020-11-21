@@ -71,7 +71,9 @@ bool utilities()
             st(nearestOddInt(-1.9) == -1) &&
             st(nearestOddInt(-2.1) == -3) &&
             st(any_to_string<float>(0.5f) == "0.5") &&
-            st(any_to_string<std::string>(std::string("abc")) == "abc"));
+            st(any_to_string<std::string>(std::string("abc")) == "abc") &&
+            st(set_contains(std::set<int>{1, 2, 3}, 2)) &&
+            st(!set_contains(std::set<int>{1, 2, 3}, 5)));
 };
 
 // Tests for Color class.

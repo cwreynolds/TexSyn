@@ -16,6 +16,7 @@
 #include <vector>
 #include <chrono>
 #include <any>
+#include <set>
 class Vec2;
 class Color;
 
@@ -457,3 +458,11 @@ template <typename T> std::string vec_to_string(const std::vector<T>& vector)
 float paper_over_abnormal_values(float x);
 void abnormal_value_report();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Returns bool indicating if the given set contains the given element.
+// TODO Stand-in for the not-until-C++20 function std::set::contains())
+//      See: https://en.cppreference.com/w/cpp/container/set/contains
+template <typename T> bool set_contains(const std::set<T>& set, const T& key)
+{
+    return set.find(key) != set.end();
+}
