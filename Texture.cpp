@@ -22,11 +22,15 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Texture::~Texture()
 {
-//    std::cout
-//        << "############################################### Texture::~Texture()"
-//        << std::endl;
+    // TODO deja vu?
+    assert("already invalid at top of ~Texture" && valid());
+    
+    // TODO I suspect both of these are superfluous:
     raster_->release();
     raster_.reset();
+    
+    // TODO 20201122 temporary for debugging
+    markAsInvalid();
     
     destructor_count_++;
 }
@@ -228,32 +232,6 @@ void Texture::closeAllWindows()
     window_x = 0;
     window_y = 0;
 }
-
-// Reset statistics for debugging.
-void Texture::resetStatistics() const
-{
-    // Clear bounds of sampled positions.
-    min_x = std::numeric_limits<float>::infinity();
-    max_x = -std::numeric_limits<float>::infinity();
-    min_y = std::numeric_limits<float>::infinity();
-    max_y = -std::numeric_limits<float>::infinity();
-}
-
-// Collect statistics for debugging.
-void Texture::collectStatistics(Vec2 position, Color color) const
-{
-    // TODO "color" currently ignored
-    // Update bounds of sampled positions.
-    if (min_x > position.x()) min_x = position.x();
-    if (max_x < position.x()) max_x = position.x();
-    if (min_y > position.y()) min_y = position.y();
-    if (max_y < position.y()) max_y = position.y();
-}
-
-float Texture::min_x = std::numeric_limits<float>::infinity();
-float Texture::max_x = -std::numeric_limits<float>::infinity();
-float Texture::min_y = std::numeric_limits<float>::infinity();
-float Texture::max_y = -std::numeric_limits<float>::infinity();
 
 // Utilities for rasterizing a Texture to tiling of pixels, with versions
 // for a square and a disk of pixels. Each require a "size" (width of the

@@ -32,6 +32,29 @@ public:
     Texture() : raster_(emptyCvMat()) { constructor_count_++; }
     virtual ~Texture();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201122 temporary for debugging
+    // TODO similar concept, but use it as a work-around, a gate on deleting the
+    //      apparently invalid instance. Count the number of such occurrences.
+    bool valid() const
+    {
+        bool v = ((valid_top_ == validity_key_) &&
+                  (valid_bot_ == validity_key_ / 2));
+        if (!v) invalid_instance_counter_++;
+        return v;
+    }
+    void markAsInvalid()
+    {
+        valid_top_ = 0;
+        valid_bot_ = 0;
+    }
+    static void invalidInstanceReport()
+    {
+        std::cout << "Texture invalid instance count = ";
+        std::cout << invalid_instance_counter_ << std::endl;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Provide a default so Texture is a concrete (non-virtual) class.
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
@@ -134,21 +157,14 @@ public:
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
     thread_local static inline int expensive_to_nest = 0;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    void fft_test() const;
-//    float highFrequencyScore() const;
+    // TODO temp?
     void fft_test();
     float highFrequencyScore();
-//    float highFrequencyScore(int render_size) const;
-    float cached_high_frequency_score_ = 0;
-    
-    //======================
     
     // TODO just a prototype
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
     
-    //~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~   ~
-
     static void leakCheck()
     {
         std::cout << "Texture";
@@ -157,17 +173,17 @@ public:
         std::cout << ", leaked=" << constructor_count_ - destructor_count_;
         std::cout << std::endl;
     }
-    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 private:
-    // TODO maybe we need a OOBB Bounds2d class?
-    // TODO maybe should be stored in external std::map keyed on Texture pointer
-    // Store bounds of sampled positions.
-    static float min_x;
-    static float max_x;
-    static float min_y;
-    static float max_y;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201122 temporary for debugging
+    static inline const int validity_key_ = 1234567890;
+    static inline int invalid_instance_counter_ = 0;
+    int valid_top_ = validity_key_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,6 +193,7 @@ private:
     // TODO just a prototype
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     std::vector<Color> cached_random_color_samples_;
+    float cached_high_frequency_score_ = 0;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Global default render size.
     static inline int render_size_ = 511;
@@ -185,5 +202,10 @@ private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201122 temporary for debugging
+    int valid_bot_ = validity_key_ / 2;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };

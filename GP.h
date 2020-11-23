@@ -34,8 +34,15 @@
     int i = 0;                                           \
     auto inc_tex_arg = [&](){ int j = i++; return j; };  \
     Texture* t = new body;                               \
+    assert("evalTexture" && t->valid()); \
     return std::any(t);                                  \
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201122
+// experiment above to check validity of newly constructed Tex.
+//     assert("evalTexture" && t->valid());
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class GP
 {
@@ -51,18 +58,36 @@ public:
 //            {"Texture"},
 //            {"Vec2"},
             
-            // TODO gets EXC_BAD_ACCESS at end of deleting Population
-            //      Texture: constructions=2163, destructions=1995, leaked=168
+//            // TODO gets EXC_BAD_ACCESS at end of deleting Population
+//            //      Texture: constructions=2163, destructions=1995, leaked=168
+//            { "Texture", [](std::any a)
+//                {
+//                    // TODO very temp
+//                    std::cout << "In deleter for Texture GpType";
+//                    if (a.has_value())
+//                    {
+//                        Texture* t = std::any_cast<Texture*>(a);
+//                        std::cout << " t=" << t;
+//
+//                        // TODO 20201121 temporary for debugging
+//                        t->validate();
+//
+//                        if (t) delete t;
+//                    }
+//                    std::cout << std::endl;
+//                }
+//            },
+            
             { "Texture", [](std::any a)
                 {
                     if (a.has_value())
                     {
                         Texture* t = std::any_cast<Texture*>(a);
-                        if (t) delete t;
+                        if (t && t->valid()) delete t;
                     }
                 }
             },
-            
+
 //            // TODO this runs to end but reports:
 //            //      Texture: constructions=2163, destructions=321, leaked=1842
 //            //      (oh, because it is deleting merely the Texture* pointer?)
@@ -1499,6 +1524,13 @@ float fitness_function(std::shared_ptr<Individual> individual)
     // TODO 20201121 try converting Population over to std::shared_ptr
 //    std::vector<Individual*> tops = population->nTopFitness(9);
     std::vector<std::shared_ptr<Individual>> tops = population->nTopFitness(9);
+    
+    // TODO 20201122 Got EXC_BAD_ACCESS inside Texture::displayAndFile3
+    //               try checking all Textures for validity.
+    
+    assert(texture.valid());
+    for (int i = 0; i < 9; i++)
+        assert(GP::textureFromIndividual(tops.at(i))->valid());
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Texture::window_x = 0;
     Texture::window_y = render_size * 3;
@@ -1583,10 +1615,11 @@ void run(std::string path_for_saving)
 {
     const FunctionSet& function_set = GP::fs();
     int individuals = 100;
+//    int individuals = 10;
 //    int generation_equivalents = 50;
 //    int generation_equivalents = 20;
-//    int generation_equivalents = 10;
-    int generation_equivalents = 1;
+    int generation_equivalents = 10;
+//    int generation_equivalents = 1;
     int steps = individuals * generation_equivalents;
     int max_tree_size = 100;
     {
@@ -1596,8 +1629,20 @@ void run(std::string path_for_saving)
         
         for (int i = 0; i < steps; i++)
         {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201122 -- before each step, lets validate the population:
+            for (auto& individual : population->individuals())
+                { assert(GP::textureFromIndividual(individual)->valid()); }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
             // Run evolution step with given tournament and function set.
             population->evolutionStep(fitness_function, function_set);
+            
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201122 -- after each step, lets validate the population:
+            for (auto& individual : population->individuals())
+                { assert(GP::textureFromIndividual(individual)->valid()); }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1614,8 +1659,11 @@ void run(std::string path_for_saving)
                             // path_for_saving + hours_minutes() + "_abs_fit",
                             Texture::getDefaultRenderSize());
     
+    final_best.reset();
 //    Texture::waitKey();
-    
+    Texture::leakCheck();
+    Individual::leakCheck();
+
     delete population;
     population = nullptr;
     abnormal_value_report();
