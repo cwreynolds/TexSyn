@@ -4136,61 +4136,95 @@ int main(int argc, const char * argv[])
 //    }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/*
-    // Investigating Texture-related (?) memory leak.
-    std::cout << "November 19, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201119_";
-    
-    bool render = false;
-    auto test = [&]()
-    {
-        const FunctionSet& function_set = GP::fs();
-        int population_size = 10;
-        int max_tree_size = 100;
-        int generation_equivalents = 10;
-        Population population(population_size, max_tree_size, function_set);
-        Texture::leakCheck();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201121 try converting Population over to std::shared_ptr
-//        auto fitness = [](Individual& i)
-        auto fitness = [](std::shared_ptr<Individual> i)
-        {
-//            return GP::textureFromIndividual(&i)->getColor(Vec2()).getS();
-            return GP::textureFromIndividual(i)->getColor(Vec2()).getS();
-        };
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        for (int i = 0; i < population_size * generation_equivalents; i++)
-        {
-            if (render)
-            {
-                Texture::closeAllWindows();
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                // TODO 20201121 try converting Population over to std::shared_ptr
-//                Individual* best = population.findBestIndividual();
-                std::shared_ptr<Individual> best = population.findBestIndividual();
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                Texture::displayAndFile(*GP::textureFromIndividual(best));
-                Texture::leakCheck();
-                Texture::waitKey(1);
-            }
-            population.evolutionStep(fitness, function_set);
-        }
-        Texture::leakCheck();
-        if (render) Texture::waitKey();
-    };
-    test();
-*/
+
+//    // Investigating Texture-related (?) memory leak.
+//    std::cout << "November 19, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201119_";
+//    
+//    bool render = false;
+//    auto test = [&]()
+//    {
+//        const FunctionSet& function_set = GP::fs();
+//        int population_size = 10;
+//        int max_tree_size = 100;
+//        int generation_equivalents = 10;
+//        Population population(population_size, max_tree_size, function_set);
+//        Texture::leakCheck();
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20201121 try converting Population over to std::shared_ptr
+//        //auto fitness = [](Individual& i)
+//        auto fitness = [](std::shared_ptr<Individual> i)
+//        {
+//            //return GP::textureFromIndividual(&i)->getColor(Vec2()).getS();
+//            return GP::textureFromIndividual(i)->getColor(Vec2()).getS();
+//        };
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        for (int i = 0; i < population_size * generation_equivalents; i++)
+//        {
+//            if (render)
+//            {
+//                Texture::closeAllWindows();
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                // TODO 20201121 try converting Population over to std::shared_ptr
+//                //Individual* best = population.findBestIndividual();
+//                std::shared_ptr<Individual> best = population.findBestIndividual();
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                Texture::displayAndFile(*GP::textureFromIndividual(best));
+//                Texture::leakCheck();
+//                Texture::waitKey(1);
+//            }
+//            population.evolutionStep(fitness, function_set);
+//        }
+//        Texture::leakCheck();
+//        if (render) Texture::waitKey();
+//    };
+//    test();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // Investigating Texture-related (?) memory leak.
-    std::cout << "November 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201122_";
-    for (int i = 0; i < 10; i++)
+    
+//    // Investigating Texture-leak / double-delete problem.
+//    std::cout << "November 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201122_";
+//    for (int i = 0; i < 10; i++)
+//    {
+//        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+//    }
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Investigating Texture-leak / double-delete problem.
+    std::cout << "November 23, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201123_";
+    
+    // Block to contain lifetime of Textures:
     {
-        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+        float f = 1;
+        float d = 0.1;
+        Uniform full_green(Color(f, 0, 0));
+        Uniform dark_green(Color(d, 0, 0));
+        Uniform full_red(Color(0, f, 0));
+        Uniform dark_red(Color(0, d, 0));
+        Grating red_stripes(Vec2(0, 0), full_red,
+                            Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+        Grating green_stripes(Vec2(0, 0), full_green,
+                              Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+        Add plaid(red_stripes, green_stripes);
+        
+        float width = 0.05;
+        Texture::displayAndFile(plaid);
+        // Note to future self: ...Old versions were just rename of previous.
+        //                      See today's git commit to get that if needed.
+        //Texture::displayAndFile(BlurOld(width, plaid));
+        //Texture::displayAndFile(Blur(width, plaid));
+        //Texture::diff(BlurOld(width, plaid), Blur(width, plaid));
+        //Texture::diff(EdgeDetectOld(width, plaid), EdgeDetect(width, plaid));
+        //Texture::diff(EdgeEnhanceOld(width, 1, plaid),
+        //              EdgeEnhance(width, 1, plaid));
+        Texture::displayAndFile(Blur(width, plaid));
+        Texture::displayAndFile(EdgeDetect(width, plaid));
+        Texture::displayAndFile(EdgeEnhance(width, 2, plaid));
+        Texture::waitKey();
     }
-
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

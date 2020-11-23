@@ -811,6 +811,10 @@ public:
         : width(_width), texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
+        return single(position, width, texture);
+    }
+    static Color single(Vec2 position, float width, const Texture& texture)
+    {
         float radius = width / 2;
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());
@@ -878,16 +882,17 @@ private:
 class EdgeDetect : public Texture
 {
 public:
-    EdgeDetect(const float width, const Texture& texture)
-      : blur(width, texture),
-        edges(texture, blur) {}
+    EdgeDetect(const float width_, const Texture& texture_)
+      : width(width_), texture(texture_) {}
     Color getColor(Vec2 position) const override
     {
-        return edges.getColor(position) + Color::gray(0.5);
+        Color original = texture.getColor(position);
+        Color blurred = Blur::single(position, width, texture);
+        return (original - blurred) + Color::gray(0.5);
     }
 private:
-    Blur blur;
-    Subtract edges;
+    const float width;
+    const Texture& texture;
 };
 
 // Enhances the edges (emphasize the high frequencies) of a given texture. Based
@@ -900,19 +905,17 @@ public:
     EdgeEnhance(const float _width,
                 const float _strength,
                 const Texture& _texture)
-      : texture(_texture),
-        strength(_strength),
-        blurred(_width, texture) {}
+        : width(_width), strength(_strength), texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
-        Color orig_color = texture.getColor(position);
-        Color blur_color = blurred.getColor(position);
-        return orig_color + ((orig_color - blur_color) * strength);
+        Color original = texture.getColor(position);
+        Color blurred = Blur::single(position, width, texture);
+        return original + ((original - blurred) * strength);
     }
 private:
+    const float width;
     const float strength;
     const Texture& texture;
-    const Blur blurred;
 };
 
 // In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
