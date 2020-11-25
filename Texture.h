@@ -20,6 +20,9 @@ class AbstractTexture
 {
 public:
     AbstractTexture(){}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    virtual ~AbstractTexture() = default;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     virtual Color getColor(Vec2 position) const = 0;
 };
 
@@ -42,6 +45,17 @@ public:
         bool v = ((valid_top_ == validity_key_) &&
                   (valid_bot_ == validity_key_ / 2));
         if (!v) invalid_instance_counter_++;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201124 more verbose:
+        if (!v)
+        {
+            std::cout << "fail Texture::valid(), should be (";
+            std::cout << validity_key_ << ", " << validity_key_ / 2;
+            std::cout << ") but are (";
+            std::cout << valid_top_ << ", " << valid_bot_ / 2 << ")";
+            std::cout << std::endl;
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return v;
     }
     void markAsInvalid()

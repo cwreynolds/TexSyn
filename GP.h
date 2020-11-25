@@ -1621,7 +1621,15 @@ void run(std::string path_for_saving)
     int generation_equivalents = 10;
 //    int generation_equivalents = 1;
     int steps = individuals * generation_equivalents;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201124
+    // Wow! For 100 it stops on the 10 construction of an
+    // Inidivdual. For 10, it completed a while run, with
+    // 100 in the initial population and another 1000 offspring.
+    //
     int max_tree_size = 100;
+    // int max_tree_size = 10;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         Timer t("LimitHue test");
         population = new Population(individuals, max_tree_size, function_set);

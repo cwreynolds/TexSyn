@@ -81,6 +81,69 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20201118"> <a href="#20201118" class="date">November
+        18, 2020</a>
+      <h1><em>HueLimit</em> test for “absolute” fitness</h1>
+      <p>Preparing some “work in progress” <a href="http://www.red3d.com/cwr/presentations/20201118_TexSyn_LazyPredator.pdf">slides</a>
+        for a presentation at Dan Shapiro's UCSC class, I made an extended
+        series of runs of the <code>HueLimit</code> evolution test. I was a bit
+        disappointed with previous runs using “multi-objective fitness
+        functions” — related to <a href="https://en.wikipedia.org/wiki/Pareto_efficiency">Pareto
+          optimality</a>. I had been time-multiplexing the various fitness
+        components, for example to optimize for both A and B, I would randomly
+        choose between optimizing either A or B on each evolution step. The
+        results seemed a little “weak” — the population improved according to
+        both A and B, but were not exceptionally good at either.</p>
+      <p>So I backed up to some previous work in this area (<a href="http://www.red3d.com/cwr/gots/">Goal
+          Oriented Texture Synthesis</a>, 2011-2013) and followed the approach
+        used there. The multiple fitness measures are mapped onto the range [0,
+        1] and then multiplied together for a final numerical fitness. This is
+        “absolute fitness” that can be measured for a single individual in
+        isolation. (As opposed to “relative fitness” measured in competitive
+        tournaments.) The fitness components can be “weighted” by limiting the
+        portion of range they occupy. For example a component on the entire [0,
+        1] range is “strong” while one remapped to [0.9, 1] has only a mild
+        strength.</p>
+      <p>The <code>HueLimit</code> fitness function was primarily based on
+        limiting hue distribution. Each TexSyn texture was randomly sampled, and
+        each sample was assigned to on of twelve “buckets” in a hue histogram. A
+        perfect fitness was to have exactly four of the twelve hue buckets with
+        ¼ of the samples each, with the other eight buckets empty. Deviation
+        from this pattern reduced the fitness. In addition two other minor
+        fitness components required the texture have average saturation values
+        above 0.5, and for the average brightness to be in the middle 80% of the
+        brightness range (basically, neither black nor white). I made about 50
+        runs like this, saving a render of the best individual at the end of the
+        run. Then I hand selected the textures that seemed most visually
+        interesting to me. Each <code>HueLimit</code> run has a population of
+        100 individuals, with max initial size of 100, and 1000 evolution steps
+        (10 “generation equivalents”). These each took about 15 minutes to run
+        on my laptop.</p>
+      <img src="images/20201113_0806_abs_fit.png" alt="20201113_0806_abs_fit" title="20201113_0806_abs_fit"
+        height="340" width="340">&nbsp;<img src="images/20201115_0833_abs_fit.png"
+        alt="20201115_0833_abs_fit" title="20201115_0833_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201113_0851_abs_fit.png" alt="20201113_0851_abs_fit" title="20201113_0851_abs_fit"
+        height="340" width="340"> <img src="images/20201114_1100_abs_fit.png" alt="20201114_1100_abs_fit"
+        title="20201114_1100_abs_fit" height="340" width="340">&nbsp;<img src="images/20201114_1111_abs_fit.png"
+        alt="20201114_1111_abs_fit" title="20201114_1111_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201114_0927_abs_fit.png" alt="20201114_0927_abs_fit" title="20201114_0927_abs_fit"
+        height="340" width="340"> <img src="images/20201115_1224_abs_fit.png" alt="20201115_1224_abs_fit"
+        title="20201115_1224_abs_fit" height="340" width="340">&nbsp;<img src="images/20201115_0328_abs_fit.png"
+        alt="20201115_0328_abs_fit" title="20201115_0328_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201116_0858_abs_fit.png" alt="20201116_0858_abs_fit" title="20201116_0858_abs_fit"
+        height="340" width="340"> <img src="images/20201114_0118_abs_fit.png" alt="20201114_0118_abs_fit"
+        title="20201114_0118_abs_fit" height="340" width="340">&nbsp;<img src="images/20201114_1129_abs_fit.png"
+        alt="20201114_1129_abs_fit" title="20201114_1129_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201115_0617_abs_fit.png" alt="20201115_0617_abs_fit" title="20201115_0617_abs_fit"
+        height="340" width="340"> <img src="images/20201113_1152_abs_fit.png" alt="20201113_1152_abs_fit"
+        title="20201113_1152_abs_fit" height="340" width="340">&nbsp;<img src="images/20201114_1218_abs_fit.png"
+        alt="20201114_1218_abs_fit" title="20201114_1218_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201114_0439_abs_fit.png" alt="20201114_0439_abs_fit" title="20201114_0439_abs_fit"
+        height="340" width="340"> <img src="images/20201114_0214_abs_fit.png" alt="20201114_0214_abs_fit"
+        title="20201114_0214_abs_fit" height="340" width="340">&nbsp;<img src="images/20201114_1146_abs_fit.png"
+        alt="20201114_1146_abs_fit" title="20201114_1146_abs_fit" height="340" width="340">&nbsp;<img
+        src="images/20201114_1127_abs_fit.png" alt="20201114_1127_abs_fit" title="20201114_1127_abs_fit"
+        height="340" width="340"> </div>
     <div class="post" id="20201104"> <a href="#20201104" class="date">November
         4, 2020</a>
       <h1>Hard limit on <code>LotsOfSpotsBase</code> constructor runtime</h1>

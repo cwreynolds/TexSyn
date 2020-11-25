@@ -4192,39 +4192,51 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Refactor Blur, EdgeDetect, EdgeEnhance.
+//    std::cout << "November 23, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201123_";
+//
+//    // Block to contain lifetime of Textures:
+//    {
+//        float f = 1;
+//        float d = 0.1;
+//        Uniform full_green(Color(f, 0, 0));
+//        Uniform dark_green(Color(d, 0, 0));
+//        Uniform full_red(Color(0, f, 0));
+//        Uniform dark_red(Color(0, d, 0));
+//        Grating red_stripes(Vec2(0, 0), full_red,
+//                            Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+//        Grating green_stripes(Vec2(0, 0), full_green,
+//                              Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+//        Add plaid(red_stripes, green_stripes);
+//
+//        float width = 0.05;
+//        Texture::displayAndFile(plaid);
+//        // Note to future self: ...Old versions were just rename of previous.
+//        //                      See today's git commit to get that if needed.
+//        //Texture::displayAndFile(BlurOld(width, plaid));
+//        //Texture::displayAndFile(Blur(width, plaid));
+//        //Texture::diff(BlurOld(width, plaid), Blur(width, plaid));
+//        //Texture::diff(EdgeDetectOld(width, plaid), EdgeDetect(width, plaid));
+//        //Texture::diff(EdgeEnhanceOld(width, 1, plaid),
+//        //              EdgeEnhance(width, 1, plaid));
+//        Texture::displayAndFile(Blur(width, plaid));
+//        Texture::displayAndFile(EdgeDetect(width, plaid));
+//        Texture::displayAndFile(EdgeEnhance(width, 2, plaid));
+//        Texture::waitKey();
+//    }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     // Investigating Texture-leak / double-delete problem.
     std::cout << "November 23, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201123_";
     
-    // Block to contain lifetime of Textures:
+    for (int i = 0; i < 10; i++)
     {
-        float f = 1;
-        float d = 0.1;
-        Uniform full_green(Color(f, 0, 0));
-        Uniform dark_green(Color(d, 0, 0));
-        Uniform full_red(Color(0, f, 0));
-        Uniform dark_red(Color(0, d, 0));
-        Grating red_stripes(Vec2(0, 0), full_red,
-                            Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
-        Grating green_stripes(Vec2(0, 0), full_green,
-                              Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
-        Add plaid(red_stripes, green_stripes);
-        
-        float width = 0.05;
-        Texture::displayAndFile(plaid);
-        // Note to future self: ...Old versions were just rename of previous.
-        //                      See today's git commit to get that if needed.
-        //Texture::displayAndFile(BlurOld(width, plaid));
-        //Texture::displayAndFile(Blur(width, plaid));
-        //Texture::diff(BlurOld(width, plaid), Blur(width, plaid));
-        //Texture::diff(EdgeDetectOld(width, plaid), EdgeDetect(width, plaid));
-        //Texture::diff(EdgeEnhanceOld(width, 1, plaid),
-        //              EdgeEnhance(width, 1, plaid));
-        Texture::displayAndFile(Blur(width, plaid));
-        Texture::displayAndFile(EdgeDetect(width, plaid));
-        Texture::displayAndFile(EdgeEnhance(width, 2, plaid));
-        Texture::waitKey();
+        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
     }
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
