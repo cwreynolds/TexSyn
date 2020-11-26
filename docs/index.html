@@ -106,19 +106,20 @@
         strength.</p>
       <p>The <code>HueLimit</code> fitness function was primarily based on
         limiting hue distribution. Each TexSyn texture was randomly sampled, and
-        each sample was assigned to on of twelve “buckets” in a hue histogram. A
-        perfect fitness was to have exactly four of the twelve hue buckets with
-        ¼ of the samples each, with the other eight buckets empty. Deviation
-        from this pattern reduced the fitness. In addition two other minor
-        fitness components required the texture have average saturation values
-        above 0.5, and for the average brightness to be in the middle 80% of the
-        brightness range (basically, neither black nor white). I made about 50
-        runs like this, saving a render of the best individual at the end of the
-        run. Then I hand selected the textures that seemed most visually
-        interesting to me. Each <code>HueLimit</code> run has a population of
-        100 individuals, with max initial size of 100, and 1000 evolution steps
-        (10 “generation equivalents”). These each took about 15 minutes to run
-        on my laptop.</p>
+        each sample was assigned to one of twelve “buckets” in a hue histogram.
+        A perfect fitness was to have exactly four of the twelve hue buckets
+        with ¼ of the samples each, with the other eight buckets empty.
+        Deviation from this pattern reduced the fitness. In addition two other
+        minor fitness components required the texture have average saturation
+        values above 0.5, and for the average brightness to be in the middle 80%
+        of the brightness range (basically, neither black nor white). The
+        result, then is a “random texture” which meets certain constraints
+        defined by the fitness function. I made about 50 runs like this, saving
+        a render of the best individual at the end of each run. Then I hand
+        selected the textures that seemed most visually interesting to me. Each
+        <code>HueLimit</code> run has a population of 100 individuals, with max
+        initial size of 100, and 1000 evolution steps (10 “generation
+        equivalents”). These each took about 15 minutes to run on my laptop.</p>
       <img src="images/20201113_0806_abs_fit.png" alt="20201113_0806_abs_fit" title="20201113_0806_abs_fit"
         height="340" width="340">&nbsp;<img src="images/20201115_0833_abs_fit.png"
         alt="20201115_0833_abs_fit" title="20201115_0833_abs_fit" height="340" width="340">&nbsp;<img
