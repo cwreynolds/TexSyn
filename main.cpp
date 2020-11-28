@@ -4228,15 +4228,36 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Investigating Texture-leak / double-delete problem.
-    std::cout << "November 23, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201123_";
+//    // Investigating Texture-leak / double-delete problem.
+//    std::cout << "November 23, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201123_";
+//
+//    for (int i = 0; i < 10; i++)
+//    {
+//        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+//    }
     
-    for (int i = 0; i < 10; i++)
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Problem with CotsMap?! Investigating Texture-leak/double-delete problem.
+    std::cout << "November 27, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201127_";
+    
+    const FunctionSet& function_set = GP::fs();
+//    int population_size = 10;
+    int max_tree_size = 25;
+//    int generation_equivalents = 10;
+    for (int i = 0; i < 100; i++)
     {
-        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+        GpTree tree;
+        function_set.makeRandomTree(max_tree_size, tree);
+        if (tree.getFunction().name() == "CotsMap")
+        {
+//            debugPrint(tree.to_string(true, "... "));
+            std::cout << tree.to_string(true, "... ") << std::endl << std::endl;
+        }
     }
-
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
