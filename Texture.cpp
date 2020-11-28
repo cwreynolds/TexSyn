@@ -25,9 +25,11 @@ Texture::~Texture()
     // TODO deja vu?
     assert("already invalid at top of ~Texture" && valid());
     
-    // TODO I suspect both of these are superfluous:
-    raster_->release();
-    raster_.reset();
+//    // TODO I suspect both of these are superfluous:
+//    raster_->release();
+//    raster_.reset();
+//    // TODO this too, right?
+//    raster_ = nullptr;
     
     // TODO 20201122 temporary for debugging
     markAsInvalid();

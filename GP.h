@@ -371,7 +371,11 @@ public:
             {
                 "CotsMap",
                 "Texture",
-                {"Vec2", "Vec2", "Vec2", "Vec2", "Texture", "Texture"},
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // TODO 20201128 diagnosed bug last night, saw this error today
+//                {"Vec2", "Vec2", "Vec2", "Vec2", "Texture", "Texture"},
+                {"Vec2", "Vec2", "Vec2", "Vec2", "Texture"},
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 evalTexture(CotsMap(argVec2(),
                                     argVec2(),
                                     argVec2(),
@@ -1614,8 +1618,8 @@ std::string hours_minutes()
 void run(std::string path_for_saving)
 {
     const FunctionSet& function_set = GP::fs();
-    int individuals = 100;
-//    int individuals = 10;
+//    int individuals = 100;
+    int individuals = 10;
 //    int generation_equivalents = 50;
 //    int generation_equivalents = 20;
     int generation_equivalents = 10;

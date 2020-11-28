@@ -4239,25 +4239,36 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Problem with CotsMap?! Investigating Texture-leak/double-delete problem.
-    std::cout << "November 27, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201127_";
+//    // Problem with CotsMap?! Investigating Texture-leak/double-delete problem.
+//    std::cout << "November 27, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201127_";
+//
+//    const FunctionSet& function_set = GP::fs();
+//    int max_tree_size = 25;
+//    for (int i = 0; i < 100; i++)
+//    {
+//        GpTree tree;
+//        function_set.makeRandomTree(max_tree_size, tree);
+//        if (tree.getFunction().name() == "CotsMap")
+//        {
+//            //debugPrint(tree.to_string(true, "... "));
+//            //std::cout << tree.to_string() << std::endl << std::endl;
+//            std::cout << tree.to_string(true) << std::endl << std::endl;
+//            //std::cout << tree.to_string(true, "... ") << std::endl << std::endl;
+//        }
+//    }
     
-    const FunctionSet& function_set = GP::fs();
-//    int population_size = 10;
-    int max_tree_size = 25;
-//    int generation_equivalents = 10;
-    for (int i = 0; i < 100; i++)
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing fix to CotsMap.
+    std::cout << "November 28, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201128_";
+    
+    for (int i = 0; i < 10; i++)
     {
-        GpTree tree;
-        function_set.makeRandomTree(max_tree_size, tree);
-        if (tree.getFunction().name() == "CotsMap")
-        {
-//            debugPrint(tree.to_string(true, "... "));
-            std::cout << tree.to_string(true, "... ") << std::endl << std::endl;
-        }
+        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
     }
-    
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
