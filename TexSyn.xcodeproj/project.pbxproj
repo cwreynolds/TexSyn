@@ -283,12 +283,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.1.2/include/opencv4/;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.1.2/lib;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/include/opencv4/;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/lib;
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-I/usr/local/Cellar/opencv/4.1.2/include/opencv4/opencv",
-					"-I/usr/local/Cellar/opencv/4.1.2/include/opencv4",
-					"-L/usr/local/Cellar/opencv/4.1.2/lib",
+					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4/opencv",
+					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4",
+					"-L/usr/local/Cellar/opencv/4.5.0_5/lib",
 					"-lopencv_gapi",
 					"-lopencv_stitching",
 					"-lopencv_aruco",
@@ -348,12 +348,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.1.2/include/opencv4/;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.1.2/lib;
+				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/include/opencv4/;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/lib;
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-I/usr/local/Cellar/opencv/4.1.2/include/opencv4/opencv",
-					"-I/usr/local/Cellar/opencv/4.1.2/include/opencv4",
-					"-L/usr/local/Cellar/opencv/4.1.2/lib",
+					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4/opencv",
+					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4",
+					"-L/usr/local/Cellar/opencv/4.5.0_5/lib",
 					"-lopencv_gapi",
 					"-lopencv_stitching",
 					"-lopencv_aruco",

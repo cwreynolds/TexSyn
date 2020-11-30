@@ -8,8 +8,18 @@
 
 #include "TexSyn.h"
 #include "GP.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201129 temp
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#pragma clang diagnostic pop
 
-bool run_unit_tests = true;
+//bool run_unit_tests = true;
+bool run_unit_tests = false;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 int main(int argc, const char * argv[])
 {
@@ -4260,14 +4270,58 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing fix to CotsMap.
-    std::cout << "November 28, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201128_";
+//    // Testing fix to CotsMap.
+//    std::cout << "November 28, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201128_";
+//
+//    for (int i = 0; i < 10; i++)
+//    {
+//        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+//    }
     
-    for (int i = 0; i < 10; i++)
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Test memory usage of repeated construction/display of "pure OpenCV" Mat.
+    std::cout << "November 29, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201129_";
+    
+//    for (int i = 0; i < 1000; i++)
+//    {
+//        debugPrint(i);
+//        int size = 800;
+//        cv::Mat mat(size, size, CV_32FC3, cv::Scalar(1, 0, 0));
+//        cv::circle(mat,
+//                   cv::Point2i(rand() % size, rand() % size),
+//                   50 + rand() % 150,
+//                   cv::Scalar(0, 1, 1),
+//                   cv::FILLED);
+//        std::string window_name = "window";
+//        cv::namedWindow(window_name);
+//        cv::moveWindow(window_name, 200, 0);
+//        cv::imshow(window_name, mat);
+//        cv::waitKey(1);
+//        cv::destroyWindow(window_name);
+//    }
+//    cv::waitKey();
+
+
+    std::string window_name = "window";
+    cv::namedWindow(window_name);
+    for (int i = 0; i < 1000; i++)
     {
-        LimitHue::run("/Users/cwr/Desktop/TexSyn_temp/");
+        debugPrint(i);
+        int size = 800;
+        cv::Mat mat(size, size, CV_32FC3, cv::Scalar(1, 0, 0));
+        cv::circle(mat,
+                   cv::Point2i(rand() % size, rand() % size),
+                   50 + rand() % 150,
+                   cv::Scalar(0, 1, 1),
+                   cv::FILLED);
+        cv::imshow(window_name, mat);
+        cv::waitKey(1);
     }
+    cv::destroyWindow(window_name);
+    cv::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
