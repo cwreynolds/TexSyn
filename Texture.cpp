@@ -71,7 +71,7 @@ void Texture::windowPlacementTool(cv::Mat& mat)
     std::string window_name = "TexSyn" + std::to_string(window_counter++);
     cv::namedWindow(window_name);       // Create a window for display.
     int tm = 23;  // TODO approximate top margin height
-    cv::moveWindow(window_name, window_x, window_y  + tm + mat.rows);
+    cv::moveWindow(window_name, window_x, window_y);
     window_x += tm;
     window_y += tm;
     cv::imshow(window_name, mat);  // Show our image inside it.

@@ -4281,10 +4281,31 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Test memory usage of repeated construction/display of "pure OpenCV" Mat.
-    std::cout << "November 29, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201129_";
-    
+//    // Test memory usage of repeated construction/display of "pure OpenCV" Mat.
+//    std::cout << "November 29, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201129_";
+//
+//    //    for (int i = 0; i < 1000; i++)
+//    //    {
+//    //        debugPrint(i);
+//    //        int size = 800;
+//    //        cv::Mat mat(size, size, CV_32FC3, cv::Scalar(1, 0, 0));
+//    //        cv::circle(mat,
+//    //                   cv::Point2i(rand() % size, rand() % size),
+//    //                   50 + rand() % 150,
+//    //                   cv::Scalar(0, 1, 1),
+//    //                   cv::FILLED);
+//    //        std::string window_name = "window";
+//    //        cv::namedWindow(window_name);
+//    //        cv::moveWindow(window_name, 200, 0);
+//    //        cv::imshow(window_name, mat);
+//    //        cv::waitKey(1);
+//    //        cv::destroyWindow(window_name);
+//    //    }
+//    //    cv::waitKey();
+//
+//    std::string window_name = "window";
+//    cv::namedWindow(window_name);
 //    for (int i = 0; i < 1000; i++)
 //    {
 //        debugPrint(i);
@@ -4295,34 +4316,29 @@ int main(int argc, const char * argv[])
 //                   50 + rand() % 150,
 //                   cv::Scalar(0, 1, 1),
 //                   cv::FILLED);
-//        std::string window_name = "window";
-//        cv::namedWindow(window_name);
-//        cv::moveWindow(window_name, 200, 0);
 //        cv::imshow(window_name, mat);
 //        cv::waitKey(1);
-//        cv::destroyWindow(window_name);
 //    }
+//    cv::destroyWindow(window_name);
 //    cv::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Test/update Texture::windowPlacementTool() for OpenCV 4.5.0.
+    std::cout << "November 30, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201130_";
+    
+    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0.4));
+    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.04, -0.05), 0.4));
+    Texture::displayAndFile(ColorNoise(Vec2(), Vec2(-0.02, -0.01), 0.4));
+    for (int i = 0; i < 30; i++)
+        Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0));
+    
+    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "",  511);
+    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "", 1023);
 
-    std::string window_name = "window";
-    cv::namedWindow(window_name);
-    for (int i = 0; i < 1000; i++)
-    {
-        debugPrint(i);
-        int size = 800;
-        cv::Mat mat(size, size, CV_32FC3, cv::Scalar(1, 0, 0));
-        cv::circle(mat,
-                   cv::Point2i(rand() % size, rand() % size),
-                   50 + rand() % 150,
-                   cv::Scalar(0, 1, 1),
-                   cv::FILLED);
-        cv::imshow(window_name, mat);
-        cv::waitKey(1);
-    }
-    cv::destroyWindow(window_name);
     cv::waitKey();
-
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

@@ -116,13 +116,19 @@ public:
     // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
     static void rasterizeSquare(int size, PixelFunction pixel_function);
     static void rasterizeDisk(int size, PixelFunction pixel_function);
-    // Combines display on screen and writing file, but primary benefit is that
-    // this allows writing an arbitrarily nested expression of TexSyn
-    // constructors, whose lifetime extends across both operations.
+    // Combines display on screen and (if non-empty "pathname" provided) writing
+    // to file. Displays at default resolution (typically 511x511) unless "size"
+    // parameter is given. Combined to allow writing inline an arbitrarily
+    // nested expression of TexSyn constructors, whose lifetime extends across
+    // both operations.
     // See: https://cwreynolds.github.io/TexSyn/#20200305
+    static void displayAndFile(const Texture& texture)
+        { displayAndFile(texture, ""); }
+    static void displayAndFile(const Texture& texture, std::string pathname)
+        { displayAndFile(texture, pathname, getDefaultRenderSize()); }
     static void displayAndFile(const Texture& texture,
-                               std::string pathname = "",
-                               int size = getDefaultRenderSize());
+                               std::string pathname,
+                               int size);
     static void waitKey();
     static void waitKey(int delay_in_milliseconds);
     // close the window
