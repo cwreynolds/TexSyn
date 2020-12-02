@@ -9,6 +9,16 @@
 #pragma once
 #include "../LazyPredator/LazyPredator.h"  // TODO use something more portable.
 
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+// TODO 20201201 prototyping new "one window" GUI
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#pragma clang diagnostic pop
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
 // Abbreviations for oft-repeated expressions below (used only in this file):
 #define argFloat() tree.evalSubtree<float>(inc_tex_arg())
 #define argVec2() tree.evalSubtree<Vec2>(inc_tex_arg())
@@ -1513,6 +1523,106 @@ float measureScalarHistogram(std::shared_ptr<Individual> individual,
     return score;
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // TODO 20201121 try converting Population over to std::shared_ptr
+//    //float fitness_function(Individual& individual)
+//    float fitness_function(std::shared_ptr<Individual> individual)
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    {
+//    //    Texture& texture = *GP::textureFromIndividual(&individual);
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        Texture::closeAllWindows();
+//        int render_size = 151;
+//        std::string pathname = "";
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20201121 try converting Population over to std::shared_ptr
+//    //    std::vector<Individual*> tops = population->nTopFitness(9);
+//        std::vector<std::shared_ptr<Individual>> tops = population->nTopFitness(9);
+//
+//        // TODO 20201122 Got EXC_BAD_ACCESS inside Texture::displayAndFile3
+//        //               try checking all Textures for validity.
+//
+//        assert(texture.valid());
+//        for (int i = 0; i < 9; i++)
+//            assert(GP::textureFromIndividual(tops.at(i))->valid());
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size * 3;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
+//                                 *GP::textureFromIndividual(tops.at(7)),
+//                                 *GP::textureFromIndividual(tops.at(8)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size * 2;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
+//                                 *GP::textureFromIndividual(tops.at(4)),
+//                                 *GP::textureFromIndividual(tops.at(5)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = render_size;
+//        Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
+//                                 *GP::textureFromIndividual(tops.at(1)),
+//                                 *GP::textureFromIndividual(tops.at(2)),
+//                                 pathname, render_size);
+//        Texture::window_x = 0;
+//        Texture::window_y = 0;
+//        Texture::displayAndFile(texture, pathname, render_size);
+//        Texture::waitKey(1);
+//
+//        Color average;
+//        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+//        for (auto& color : samples) average += color;
+//        average *= 1.0 / samples.size();
+//        float brightness = average.luminance();
+//        float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
+//        // TODO make flat near midrance, penalize only very bright or dark.
+//    //    float closeness_to_midrange = 1 - relative_distance_from_midrange;
+//        float closeness_to_midrange = remapIntervalClip(relative_distance_from_midrange,
+//                                                        0.8, 1, 1, 0);
+//
+//
+//        float average_saturation = average.getS();
+//        float enough_saturation = remapIntervalClip(average_saturation,
+//                                                    0, 0.5, 0.5, 1);
+//        std::cout << std::endl;
+//    //    float score = measureScalarHistogram(&individual, 12, 8, 0, 1,
+//    //                                         [](Color c){ return c.getH(); });
+//        float closeness_to_hue_constraint =
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20201121 try converting Population over to std::shared_ptr
+//    //    measureScalarHistogram(&individual, 12, 8, 0, 1,
+//    //                           [](Color c){ return c.getH(); });
+//        measureScalarHistogram(individual, 12, 8, 0, 1,
+//                               [](Color c){ return c.getH(); });
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        measureScalarHistogram(population->nTopFitness(1).at(0),
+//                               12, 8, 0, 1,
+//                               [](Color c){ return c.getH(); });
+//    //    float closeness_to_hue_constraint = score;
+//    //    float size_constraint = remapIntervalClip(individual.tree().size(),
+//    //                                              100, 200, 1, 0.5);
+//    //    float size_constraint = remapIntervalClip(individual.tree().size(),
+//    //                                              150, 200, 1, 0.8);
+//        float size_constraint = 1;
+//        float fitness = (closeness_to_midrange *
+//                         closeness_to_hue_constraint *
+//                         enough_saturation *
+//                         size_constraint);
+//        std::cout << "    fit=" << fitness;
+//        std::cout << " (hue=" << closeness_to_hue_constraint;
+//        std::cout << ", gray=" << closeness_to_midrange;
+//        std::cout << ", sat=" << enough_saturation;
+//        std::cout << ", size=" << size_constraint << ")";
+//        std::cout << std::endl << std::endl;
+//        return fitness;
+//    }
+
+// TODO 20201201 prototyping new "one window" GUI
+cv::Mat gui_image;
+std::string window_name = "LimitHue run";
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20201121 try converting Population over to std::shared_ptr
 //float fitness_function(Individual& individual)
@@ -1557,6 +1667,16 @@ float fitness_function(std::shared_ptr<Individual> individual)
     Texture::window_x = 0;
     Texture::window_y = 0;
     Texture::displayAndFile(texture, pathname, render_size);
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO 20201201 prototyping new "one window" GUI
+    int gui_w = (render_size + 10) * 5;
+    int gui_h = (render_size + 10) * 3;
+    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
+    cv::imshow(window_name, gui_image);
+    cv::moveWindow(window_name, 300, 300);
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
     Texture::waitKey(1);
 
     Color average;
@@ -1606,6 +1726,9 @@ float fitness_function(std::shared_ptr<Individual> individual)
     std::cout << std::endl << std::endl;
     return fitness;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // TODO maybe instead: https://en.cppreference.com/w/cpp/io/manip/put_time
 std::string hours_minutes()
 {
@@ -1639,6 +1762,12 @@ void run(std::string path_for_saving)
         population = new Population(individuals, max_tree_size, function_set);
 //        population->run(steps, function_set, tournamentFunction);
         
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO 20201201 prototyping new "one window" GUI
+        cv::namedWindow(window_name);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+        
         for (int i = 0; i < steps; i++)
         {
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1671,6 +1800,11 @@ void run(std::string path_for_saving)
                             // path_for_saving + hours_minutes() + "_abs_fit",
                             Texture::getDefaultRenderSize());
     
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO 20201201 prototyping new "one window" GUI
+    cv::destroyWindow(window_name);
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
     final_best.reset();
 //    Texture::waitKey();
     Texture::leakCheck();

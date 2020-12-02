@@ -4324,20 +4324,29 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Test/update Texture::windowPlacementTool() for OpenCV 4.5.0.
+//    std::cout << "November 30, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201130_";
+//
+//    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0.4));
+//    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.04, -0.05), 0.4));
+//    Texture::displayAndFile(ColorNoise(Vec2(), Vec2(-0.02, -0.01), 0.4));
+//    for (int i = 0; i < 30; i++)
+//    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0));
+//
+//    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "",  511);
+//    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "", 1023);
+//
+//    cv::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     // Test/update Texture::windowPlacementTool() for OpenCV 4.5.0.
-    std::cout << "November 30, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201130_";
+    std::cout << "December 1, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201201_";
     
-    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0.4));
-    Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.04, -0.05), 0.4));
-    Texture::displayAndFile(ColorNoise(Vec2(), Vec2(-0.02, -0.01), 0.4));
-    for (int i = 0; i < 30; i++)
-        Texture::displayAndFile(ColorNoise(Vec2(), Vec2( 0.1,   0.2),  0));
-    
-    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "",  511);
-    //Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.1, 0.2),  0), "", 1023);
-
-    cv::waitKey();
+    LimitHue::run("");
+//    cv::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
