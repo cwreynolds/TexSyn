@@ -4346,7 +4346,6 @@ int main(int argc, const char * argv[])
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201201_";
     
     LimitHue::run("");
-//    cv::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

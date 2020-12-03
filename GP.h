@@ -16,6 +16,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+// TODO 20201202 very experimental putText()
+#include <opencv2/freetype.hpp>
 #pragma clang diagnostic pop
 //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
@@ -1623,6 +1625,10 @@ float measureScalarHistogram(std::shared_ptr<Individual> individual,
 cv::Mat gui_image;
 std::string window_name = "LimitHue run";
 
+// TODO 20201202 very experimental putText()
+cv::Ptr<cv::freetype::FreeType2> ft2;
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20201121 try converting Population over to std::shared_ptr
 //float fitness_function(Individual& individual)
@@ -1672,9 +1678,94 @@ float fitness_function(std::shared_ptr<Individual> individual)
     // TODO 20201201 prototyping new "one window" GUI
     int gui_w = (render_size + 10) * 5;
     int gui_h = (render_size + 10) * 3;
-    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
+//    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
+//    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar(127, 127, 127));
+
+    
+    
+    int text_y = 0;
+//    float text_scale = 0.8;
+    float text_scale = 1;
+//    cv::putText(gui_image, "hello world", cv::Point(40, text_y += 40),
+//                cv::FONT_HERSHEY_COMPLEX, text_scale, CV_RGB(1, 0.5, 0));
+    
+//    cv::putText(gui_image,
+//                "hello world",
+//                cv::Point(40, text_y += 40),
+//                cv::FONT_HERSHEY_DUPLEX,
+//                text_scale,
+//                CV_RGB(1, 0.5, 0)
+//                // , cv::FILLED
+//                , 1
+//                , cv::LINE_AA
+//                );
+    cv::putText(gui_image,
+                "hello world",
+                cv::Point(40, text_y += 40),
+                cv::FONT_HERSHEY_SIMPLEX,
+                text_scale / 2,
+                CV_RGB(1, 0.5, 0),
+                1,
+                cv::LINE_AA);
+    
+    cv::putText(gui_image,
+                "hello world",
+                cv::Point(40, text_y += 40),
+                cv::FONT_HERSHEY_SIMPLEX,
+                text_scale,
+                CV_RGB(1, 0.5, 0),
+                1,
+                cv::LINE_AA);
+    
+    cv::putText(gui_image,
+                "hello world",
+                cv::Point(40, text_y += 80),
+                cv::FONT_HERSHEY_SIMPLEX,
+                text_scale * 2,
+                CV_RGB(1, 0.5, 0),
+                3,
+                cv::LINE_AA);
+//
+//
+//
+//    cv::putText(gui_image,
+//                "HueLimit_20201201_1123_aJWp",
+//                cv::Point(40, text_y += 40),
+//                cv::FONT_HERSHEY_PLAIN, 0.5, CV_RGB(1, 1, 1));
+
+
+    // TODO 20201202 very experimental putText()
+    ft2->putText(gui_image,
+                 "hello world",
+                 cv::Point(40, text_y += 20), // textOrg
+                 10, // fontHeight,
+                 cv::Scalar::all(255),
+                 cv::FILLED,  // thickness,
+                 cv::LINE_AA, // 8, // linestyle,
+                 true);
+
+    // TODO 20201202 very experimental putText()
+    ft2->putText(gui_image,
+                 "hello world",
+                 cv::Point(40, text_y += 40), // textOrg
+                 20, // fontHeight,
+                 cv::Scalar::all(255),
+                 cv::FILLED,  // thickness,
+                 cv::LINE_AA, // 8, // linestyle,
+                 true);
+
+    ft2->putText(gui_image,
+                 "hello world",
+                 cv::Point(40, text_y += 80), // textOrg
+                 60, // fontHeight,
+                 cv::Scalar::all(255),
+                 cv::FILLED,  // thickness,
+                 cv::LINE_AA, // 8, // linestyle,
+                 true);
+
     cv::imshow(window_name, gui_image);
-    cv::moveWindow(window_name, 300, 300);
+//    cv::moveWindow(window_name, 300, 300);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     Texture::waitKey(1);
@@ -1765,6 +1856,25 @@ void run(std::string path_for_saving)
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO 20201201 prototyping new "one window" GUI
         cv::namedWindow(window_name);
+        cv::moveWindow(window_name, 15, 15);
+        
+        
+        // TODO 20201202 very experimental putText()
+//        String text = "Funny text inside the box";
+//        int fontHeight = 60;
+//        int thickness = -1;
+//        int linestyle = 8;
+//        Mat img(600, 800, CV_8UC3, Scalar::all(0));
+//        int baseline=0;
+//        cv::Ptr<cv::freetype::FreeType2> ft2;
+        ft2 = cv::freetype::createFreeType2();
+//        ft2->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
+        ft2->loadFontData("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf", 0);
+//        Size textSize = ft2->getTextSize(text,
+//                                         fontHeight,
+//                                         thickness,
+//                                         &baseline);
+        
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
         
@@ -1799,16 +1909,15 @@ void run(std::string path_for_saving)
                             "",
                             // path_for_saving + hours_minutes() + "_abs_fit",
                             Texture::getDefaultRenderSize());
-    
+    final_best.reset();
+    Texture::waitKey();
+    Texture::leakCheck();
+    Individual::leakCheck();
+
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // TODO 20201201 prototyping new "one window" GUI
     cv::destroyWindow(window_name);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-    final_best.reset();
-//    Texture::waitKey();
-    Texture::leakCheck();
-    Individual::leakCheck();
 
     delete population;
     population = nullptr;
