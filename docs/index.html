@@ -81,6 +81,48 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20201203"> <a href="#20201203" class="date">December
+        3, 2020</a>
+      <h1>Recent infrastructure work</h1>
+      <p>During the HueLimit runs described below on <a href="#20201118">November
+          18</a>, a nagging problem was that the virtual memory partition of
+        TexSyn grew at a significant rate, indicating a “memory leak.” My laptop
+        could run for 12-18 hours before exhausting its memory partition at
+        about 50 GB. I did know that I had prototyped <code>GpTree::eval()</code>
+        to construct <code>Texture</code> objects on the heap and realized they
+        were not being freed/deleted when the <code> Individual</code>
+        containing them was deleted. The <code>Texture</code> objects
+        themselves are pretty small, but I assumed the OpenCV <code>cv::Mat</code>
+        (in which Textures store their rendered pixels for display and file
+        output) were not getting deleted, causing the leak.</p>
+      <p>Turns out that was <strong>not</strong> the problem, it was actually a
+        memory leak in OpenCV itself, for each window it opens on macOS. (See my
+        OpenCV <a href="https://github.com/opencv/opencv/issues/18962">bug
+          report</a>.) But I didn't track <em>that</em> down until I put in the
+        <code>GpTree::deleteCachedValues()</code> to free those <code>Texture</code>
+        instances created during <code>eval()</code>. But to do <em>that</em>
+        I had to track down a very confusing bug which happened to be introduced
+        by a typo in <code>GP.h</code> where the specification for the <code>GpFunction</code>
+        for <em>CotsMap</em> indicated an extra parameter of type <code>Texture</code>.
+        This caused the GpTree to have a “phantom limb” which produced symptoms
+        taking me a long time to understand.</p>
+      <p>Having diagnosed the memory leak, the fix was simply to avoid opening
+        so many windows. The many windows came from my goofy-prototype-hack of a
+        user interface which opened and closed thousands of windows. I needed to
+        do the obvious and normal thing: to have a single window, and update it
+        as required. I also wanted to be able to put text labels on that GUI
+        (graphical user interface) control panel. So I started digging into
+        OpenCV's support for drawing text on images. That led to finding another
+        <a href="https://github.com/opencv/opencv/issues/19005">bug</a>, which
+        led me to reconsider a decision I'd made almost a year ago about storing
+        Textures in <code>cv::Mats</code> of type <code>CV_32FC3</code>. That
+        is, my image data represents the color of each pixel as three 32 bit
+        floating point numbers (representing red, green, and blue) for a total
+        of <strong>96</strong> bits per pixel. Its is <strong>much</strong>
+        more common to use <strong>24</strong> bits per pixel with an 8 bit
+        byte to represent red, green, and blue (aka <code>CV_8UC3</code>). I am
+        investigating that now but it is not running yet.</p>
+    </div>
     <div class="post" id="20201118"> <a href="#20201118" class="date">November
         18, 2020</a>
       <h1><em>HueLimit</em> test for “absolute” fitness</h1>

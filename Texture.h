@@ -194,6 +194,15 @@ public:
         std::cout << std::endl;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+    static int getDefaultOpencvMatType() { return default_opencv_mat_type_; }
+    static void setDefaultOpencvMatType(int opencv_mat_type)
+        { default_opencv_mat_type_ = opencv_mat_type; }
+    // should be private
+    static int default_opencv_mat_type_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

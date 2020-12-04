@@ -4341,11 +4341,31 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Test/update Texture::windowPlacementTool() for OpenCV 4.5.0.
-    std::cout << "December 1, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201201_";
+//    // Test/update Texture::windowPlacementTool() for OpenCV 4.5.0.
+//    std::cout << "December 1, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201201_";
+//
+//    LimitHue::run("");
     
-    LimitHue::run("");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // OpenCV bug report: https://github.com/opencv/opencv/issues/19005
+    std::cout << "December 3, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201203_";
+    
+//    compare_putTexts("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf");
+    
+    
+    Vec2 v1(-1.5, 0);
+    Vec2 v2(+1.5, 0);
+    std::cout << "first render" << std::endl;
+    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
+    cv::waitKey(1);
+    std::cout << "second render" << std::endl;
+    Texture::setDefaultOpencvMatType(CV_8UC3);
+    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
+
+    cv::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -89,7 +89,11 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     if ((size != raster_->rows) || (size != raster_->cols))
     {
         // Reset our OpenCV Mat to be (size, size) with 3 floats per pixel.
-        raster_->create(size, size, CV_32FC3);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+//        raster_->create(size, size, CV_32FC3);
+        raster_->create(size, size, getDefaultOpencvMatType());
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO Code assumes disk center at window center, so size must be odd.
         assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
         // Synchronizes access to opencv_image by multiple row threads.
@@ -126,7 +130,11 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     int half = size / 2;
     // First and last pixels on j-th row of time
     int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
-    cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+//    cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+    cv::Mat row_image(1, size, getDefaultOpencvMatType(), cv::Scalar(0.5, 0.5, 0.5));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for (int i = -x_limit; i <= x_limit; i++)
     {
         // Read TexSyn Color from Texture at (i, j).
@@ -721,5 +729,8 @@ const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+int Texture::default_opencv_mat_type_ = CV_32FC3;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
