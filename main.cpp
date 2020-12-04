@@ -4349,27 +4349,30 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // OpenCV bug report: https://github.com/opencv/opencv/issues/19005
-    std::cout << "December 3, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201203_";
+//    // OpenCV bug report: https://github.com/opencv/opencv/issues/19005
+//    std::cout << "December 3, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201203_";
+//
+//    //compare_putTexts("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf");
+//
+//    Vec2 v1(-0.8, 0);
+//    Vec2 v2(+0.8, 0);
+//    std::cout << "first render" << std::endl;
+//    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
+//    cv::waitKey(1);
+//    std::cout << "second render" << std::endl;
+//    Texture::setDefaultOpencvMatType(CV_8UC3);
+//    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
+//
+//    cv::waitKey();
     
-//    compare_putTexts("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf");
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // Prototyping GUI.
+    std::cout << "December 4, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201204_";
     
-//    Vec2 v1(-1.5, 0);
-//    Vec2 v2(+1.5, 0);
-//    Vec2 v1(-2, 0);
-//    Vec2 v2(+2, 0);
-    Vec2 v1(-0.8, 0);
-    Vec2 v2(+0.8, 0);
-    std::cout << "first render" << std::endl;
-    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
-    cv::waitKey(1);
-    std::cout << "second render" << std::endl;
-    Texture::setDefaultOpencvMatType(CV_8UC3);
-    Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
-
-    cv::waitKey();
+    LimitHue::run("");
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

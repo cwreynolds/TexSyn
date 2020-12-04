@@ -8,6 +8,10 @@
 
 #pragma once
 #include "../LazyPredator/LazyPredator.h"  // TODO use something more portable.
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201204 start GUI package
+#include "GUI.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 // TODO 20201201 prototyping new "one window" GUI
@@ -1680,7 +1684,8 @@ float fitness_function(std::shared_ptr<Individual> individual)
     int gui_h = (render_size + 10) * 3;
 //    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
 //    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar(127, 127, 127));
+//    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar(127, 127, 127));
+    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar::all(127));
 
     
     
@@ -1848,6 +1853,14 @@ void run(std::string path_for_saving)
     int max_tree_size = 100;
     // int max_tree_size = 10;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201204 prototype GUI
+    GUI gui(Vec2(500, 100), Vec2(100, 500));
+    gui.drawText("TexSyn/LazyPredator GUI", 15, Vec2(20, 20), Color(0.5, 1, 0));
+    gui.refresh();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     {
         Timer t("LimitHue test");
         population = new Population(individuals, max_tree_size, function_set);
@@ -1868,8 +1881,8 @@ void run(std::string path_for_saving)
 //        int baseline=0;
 //        cv::Ptr<cv::freetype::FreeType2> ft2;
         ft2 = cv::freetype::createFreeType2();
-//        ft2->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
-        ft2->loadFontData("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf", 0);
+        ft2->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
+//        ft2->loadFontData("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf", 0);
 //        Size textSize = ft2->getTextSize(text,
 //                                         fontHeight,
 //                                         thickness,
