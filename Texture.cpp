@@ -133,7 +133,10 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
 //    cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-    cv::Mat row_image(1, size, getDefaultOpencvMatType(), cv::Scalar(0.5, 0.5, 0.5));
+    cv::Mat row_image(1, size, getDefaultOpencvMatType(),
+//                      cv::Scalar::all(127));
+                      cv::Scalar::all((getDefaultOpencvMatType() == CV_32FC3) ?
+                                      0.5 : 127));
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for (int i = -x_limit; i <= x_limit; i++)
     {
@@ -158,10 +161,34 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         }
         // Adjust for display gamma.
         color = color.gamma(1 / defaultGamma());
-        // Make OpenCV color, with reversed component order.
-        cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-        // Write OpenCV color to corresponding pixel on row image:
-        row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+//        // Make OpenCV color, with reversed component order.
+//        cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+//        // Write OpenCV color to corresponding pixel on row image:
+//        row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
+        if (getDefaultOpencvMatType() == CV_32FC3)
+        {
+            // Make OpenCV color, with reversed component order.
+            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+            // Write OpenCV color to corresponding pixel on row image:
+            row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
+        }
+        else
+        {
+            // TODO 20201203 experiment case for CV_8UC3
+            
+            // Make OpenCV color, with reversed component order.
+//            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
+            cv::Vec3b opencv_color(color.b() * 255,
+                                   color.g() * 255,
+                                   color.r() * 255);
+            // Write OpenCV color to corresponding pixel on row image:
+//            row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
+            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
@@ -191,6 +218,10 @@ void Texture::writeToFile(int size,
                           int margin,
                           const std::string& file_type) const
 {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+    // need anything here?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
     cv::Mat opencv_image(size + margin * 2,
                          size + margin * 2,
@@ -202,6 +233,10 @@ void Texture::writeToFile(int size,
     rasterizeToImageCache(size, getDefaultRenderAsDisk());
     // Define a new image, a "pointer" to portion of opencv_image inside margin.
     cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+    // need anything here?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
     raster_->convertTo(render_target, CV_8UC3, 255);
     bool ok = cv::imwrite(pathname + file_type, opencv_image);
@@ -288,6 +323,10 @@ void Texture::displayAndFile3(const Texture& t1,
                               std::string pathname,
                               int size)
 {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+    // need anything here?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
     cv::Mat mat(size, size * 3, CV_8UC3);
     // Function to handle each Texture.

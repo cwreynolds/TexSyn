@@ -4356,8 +4356,12 @@ int main(int argc, const char * argv[])
 //    compare_putTexts("/Users/cwr/Downloads/open-sans/OpenSans-Regular.ttf");
     
     
-    Vec2 v1(-1.5, 0);
-    Vec2 v2(+1.5, 0);
+//    Vec2 v1(-1.5, 0);
+//    Vec2 v2(+1.5, 0);
+//    Vec2 v1(-2, 0);
+//    Vec2 v2(+2, 0);
+    Vec2 v1(-0.8, 0);
+    Vec2 v2(+0.8, 0);
     std::cout << "first render" << std::endl;
     Texture::displayAndFile(Gradation(v1, Uniform(0), v2, Uniform(1)));
     cv::waitKey(1);
