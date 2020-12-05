@@ -1633,23 +1633,80 @@ std::string window_name = "LimitHue run";
 cv::Ptr<cv::freetype::FreeType2> ft2;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+int render_size = 151;
+float text_height = 15;
+float margin = 10;
+
 // TODO 20201204 prototype GUI
-GUI gui(Vec2(500, 500), Vec2(100, 100));
+GUI gui(Vec2((render_size * 5) + margin * 6,
+             (render_size + text_height + margin) * 3 + 50),
+        Vec2(100, 100));
+
+
+
+//void drawIndividualsTextureWithFitness(std::shared_ptr<Individual> individual,
+//                                       const Vec2& upper_left_position,
+//                                       int size,
+//                                       GUI& gui)
+//{
+//    Texture& texture = *GP::textureFromIndividual(individual);
+//    texture.rasterizeToImageCache(size, true);
+//    gui.drawTexture(texture, upper_left_position, size);
+//    float text_height = 15;
+//    Vec2 text_pos = upper_left_position + Vec2(0, size);
+//    std::string text = std::to_string(individual->getFitness());
+//    gui.eraseRectangle(Vec2(size, text_height), text_pos);
+//    gui.drawText(text, text_height, text_pos, Color(1));
+//}
+
 
 void drawIndividualsTextureWithFitness(std::shared_ptr<Individual> individual,
                                        const Vec2& upper_left_position,
-                                       int size,
                                        GUI& gui)
 {
     Texture& texture = *GP::textureFromIndividual(individual);
-    texture.rasterizeToImageCache(size, true);
-    gui.drawTexture(texture, upper_left_position, size);
-    float text_height = 15;
-    Vec2 text_pos = upper_left_position + Vec2(0, size);
+    texture.rasterizeToImageCache(render_size, true);
+    gui.drawTexture(texture, upper_left_position, render_size);
+    Vec2 text_pos = upper_left_position + Vec2(0, render_size);
     std::string text = std::to_string(individual->getFitness());
-    gui.eraseRectangle(Vec2(size, text_height), text_pos);
+    gui.eraseRectangle(Vec2(render_size, text_height), text_pos);
     gui.drawText(text, text_height, text_pos, Color(1));
 }
+
+//    void updateGUI(std::shared_ptr<Individual> individual,
+//                   const std::vector<std::shared_ptr<Individual>>& tops)
+//    {
+//        drawIndividualsTextureWithFitness(individual, Vec2(50, 50), gui);
+//        gui.refresh();
+//    }
+
+void updateGUI(std::shared_ptr<Individual> individual)
+{
+    Vec2 position(0, 50);
+    drawIndividualsTextureWithFitness(individual, position, gui);
+    
+//    position += Vec2(0, render_size + text_height + margin);
+    float row_spacing = render_size + text_height + margin;
+    position += Vec2(0, row_spacing);
+    
+    std::vector<std::shared_ptr<Individual>> tops = population->nTopFitness(10);
+
+//    for (int i = 0; i < 5; i++)
+//    {
+//        drawIndividualsTextureWithFitness(tops.at(i), position, gui);
+//        position += Vec2(margin + render_size, 0);
+//    }
+    
+    for (int i = 0; i < 10; i++)
+    {
+        drawIndividualsTextureWithFitness(tops.at(i), position, gui);
+        position += Vec2(margin + render_size, 0);
+        if (i == 4) position = Vec2(0, position.y() + row_spacing);
+    }
+    gui.refresh();
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -1663,7 +1720,7 @@ float fitness_function(std::shared_ptr<Individual> individual)
 //    Texture& texture = *GP::textureFromIndividual(&individual);
     Texture& texture = *GP::textureFromIndividual(individual);
 //    Texture::closeAllWindows();
-    int render_size = 151;
+//    int render_size = 151;
     std::string pathname = "";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201121 try converting Population over to std::shared_ptr
@@ -1839,10 +1896,13 @@ float fitness_function(std::shared_ptr<Individual> individual)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201204 prototype GUI
     individual->setFitness(fitness);
-    drawIndividualsTextureWithFitness(individual, Vec2(50, 50), render_size,
-                                      gui);
+//    drawIndividualsTextureWithFitness(individual, Vec2(50, 50), render_size,
+//                                      gui);
+    
+//    updateGUI(individual, tops);
+    updateGUI(individual);
     individual->setFitness(0);
-    gui.refresh();
+//    gui.refresh();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     return fitness;

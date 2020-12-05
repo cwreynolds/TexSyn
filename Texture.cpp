@@ -236,9 +236,22 @@ void Texture::writeToFile(int size,
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
     // need anything here?
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
-    raster_->convertTo(render_target, CV_8UC3, 255);
+//    raster_->convertTo(render_target, CV_8UC3, 255);
+
+    if (getDefaultOpencvMatType() == CV_8UC3)
+    {
+        raster_->copyTo(render_target);
+    }
+    else
+    {
+        raster_->convertTo(render_target, CV_8UC3, 255);
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
     bool ok = cv::imwrite(pathname + file_type, opencv_image);
     std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
     std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
@@ -340,7 +353,8 @@ void Texture::displayAndFile3(const Texture& t1,
         
         if (getDefaultOpencvMatType() == CV_8UC3)
         {
-            t.raster_->convertTo(submat, CV_8UC3, 1);
+//            t.raster_->convertTo(submat, CV_8UC3, 1);
+            t.raster_->copyTo(submat);
         }
         else
         {

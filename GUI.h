@@ -101,6 +101,7 @@ public:
 //
 //        }
     
+    // TODO ideally this should clip the rectangle to be "not outside" image_.
     void drawTexture(const Texture& texture,
                      const Vec2& upper_left_position,
                      int size)
@@ -109,8 +110,6 @@ public:
         Vec2 ulp = upper_left_position;
         cv::Rect target_rect(ulp.x(), ulp.y(), size, size);
         cv::Mat submat = cv::Mat(image_, target_rect);
-//        texture.getCvMat().convertTo(submat, CV_8UC3, 1);
-//        submat = texture.getCvMat();
         texture.getCvMat().copyTo(submat);
     }
 
