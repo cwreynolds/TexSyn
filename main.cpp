@@ -4372,6 +4372,7 @@ int main(int argc, const char * argv[])
     std::cout << "December 4, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201204_";
     
+    Texture::setDefaultOpencvMatType(CV_8UC3);
     LimitHue::run("");
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

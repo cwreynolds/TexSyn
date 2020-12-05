@@ -19,8 +19,10 @@
 #include <opencv2/freetype.hpp>
 #pragma clang diagnostic pop
 
-#include "Vec2.h"
-#include "Color.h"
+//#include "Vec2.h"
+//#include "Color.h"
+
+#include "Texture.h"
 
 class GUI
 {
@@ -42,6 +44,7 @@ public:
     };
     virtual ~GUI() { cv::destroyWindow(windowName()); }
     void refresh() { cv::imshow(windowName(), image_); cv::waitKey(1); }
+//    void refresh() {}
     void clear() { image_ = backgroundGray(); }
     
     void drawText(const std::string& text,
@@ -51,27 +54,85 @@ public:
     {
         // TODO 20201204 this assumes .ttf file found
         font->putText(image_,
-//                      "hello world",
-//                      cv::Point(40, text_y += 40), // textOrg
-//                      20, // fontHeight,
-//                      cv::Scalar::all(255),
                       text,
                       cv::Point(upper_left_position.x(),
                                 upper_left_position.y()),
                       font_height,
-//                      CV_RGB(255 * color.r(), color.g(), color.b()),
                       colorToCvScalar(color),
                       cv::FILLED,
                       cv::LINE_AA,
-                      true);
-        
+                      false);
     }
     
+    //qqq
+//    //    void drawTexture(const Texture& texture,
+//        void drawTexture(Texture& texture,
+//                         const Vec2& upper_left_position,
+//                         int size)
+//        {
+//    //        int size = texture.getDefaultRenderSize();
+//
+//    //        // Render Texture to its raster_ cv::Mat.
+//    //        t.rasterizeToImageCache(size, getDefaultRenderAsDisk());
+//
+//
+//
+//    //        int size = texture.getCvMat().rows;
+//            texture.rasterizeToImageCache(size, true);
+//
+//
+//    //        // Define a size*size portion of "mat" whose left edge is at "x".
+//    //        cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
+//    //        // Copy into submat while conveting from rgb float to rgb uint8_t
+//    //        t.raster_->convertTo(submat, CV_8UC3, 255);
+//
+//    //        cv::Rect target(upper_left_position.x(), upper_left_position.y(),
+//    //                        size, size);
+//            cv::Rect target_rect(upper_left_position.x(),
+//                            upper_left_position.y(),
+//                            upper_left_position.x() + size,
+//                            upper_left_position.y() + size);
+//
+//            cv::Mat submat = cv::Mat(image_, target_rect);
+//
+//    //        submat = texture.getCvMat();
+//    //        texture.getCvMat().convertTo(submat, CV_8UC3, 255);
+//            texture.getCvMat().convertTo(submat, CV_8UC3, 1);
+//
+//        }
+    
+    void drawTexture(const Texture& texture,
+                     const Vec2& upper_left_position,
+                     int size)
+    {
+        texture.rasterizeToImageCache(size, true);
+        Vec2 ulp = upper_left_position;
+        cv::Rect target_rect(ulp.x(), ulp.y(), size, size);
+        cv::Mat submat = cv::Mat(image_, target_rect);
+//        texture.getCvMat().convertTo(submat, CV_8UC3, 1);
+//        submat = texture.getCvMat();
+        texture.getCvMat().copyTo(submat);
+    }
+
+
     const std::string& windowName() const { return window_name_; }
+    
+    // TODO reconsider
+    void eraseRectangle(Vec2 size_in_pixels, Vec2 upper_left_init_position)
+    {
+        cv::rectangle(image_,
+                      vec2ToCvPoint(upper_left_init_position),
+                      vec2ToCvPoint(upper_left_init_position + size_in_pixels),
+                      backgroundGray(),
+                      cv::FILLED,
+                      cv::LINE_AA);
+    }
     
     static cv::Scalar backgroundGray() { return cv::Scalar::all(127); }
     static cv::Scalar colorToCvScalar(const Color& c)
         { return CV_RGB(255 * c.r(), 255 * c.g(), 255 * c.b()); }
+    static cv::Point vec2ToCvPoint(const Vec2& v)
+        { return cv::Point(v.x(), v.y()); }
 private:
     cv::Mat image_;
     std::string window_name_ = "LimitHue run";

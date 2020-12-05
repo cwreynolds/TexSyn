@@ -323,10 +323,6 @@ void Texture::displayAndFile3(const Texture& t1,
                               std::string pathname,
                               int size)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-    // need anything here?
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
     cv::Mat mat(size, size * 3, CV_8UC3);
     // Function to handle each Texture.
@@ -337,7 +333,20 @@ void Texture::displayAndFile3(const Texture& t1,
         // Define a size*size portion of "mat" whose left edge is at "x".
         cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
         // Copy into submat while conveting from rgb float to rgb uint8_t
-        t.raster_->convertTo(submat, CV_8UC3, 255);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
+        // need anything here?
+//
+        
+        if (getDefaultOpencvMatType() == CV_8UC3)
+        {
+            t.raster_->convertTo(submat, CV_8UC3, 1);
+        }
+        else
+        {
+            t.raster_->convertTo(submat, CV_8UC3, 255);
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     subwindow(t1, 0);
     subwindow(t2, size);

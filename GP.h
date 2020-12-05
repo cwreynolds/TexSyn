@@ -1632,6 +1632,27 @@ std::string window_name = "LimitHue run";
 // TODO 20201202 very experimental putText()
 cv::Ptr<cv::freetype::FreeType2> ft2;
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201204 prototype GUI
+GUI gui(Vec2(500, 500), Vec2(100, 100));
+
+void drawIndividualsTextureWithFitness(std::shared_ptr<Individual> individual,
+                                       const Vec2& upper_left_position,
+                                       int size,
+                                       GUI& gui)
+{
+    Texture& texture = *GP::textureFromIndividual(individual);
+    texture.rasterizeToImageCache(size, true);
+    gui.drawTexture(texture, upper_left_position, size);
+    float text_height = 15;
+    Vec2 text_pos = upper_left_position + Vec2(0, size);
+    std::string text = std::to_string(individual->getFitness());
+    gui.eraseRectangle(Vec2(size, text_height), text_pos);
+    gui.drawText(text, text_height, text_pos, Color(1));
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20201121 try converting Population over to std::shared_ptr
@@ -1641,7 +1662,7 @@ float fitness_function(std::shared_ptr<Individual> individual)
 {
 //    Texture& texture = *GP::textureFromIndividual(&individual);
     Texture& texture = *GP::textureFromIndividual(individual);
-    Texture::closeAllWindows();
+//    Texture::closeAllWindows();
     int render_size = 151;
     std::string pathname = "";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1656,122 +1677,116 @@ float fitness_function(std::shared_ptr<Individual> individual)
     for (int i = 0; i < 9; i++)
         assert(GP::textureFromIndividual(tops.at(i))->valid());
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Texture::window_x = 0;
-    Texture::window_y = render_size * 3;
-    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
-                             *GP::textureFromIndividual(tops.at(7)),
-                             *GP::textureFromIndividual(tops.at(8)),
-                             pathname, render_size);
-    Texture::window_x = 0;
-    Texture::window_y = render_size * 2;
-    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
-                             *GP::textureFromIndividual(tops.at(4)),
-                             *GP::textureFromIndividual(tops.at(5)),
-                             pathname, render_size);
-    Texture::window_x = 0;
-    Texture::window_y = render_size;
-    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
-                             *GP::textureFromIndividual(tops.at(1)),
-                             *GP::textureFromIndividual(tops.at(2)),
-                             pathname, render_size);
-    Texture::window_x = 0;
-    Texture::window_y = 0;
-    Texture::displayAndFile(texture, pathname, render_size);
+//    Texture::window_x = 0;
+//    Texture::window_y = render_size * 3;
+//    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(6)),
+//                             *GP::textureFromIndividual(tops.at(7)),
+//                             *GP::textureFromIndividual(tops.at(8)),
+//                             pathname, render_size);
+//    Texture::window_x = 0;
+//    Texture::window_y = render_size * 2;
+//    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(3)),
+//                             *GP::textureFromIndividual(tops.at(4)),
+//                             *GP::textureFromIndividual(tops.at(5)),
+//                             pathname, render_size);
+//    Texture::window_x = 0;
+//    Texture::window_y = render_size;
+//    Texture::displayAndFile3(*GP::textureFromIndividual(tops.at(0)),
+//                             *GP::textureFromIndividual(tops.at(1)),
+//                             *GP::textureFromIndividual(tops.at(2)),
+//                             pathname, render_size);
+//    Texture::window_x = 0;
+//    Texture::window_y = 0;
+//    Texture::displayAndFile(texture, pathname, render_size);
     
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO 20201201 prototyping new "one window" GUI
-    int gui_w = (render_size + 10) * 5;
-    int gui_h = (render_size + 10) * 3;
-//    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
-//    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-//    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar(127, 127, 127));
-    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar::all(127));
-
-    
-    
-    int text_y = 0;
-//    float text_scale = 0.8;
-    float text_scale = 1;
-//    cv::putText(gui_image, "hello world", cv::Point(40, text_y += 40),
-//                cv::FONT_HERSHEY_COMPLEX, text_scale, CV_RGB(1, 0.5, 0));
-    
+//    // TODO 20201201 prototyping new "one window" GUI
+//    int gui_w = (render_size + 10) * 5;
+//    int gui_h = (render_size + 10) * 3;
+////    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(1, 0, 0));
+////    gui_image = cv::Mat(gui_h, gui_w, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
+////    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar(127, 127, 127));
+//    gui_image = cv::Mat(gui_h, gui_w, CV_8UC3, cv::Scalar::all(127));
+//
+//
+//
+//    int text_y = 0;
+////    float text_scale = 0.8;
+//    float text_scale = 1;
+////    cv::putText(gui_image, "hello world", cv::Point(40, text_y += 40),
+////                cv::FONT_HERSHEY_COMPLEX, text_scale, CV_RGB(1, 0.5, 0));
+//
+////    cv::putText(gui_image,
+////                "hello world",
+////                cv::Point(40, text_y += 40),
+////                cv::FONT_HERSHEY_DUPLEX,
+////                text_scale,
+////                CV_RGB(1, 0.5, 0)
+////                // , cv::FILLED
+////                , 1
+////                , cv::LINE_AA
+////                );
 //    cv::putText(gui_image,
 //                "hello world",
 //                cv::Point(40, text_y += 40),
-//                cv::FONT_HERSHEY_DUPLEX,
-//                text_scale,
-//                CV_RGB(1, 0.5, 0)
-//                // , cv::FILLED
-//                , 1
-//                , cv::LINE_AA
-//                );
-    cv::putText(gui_image,
-                "hello world",
-                cv::Point(40, text_y += 40),
-                cv::FONT_HERSHEY_SIMPLEX,
-                text_scale / 2,
-                CV_RGB(1, 0.5, 0),
-                1,
-                cv::LINE_AA);
-    
-    cv::putText(gui_image,
-                "hello world",
-                cv::Point(40, text_y += 40),
-                cv::FONT_HERSHEY_SIMPLEX,
-                text_scale,
-                CV_RGB(1, 0.5, 0),
-                1,
-                cv::LINE_AA);
-    
-    cv::putText(gui_image,
-                "hello world",
-                cv::Point(40, text_y += 80),
-                cv::FONT_HERSHEY_SIMPLEX,
-                text_scale * 2,
-                CV_RGB(1, 0.5, 0),
-                3,
-                cv::LINE_AA);
-//
-//
+//                cv::FONT_HERSHEY_SIMPLEX,
+//                text_scale / 2,
+//                CV_RGB(1, 0.5, 0),
+//                1,
+//                cv::LINE_AA);
 //
 //    cv::putText(gui_image,
-//                "HueLimit_20201201_1123_aJWp",
+//                "hello world",
 //                cv::Point(40, text_y += 40),
-//                cv::FONT_HERSHEY_PLAIN, 0.5, CV_RGB(1, 1, 1));
+//                cv::FONT_HERSHEY_SIMPLEX,
+//                text_scale,
+//                CV_RGB(1, 0.5, 0),
+//                1,
+//                cv::LINE_AA);
+//
+//    cv::putText(gui_image,
+//                "hello world",
+//                cv::Point(40, text_y += 80),
+//                cv::FONT_HERSHEY_SIMPLEX,
+//                text_scale * 2,
+//                CV_RGB(1, 0.5, 0),
+//                3,
+//                cv::LINE_AA);
+//
+//
+//    // TODO 20201202 very experimental putText()
+//    ft2->putText(gui_image,
+//                 "hello world",
+//                 cv::Point(40, text_y += 20), // textOrg
+//                 10, // fontHeight,
+//                 cv::Scalar::all(255),
+//                 cv::FILLED,  // thickness,
+//                 cv::LINE_AA, // 8, // linestyle,
+//                 true);
+//
+//    // TODO 20201202 very experimental putText()
+//    ft2->putText(gui_image,
+//                 "hello world",
+//                 cv::Point(40, text_y += 40), // textOrg
+//                 20, // fontHeight,
+//                 cv::Scalar::all(255),
+//                 cv::FILLED,  // thickness,
+//                 cv::LINE_AA, // 8, // linestyle,
+//                 true);
+//
+//    ft2->putText(gui_image,
+//                 "hello world",
+//                 cv::Point(40, text_y += 80), // textOrg
+//                 60, // fontHeight,
+//                 cv::Scalar::all(255),
+//                 cv::FILLED,  // thickness,
+//                 cv::LINE_AA, // 8, // linestyle,
+//                 true);
 
-
-    // TODO 20201202 very experimental putText()
-    ft2->putText(gui_image,
-                 "hello world",
-                 cv::Point(40, text_y += 20), // textOrg
-                 10, // fontHeight,
-                 cv::Scalar::all(255),
-                 cv::FILLED,  // thickness,
-                 cv::LINE_AA, // 8, // linestyle,
-                 true);
-
-    // TODO 20201202 very experimental putText()
-    ft2->putText(gui_image,
-                 "hello world",
-                 cv::Point(40, text_y += 40), // textOrg
-                 20, // fontHeight,
-                 cv::Scalar::all(255),
-                 cv::FILLED,  // thickness,
-                 cv::LINE_AA, // 8, // linestyle,
-                 true);
-
-    ft2->putText(gui_image,
-                 "hello world",
-                 cv::Point(40, text_y += 80), // textOrg
-                 60, // fontHeight,
-                 cv::Scalar::all(255),
-                 cv::FILLED,  // thickness,
-                 cv::LINE_AA, // 8, // linestyle,
-                 true);
-
-    cv::imshow(window_name, gui_image);
+//    cv::imshow(window_name, gui_image);
 //    cv::moveWindow(window_name, 300, 300);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
 
     Texture::waitKey(1);
 
@@ -1820,6 +1835,16 @@ float fitness_function(std::shared_ptr<Individual> individual)
     std::cout << ", sat=" << enough_saturation;
     std::cout << ", size=" << size_constraint << ")";
     std::cout << std::endl << std::endl;
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201204 prototype GUI
+    individual->setFitness(fitness);
+    drawIndividualsTextureWithFitness(individual, Vec2(50, 50), render_size,
+                                      gui);
+    individual->setFitness(0);
+    gui.refresh();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     return fitness;
 }
 
@@ -1856,7 +1881,7 @@ void run(std::string path_for_saving)
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201204 prototype GUI
-    GUI gui(Vec2(500, 100), Vec2(100, 500));
+//    GUI gui(Vec2(500, 100), Vec2(100, 500));
     gui.drawText("TexSyn/LazyPredator GUI", 15, Vec2(20, 20), Color(0.5, 1, 0));
     gui.refresh();
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1868,8 +1893,8 @@ void run(std::string path_for_saving)
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO 20201201 prototyping new "one window" GUI
-        cv::namedWindow(window_name);
-        cv::moveWindow(window_name, 15, 15);
+//        cv::namedWindow(window_name);
+//        cv::moveWindow(window_name, 15, 15);
         
         
         // TODO 20201202 very experimental putText()
@@ -1929,7 +1954,7 @@ void run(std::string path_for_saving)
 
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // TODO 20201201 prototyping new "one window" GUI
-    cv::destroyWindow(window_name);
+//    cv::destroyWindow(window_name);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     delete population;
