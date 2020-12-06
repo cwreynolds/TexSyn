@@ -4368,12 +4368,22 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototyping GUI.
-    std::cout << "December 4, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201204_";
+//    // Prototyping GUI.
+//    std::cout << "December 4, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201204_";
+//
+//    Texture::setDefaultOpencvMatType(CV_8UC3);
+//    LimitHue::run("");
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Refactor LimitHue from namespace to class.
+    std::cout << "December 5, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201205_";
     
     Texture::setDefaultOpencvMatType(CV_8UC3);
-    LimitHue::run("");
+    // LimitHueOld::run("");
+    LimitHue(10, 100, 100).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

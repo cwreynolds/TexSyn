@@ -1363,7 +1363,8 @@ void run()
 }
 
 // "LimitHue" evolution test, uses traditional numeric (not relative) fitness.
-namespace LimitHue
+//namespace LimitHue
+namespace LimitHueOld
 {
 
 // Global Population instance. (TODO maybe should be shared_ptr?)
@@ -2023,3 +2024,108 @@ void run(std::string path_for_saving)
 }
 
 }
+
+
+// TODO 20201205 a refactor of the LimitHue(Old) namespace as a class.
+//      • should the whole run happen in the constructor?
+//      • or should there be a separate run() function?
+//      • should run() be a static that creates a instance on the fly?
+//      • this is a prototype for somekind of base class for defining runs
+
+class LimitHue
+{
+public:
+    // Default constructor.
+    LimitHue() : LimitHue(100, 100, 100) {}
+    // Constructor with all parameters.
+    LimitHue(int population_size,
+             int max_int_tree_size,
+             int evolution_steps)
+    :
+    population(population_size, max_int_tree_size, function_set),
+    gui(guiSize(), Vec2(15, 15)),
+    evolution_steps_(evolution_steps)
+    {
+    }
+    
+    // Run the evolutionary computation for given number of steps.
+    // TODO very generic, could be in base "run" class.
+    void run()
+    {
+        Timer t(name() + " run");
+        for (int i = 0; i < evolution_steps_; i++)
+        {
+            // TODO 20201205 -- WOW -- I didn't initially copy these over during
+            //     the "refactor LimitHue from namespace to class." pass. And I
+            //     started getting valid() failures. So I copied these two block
+            //     in and it runs fine. Must be initing something?
+            
+            
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201122 -- before each step, lets validate the population:
+            for (auto& individual : population.individuals())
+//                { assert(GP::textureFromIndividual(individual)->valid()); }
+                { individual->treeValue(); }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            // TODO HUH, can't use name at a function pointer for member function
+            // population.evolutionStep(fitness_function, function_set);
+            
+            auto ff = [&](std::shared_ptr<Individual> individual)
+                { return fitness_function_foo(individual); };
+            population.evolutionStep(ff, function_set);
+
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201122 -- after each step, lets validate the population:
+            for (auto& individual : population.individuals())
+//                { assert(GP::textureFromIndividual(individual)->valid()); }
+                { individual->treeValue(); }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            
+            
+        }
+        Texture::leakCheck();
+        Individual::leakCheck();
+        abnormal_value_report();
+    }
+    
+    float fitness_function_foo(std::shared_ptr<Individual> individual)
+    {
+        return LPRS().frandom01();
+    }
+
+    
+    Vec2 guiSize() const
+    {
+        int row_y = gui_render_size_ + gui_text_height_ + gui_margin_;
+        return Vec2((gui_render_size_ * 5) + gui_margin_ * 6, row_y * 3 + 50);
+    }
+    
+    // The generic name for this run.
+    const std::string& name() const { return name_; }
+private:
+    // TODO set this in default constructor?
+    std::string name_ = "LimitHue";
+
+    const FunctionSet& function_set = GP::fs();
+//    Population* population = nullptr;
+    Population population;
+
+
+    
+    
+    // TODO 20201202 very experimental putText()
+    cv::Ptr<cv::freetype::FreeType2> ft2;
+
+
+    int gui_render_size_ = 151;
+    float gui_text_height_ = 15;
+    float gui_margin_ = 10;
+
+    // const ?
+    GUI gui;
+    
+    int evolution_steps_;
+
+};
