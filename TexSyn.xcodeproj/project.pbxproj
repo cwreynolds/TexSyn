@@ -356,6 +356,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/include/opencv4/;
 				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/opencv/4.5.0_5/lib;
+				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4/opencv",
 					"-I/usr/local/Cellar/opencv/4.5.0_5/include/opencv4",
