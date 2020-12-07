@@ -2055,42 +2055,19 @@ public:
         Timer t(name() + " run");
         for (int i = 0; i < evolution_steps_; i++)
         {
-            // TODO 20201205 -- WOW -- I didn't initially copy these over during
-            //     the "refactor LimitHue from namespace to class." pass. And I
-            //     started getting valid() failures. So I copied these two block
-            //     in and it runs fine. Must be initing something?
-            
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20201122 -- before each step, lets validate the population:
-            for (auto& individual : population.individuals())
-//                { assert(GP::textureFromIndividual(individual)->valid()); }
-                { individual->treeValue(); }
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            
             // TODO HUH, can't use name at a function pointer for member function
             // population.evolutionStep(fitness_function, function_set);
             
             auto ff = [&](std::shared_ptr<Individual> individual)
-                { return fitness_function_foo(individual); };
+                { return fitness_function(individual); };
             population.evolutionStep(ff, function_set);
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20201122 -- after each step, lets validate the population:
-            for (auto& individual : population.individuals())
-//                { assert(GP::textureFromIndividual(individual)->valid()); }
-                { individual->treeValue(); }
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-            
-            
         }
         Texture::leakCheck();
         Individual::leakCheck();
         abnormal_value_report();
     }
     
-    float fitness_function_foo(std::shared_ptr<Individual> individual)
+    float fitness_function(std::shared_ptr<Individual> individual)
     {
         return LPRS().frandom01();
     }
