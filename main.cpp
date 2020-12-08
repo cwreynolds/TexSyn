@@ -4378,13 +4378,13 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Refactor LimitHue from namespace to class.
-    std::cout << "December 5, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201205_";
+    std::cout << "December 7, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201207_";
     
-    Texture::setDefaultOpencvMatType(CV_8UC3);
     // LimitHueOld::run("");
-    LimitHue(10, 100, 100).run();
-    
+//    LimitHue(10, 100, 100).run();
+    LimitHue(200, 50, 2000).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

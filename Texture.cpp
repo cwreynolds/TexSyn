@@ -794,5 +794,8 @@ const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-int Texture::default_opencv_mat_type_ = CV_32FC3;
+//int Texture::default_opencv_mat_type_ = CV_32FC3;
+// TODO 20201207 seems to be working fine, switch over to this as default
+//               eventually remove the conditionalization.
+int Texture::default_opencv_mat_type_ = CV_8UC3;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

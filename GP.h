@@ -2025,7 +2025,6 @@ void run(std::string path_for_saving)
 
 }
 
-
 // TODO 20201205 a refactor of the LimitHue(Old) namespace as a class.
 //      • should the whole run happen in the constructor?
 //      • or should there be a separate run() function?
@@ -2041,68 +2040,188 @@ public:
     LimitHue(int population_size,
              int max_int_tree_size,
              int evolution_steps)
-    :
-    population(population_size, max_int_tree_size, function_set),
-    gui(guiSize(), Vec2(15, 15)),
-    evolution_steps_(evolution_steps)
-    {
-    }
-    
+      : population(population_size, max_int_tree_size, function_set),
+        gui(guiSize(), Vec2(15, 15)),
+        evolution_steps_(evolution_steps) {}
     // Run the evolutionary computation for given number of steps.
     // TODO very generic, could be in base "run" class.
     void run()
     {
         Timer t(name() + " run");
-        for (int i = 0; i < evolution_steps_; i++)
+        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0.5, 1, 0));
+        gui.refresh();
+        Population::FitnessFunction fitness_function_wrapper =
+            [&](std::shared_ptr<Individual> individual)
+            { return fitness_function(individual); };
+        for (step = 0; step < evolution_steps_; step++)
         {
-            // TODO HUH, can't use name at a function pointer for member function
-            // population.evolutionStep(fitness_function, function_set);
-            
-            auto ff = [&](std::shared_ptr<Individual> individual)
-                { return fitness_function(individual); };
-            population.evolutionStep(ff, function_set);
+            population.evolutionStep(fitness_function_wrapper, function_set);
         }
         Texture::leakCheck();
         Individual::leakCheck();
         abnormal_value_report();
     }
-    
+    // Determines fitness (on [0, 1]) for given Individual
     float fitness_function(std::shared_ptr<Individual> individual)
     {
-        return LPRS().frandom01();
-    }
+        Texture& texture = *GP::textureFromIndividual(individual);
+        std::string pathname = "";
+        Color average;
+        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+        for (auto& color : samples) average += color;
+        average *= 1.0 / samples.size();
+        float brightness = average.luminance();
+        float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
+        // TODO make flat near midrance, penalize only very bright or dark.
+        //    float closeness_to_midrange = 1 - relative_distance_from_midrange;
+        float closeness_to_midrange = remapIntervalClip(relative_distance_from_midrange,
+                                                        0.8, 1, 1, 0);
+        
+        float average_saturation = average.getS();
+        float enough_saturation = remapIntervalClip(average_saturation,
+                                                    0, 0.5, 0.5, 1);
+        std::cout << std::endl;
+        float closeness_to_hue_constraint =
+        measureScalarHistogram(individual, 12, 8, 0, 1,
+                               [](Color c){ return c.getH(); });
 
+        measureScalarHistogram(population.nTopFitness(1).at(0),
+                               12, 8, 0, 1,
+                               [](Color c){ return c.getH(); });
+
+        float size_constraint = 1;
+        float fitness = (closeness_to_midrange *
+                         closeness_to_hue_constraint *
+                         enough_saturation *
+                         size_constraint);
+        std::cout << "    fit=" << fitness;
+        std::cout << " (hue=" << closeness_to_hue_constraint;
+        std::cout << ", gray=" << closeness_to_midrange;
+        std::cout << ", sat=" << enough_saturation;
+        std::cout << ", size=" << size_constraint << ")";
+        std::cout << std::endl << std::endl;
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201204 for the sake of the GUI we want this individual to
+        // already have its fitness set. Otherwise that is suppost to happen
+        // in the caller of this fitnress function.
+        individual->setFitness(fitness);
+        updateGUI(individual);
+        individual->setFitness(0);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        return fitness;
+    }
     
+    // Assign a score on [0, 1] based on a histogram for a scalar (as defined
+    // by "metric") property (of randomly sampled colors from the Texture).
+    float measureScalarHistogram(std::shared_ptr<Individual> individual,
+                                 int bucket_count,
+                                 int must_be_near_zero,
+                                 float min_metric,
+                                 float max_metric,
+                                 std::function<float(Color)> metric)
+    {
+        assert(bucket_count > must_be_near_zero);
+        // Get random color samples from Texture, cached if previously generated.
+        Texture& texture = *GP::textureFromIndividual(individual);
+        const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+        // Set up histogram with "bucket_count" buckets
+        std::vector<int> buckets(bucket_count, 0);
+        // For each color sample, increment the corresponding histogram bucket.
+        for (auto& color : samples)
+        {
+            float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
+            int bucket_index = value * bucket_count;
+            if (bucket_index == bucket_count) bucket_index--;
+            buckets.at(bucket_index)++;
+        }
+        // Determine score (sum of abs error from target bucket size, neg for error)
+        // TODO after a lot of fiddling, back to previous version of score.
+        float score = 0;
+        //    float score = 1;
+        int big_buckets = bucket_count - must_be_near_zero;
+        int target = int(samples.size()) / big_buckets;
+        auto biggest_first = [](int a, int b){ return a > b; };
+        std::sort(buckets.begin(), buckets.end(), biggest_first);
+        for (int i = 0; i < bucket_count; i++)
+        {
+            int ith_target = (i < big_buckets) ? target : 0;
+            score -= sq(std::abs(buckets.at(i) - ith_target));
+        }
+        // TODO warning assumes these params (100 samples, 12 buckets, 8 near zeros)
+        score = 1 + (score / 7500);
+        
+        // TODO debug print of score and buckets.
+        std::cout << "    sorted hue buckets (";
+        for (int b : buckets) std::cout << b << " ";
+        std::cout << ") score=" << score << std::endl;
+        
+        return score;
+    }
+    // Display textures and text on GUI canvas.
+    void updateGUI(std::shared_ptr<Individual> individual)
+    {
+        Vec2 step_position(300, 20);
+        gui.eraseRectangle(Vec2(100, gui_text_height_), step_position);
+        std::string text = ("step " + std::to_string(step) +
+                            " of " + std::to_string(evolution_steps_));
+        gui.drawText(text, gui_text_height_, step_position, Color(1, 0, 0));
+
+        
+        
+        Vec2 position(0, 50);
+        drawIndividualsTextureWithFitness(individual, position, gui);
+        float row_spacing = gui_render_size_ + gui_text_height_ + gui_margin_;
+        position += Vec2(0, row_spacing);
+        
+        std::vector<std::shared_ptr<Individual>> tops =
+                                                     population.nTopFitness(10);
+                
+        for (int i = 0; i < 10; i++)
+        {
+            drawIndividualsTextureWithFitness(tops.at(i), position, gui);
+            position += Vec2(gui_margin_ + gui_render_size_, 0);
+            if (i == 4) position = Vec2(0, position.y() + row_spacing);
+        }
+        gui.refresh();
+    }
+    // Render an Individual's Texture, above its numerical fitness (as percent).
+    void drawIndividualsTextureWithFitness(std::shared_ptr<Individual> individual,
+                                           const Vec2& upper_left_position,
+                                           GUI& gui)
+    {
+        Texture& texture = *GP::textureFromIndividual(individual);
+        texture.rasterizeToImageCache(gui_render_size_, true);
+        gui.drawTexture(texture, upper_left_position, gui_render_size_);
+        Vec2 text_pos = upper_left_position + Vec2(0, gui_render_size_);
+        float fitness = individual->getFitness();
+        std::string text = float_to_percent_fractional_digits(fitness, 1);
+        gui.eraseRectangle(Vec2(gui_render_size_, gui_text_height_), text_pos);
+        gui.drawText(text, gui_text_height_, text_pos, Color(1));
+    }
+    // Compute dimensions of the GUI window.
     Vec2 guiSize() const
     {
         int row_y = gui_render_size_ + gui_text_height_ + gui_margin_;
         return Vec2((gui_render_size_ * 5) + gui_margin_ * 6, row_y * 3 + 50);
     }
-    
     // The generic name for this run.
     const std::string& name() const { return name_; }
 private:
     // TODO set this in default constructor?
     std::string name_ = "LimitHue";
-
+    // Use the standard TexSyn FunctionSet.
     const FunctionSet& function_set = GP::fs();
-//    Population* population = nullptr;
+    // GP population for this run.
     Population population;
-
-
-    
-    
-    // TODO 20201202 very experimental putText()
-    cv::Ptr<cv::freetype::FreeType2> ft2;
-
-
+    // Number of evolution steps (steady state population updates) in this run.
+    int evolution_steps_;
+    // GUI and parameters for it.
     int gui_render_size_ = 151;
     float gui_text_height_ = 15;
     float gui_margin_ = 10;
-
-    // const ?
+    std::string gui_title_ = "TexSyn/LazyPredator GUI"; // TODO keep?
     GUI gui;
-    
-    int evolution_steps_;
-
+    int step;
 };

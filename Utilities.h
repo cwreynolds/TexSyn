@@ -12,6 +12,7 @@
 #include <cmath>
 #include <complex>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <vector>
 #include <chrono>
@@ -450,6 +451,17 @@ template <typename T> std::string vec_to_string(const std::vector<T>& vector)
         s << element;
     }
     return s.str();
+}
+
+// TODO 20201207
+// Format float to a string, as percentage with "digits" fractional digits after
+// the decimal point.
+inline std::string float_to_percent_fractional_digits(float value, int digits)
+{
+    std::stringstream ss;
+    ss << std::setprecision(2 + digits);
+    ss << 100 * value << "%";
+    return ss.str();
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

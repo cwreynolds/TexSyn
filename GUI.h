@@ -40,13 +40,10 @@ public:
         cv::moveWindow(windowName(),
                        upper_left_init_position.x(),
                        upper_left_init_position.y());
-//        refresh();
     };
     virtual ~GUI() { cv::destroyWindow(windowName()); }
     void refresh() { cv::imshow(windowName(), image_); cv::waitKey(1); }
-//    void refresh() {}
     void clear() { image_ = backgroundGray(); }
-    
     void drawText(const std::string& text,
                   float font_height,
                   const Vec2& upper_left_position,
@@ -63,44 +60,6 @@ public:
                       cv::LINE_AA,
                       false);
     }
-    
-    //qqq
-//    //    void drawTexture(const Texture& texture,
-//        void drawTexture(Texture& texture,
-//                         const Vec2& upper_left_position,
-//                         int size)
-//        {
-//    //        int size = texture.getDefaultRenderSize();
-//
-//    //        // Render Texture to its raster_ cv::Mat.
-//    //        t.rasterizeToImageCache(size, getDefaultRenderAsDisk());
-//
-//
-//
-//    //        int size = texture.getCvMat().rows;
-//            texture.rasterizeToImageCache(size, true);
-//
-//
-//    //        // Define a size*size portion of "mat" whose left edge is at "x".
-//    //        cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
-//    //        // Copy into submat while conveting from rgb float to rgb uint8_t
-//    //        t.raster_->convertTo(submat, CV_8UC3, 255);
-//
-//    //        cv::Rect target(upper_left_position.x(), upper_left_position.y(),
-//    //                        size, size);
-//            cv::Rect target_rect(upper_left_position.x(),
-//                            upper_left_position.y(),
-//                            upper_left_position.x() + size,
-//                            upper_left_position.y() + size);
-//
-//            cv::Mat submat = cv::Mat(image_, target_rect);
-//
-//    //        submat = texture.getCvMat();
-//    //        texture.getCvMat().convertTo(submat, CV_8UC3, 255);
-//            texture.getCvMat().convertTo(submat, CV_8UC3, 1);
-//
-//        }
-    
     // TODO ideally this should clip the rectangle to be "not outside" image_.
     void drawTexture(const Texture& texture,
                      const Vec2& upper_left_position,
@@ -112,10 +71,7 @@ public:
         cv::Mat submat = cv::Mat(image_, target_rect);
         texture.getCvMat().copyTo(submat);
     }
-
-
     const std::string& windowName() const { return window_name_; }
-    
     // TODO reconsider
     void eraseRectangle(Vec2 size_in_pixels, Vec2 upper_left_init_position)
     {
