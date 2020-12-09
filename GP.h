@@ -2050,7 +2050,8 @@ public:
     void run()
     {
         Timer t(name() + " run");
-        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0.5, 1, 0));
+//        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0.5, 1, 0));
+        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0));
         gui.refresh();
         Population::FitnessFunction fitness_function_wrapper =
             [&](std::shared_ptr<Individual> individual)
@@ -2076,6 +2077,9 @@ public:
                                  LimitHueOld::hours_minutes() +
                                  "_" + name()),
                                 Texture::getDefaultRenderSize());
+        
+        // TODO need to be able to delete that specific window...
+        
         Texture::waitKey(1000);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2098,7 +2102,10 @@ public:
         
         float average_saturation = average.getS();
         float enough_saturation = remapIntervalClip(average_saturation,
-                                                    0, 0.5, 0.5, 1);
+//                                                    0, 0.5, 0.5, 1);
+        // TODO 20201209 noticed that sufficiently saturated patterns were down
+        // voted too much. Change so > 30% saturation is good enough for full credit.
+                                                    0, 0.3, 0.5, 1);
         std::cout << std::endl;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20201208 penalize_adjacency
@@ -2214,20 +2221,37 @@ public:
         
         float adjacency_penalty = 1;
         
+//            for (int i = 0; i < big_buckets; i++)
+//            {
+//                int i_index = buckets.at(i).index;
+//                for (int j = 0; j < big_buckets; j++)
+//                {
+//                    int j_index = buckets.at(j).index;
+//    //                if (1 == ((i_index - j_index) % bucket_count))
+//                    if (1 == (std::abs(i_index - j_index) % bucket_count))
+//                    {
+//    //                    std::cout << "found one!" << std::endl;
+//    //                    adjacency_penalty *= 0.95;
+//                        // TODO changed 10:50pm Dec 8
+//                        adjacency_penalty *= 0.97;
+//                    }
+//                }
+//            }
+        
         for (int i = 0; i < big_buckets; i++)
         {
             int i_index = buckets.at(i).index;
             for (int j = 0; j < big_buckets; j++)
             {
                 int j_index = buckets.at(j).index;
-//                if (1 == ((i_index - j_index) % bucket_count))
-                if (1 == (std::abs(i_index - j_index) % bucket_count))
+//                if (1 == (std::abs(i_index - j_index) % bucket_count))
+                if (1 == modulo_abs_diff(i_index, j_index, bucket_count))
                 {
-//                    std::cout << "found one!" << std::endl;
-                    adjacency_penalty *= 0.95;
+                    adjacency_penalty *= 0.97;
                 }
             }
         }
+
         
 //        std::cout << "raw_score=" << score;
 //        std::cout << ", normalized_score=" << 1 + (score / 7500);
@@ -2259,7 +2283,8 @@ public:
         gui.eraseRectangle(Vec2(200, gui_text_height_), step_position);
         std::string text = ("step " + std::to_string(step) +
                             " of " + std::to_string(evolution_steps_));
-        gui.drawText(text, gui_text_height_, step_position, Color(1, 0, 0));
+//        gui.drawText(text, gui_text_height_, step_position, Color(1, 0, 0));
+        gui.drawText(text, gui_text_height_, step_position, Color(1));
 
         
         
@@ -2314,7 +2339,7 @@ private:
     int gui_render_size_ = 151;
     float gui_text_height_ = 15;
     float gui_margin_ = 10;
-    std::string gui_title_ = "TexSyn/LazyPredator GUI"; // TODO keep?
+    std::string gui_title_ = "TexSyn/LazyPredator run"; // TODO keep?
     GUI gui;
     int step;
     

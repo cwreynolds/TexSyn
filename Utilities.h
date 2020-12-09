@@ -478,3 +478,13 @@ template <typename T> bool set_contains(const std::set<T>& set, const T& key)
 {
     return set.find(key) != set.end();
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201209
+// Positive "distance" between two ints in modulo arithmetic.
+inline int modulo_abs_diff(int a, int b, int modulus)
+{
+    return std::min(std::abs(a - (b + modulus)) % modulus,
+                    std::abs((modulus + a) - b) % modulus);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -4377,18 +4377,52 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Refactor LimitHue from namespace to class.
-    std::cout << "December 7, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201207_";
+//    // Refactor LimitHue from namespace to class.
+//    std::cout << "December 7, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201207_";
+//
+//    // LimitHueOld::run("");
+//    //    LimitHue(10, 100, 100).run();
+//    //    LimitHue(200, 50, 2000).run();
+//    //    LimitHue(200, 20, 4000).run();
+//    //    LimitHue(200, 100, 2000).run();
+//
+//    //    for (int i = 0; i < 20; i ++)
+//    //        LimitHue(200, 60, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    for (int i = 0; i < 20; i ++)
+//        LimitHue(100, 100, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // LimitHueOld::run("");
-//    LimitHue(10, 100, 100).run();
-//    LimitHue(200, 50, 2000).run();
-//    LimitHue(200, 20, 4000).run();
-//    LimitHue(200, 100, 2000).run();
+    // Refactor LimitHue from namespace to class.
+    std::cout << "December 9, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201209_";
+    
+//    debugPrint(modulo_abs_diff(5, 5, 12));
+//    debugPrint(modulo_abs_diff(5, 6, 12));
+//    debugPrint(modulo_abs_diff(6, 5, 12));
+//    debugPrint(modulo_abs_diff(0, 11, 12));
+//    debugPrint(modulo_abs_diff(11, 0, 12));
+//    debugPrint(modulo_abs_diff(1, 11, 12));
+//    debugPrint(modulo_abs_diff(11, 1, 12));
+//
+//    debugPrint(modulo_abs_diff(-1, 1, 12));
+//    debugPrint(modulo_abs_diff(1, -1, 12));
+    
+    
+//    for (int i = 0; i < 12; i++)
+//    {
+//        for (int j = 0; j < 12; j++)
+//        {
+//            std::cout << "modulo_abs_diff(" << i << ", " << j << ") = ";
+//            std::cout << modulo_abs_diff(i, j, 12) << std::endl;
+//        }
+//    }
     
     for (int i = 0; i < 20; i ++)
-        LimitHue(200, 60, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+        LimitHue(100, 50, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
