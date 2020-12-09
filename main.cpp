@@ -4383,7 +4383,12 @@ int main(int argc, const char * argv[])
     
     // LimitHueOld::run("");
 //    LimitHue(10, 100, 100).run();
-    LimitHue(200, 50, 2000).run();
+//    LimitHue(200, 50, 2000).run();
+//    LimitHue(200, 20, 4000).run();
+//    LimitHue(200, 100, 2000).run();
+    
+    for (int i = 0; i < 20; i ++)
+        LimitHue(200, 60, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -2035,14 +2035,16 @@ class LimitHue
 {
 public:
     // Default constructor.
-    LimitHue() : LimitHue(100, 100, 100) {}
+    LimitHue() : LimitHue(100, 100, 100, "") {}
     // Constructor with all parameters.
     LimitHue(int population_size,
              int max_int_tree_size,
-             int evolution_steps)
+             int evolution_steps,
+             std::string path_for_saving_images)
       : population(population_size, max_int_tree_size, function_set),
         gui(guiSize(), Vec2(15, 15)),
-        evolution_steps_(evolution_steps) {}
+        evolution_steps_(evolution_steps),
+        path_for_saving_images_(path_for_saving_images) {}
     // Run the evolutionary computation for given number of steps.
     // TODO very generic, could be in base "run" class.
     void run()
@@ -2057,9 +2059,26 @@ public:
         {
             population.evolutionStep(fitness_function_wrapper, function_set);
         }
-        Texture::leakCheck();
-        Individual::leakCheck();
-        abnormal_value_report();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+
+//        Texture::leakCheck();
+//        Individual::leakCheck();
+//        abnormal_value_report();
+        
+        std::shared_ptr<Individual> final_best = population.nTopFitness(1).at(0);
+        std::cout << "Final best in population:" << std::endl;
+        std::cout << final_best->tree().to_string() << std::endl;
+        
+        Texture* texture = GP::textureFromIndividual(final_best);
+        Texture::displayAndFile(*texture,
+                                (path_for_saving_images_ +
+                                 LimitHueOld::hours_minutes() +
+                                 "_" + name()),
+                                Texture::getDefaultRenderSize());
+        Texture::waitKey(1000);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     }
     // Determines fitness (on [0, 1]) for given Individual
     float fitness_function(std::shared_ptr<Individual> individual)
@@ -2081,13 +2100,23 @@ public:
         float enough_saturation = remapIntervalClip(average_saturation,
                                                     0, 0.5, 0.5, 1);
         std::cout << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+//        float closeness_to_hue_constraint =
+//        measureScalarHistogram(individual, 12, 8, 0, 1,
+//                               [](Color c){ return c.getH(); });
+//
+//        measureScalarHistogram(population.nTopFitness(1).at(0),
+//                               12, 8, 0, 1,
+//                               [](Color c){ return c.getH(); });
         float closeness_to_hue_constraint =
-        measureScalarHistogram(individual, 12, 8, 0, 1,
+        measureScalarHistogram(individual, 12, 8, true, 0, 1,
                                [](Color c){ return c.getH(); });
-
+        
         measureScalarHistogram(population.nTopFitness(1).at(0),
-                               12, 8, 0, 1,
+                               12, 8, true, 0, 1,
                                [](Color c){ return c.getH(); });
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         float size_constraint = 1;
         float fitness = (closeness_to_midrange *
@@ -2115,9 +2144,14 @@ public:
     
     // Assign a score on [0, 1] based on a histogram for a scalar (as defined
     // by "metric") property (of randomly sampled colors from the Texture).
+    // TODO 20201208 maybe pass in Texture rather than Individual?
     float measureScalarHistogram(std::shared_ptr<Individual> individual,
                                  int bucket_count,
                                  int must_be_near_zero,
+                                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 // TODO 20201208 penalize_adjacency
+                                 bool penalize_adjacency,
+                                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                  float min_metric,
                                  float max_metric,
                                  std::function<float(Color)> metric)
@@ -2126,35 +2160,94 @@ public:
         // Get random color samples from Texture, cached if previously generated.
         Texture& texture = *GP::textureFromIndividual(individual);
         const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+//        // Set up histogram with "bucket_count" buckets
+//        std::vector<int> buckets(bucket_count, 0);
         // Set up histogram with "bucket_count" buckets
-        std::vector<int> buckets(bucket_count, 0);
+        class Bucket {public: int count; int index; };
+        std::vector<Bucket> buckets(bucket_count);
+        int k = 0;
+        for (auto& b : buckets) { b.count = 0; b.index = k++;}
+        
+//        for (int i = 0; i < bucket_count; i ++)
+//        {
+//            buckets.at(i).count = 0;
+//            buckets.at(i).index = i;
+//        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // For each color sample, increment the corresponding histogram bucket.
         for (auto& color : samples)
         {
             float value = remapInterval(metric(color), min_metric, max_metric, 0, 1);
             int bucket_index = value * bucket_count;
             if (bucket_index == bucket_count) bucket_index--;
-            buckets.at(bucket_index)++;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201208 penalize_adjacency
+//            buckets.at(bucket_index)++;
+            buckets.at(bucket_index).count++;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Determine score (sum of abs error from target bucket size, neg for error)
-        // TODO after a lot of fiddling, back to previous version of score.
         float score = 0;
-        //    float score = 1;
         int big_buckets = bucket_count - must_be_near_zero;
         int target = int(samples.size()) / big_buckets;
-        auto biggest_first = [](int a, int b){ return a > b; };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+//        auto biggest_first = [](int a, int b){ return a > b; };
+        auto biggest_first =
+            [](Bucket& a, Bucket& b){ return a.count > b.count; };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::sort(buckets.begin(), buckets.end(), biggest_first);
         for (int i = 0; i < bucket_count; i++)
         {
             int ith_target = (i < big_buckets) ? target : 0;
-            score -= sq(std::abs(buckets.at(i) - ith_target));
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201208 penalize_adjacency
+//            score -= sq(std::abs(buckets.at(i) - ith_target));
+            score -= sq(std::abs(buckets.at(i).count - ith_target));
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // TODO warning assumes these params (100 samples, 12 buckets, 8 near zeros)
-        score = 1 + (score / 7500);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
         
+        float adjacency_penalty = 1;
+        
+        for (int i = 0; i < big_buckets; i++)
+        {
+            int i_index = buckets.at(i).index;
+            for (int j = 0; j < big_buckets; j++)
+            {
+                int j_index = buckets.at(j).index;
+//                if (1 == ((i_index - j_index) % bucket_count))
+                if (1 == (std::abs(i_index - j_index) % bucket_count))
+                {
+//                    std::cout << "found one!" << std::endl;
+                    adjacency_penalty *= 0.95;
+                }
+            }
+        }
+        
+//        std::cout << "raw_score=" << score;
+//        std::cout << ", normalized_score=" << 1 + (score / 7500);
+//        std::cout << ", adjacency_penalty=" << adjacency_penalty;
+//        std::cout << ", adjusted_score="<<adjacency_penalty*(1 + (score / 7500));
+//        std::cout << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        score = 1 + (score / 7500);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+        score *= adjacency_penalty;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         // TODO debug print of score and buckets.
         std::cout << "    sorted hue buckets (";
-        for (int b : buckets) std::cout << b << " ";
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201208 penalize_adjacency
+//        for (int b : buckets) std::cout << b << " ";
+        for (auto& b : buckets) std::cout << b.count << " ";
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << ") score=" << score << std::endl;
         
         return score;
@@ -2163,7 +2256,7 @@ public:
     void updateGUI(std::shared_ptr<Individual> individual)
     {
         Vec2 step_position(300, 20);
-        gui.eraseRectangle(Vec2(100, gui_text_height_), step_position);
+        gui.eraseRectangle(Vec2(200, gui_text_height_), step_position);
         std::string text = ("step " + std::to_string(step) +
                             " of " + std::to_string(evolution_steps_));
         gui.drawText(text, gui_text_height_, step_position, Color(1, 0, 0));
@@ -2224,4 +2317,6 @@ private:
     std::string gui_title_ = "TexSyn/LazyPredator GUI"; // TODO keep?
     GUI gui;
     int step;
+    
+    std::string path_for_saving_images_;
 };
