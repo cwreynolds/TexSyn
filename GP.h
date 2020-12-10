@@ -2025,6 +2025,50 @@ void run(std::string path_for_saving)
 
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Measures presence of high spatial frequencies ("confetti") in a texture.
+// TODO 20201210 maybe move to new "Analyze" package?
+//
+// For these test textures:
+//    Uniform black(0);
+//    Uniform white(1);
+//    Vec2 v0;
+//    Vec2 v1(1, 1);
+//    Noise n1(v0, v1, black, white);
+//    Noise n2(v0, v1 / 10, black, white);
+//    Noise n3(v0, v1 / 100, black, white);
+// returns:
+//    wiggliness(n1) = 0.00145902
+//    wiggliness(n2) = 0.0150223
+//    wiggliness(n3) = 0.130341
+//
+inline float wiggliness(const Texture& texture)
+{
+    float sum = 0;
+    Color last_sample;
+    float samples = 100;
+    auto do_transect= [&](Vec2 v1, Vec2 v2)
+    {
+        for (int i = 0; i < samples; i++)
+        {
+            Vec2 sample_position = interpolate(i / samples, v1, v2);
+            Color this_sample = texture.getColor(sample_position);
+            float lum_diff = std::abs((last_sample - this_sample).luminance());
+            if (i > 0) { sum += lum_diff; }
+            last_sample = this_sample;
+        }
+        return sum / samples;
+    };
+    return (0.5 *
+            (do_transect(Vec2(-0.1, -0.1), Vec2(+0.1, +0.1)) +
+             do_transect(Vec2(-0.1, +0.1), Vec2(+0.1, -0.1))));
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 // TODO 20201205 a refactor of the LimitHue(Old) namespace as a class.
 //      • should the whole run happen in the constructor?
 //      • or should there be a separate run() function?
@@ -2051,7 +2095,8 @@ public:
     {
         Timer t(name() + " run");
 //        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0.5, 1, 0));
-        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0));
+//        gui.drawText(gui_title_, 15, Vec2(20, 20), Color(0));
+        gui.drawText(gui_title_ + name(), 15, Vec2(20, 20), Color(0));
         gui.refresh();
         Population::FitnessFunction fitness_function_wrapper =
             [&](std::shared_ptr<Individual> individual)
@@ -2069,6 +2114,7 @@ public:
         
         std::shared_ptr<Individual> final_best = population.nTopFitness(1).at(0);
         std::cout << "Final best in population:" << std::endl;
+        std::cout << "fitness = " << final_best->getFitness() << std::endl;
         std::cout << final_best->tree().to_string() << std::endl;
         
         Texture* texture = GP::textureFromIndividual(final_best);
@@ -2093,19 +2139,25 @@ public:
         const std::vector<Color>& samples = texture.cachedRandomColorSamples(LPRS());
         for (auto& color : samples) average += color;
         average *= 1.0 / samples.size();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201209 smoother brightness penalty?
         float brightness = average.luminance();
         float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
         // TODO make flat near midrance, penalize only very bright or dark.
         //    float closeness_to_midrange = 1 - relative_distance_from_midrange;
         float closeness_to_midrange = remapIntervalClip(relative_distance_from_midrange,
                                                         0.8, 1, 1, 0);
-        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         float average_saturation = average.getS();
         float enough_saturation = remapIntervalClip(average_saturation,
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                                                    0, 0.5, 0.5, 1);
         // TODO 20201209 noticed that sufficiently saturated patterns were down
         // voted too much. Change so > 30% saturation is good enough for full credit.
-                                                    0, 0.3, 0.5, 1);
+//                                                    0, 0.3, 0.5, 1);
+                                                    0, 0.4, 0.5, 1);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << std::endl;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20201208 penalize_adjacency
@@ -2125,16 +2177,30 @@ public:
                                [](Color c){ return c.getH(); });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201210 wiggle_constraint
+        float wiggle_constraint = clip01(1 - wiggliness(texture));
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         float size_constraint = 1;
         float fitness = (closeness_to_midrange *
                          closeness_to_hue_constraint *
                          enough_saturation *
-                         size_constraint);
+                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         // TODO 20201210 wiggle_constraint
+//                         size_constraint);
+                         size_constraint *
+                         wiggle_constraint);
+                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "    fit=" << fitness;
         std::cout << " (hue=" << closeness_to_hue_constraint;
         std::cout << ", gray=" << closeness_to_midrange;
         std::cout << ", sat=" << enough_saturation;
         std::cout << ", size=" << size_constraint << ")";
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20201210 wiggle_constraint
+        std::cout << ", wiggle=" << wiggle_constraint << ")";
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << std::endl << std::endl;
         
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2192,7 +2258,18 @@ public:
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // TODO 20201208 penalize_adjacency
 //            buckets.at(bucket_index)++;
-            buckets.at(bucket_index).count++;
+//            buckets.at(bucket_index).count++;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20201210 reject dark or desaturated colors from histogram
+            //
+            // TODO WARNING this "assumes" that we care primarily about hue,
+            // which is fine inside LimitHue, but not as a general utility,
+            // which is how this started out.
+            float h, s, v;
+            color.getHSV(h, s, v);
+            // TODO ad hoc inline constants, should be replaced by class members
+            if ((s > 0.4) && (v > 0.3)) { buckets.at(bucket_index).count++; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Determine score (sum of abs error from target bucket size, neg for error)
@@ -2339,7 +2416,7 @@ private:
     int gui_render_size_ = 151;
     float gui_text_height_ = 15;
     float gui_margin_ = 10;
-    std::string gui_title_ = "TexSyn/LazyPredator run"; // TODO keep?
+    std::string gui_title_ = "TexSyn/LazyPredator run: "; // TODO keep?
     GUI gui;
     int step;
     

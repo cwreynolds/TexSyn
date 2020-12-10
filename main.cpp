@@ -4395,34 +4395,63 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Refactor LimitHue from namespace to class.
-    std::cout << "December 9, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201209_";
-    
-//    debugPrint(modulo_abs_diff(5, 5, 12));
-//    debugPrint(modulo_abs_diff(5, 6, 12));
-//    debugPrint(modulo_abs_diff(6, 5, 12));
-//    debugPrint(modulo_abs_diff(0, 11, 12));
-//    debugPrint(modulo_abs_diff(11, 0, 12));
-//    debugPrint(modulo_abs_diff(1, 11, 12));
-//    debugPrint(modulo_abs_diff(11, 1, 12));
+//    // Refactor LimitHue from namespace to class.
+//    std::cout << "December 9, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201209_";
 //
-//    debugPrint(modulo_abs_diff(-1, 1, 12));
-//    debugPrint(modulo_abs_diff(1, -1, 12));
-    
-    
-//    for (int i = 0; i < 12; i++)
-//    {
-//        for (int j = 0; j < 12; j++)
-//        {
-//            std::cout << "modulo_abs_diff(" << i << ", " << j << ") = ";
-//            std::cout << modulo_abs_diff(i, j, 12) << std::endl;
-//        }
-//    }
-    
-    for (int i = 0; i < 20; i ++)
-        LimitHue(100, 50, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//    //    debugPrint(modulo_abs_diff(5, 5, 12));
+//    //    debugPrint(modulo_abs_diff(5, 6, 12));
+//    //    debugPrint(modulo_abs_diff(6, 5, 12));
+//    //    debugPrint(modulo_abs_diff(0, 11, 12));
+//    //    debugPrint(modulo_abs_diff(11, 0, 12));
+//    //    debugPrint(modulo_abs_diff(1, 11, 12));
+//    //    debugPrint(modulo_abs_diff(11, 1, 12));
+//    //
+//    //    debugPrint(modulo_abs_diff(-1, 1, 12));
+//    //    debugPrint(modulo_abs_diff(1, -1, 12));
+//
+//
+//    //    for (int i = 0; i < 12; i++)
+//    //    {
+//    //        for (int j = 0; j < 12; j++)
+//    //        {
+//    //            std::cout << "modulo_abs_diff(" << i << ", " << j << ") = ";
+//    //            std::cout << modulo_abs_diff(i, j, 12) << std::endl;
+//    //        }
+//    //    }
+//
+//    //    for (int i = 0; i < 20; i ++)
+//    //        LimitHue(100, 50, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    for (int i = 0; i < 20; i ++)
+//        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Measure of high frequency in textures.
+    std::cout << "December 10, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201210_";
+    
+//    Uniform black(0);
+//    Uniform white(1);
+//    Vec2 v0;
+//    Vec2 v1(1, 1);
+//    Noise n1(v0, v1, black, white);
+//    Noise n2(v0, v1 / 10, black, white);
+//    Noise n3(v0, v1 / 100, black, white);
+//
+//    Texture::displayAndFile(n1);
+//    Texture::displayAndFile(n2);
+//    Texture::displayAndFile(n3);
+//
+//    debugPrint(wiggliness(n1));
+//    debugPrint(wiggliness(n2));
+//    debugPrint(wiggliness(n3));
+
+//    Texture::waitKey();
+
+    for (int i = 0; i < 20; i ++)
+        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
