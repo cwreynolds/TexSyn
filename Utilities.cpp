@@ -406,17 +406,58 @@ void jittered_grid_NxN_in_square(int n,
 int abnormal_value_counter = 0;
 int abnormal_value_counter_per_run = 0;
 
-float paper_over_abnormal_values(float x)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
+//               Try bulling through with paper_over_abnormal_values()
+//    float paper_over_abnormal_values(float x)
+//    {
+//        if (!is_normal(x))
+//        {
+//            std::cout << "!!! replacing abnormal float " << x << "with 0.";
+//            std::cout << std::endl;
+//            abnormal_value_counter_per_run++;
+//            x = 0;
+//        }
+//        return x;
+//    }
+
+//float paper_over_abnormal_values(float x)
+//{
+//    if (!is_normal(x))
+//    {
+//        grabPrintLock();
+//        abnormal_value_counter_per_run++;
+//        std::cout << "!!! replacing abnormal float " << x << " with 0 (";
+//        std::cout << abnormal_value_counter_per_run << " so far)." << std::endl;
+//        x = 0;
+//    }
+//    return x;
+//}
+
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+
+// TODO 20201210 prototyping version where it prints the source fragment
+
+
+// Original (circa 2002) "non locking" version, in case it is ever useful.
+#define paper_over_abnormal_values(e) paper_over_abnormal_values_helper((e), #e)
+
+
+float paper_over_abnormal_values_helper(float x, const std::string& source)
 {
     if (!is_normal(x))
     {
-        std::cout << "!!! replacing abnormal float " << x << "with 0.";
-        std::cout << std::endl;
+        grabPrintLock();
         abnormal_value_counter_per_run++;
+        std::cout << "!!! replacing abnormal float " << x;
+        std::cout << ", from " << source << ", with 0 (";
+        std::cout << abnormal_value_counter_per_run << " so far)." << std::endl;
         x = 0;
     }
     return x;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 void abnormal_value_report()
 {

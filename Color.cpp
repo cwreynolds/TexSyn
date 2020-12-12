@@ -94,13 +94,23 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //    Color(red, green, blue).assertNormal();
     
-    if (!Color(red, green, blue).isNormal())
-    {
-        std::cout << "TODO bad input to Color::convertRGBtoHSV()" << std::endl;
-        red = 0;
-        green = 0;
-        blue = 0;
-    }
+//    if (!Color(red, green, blue).isNormal())
+//    {
+//        std::cout << "TODO bad input to Color::convertRGBtoHSV()" << std::endl;
+//        red = 0;
+//        green = 0;
+//        blue = 0;
+//    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
+    //               Try bulling through with paper_over_abnormal_values()
+    
+    paper_over_abnormal_values(red);
+    paper_over_abnormal_values(green);
+    paper_over_abnormal_values(blue);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const float R = 255.0f * red;
     const float G = 255.0f * green;
@@ -166,7 +176,15 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
 //    if (!((H >= 0.0) && ( H <= 1.0)))
 //        std::cout << "h Value error in Pixel conversion, Value is " << H
 //        << " Input r,g,b = " << red << "," << green << "," << blue << std::endl;
-    assert_Valid_Float (H);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
+    //               Try bulling through with paper_over_abnormal_values()
+//    assert_Valid_Float (H);
+    
+    paper_over_abnormal_values(H);
+    paper_over_abnormal_values(S);
+    paper_over_abnormal_values(V);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // Transform color space from "Hue Saturation Value" to "Red Green Blue"
@@ -230,17 +248,35 @@ Color Color::clipToUnitRGB() const
     return result;
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
+//               Try bulling through with paper_over_abnormal_values()
+
+//    // Exponentiate the RGB components by given gamma value ("exponent").
+//    // Also clips RGB components to be non-negative before exponentiation, and if
+//    // any RGB values are so large that they "overflow", clips result to white.
+//    Color Color::gamma(float exponent) const
+//    {
+//        Color exponentiated(pow(std::max(r(), 0.0f), exponent),
+//                            pow(std::max(g(), 0.0f), exponent),
+//                            pow(std::max(b(), 0.0f), exponent));
+//        bool valid = isNormal() && exponentiated.isNormal();
+//        return valid ? exponentiated : Color(1, 1, 1);
+//    }
+
 // Exponentiate the RGB components by given gamma value ("exponent").
-// Also clips RGB components to be non-negative before exponentiation, and if
-// any RGB values are so large that they "overflow", clips result to white.
+// Also clips RGB components to be non-negative before exponentiation.
+// If any RGB values are so large that they "overflow", returns black.
 Color Color::gamma(float exponent) const
 {
-    Color exponentiated(pow(std::max(r(), 0.0f), exponent),
-                        pow(std::max(g(), 0.0f), exponent),
-                        pow(std::max(b(), 0.0f), exponent));
-    bool valid = isNormal() && exponentiated.isNormal();
-    return valid ? exponentiated : Color(1, 1, 1);
+    float er = pow(std::max(r(), 0.0f), exponent);
+    float eg = pow(std::max(g(), 0.0f), exponent);
+    float eb = pow(std::max(b(), 0.0f), exponent);
+    return Color(paper_over_abnormal_values(er),
+                 paper_over_abnormal_values(eg),
+                 paper_over_abnormal_values(eb));
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // TODO experimental version in RandomSequence instead of in Color.
 //

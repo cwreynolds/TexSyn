@@ -467,8 +467,20 @@ inline std::string float_to_percent_fractional_digits(float value, int digits)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-float paper_over_abnormal_values(float x);
+//float paper_over_abnormal_values(float x);
+//void abnormal_value_report();
+
+
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+// TODO 20201210 prototyping version where it prints the source fragment
+#define paper_over_abnormal_values(e) paper_over_abnormal_values_helper((e), #e)
+
+
+float paper_over_abnormal_values_helper(float x, const std::string& source);
 void abnormal_value_report();
+
+//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Returns bool indicating if the given set contains the given element.

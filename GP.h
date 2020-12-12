@@ -2180,25 +2180,26 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20201210 wiggle_constraint
         float wiggle_constraint = clip01(1 - wiggliness(texture));
+//        float size_constraint = 1;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        float size_constraint = 1;
         float fitness = (closeness_to_midrange *
                          closeness_to_hue_constraint *
                          enough_saturation *
                          //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                          // TODO 20201210 wiggle_constraint
 //                         size_constraint);
-                         size_constraint *
+//                         size_constraint *
                          wiggle_constraint);
                          //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "    fit=" << fitness;
         std::cout << " (hue=" << closeness_to_hue_constraint;
         std::cout << ", gray=" << closeness_to_midrange;
         std::cout << ", sat=" << enough_saturation;
-        std::cout << ", size=" << size_constraint << ")";
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20201210 wiggle_constraint
+//        std::cout << ", size=" << size_constraint << ")";
+//        std::cout << ", size=" << size_constraint;
         std::cout << ", wiggle=" << wiggle_constraint << ")";
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << std::endl << std::endl;
@@ -2269,7 +2270,8 @@ public:
             float h, s, v;
             color.getHSV(h, s, v);
             // TODO ad hoc inline constants, should be replaced by class members
-            if ((s > 0.4) && (v > 0.3)) { buckets.at(bucket_index).count++; }
+//            if ((s > 0.4) && (v > 0.3)) { buckets.at(bucket_index).count++; }
+            if ((s > 0.5) && (v > 0.4)) { buckets.at(bucket_index).count++; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Determine score (sum of abs error from target bucket size, neg for error)

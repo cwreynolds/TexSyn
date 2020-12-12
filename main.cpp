@@ -4450,8 +4450,16 @@ int main(int argc, const char * argv[])
 
 //    Texture::waitKey();
 
+//    for (int i = 0; i < 20; i ++)
+//        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+    
+    float p = std::numeric_limits<float>::infinity();
+    float q = std::numeric_limits<float>::quiet_NaN();
+    paper_over_abnormal_values(p);
+    paper_over_abnormal_values(q);
+
     for (int i = 0; i < 20; i ++)
-        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+        LimitHue(100, 30, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
