@@ -60,6 +60,18 @@ public:
                       cv::LINE_AA,
                       false);
     }
+    // Draw given text horizontally centered around given position.
+    // TODO 20201212 should centering be an arg to the main func?
+    void drawTextHorizontalCenter(const std::string& text,
+                                  float font_height,
+                                  const Vec2& top_center_position,
+                                  const Color& color)
+    {
+        int bl = 0;
+        cv::Size ts(font->getTextSize(text, font_height, cv::FILLED, &bl));
+        Vec2 position = top_center_position - Vec2(ts.width / 2, 0);
+        drawText(text, font_height, position, color);
+    }
     // TODO ideally this should clip the rectangle to be "not outside" image_.
     void drawTexture(const Texture& texture,
                      const Vec2& upper_left_position,

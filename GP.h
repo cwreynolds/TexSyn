@@ -2395,7 +2395,8 @@ public:
         float fitness = individual->getFitness();
         std::string text = float_to_percent_fractional_digits(fitness, 1);
         gui.eraseRectangle(Vec2(gui_render_size_, gui_text_height_), text_pos);
-        gui.drawText(text, gui_text_height_, text_pos, Color(1));
+        Vec2 center = text_pos + Vec2(gui_render_size_ / 2, 0);
+        gui.drawTextHorizontalCenter(text, gui_text_height_, center, Color(1));
     }
     // Compute dimensions of the GUI window.
     Vec2 guiSize() const
