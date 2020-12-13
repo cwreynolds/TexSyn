@@ -4428,38 +4428,57 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Measure of high frequency in textures.
+//        // Measure of high frequency in textures.
+//        std::cout << "December 10, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201210_";
+//
+//    //    Uniform black(0);
+//    //    Uniform white(1);
+//    //    Vec2 v0;
+//    //    Vec2 v1(1, 1);
+//    //    Noise n1(v0, v1, black, white);
+//    //    Noise n2(v0, v1 / 10, black, white);
+//    //    Noise n3(v0, v1 / 100, black, white);
+//    //
+//    //    Texture::displayAndFile(n1);
+//    //    Texture::displayAndFile(n2);
+//    //    Texture::displayAndFile(n3);
+//    //
+//    //    debugPrint(wiggliness(n1));
+//    //    debugPrint(wiggliness(n2));
+//    //    debugPrint(wiggliness(n3));
+//
+//    //    Texture::waitKey();
+//
+//    //    for (int i = 0; i < 20; i ++)
+//    //        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//        float p = std::numeric_limits<float>::infinity();
+//        float q = std::numeric_limits<float>::quiet_NaN();
+//        paper_over_abnormal_values(p);
+//        paper_over_abnormal_values(q);
+//
+//        for (int i = 0; i < 20; i ++)
+//            LimitHue(100, 30, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Try long run with large programs.
     std::cout << "December 10, 2020" << std::endl;
     std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201210_";
     
-//    Uniform black(0);
-//    Uniform white(1);
-//    Vec2 v0;
-//    Vec2 v1(1, 1);
-//    Noise n1(v0, v1, black, white);
-//    Noise n2(v0, v1 / 10, black, white);
-//    Noise n3(v0, v1 / 100, black, white);
-//
-//    Texture::displayAndFile(n1);
-//    Texture::displayAndFile(n2);
-//    Texture::displayAndFile(n3);
-//
-//    debugPrint(wiggliness(n1));
-//    debugPrint(wiggliness(n2));
-//    debugPrint(wiggliness(n3));
-
-//    Texture::waitKey();
-
-//    for (int i = 0; i < 20; i ++)
-//        LimitHue(100, 50, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//    LimitHue(100, 200, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//    LimitHue(100, 201, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
     
-    float p = std::numeric_limits<float>::infinity();
-    float q = std::numeric_limits<float>::quiet_NaN();
-    paper_over_abnormal_values(p);
-    paper_over_abnormal_values(q);
-
     for (int i = 0; i < 20; i ++)
-        LimitHue(100, 30, 2000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+    {
+        LimitHue(200, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+        Texture::invalidInstanceReport();
+        Texture::leakCheck();
+        Individual::leakCheck();
+        abnormal_value_report();
+    }
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
