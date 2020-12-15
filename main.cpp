@@ -8,18 +8,8 @@
 
 #include "TexSyn.h"
 #include "GP.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20201129 temp
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#pragma clang diagnostic pop
 
-//bool run_unit_tests = true;
-bool run_unit_tests = false;
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bool run_unit_tests = true;
 
 int main(int argc, const char * argv[])
 {
@@ -4470,16 +4460,18 @@ int main(int argc, const char * argv[])
 //    LimitHue(100, 200, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 //    LimitHue(100, 201, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
     
-    for (int i = 0; i < 20; i ++)
-    {
-        LimitHue(200, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
-        Texture::invalidInstanceReport();
-        Texture::leakCheck();
-        Individual::leakCheck();
-        abnormal_value_report();
-    }
+//    for (int i = 0; i < 20; i ++)
+//    {
+//        LimitHue(200, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//        Texture::invalidInstanceReport();
+//        Texture::leakCheck();
+//        Individual::leakCheck();
+//        abnormal_value_report();
+//    }
 
+    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
 
+    debugPrint(date_hours_minutes());
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

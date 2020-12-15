@@ -911,15 +911,6 @@ float fitness_function(Individual& individual)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// TODO maybe instead: https://en.cppreference.com/w/cpp/io/manip/put_time
-std::string hours_minutes()
-{
-    std::time_t t = std::time(nullptr);
-    char mbstr[100];
-    std::strftime(mbstr, sizeof(mbstr), "%Y%m%d_%I%M", std::localtime(&t));
-    return std::string(mbstr);
-}
-
 void run(std::string path_for_saving)
 {
     const FunctionSet& function_set = GP::fs();
@@ -1096,12 +1087,10 @@ public:
         std::cout << final_best->tree().to_string() << std::endl;
         
         Texture* texture = GP::textureFromIndividual(final_best);
-        Texture::displayAndFile(*texture,
-                                (path_for_saving_images_ +
-                                 LimitHueOld::hours_minutes() +
-                                 "_" + name()),
-                                Texture::getDefaultRenderSize());
-        
+        std::string p =
+            path_for_saving_images_ + date_hours_minutes() + "_" + name();
+        Texture::displayAndFile(*texture, p, Texture::getDefaultRenderSize());
+
         // TODO need to be able to delete that specific window...
         
         Texture::waitKey(1000);

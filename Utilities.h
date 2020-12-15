@@ -503,3 +503,13 @@ inline int modulo_abs_diff(int a, int b, int modulus)
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Returns string for current date and time in format: "YYYYMMDD_HHMM"
+inline std::string date_hours_minutes()
+{
+    std::stringstream ss;
+    auto t = std::time(nullptr);
+    auto l = std::localtime(&t);
+    ss << std::put_time(l, "%Y%m%d_%H%M");
+    return ss.str();
+}
