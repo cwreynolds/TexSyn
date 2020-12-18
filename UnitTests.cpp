@@ -434,9 +434,12 @@ bool noise_ranges()
     {
         std::pair<float, float> min_max =
             PerlinNoise::measure_range(noise_function);
-        // std::cout << "noise_ranges: ";
-        // std::cout << "min_range = " << min_max.first << ", ";
-        // std::cout << "max_range = " << min_max.second << std::endl;
+        if ((false))  // Change to true for verbose logging.
+        {
+            std::cout << "noise_ranges: ";
+            std::cout << "min_range = " << min_max.first << ", ";
+            std::cout << "max_range = " << min_max.second << std::endl;
+        }
         return ((min_max.first <= min_threshold) &&
                 (min_max.second >= max_threshold));
     };

@@ -178,10 +178,11 @@ namespace PerlinNoise
         float max_range = -std::numeric_limits<float>::infinity();
         float min_range = +std::numeric_limits<float>::infinity();
         float measurements = 10000;
+        RandomSequence rs(30304668);
         for (int i = 0; i < measurements; i ++)
         {
             float diameter = 200;
-            Vec2 v = Vec2::randomPointInUnitDiameterCircle() * diameter;
+            Vec2 v = rs.randomPointInUnitDiameterCircle() * diameter;
             float noise = noise_func(v);
             if (max_range < noise) max_range = noise;
             if (min_range > noise) min_range = noise;
