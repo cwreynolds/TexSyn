@@ -33,31 +33,6 @@ public:
     {
         // GpTypes
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO use experimental "deleter" function. EG for Texture in TexSyn.
-//            {"Texture"},
-//            {"Vec2"},
-            
-//            // TODO gets EXC_BAD_ACCESS at end of deleting Population
-//            //      Texture: constructions=2163, destructions=1995, leaked=168
-//            { "Texture", [](std::any a)
-//                {
-//                    // TODO very temp
-//                    std::cout << "In deleter for Texture GpType";
-//                    if (a.has_value())
-//                    {
-//                        Texture* t = std::any_cast<Texture*>(a);
-//                        std::cout << " t=" << t;
-//
-//                        // TODO 20201121 temporary for debugging
-//                        t->validate();
-//
-//                        if (t) delete t;
-//                    }
-//                    std::cout << std::endl;
-//                }
-//            },
-            
             { "Texture", [](std::any a)
                 {
                     if (a.has_value())
@@ -67,14 +42,7 @@ public:
                     }
                 }
             },
-
-//            // TODO this runs to end but reports:
-//            //      Texture: constructions=2163, destructions=321, leaked=1842
-//            //      (oh, because it is deleting merely the Texture* pointer?)
-//            { "Texture", [](std::any a) { a.reset(); } },
-            
             { "Vec2" },
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             { "Float_01", 0.0f, 1.0f },
             { "Float_02", 0.0f, 2.0f },
             { "Float_0_10", 0.0f, 10.0f },
@@ -1024,10 +992,10 @@ public:
     LimitHue() : LimitHue(100, 100, 100, "") {}
     // Constructor with all parameters.
     LimitHue(int population_size,
-             int max_int_tree_size,
+             int max_init_tree_size,
              int evolution_steps,
              std::string path_for_saving_images)
-      : population(population_size, max_int_tree_size, function_set),
+      : population(population_size, max_init_tree_size, function_set),
         gui(guiSize(), Vec2(15, 15)),
         evolution_steps_(evolution_steps),
         path_for_saving_images_(path_for_saving_images) {}
@@ -1329,6 +1297,31 @@ public:
     }
     // The generic name for this run.
     const std::string& name() const { return name_; }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20201222 set up comparison run
+    
+    static void comparison(std::string pathname)
+    {
+        int seed_index = 0;
+        std::vector<int> seeds = { 974807923, 163030392, 816605882, 115610489,
+                                   267578284, 722321507, 343468183, 781771569,
+                                   307139823, 563745816, 255389204, 665486019 };
+        int pop_size = 100;
+        int tree_size = 100;
+        int steps = 2000;
+
+        LPRS().setSeed(seeds.at(seed_index));
+        LimitHue lh1(pop_size, tree_size, steps, pathname + "lh1_");
+        lh1.run();
+        
+        Population::use_uniform_selection_for_absolute_fitness = true;
+        LPRS().setSeed(seeds.at(seed_index));
+        LimitHue lh2(pop_size, tree_size, steps, pathname + "lh2_");
+        lh2.run();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 private:
     // TODO set this in default constructor?
     std::string name_ = "LimitHue";

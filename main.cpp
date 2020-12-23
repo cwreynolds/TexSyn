@@ -4453,13 +4453,13 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Try long run with large programs.
-    std::cout << "December 10, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201210_";
-    
+//    // Try long run with large programs.
+//    std::cout << "December 10, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201210_";
+//
 //    LimitHue(100, 200, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
 //    LimitHue(100, 201, 5000, "/Users/cwr/Desktop/TexSyn_temp/").run();
-    
+//
 //    for (int i = 0; i < 20; i ++)
 //    {
 //        LimitHue(200, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
@@ -4468,10 +4468,19 @@ int main(int argc, const char * argv[])
 //        Individual::leakCheck();
 //        abnormal_value_report();
 //    }
+//
+//    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    debugPrint(date_hours_minutes());
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Set up hyperparameter comparison.
+    std::cout << "December 22, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201222_";
+    
+    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
 
-    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
-
-    debugPrint(date_hours_minutes());
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
