@@ -9,6 +9,7 @@
 #pragma once
 #include "../LazyPredator/LazyPredator.h"  // TODO use something more portable.
 #include "GUI.h"
+#include <fstream>
 
 // Abbreviations for oft-repeated expressions below (used only in this file):
 #define argFloat() tree.evalSubtree<float>(inc_tex_arg())
@@ -1012,6 +1013,7 @@ public:
         for (step = 0; step < evolution_steps_; step++)
         {
             population.evolutionStep(fitness_function_wrapper, function_set);
+            if (per_step_hook_) per_step_hook_(population);
         }
         Individual* final_best = population.nTopFitness(1).at(0);
         std::cout << "Final best in population:" << std::endl;
@@ -1303,22 +1305,49 @@ public:
     
     static void comparison(std::string pathname)
     {
-        int seed_index = 0;
-        std::vector<int> seeds = { 974807923, 163030392, 816605882, 115610489,
-                                   267578284, 722321507, 343468183, 781771569,
-                                   307139823, 563745816, 255389204, 665486019 };
+        int runs = 4;
         int pop_size = 100;
         int tree_size = 100;
         int steps = 2000;
-
-        LPRS().setSeed(seeds.at(seed_index));
-        LimitHue lh1(pop_size, tree_size, steps, pathname + "lh1_");
-        lh1.run();
-        
-        Population::use_uniform_selection_for_absolute_fitness = true;
-        LPRS().setSeed(seeds.at(seed_index));
-        LimitHue lh2(pop_size, tree_size, steps, pathname + "lh2_");
-        lh2.run();
+        std::vector<int> seeds =
+        {
+            444700671, 493213596, 840362786, 980307906, 261430925, 533548673,
+            218546925, 633434603, 612577940, 999241686, 225521002, 597149672,
+            207487440, 309365284, 110736518, 590685304, 949910212, 717531964,
+            753082971, 176941139, 508919199, 562432923, 759317570, 473498701,
+            207884788, 831877318, 393419179, 791381440, 723837506, 806703740,
+            666704731, 291995111, 653300425, 449012055, 481843034, 515746916,
+            166008386, 498372567, 169435341, 370407295, 255135461, 466952674
+        };
+        std::string logger_pathname;
+        auto logger = [&](Population& p)
+        {
+            // Open file for append.
+            std::ofstream outfile;
+            outfile.open(logger_pathname, std::ios_base::app);
+            assert(!outfile.fail());
+            Individual* best_individual = p.nTopFitness(1).at(0);
+            outfile << best_individual->getFitness() << ",";
+            outfile << p.averageFitness() << ",";
+            outfile << p.averageTreeSize() << std::endl;
+            outfile.close();
+        };
+        for (int run = 0; run < runs; run++)
+        {
+            Population::use_uniform_selection_for_absolute_fitness = false;
+            LPRS().setSeed(seeds.at(run));
+            LimitHue lh1(pop_size, tree_size, steps, pathname + "lh1_");
+            logger_pathname = pathname + "lh1_" + date_hours_minutes() + ".txt";
+            lh1.per_step_hook_ = logger;
+            lh1.run();
+            
+            Population::use_uniform_selection_for_absolute_fitness = true;
+            LPRS().setSeed(seeds.at(run));
+            LimitHue lh2(pop_size, tree_size, steps, pathname + "lh2_");
+            logger_pathname = pathname + "lh2_" + date_hours_minutes() + ".txt";
+            lh2.per_step_hook_ = logger;
+            lh2.run();
+        }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1338,6 +1367,6 @@ private:
     std::string gui_title_ = "TexSyn/LazyPredator run: "; // TODO keep?
     GUI gui;
     int step;
-    
     std::string path_for_saving_images_;
+    std::function<void(Population&)> per_step_hook_ = nullptr;
 };
