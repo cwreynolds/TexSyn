@@ -403,47 +403,10 @@ void jittered_grid_NxN_in_square(int n,
                                    rs.frandom01() * cell_width));
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Utilities to count and report, but otherwise tolerate, "abnormal" floats.
 int abnormal_value_counter = 0;
 int abnormal_value_counter_per_run = 0;
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
-//               Try bulling through with paper_over_abnormal_values()
-//    float paper_over_abnormal_values(float x)
-//    {
-//        if (!is_normal(x))
-//        {
-//            std::cout << "!!! replacing abnormal float " << x << "with 0.";
-//            std::cout << std::endl;
-//            abnormal_value_counter_per_run++;
-//            x = 0;
-//        }
-//        return x;
-//    }
-
-//float paper_over_abnormal_values(float x)
-//{
-//    if (!is_normal(x))
-//    {
-//        grabPrintLock();
-//        abnormal_value_counter_per_run++;
-//        std::cout << "!!! replacing abnormal float " << x << " with 0 (";
-//        std::cout << abnormal_value_counter_per_run << " so far)." << std::endl;
-//        x = 0;
-//    }
-//    return x;
-//}
-
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-
-// TODO 20201210 prototyping version where it prints the source fragment
-
-
-// Original (circa 2002) "non locking" version, in case it is ever useful.
-#define paper_over_abnormal_values(e) paper_over_abnormal_values_helper((e), #e)
-
-
+// Filter out "abnormal" floats, substituting zero. Count and log each such.
 float paper_over_abnormal_values_helper(float x, const std::string& source)
 {
     if (!is_normal(x))
@@ -457,9 +420,7 @@ float paper_over_abnormal_values_helper(float x, const std::string& source)
     }
     return x;
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+// Can be called at end of run to log a summary report.
 void abnormal_value_report()
 {
     if (abnormal_value_counter || abnormal_value_counter_per_run)
@@ -471,5 +432,3 @@ void abnormal_value_report()
         abnormal_value_counter_per_run = 0;
     }
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

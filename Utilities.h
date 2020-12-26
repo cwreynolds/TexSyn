@@ -436,11 +436,8 @@ template<typename T> std::string any_to_string(std::any a)
 // Like std::isnormal() but allows zero. TODO hmm maybe I want std::isfinite()?
 inline bool is_normal(float x) { return !(std::isnan(x) || std::isinf(x)); }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// TODO add a unit test. search for ", " to find places where this could be used
-
 // Convert an std::vector into an std::string as a "comma separated list".
+// TODO add a unit test. search for ", " to find places where this could be used
 template <typename T> std::string vec_to_string(const std::vector<T>& vector)
 {
     std::stringstream s;
@@ -453,7 +450,6 @@ template <typename T> std::string vec_to_string(const std::vector<T>& vector)
     return s.str();
 }
 
-// TODO 20201207
 // Format float to a string, as percentage with "digits" fractional digits after
 // the decimal point.
 inline std::string float_to_percent_fractional_digits(float value, int digits)
@@ -464,24 +460,12 @@ inline std::string float_to_percent_fractional_digits(float value, int digits)
     return ss.str();
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//float paper_over_abnormal_values(float x);
-//void abnormal_value_report();
-
-
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-// TODO 20201210 prototyping version where it prints the source fragment
+// Utilities to count and report, but otherwise tolerate, "abnormal" floats.
 #define paper_over_abnormal_values(e) paper_over_abnormal_values_helper((e), #e)
-
-
+// Filter out "abnormal" floats, substituting zero. Count and log each such.
 float paper_over_abnormal_values_helper(float x, const std::string& source);
+// Can be called at end of run to log a summary report.
 void abnormal_value_report();
-
-//~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Returns bool indicating if the given set contains the given element.
 // TODO Stand-in for the not-until-C++20 function std::set::contains())
@@ -491,8 +475,6 @@ template <typename T> bool set_contains(const std::set<T>& set, const T& key)
     return set.find(key) != set.end();
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20201209
 // Positive "distance" between two ints in modulo arithmetic.
 inline int modulo_abs_diff(int a, int b, int modulus)
 {
@@ -501,8 +483,6 @@ inline int modulo_abs_diff(int a, int b, int modulus)
     return std::min(std::abs(a - (b + modulus)) % modulus,
                     std::abs((modulus + a) - b) % modulus);
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Returns string for current date and time in format: "YYYYMMDD_HHMM"
 inline std::string date_hours_minutes()

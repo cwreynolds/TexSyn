@@ -69,15 +69,6 @@ Color Color::operator*(float s) const
     return Color(r() * s, g() * s, b() * s);
 }
 
-//------------------------------------------------------------------------------
-// TODO Dec 18, 2019 -- I copied the code below from the Utilities.h file of the
-// 2009 version of TextureSynthesisTest. It needs to be cleaned up.
-//------------------------------------------------------------------------------
-
-// for tracking down NAN/INF problems
-#define assert_Not_A_Not_A_Number(x) assert(!std::isnan (x))
-#define assert_Valid_Float(x) assert(!(std::isnan(x)||std::isinf(x)))
-
 // Transform color space from "Red Green Blue" to "Hue Saturation Value"
 //
 // Method due to Alvy Ray Smith, while at NYIT, first published in 1978.
@@ -91,30 +82,10 @@ Color Color::operator*(float s) const
 void Color::convertRGBtoHSV (float red, float green, float blue,
                              float& H, float& S, float& V)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Color(red, green, blue).assertNormal();
-    
-//    if (!Color(red, green, blue).isNormal())
-//    {
-//        std::cout << "TODO bad input to Color::convertRGBtoHSV()" << std::endl;
-//        red = 0;
-//        green = 0;
-//        blue = 0;
-//    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
-    //               Try bulling through with paper_over_abnormal_values()
-    
-    paper_over_abnormal_values(red);
-    paper_over_abnormal_values(green);
-    paper_over_abnormal_values(blue);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    const float R = 255.0f * red;
-    const float G = 255.0f * green;
-    const float B = 255.0f * blue;
+    // Modified to count and report, but otherwise tolerate, "abnormal" floats.
+    const float R = 255 * paper_over_abnormal_values(red);
+    const float G = 255 * paper_over_abnormal_values(green);
+    const float B = 255 * paper_over_abnormal_values(blue);
     if((B > G) && (B > R)) // Blue Is the dominant color
     {
         V = B; // Value is set as the dominant color
@@ -173,18 +144,11 @@ void Color::convertRGBtoHSV (float red, float green, float blue,
         { S = 0; H = 0;}
     }
     H /= 360.0f;
-//    if (!((H >= 0.0) && ( H <= 1.0)))
-//        std::cout << "h Value error in Pixel conversion, Value is " << H
-//        << " Input r,g,b = " << red << "," << green << "," << blue << std::endl;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
-    //               Try bulling through with paper_over_abnormal_values()
-//    assert_Valid_Float (H);
-    
-    paper_over_abnormal_values(H);
-    paper_over_abnormal_values(S);
-    paper_over_abnormal_values(V);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // Modified to count and report, but otherwise tolerate, "abnormal" floats.
+    H = paper_over_abnormal_values(H);
+    S = paper_over_abnormal_values(S);
+    V = paper_over_abnormal_values(V);
 }
 
 // Transform color space from "Hue Saturation Value" to "Red Green Blue"
@@ -248,22 +212,6 @@ Color Color::clipToUnitRGB() const
     return result;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20201210 Color::convertRGBtoHSV assert fail. Try bulling through
-//               Try bulling through with paper_over_abnormal_values()
-
-//    // Exponentiate the RGB components by given gamma value ("exponent").
-//    // Also clips RGB components to be non-negative before exponentiation, and if
-//    // any RGB values are so large that they "overflow", clips result to white.
-//    Color Color::gamma(float exponent) const
-//    {
-//        Color exponentiated(pow(std::max(r(), 0.0f), exponent),
-//                            pow(std::max(g(), 0.0f), exponent),
-//                            pow(std::max(b(), 0.0f), exponent));
-//        bool valid = isNormal() && exponentiated.isNormal();
-//        return valid ? exponentiated : Color(1, 1, 1);
-//    }
-
 // Exponentiate the RGB components by given gamma value ("exponent").
 // Also clips RGB components to be non-negative before exponentiation.
 // If any RGB values are so large that they "overflow", returns black.
@@ -276,7 +224,6 @@ Color Color::gamma(float exponent) const
                  paper_over_abnormal_values(eg),
                  paper_over_abnormal_values(eb));
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // TODO experimental version in RandomSequence instead of in Color.
 //

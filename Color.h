@@ -17,14 +17,11 @@ public:
     // Constructors:
     Color() : Color(0, 0, 0) {};
     Color(float gray) : Color(gray, gray, gray) {}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Color(float r, float g, float b) : red_(r), green_(g), blue_(b) {}
-//    Color(float r, float g, float b):red_(r),green_(g),blue_(b){assertNormal();}
+    // Modified to count and report, but otherwise tolerate, "abnormal" floats.
     Color(float r, float g, float b)
       : red_(paper_over_abnormal_values(r)),
         green_(paper_over_abnormal_values(g)),
         blue_(paper_over_abnormal_values(b)) {}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // assignment, set RGB components
     Color operator=(const Color& c)
     {
