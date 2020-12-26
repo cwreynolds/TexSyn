@@ -4475,12 +4475,20 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Set up hyperparameter comparison.
-    std::cout << "December 22, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201222_";
+//    // Set up hyperparameter comparison.
+//    std::cout << "December 22, 2020" << std::endl;
+//    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201222_";
+//
+//    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
     
-    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
-
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Cleaning up GP.h
+    std::cout << "December 25, 2020" << std::endl;
+    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201225_";
+    
+    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
