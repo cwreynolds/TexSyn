@@ -320,11 +320,7 @@ public:
             {
                 "CotsMap",
                 "Texture",
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                // TODO 20201128 diagnosed bug last night, saw this error today
-//                {"Vec2", "Vec2", "Vec2", "Vec2", "Texture", "Texture"},
                 {"Vec2", "Vec2", "Vec2", "Vec2", "Texture"},
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 evalTexture(CotsMap(argVec2(),
                                     argVec2(),
                                     argVec2(),
@@ -359,7 +355,10 @@ public:
     // TODO move this elsewhere? Maybe static on Texture class?
     static Texture* textureFromIndividual(Individual* individual)
     {
-        return std::any_cast<Texture*>(individual->treeValue());
+        Texture* t = std::any_cast<Texture*>(individual->treeValue());
+        assert(t);
+        assert(t->valid());
+        return t;
     };
 };
 
@@ -368,7 +367,6 @@ public:
 #undef argTexture
 #undef evalTexture
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Measures presence of high spatial frequencies ("confetti") in a texture.
 // TODO 20201210 maybe move to new "Analyze" package?
 //
@@ -406,8 +404,6 @@ inline float wiggliness(const Texture& texture)
             (do_transect(Vec2(-0.1, -0.1), Vec2(+0.1, +0.1)) +
              do_transect(Vec2(-0.1, +0.1), Vec2(+0.1, -0.1))));
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 
 // TODO 20201205 a refactor of the LimitHue(Old) namespace as a class.
@@ -437,30 +433,26 @@ public:
         Timer t(name() + " run");
         gui.drawText(gui_title_ + name(), 15, Vec2(20, 20), Color(0));
         gui.refresh();
-        Population::FitnessFunction fitness_function_wrapper =
-            [&](Individual& individual)
-            { return fitness_function(&individual); };
         for (step = 0; step < evolution_steps_; step++)
         {
-            population.evolutionStep(fitness_function_wrapper, function_set);
+            population.evolutionStep([&](Individual* individual)
+                                         { return fitnessFunction(individual); },
+                                     function_set);
             if (per_step_hook_) per_step_hook_(population);
         }
         Individual* final_best = population.nTopFitness(1).at(0);
         std::cout << "Final best in population:" << std::endl;
         std::cout << "fitness = " << final_best->getFitness() << std::endl;
         std::cout << final_best->tree().to_string() << std::endl;
-        
         Texture* texture = GP::textureFromIndividual(final_best);
-        std::string p =
-            path_for_saving_images_ + date_hours_minutes() + "_" + name();
+        std::string p = (path_for_saving_images_ + date_hours_minutes() +
+                         "_" + name());
         Texture::displayAndFile(*texture, p, Texture::getDefaultRenderSize());
-
-        // TODO need to be able to delete that specific window...
-        
+        // TODO need to be able to delete that specific window, or reuse.
         Texture::waitKey(1000);
     }
     // Determines fitness (on [0, 1]) for given Individual
-    float fitness_function(Individual* individual)
+    float fitnessFunction(Individual* individual)
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         std::string pathname = "";
@@ -600,15 +592,20 @@ public:
                                            const Vec2& upper_left_position,
                                            GUI& gui)
     {
-        Texture& texture = *GP::textureFromIndividual(individual);
-        texture.rasterizeToImageCache(gui_render_size_, true);
-        gui.drawTexture(texture, upper_left_position, gui_render_size_);
-        Vec2 text_pos = upper_left_position + Vec2(0, gui_render_size_);
-        float fitness = individual->getFitness();
-        std::string text = float_to_percent_fractional_digits(fitness, 1);
-        gui.eraseRectangle(Vec2(gui_render_size_, gui_text_height_), text_pos);
-        Vec2 center = text_pos + Vec2(gui_render_size_ / 2, 0);
-        gui.drawTextHorizontalCenter(text, gui_text_height_, center, Color(1));
+        if (individual->hasFitness())
+        {
+            Texture& texture = *GP::textureFromIndividual(individual);
+            texture.rasterizeToImageCache(gui_render_size_, true);
+            gui.drawTexture(texture, upper_left_position, gui_render_size_);
+            Vec2 text_pos = upper_left_position + Vec2(0, gui_render_size_);
+            float fitness = individual->getFitness();
+            std::string text = float_to_percent_fractional_digits(fitness, 1);
+            Vec2 text_size(gui_render_size_, gui_text_height_);
+            gui.eraseRectangle(text_size, text_pos);
+            Vec2 center = text_pos + Vec2(gui_render_size_ / 2, 0);
+            Color white(1);
+            gui.drawTextHorizontalCenter(text, gui_text_height_, center, white);
+        }
     }
     // Compute dimensions of the GUI window.
     Vec2 guiSize() const
@@ -618,10 +615,7 @@ public:
     }
     // The generic name for this run.
     const std::string& name() const { return name_; }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201222 set up comparison run
-    
+        
     static void comparison(std::string pathname)
     {
         int runs = 4;
@@ -654,23 +648,26 @@ public:
         };
         for (int run = 0; run < runs; run++)
         {
-            Population::use_uniform_selection_for_absolute_fitness = false;
+            std::string run_string = std::to_string(run + 1);
+            std::string ab = "_a_";
             LPRS().setSeed(seeds.at(run));
-            LimitHue lh1(pop_size, tree_size, steps, pathname + "lh1_");
-            logger_pathname = pathname + "lh1_" + date_hours_minutes() + ".txt";
+            LimitHue lh1(pop_size, tree_size, steps, pathname + run_string + ab);
+            logger_pathname = (pathname + run_string + ab +
+                               date_hours_minutes() + ".txt");
             lh1.per_step_hook_ = logger;
             lh1.run();
             
-            Population::use_uniform_selection_for_absolute_fitness = true;
+            /*
+            ab = "_b_";
             LPRS().setSeed(seeds.at(run));
-            LimitHue lh2(pop_size, tree_size, steps, pathname + "lh2_");
-            logger_pathname = pathname + "lh2_" + date_hours_minutes() + ".txt";
+            LimitHue lh2(pop_size, tree_size, steps, pathname + run_string + ab);
+            logger_pathname = (pathname + run_string + ab +
+                               date_hours_minutes() + ".txt");
             lh2.per_step_hook_ = logger;
             lh2.run();
+             */
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 private:
     // TODO set this in default constructor?
     std::string name_ = "LimitHue";

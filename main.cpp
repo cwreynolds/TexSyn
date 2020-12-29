@@ -4483,11 +4483,34 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Cleaning up GP.h
-    std::cout << "December 25, 2020" << std::endl;
-    std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201225_";
+//        // Cleaning up GP.h
+//        std::cout << "December 25, 2020" << std::endl;
+//        std::string path = "/Users/cwr/Desktop/TexSyn_temp/20201225_";
+//
+//        // TODO 20201226 experiment: measure all initial fitnesses
+//
+//    //    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    //    LimitHue(100, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    //    Population::use_uniform_selection_for_absolute_fitness = true;
+//    //    LimitHue(100, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//
+//    //    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
     
-    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 20201227 build new "absolute fitness" step func based on tournament
+    std::cout << "December 27, 2020" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20201227_";
+
+//    Population::use_uniform_selection_for_absolute_fitness = true;
+//    LimitHue(100, 100, 100, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//    LimitHue(100, 100, 1000, "/Users/cwr/Desktop/TexSyn_temp/").run();
+//    LimitHue(10, 10, 10, temp_dir).run();
+//    LimitHue(100, 100, 1000, temp_dir).run();
+    LimitHue(100, 100, 100, temp_dir).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
