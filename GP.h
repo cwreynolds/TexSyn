@@ -485,14 +485,7 @@ public:
         std::cout << ", sat=" << enough_saturation;
         std::cout << ", wiggle=" << wiggle_constraint << ")";
         std::cout << std::endl << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201204 for the sake of the GUI we want this individual to
-        // already have its fitness set. Otherwise that is suppost to happen
-        // in the caller of this fitness function.
-        individual->setFitness(fitness);
-        updateGUI(individual);
-        individual->setFitness(0);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        updateGUI(individual, fitness);
         return fitness;
     }
     // A score on [0, 1] measuring how well given Texture meets the "LimitHue"
@@ -565,8 +558,10 @@ public:
         std::cout << ") score=" << score << std::endl;
         return score;
     }
-    // Display textures and text on GUI canvas.
-    void updateGUI(Individual* individual)
+    
+    // Display textures and text on GUI canvas. The current Individual and its
+    // newly measured fitness is passed in. Also display "top ten" Individuals.
+    void updateGUI(Individual* individual, float fitness)
     {
         Vec2 step_position(300, 20);
         gui.eraseRectangle(Vec2(200, gui_text_height_), step_position);
@@ -574,39 +569,38 @@ public:
                             " of " + std::to_string(evolution_steps_));
         gui.drawText(text, gui_text_height_, step_position, Color(1));
         Vec2 position(0, 50);
-        drawIndividualsTextureWithFitness(individual, position, gui);
+        drawTextureOnGui(individual, fitness, position);
         float row_spacing = gui_render_size_ + gui_text_height_ + gui_margin_;
         position += Vec2(0, row_spacing);
-        
+        // Draw the "top ten" textures in two rows of 5.
         std::vector<Individual*> tops = population.nTopFitness(10);
         for (int i = 0; i < 10; i++)
         {
-            drawIndividualsTextureWithFitness(tops.at(i), position, gui);
+            Individual* ind = tops.at(i);
+            float fit = ind->getFitness();
+            if (ind->hasFitness()) drawTextureOnGui(ind, fit, position);
             position += Vec2(gui_margin_ + gui_render_size_, 0);
             if (i == 4) position = Vec2(0, position.y() + row_spacing);
         }
         gui.refresh();
     }
+
     // Render an Individual's Texture, above its numerical fitness (as percent).
-    void drawIndividualsTextureWithFitness(Individual* individual,
-                                           const Vec2& upper_left_position,
-                                           GUI& gui)
+    void drawTextureOnGui(Individual* individual,
+                          float fitness,
+                          const Vec2& upper_left_position)
     {
-        if (individual->hasFitness())
-        {
-            Texture& texture = *GP::textureFromIndividual(individual);
-            texture.rasterizeToImageCache(gui_render_size_, true);
-            gui.drawTexture(texture, upper_left_position, gui_render_size_);
-            Vec2 text_pos = upper_left_position + Vec2(0, gui_render_size_);
-            float fitness = individual->getFitness();
-            std::string text = float_to_percent_fractional_digits(fitness, 1);
-            Vec2 text_size(gui_render_size_, gui_text_height_);
-            gui.eraseRectangle(text_size, text_pos);
-            Vec2 center = text_pos + Vec2(gui_render_size_ / 2, 0);
-            Color white(1);
-            gui.drawTextHorizontalCenter(text, gui_text_height_, center, white);
-        }
+        Texture& texture = *GP::textureFromIndividual(individual);
+        texture.rasterizeToImageCache(gui_render_size_, true);
+        gui.drawTexture(texture, upper_left_position, gui_render_size_);
+        Vec2 text_pos = upper_left_position + Vec2(0, gui_render_size_);
+        std::string text = float_to_percent_fractional_digits(fitness, 1);
+        Vec2 text_size(gui_render_size_, gui_text_height_);
+        gui.eraseRectangle(text_size, text_pos);
+        Vec2 center = text_pos + Vec2(gui_render_size_ / 2, 0);
+        gui.drawTextHorizontalCenter(text, gui_text_height_, center, Color(1));
     }
+
     // Compute dimensions of the GUI window.
     Vec2 guiSize() const
     {
