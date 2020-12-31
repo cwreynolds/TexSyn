@@ -4150,7 +4150,6 @@ int main(int argc, const char * argv[])
 //        int generation_equivalents = 10;
 //        Population population(population_size, max_tree_size, function_set);
 //        Texture::leakCheck();
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //        // TODO 20201121 try converting Population over to std::shared_ptr
 //        //auto fitness = [](Individual& i)
 //        auto fitness = [](std::shared_ptr<Individual> i)
@@ -4158,17 +4157,14 @@ int main(int argc, const char * argv[])
 //            //return GP::textureFromIndividual(&i)->getColor(Vec2()).getS();
 //            return GP::textureFromIndividual(i)->getColor(Vec2()).getS();
 //        };
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //        for (int i = 0; i < population_size * generation_equivalents; i++)
 //        {
 //            if (render)
 //            {
 //                Texture::closeAllWindows();
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                // TODO 20201121 try converting Population over to std::shared_ptr
 //                //Individual* best = population.findBestIndividual();
 //                std::shared_ptr<Individual> best = population.findBestIndividual();
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                Texture::displayAndFile(*GP::textureFromIndividual(best));
 //                Texture::leakCheck();
 //                Texture::waitKey(1);

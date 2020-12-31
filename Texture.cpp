@@ -12,31 +12,16 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #include <opencv2/core/core.hpp>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO temp(?) for fft_test()
-#include <opencv2/imgproc/imgproc.hpp>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <opencv2/imgproc/imgproc.hpp>  // TODO temp(?) for fft_test()
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Texture::~Texture()
 {
-    // TODO deja vu?
     assert("already invalid at top of ~Texture" && valid());
-    
-//    // TODO I suspect both of these are superfluous:
-//    raster_->release();
-//    raster_.reset();
-//    // TODO this too, right?
-//    raster_ = nullptr;
-    
-    // TODO 20201122 temporary for debugging
     markAsInvalid();
-    
     destructor_count_++;
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Utility for getColor(), special-cased for when alpha is 0 or 1.
 Color Texture::interpolatePointOnTextures(float alpha,
@@ -88,12 +73,8 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
     if ((size != raster_->rows) || (size != raster_->cols))
     {
-        // Reset our OpenCV Mat to be (size, size) with 3 floats per pixel.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-//        raster_->create(size, size, CV_32FC3);
+        // Reset our OpenCV Mat to be (size, size) at default depth.
         raster_->create(size, size, getDefaultOpencvMatType());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO Code assumes disk center at window center, so size must be odd.
         assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
         // Synchronizes access to opencv_image by multiple row threads.
@@ -130,14 +111,8 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     int half = size / 2;
     // First and last pixels on j-th row of time
     int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-//    cv::Mat row_image(1, size, CV_32FC3, cv::Scalar(0.5, 0.5, 0.5));
-    cv::Mat row_image(1, size, getDefaultOpencvMatType(),
-//                      cv::Scalar::all(127));
-                      cv::Scalar::all((getDefaultOpencvMatType() == CV_32FC3) ?
-                                      0.5 : 127));
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
+    cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
     for (int i = -x_limit; i <= x_limit; i++)
     {
         // Read TexSyn Color from Texture at (i, j).
@@ -161,34 +136,12 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         }
         // Adjust for display gamma.
         color = color.gamma(1 / defaultGamma());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-//        // Make OpenCV color, with reversed component order.
-//        cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-//        // Write OpenCV color to corresponding pixel on row image:
-//        row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
-        if (getDefaultOpencvMatType() == CV_32FC3)
-        {
-            // Make OpenCV color, with reversed component order.
-            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-            // Write OpenCV color to corresponding pixel on row image:
-            row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
-        }
-        else
-        {
-            // TODO 20201203 experiment case for CV_8UC3
-            
-            // Make OpenCV color, with reversed component order.
-//            cv::Vec3f opencv_color(color.b(), color.g(), color.r());
-            cv::Vec3b opencv_color(color.b() * 255,
-                                   color.g() * 255,
-                                   color.r() * 255);
-            // Write OpenCV color to corresponding pixel on row image:
-//            row_image.at<cv::Vec3f>(cv::Point(half + i, 0)) = opencv_color;
-            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
-
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Make OpenCV color, with reversed component order.
+        cv::Vec3b opencv_color(color.b() * 255,  // Note: assumes CV_8UC3.
+                               color.g() * 255,
+                               color.r() * 255);
+        // Write OpenCV color to corresponding pixel on row image:
+        row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
@@ -218,10 +171,6 @@ void Texture::writeToFile(int size,
                           int margin,
                           const std::string& file_type) const
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-    // need anything here?
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
     cv::Mat opencv_image(size + margin * 2,
                          size + margin * 2,
@@ -233,25 +182,7 @@ void Texture::writeToFile(int size,
     rasterizeToImageCache(size, getDefaultRenderAsDisk());
     // Define a new image, a "pointer" to portion of opencv_image inside margin.
     cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-    // need anything here?
-    
-    // Convert 3xfloat rendered raster to 3x8bit window inside opencv_image
-//    raster_->convertTo(render_target, CV_8UC3, 255);
-
-    if (getDefaultOpencvMatType() == CV_8UC3)
-    {
-        raster_->copyTo(render_target);
-    }
-    else
-    {
-        raster_->convertTo(render_target, CV_8UC3, 255);
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    
+    raster_->copyTo(render_target);
     bool ok = cv::imwrite(pathname + file_type, opencv_image);
     std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
     std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
@@ -346,21 +277,7 @@ void Texture::displayAndFile3(const Texture& t1,
         // Define a size*size portion of "mat" whose left edge is at "x".
         cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
         // Copy into submat while conveting from rgb float to rgb uint8_t
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-        // need anything here?
-//
-        
-        if (getDefaultOpencvMatType() == CV_8UC3)
-        {
-//            t.raster_->convertTo(submat, CV_8UC3, 1);
-            t.raster_->copyTo(submat);
-        }
-        else
-        {
-            t.raster_->convertTo(submat, CV_8UC3, 255);
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        t.raster_->copyTo(submat);
     };
     subwindow(t1, 0);
     subwindow(t2, size);
@@ -372,104 +289,14 @@ void Texture::displayAndFile3(const Texture& t1,
     windowPlacementTool(mat);
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-//    //CV_32FC3
-//
-//    void Texture::fft_test() const
-//    {
-//        // Read image from file
-//        // Make sure that the image is in grayscale
-//    //    cv::Mat img = cv::imread("lena.JPG",0);
-//    //    cv::Mat& img = *raster_;
-//    //    cv::Mat img = *raster_;
-//    //    cv::Mat img(*raster_);
-//        cv::Mat img;
-//
-//    //    img.convertTo(img, CV_32F);
-//        raster_->convertTo(img, CV_32F);
-//
-//    //    cv::cvtColor(img, *raster_, cv::COLOR_BGR2GRAY);
-//        cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
-//
-//        debugPrint(raster_->cols);
-//        debugPrint(raster_->rows);
-//        debugPrint(img.cols);
-//        debugPrint(img.rows);
-//        debugPrint(cv::Mat_<float>(img).cols);
-//        debugPrint(cv::Mat_<float>(img).rows);
-//
-//        cv::imshow("img", img);
-//    //    cv::imshow("cv::Mat_<float>(img)", cv::Mat_<float>(img));
-//    //    Texture::waitKey();
-//
-//        //Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//    //    cv::Mat planes[] = {cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F)};
-//    //    cv::Mat complexI;
-//    //    cv::merge(planes, 2, complexI);
-//    //    std::vector<cv::Mat> planes =
-//    //        { cv::Mat_<float>(img), cv::Mat::zeros(img.size(), CV_32F) };
-//        std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
-//        cv::Mat complexI;
-//        cv::merge(planes, complexI);
-//
-//        // Applying DFT
-//        cv::dft(complexI, complexI);
-//
-//        // Reconstructing original image from the DFT coefficients
-//        cv::Mat invDFT, invDFTcvt;
-//        // Applying IDFT
-//        cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
-//
-//    //    invDFT.convertTo(invDFTcvt, CV_8U);
-//        invDFT.convertTo(invDFTcvt, CV_8U, 256);
-//        cv::imshow("Output", invDFTcvt);
-//
-//
-//        // Split the image into different channels
-//        std::vector<cv::Mat> fftChannels(2);
-//        split(complexI, fftChannels);
-//
-//
-//    //    cv::imshow("complexI[0]", complexI[0]);
-//        cv::imshow("fftChannels[0]", fftChannels[0]);
-//        cv::imshow("fftChannels[1]", fftChannels[1]);
-//
-//
-//    //    //show the image
-//    //    cv::imshow("Original Image", img);
-//
-//    //    // Wait until user press some key
-//    //    cv::waitKey(0);
-//    //    return 0;
-//    }
-
 void Texture::fft_test() // const
 {
-//    Texture::rasterizeToImageCache(251, false);
-//    Texture::rasterizeToImageCache(101, false);
     Texture::rasterizeToImageCache(201, false);
-
-    
-//    cv::Mat img;
     cv::Mat monochrome;
-//    raster_->convertTo(img, CV_32F);
-//    cv::cvtColor(*raster_, img, cv::COLOR_BGR2GRAY);
     cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-
-//    debugPrint(raster_->cols);
-//    debugPrint(raster_->rows);
-//    debugPrint(img.cols);
-//    debugPrint(img.rows);
-//    debugPrint(cv::Mat_<float>(img).cols);
-//    debugPrint(cv::Mat_<float>(img).rows);
-//    cv::imshow("img", img);
     cv::imshow("monochrome", monochrome);
 
     // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//    std::vector<cv::Mat> planes = { img, cv::Mat::zeros(img.size(), CV_32F) };
-//    std::vector<cv::Mat> planes = { monochrome, cv::Mat::zeros(monochrome.size(), CV_32F) };
     cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
     std::vector<cv::Mat> planes = { monochrome, zeros };
     cv::Mat complexI;
@@ -479,21 +306,14 @@ void Texture::fft_test() // const
     cv::dft(complexI, complexI);
 
     // Reconstructing original image from the DFT coefficients
-//    cv::Mat invDFT, invDFTcvt;
     cv::Mat invDFT;
     // Applying IDFT
     cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
-    
-//    invDFT.convertTo(invDFTcvt, CV_8U, 256);
-//    cv::imshow("Output", invDFTcvt);
-//    cv::imshow("Output", invDFT);
     cv::imshow("DFT-iDFT reconstruction", invDFT);
 
     // Split the image into different channels
     std::vector<cv::Mat> fftChannels(2);
     split(complexI, fftChannels);
-//    cv::imshow("fftChannels[0]", fftChannels[0]);
-//    cv::imshow("fftChannels[1]", fftChannels[1]);
     cv::imshow("DFT real part", fftChannels[0]);
     cv::imshow("DFT imginary part", fftChannels[1]);
     
@@ -501,13 +321,6 @@ void Texture::fft_test() // const
     int width = real.rows;
     int y = width / 2;
 
-//        for (int x = real.cols / 2; x < real.cols; x++)
-//        {
-//    //        std::cout << real.at<float>(y, x) << " ";
-//    //        int v = (real.at<float>(y, x) * 10) + 50;
-//            int v = real.at<float>(y, x) * 10;
-//            std::cout << v << " ";
-//        }
     for (int x = width / 2; x < width; x++)
     {
         std::cout << real.at<float>(y, x) << " ";
@@ -518,192 +331,9 @@ void Texture::fft_test() // const
         std::cout << int(10 * real.at<float>(y, x)) << " ";
     }
     std::cout << std::endl << std::endl;
-    
-    
-//        float score = 0;
-//        for (int x = width / 2; x < width; x++)
-//        {
-//            float real_part = real.at<float>(y, x);
-//    //        float weight = float(x - (real.cols / 2)) / (real.cols / 2);
-//    //        float weight = remapInterval(x, width / 2, width, 0, 1);
-//            float weight = sq(remapInterval(x, width / 2, width, 0, 1));
-//    //        score += real_part * weight;
-//            score += std::abs(real_part * weight);
-//        }
-//        debugPrint(score);
 
     debugPrint(highFrequencyScore());
 }
-
- 
-//    float Texture::highFrequencyScore() const
-//    //{
-//    //    return highFrequencyScore(getDefaultRenderSize());
-//    //}
-//    //float Texture::highFrequencyScore(int render_size) const
-//    {
-//    //    // TODO no this wastes a lot of re-rendering time during GP run
-//    //    // but how to make sure there is a correctly-sized raster?
-//    //    // Render this texture to monochrome (square image, 201x201).
-//    //    Texture::rasterizeToImageCache(201, false);
-//    //    if (raster_->empty()) Texture::rasterizeToImageCache(201, false);
-//
-//        // TODO, no, still wrong, some images displayed with square shape.
-//        // Render this texture to monochrome, at given render_size, square shape.
-//    //    Texture::rasterizeToImageCache(render_size, false);
-//    //    Texture::rasterizeToImageCache(render_size, getDefaultRenderAsDisk());
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        Timer t("....................................Texture::highFrequencyScore");
-//        cv::Mat temp = *raster_;
-//        Texture::rasterizeToImageCache(101, false);
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//        cv::Mat monochrome;
-//        cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        *raster_ = temp;
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//        // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//        cv::Mat complexI;
-//        cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-//        std::vector<cv::Mat> planes = { monochrome, zeros };
-//        cv::merge(planes, complexI);
-//
-//        // Applying DFT
-//        cv::dft(complexI, complexI);
-//
-//        // Split the image into different channels
-//        std::vector<cv::Mat> fftChannels(2);
-//        split(complexI, fftChannels);
-//
-//        cv::Mat& real = fftChannels[0];
-//        int width = real.rows;
-//        int y = width / 2;
-//        float score = 0;
-//        for (int x = width / 2; x < width; x++)
-//        {
-//            float real_part = real.at<float>(y, x);
-//            float weight = sq(remapInterval(x, width / 2, width, 0, 1));
-//            score += std::abs(real_part * weight);
-//        }
-//        return score;
-//    }
-
-//    float Texture::highFrequencyScore() // const
-//    {
-//        // TODO maybe cache the rendered image used here, or just case the score?
-//        Timer t("....................................Texture::highFrequencyScore");
-//        float score = cached_high_frequency_score_;
-//        if (score == 0)
-//        {
-//            // Render this texture to monochrome (square image, size x size).
-//            int size = 101;
-//            cv::Mat temp = *raster_;  // Save raster_
-//            Texture::rasterizeToImageCache(size, false);
-//            cv::Mat monochrome;
-//            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-//            // restore raster_
-//            *raster_ = temp;
-//
-//            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//            cv::Mat complexI;
-//            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-//            std::vector<cv::Mat> planes = { monochrome, zeros };
-//            cv::merge(planes, complexI);
-//
-//            // Applying DFT
-//            cv::dft(complexI, complexI);
-//
-//            // Split the image into different channels
-//            std::vector<cv::Mat> fftChannels(2);
-//            split(complexI, fftChannels);
-//
-//            cv::Mat& real = fftChannels[0];
-//            int width = real.rows;
-//            for (int x = width / 2; x < width; x++)
-//            {
-//                for (int y = width / 2; y < width; y++)
-//                {
-//                    float real_part = real.at<float>(y, x);
-//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                    // TODO I think this is left over form the 1d version several days ago
-//    //                float weight = sq(remapInterval(x, width / 2, width, 0, 1));
-//                    Vec2 offset = Vec2(x, y) - Vec2(width / 2, width / 2);
-//                    float weight = sq(offset.length() / (width * 0.5));
-//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                    score += std::abs(real_part * weight);
-//                }
-//            }
-//            cached_high_frequency_score_ = score;
-//        }
-//        return score;
-//    }
-
-// TODO rewrite to score entire real plane (all four quadrants)
-//      wondered if this is why slice gratings at a diagonal were so popular
-
-//    float Texture::highFrequencyScore()
-//    {
-//        // TODO maybe cache the rendered image used here, or just case the score?
-//        Timer t("    highFrequencyScore");
-//        float score = cached_high_frequency_score_;
-//        if (score == 0)
-//        {
-//            // Render this texture to monochrome (square image, size x size).
-//            int size = 101;
-//            cv::Mat temp = *raster_;  // Save raster_
-//            Texture::rasterizeToImageCache(size, false);
-//            cv::Mat monochrome;
-//            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-//            // restore raster_
-//            *raster_ = temp;
-//
-//            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-//            cv::Mat complexI;
-//            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-//            std::vector<cv::Mat> planes = { monochrome, zeros };
-//            cv::merge(planes, complexI);
-//
-//            // Applying DFT
-//            cv::dft(complexI, complexI);
-//
-//            // Split the image into different channels
-//            std::vector<cv::Mat> fftChannels(2);
-//            split(complexI, fftChannels);
-//
-//            cv::Mat& real = fftChannels[0];
-//            int width = real.rows;
-//            float half_width = width * 0.5;
-//
-//            Vec2 center(half_width, half_width);
-//
-//    //        for (int x = width / 2; x < width; x++)
-//            for (int x = 0; x < width; x++)
-//            {
-//    //            for (int y = width / 2; y < width; y++)
-//                for (int y = 0; y < width; y++)
-//                {
-//    //                float real_part = real.at<float>(y, x);
-//    //                Vec2 offset = Vec2(x, y) - Vec2(half_width, half_width);
-//    //                float weight = sq(offset.length() / (width * 0.5));
-//    //                score += std::abs(real_part * weight);
-//
-//    //                Vec2 offset = Vec2(x, y) - center;
-//    //                float length = offset.length();
-//                    float length = (Vec2(x, y) - center).length();
-//                    float weight = sq(length / half_width);
-//                    if (weight < 1)
-//                    {
-//                        float real_part = real.at<float>(y, x);
-//                        score += std::abs(real_part * weight);
-//                    }
-//                }
-//            }
-//            cached_high_frequency_score_ = score;
-//        }
-//        return score;
-//    }
 
 float Texture::highFrequencyScore()
 {
@@ -743,7 +373,6 @@ float Texture::highFrequencyScore()
             for (int y = 0; y < width; y++)
             {
                 float length = (Vec2(x, y) - center).length();
-//                float weight = sq(length / half_width);
                 float weight = length / half_width;
                 if (weight < 1)
                 {
@@ -757,30 +386,14 @@ float Texture::highFrequencyScore()
     return score;
 }
 
-
-//    void sampleColors(Individual* individual, std::vector<Color>& samples)
-//    {
-//        int n = 10;
-//        samples.clear();
-//        std::vector<Vec2> positions;
-//        jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
-//        Texture* texture = GP::textureFromIndividual(individual);
-//        for (auto& p : positions)
-//            samples.push_back(texture->getColor(p).clipToUnitRGB());
-//    }
-
-// TODO just a prototype
 // Optional cache of 100 colors randomly sampled in unit-diameter disk.
 const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
 {
     if (cached_random_color_samples_.empty())
     {
         int n = 10;
-//        samples.clear();
         std::vector<Vec2> positions;
-//        jittered_grid_NxN_in_square(n, 1.4, LPRS(), positions);
         jittered_grid_NxN_in_square(n, 1.4, rs, positions);
-//        Texture* texture = GP::textureFromIndividual(individual);
         for (auto& p : positions)
         {
             Color sample = getColor(p).clipToUnitRGB();
@@ -789,13 +402,9 @@ const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
     }
     return cached_random_color_samples_;
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-//int Texture::default_opencv_mat_type_ = CV_32FC3;
+// int Texture::default_opencv_mat_type_ = CV_32FC3;
 // TODO 20201207 seems to be working fine, switch over to this as default
 //               eventually remove the conditionalization.
 int Texture::default_opencv_mat_type_ = CV_8UC3;
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

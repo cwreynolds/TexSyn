@@ -34,7 +34,9 @@ public:
     {
         // GpTypes
         {
-            { "Texture", [](std::any a)
+            {
+                "Texture",
+                [](std::any a)
                 {
                     if (a.has_value())
                     {
@@ -369,6 +371,7 @@ public:
 
 // Measures presence of high spatial frequencies ("confetti") in a texture.
 // TODO 20201210 maybe move to new "Analyze" package?
+// TODO 20201230 similar to Texture::highFrequencyScore()
 //
 // For these test textures:
 //    Uniform black(0);

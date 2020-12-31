@@ -20,9 +20,7 @@ class AbstractTexture
 {
 public:
     AbstractTexture(){}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     virtual ~AbstractTexture() = default;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     virtual Color getColor(Vec2 position) const = 0;
 };
 
@@ -30,45 +28,9 @@ class Texture : public AbstractTexture
 {
 public:
     // Default constructor.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Texture() : raster_(emptyCvMat()) {}
     Texture() : raster_(emptyCvMat()) { constructor_count_++; }
     virtual ~Texture();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201122 temporary for debugging
-    // TODO similar concept, but use it as a work-around, a gate on deleting the
-    //      apparently invalid instance. Count the number of such occurrences.
-    bool valid() const
-    {
-        bool v = ((valid_top_ == validity_key_) &&
-                  (valid_bot_ == validity_key_ / 2));
-        if (!v) invalid_instance_counter_++;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20201124 more verbose:
-        if (!v)
-        {
-            std::cout << "fail Texture::valid(), should be (";
-            std::cout << validity_key_ << ", " << validity_key_ / 2;
-            std::cout << ") but are (";
-            std::cout << valid_top_ << ", " << valid_bot_ / 2 << ")";
-            std::cout << std::endl;
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        return v;
-    }
-    void markAsInvalid()
-    {
-        valid_top_ = 0;
-        valid_bot_ = 0;
-    }
-    static void invalidInstanceReport()
-    {
-        std::cout << "Texture invalid instance count = ";
-        std::cout << invalid_instance_counter_ << std::endl;
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Provide a default so Texture is a concrete (non-virtual) class.
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
@@ -109,6 +71,34 @@ public:
     void resetStatistics() const;
     // Collect statistics for debugging.
     void collectStatistics(Vec2 position, Color color) const;
+    
+    // Added to debug memory leak, but kept as an alarm for potential problems.
+    // Used to test if a given Texture (eg a pointer's target) is still valid.
+    bool valid() const
+    {
+        bool v = ((valid_top_ == validity_key_) &&
+                  (valid_bot_ == validity_key_ / 2));
+        if (!v) invalid_instance_counter_++;
+        if (!v)
+        {
+            std::cout << "fail Texture::valid(), should be (";
+            std::cout << validity_key_ << ", " << validity_key_ / 2;
+            std::cout << ") but are (";
+            std::cout << valid_top_ << ", " << valid_bot_ / 2 << ")";
+            std::cout << std::endl;
+        }
+        return v;
+    }
+    void markAsInvalid()
+    {
+        valid_top_ = 0;
+        valid_bot_ = 0;
+    }
+    static void invalidInstanceReport()
+    {
+        std::cout << "Texture invalid instance count = ";
+        std::cout << invalid_instance_counter_ << std::endl;
+    }
     // Utilities for rasterizing a Texture to tiling of pixels, with versions
     // for a square and a disk of pixels. Each require a "size" (width of the
     // square or diameter of the disk) and a function to be applied at each
@@ -176,15 +166,13 @@ public:
     static bool getDefaultRenderAsDisk() { return render_as_disk_; }
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
     thread_local static inline int expensive_to_nest = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO temp?
+    // Score a Texture on how much "high" frequency it has.
+    // TODO temp? Similar in intent to wiggliness() in GP.h
     void fft_test();
     float highFrequencyScore();
-    
-    // TODO just a prototype
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
-    
+    // Print report on constructor vs. destructor count, eg at end of run.
     static void leakCheck()
     {
         std::cout << "Texture";
@@ -193,54 +181,27 @@ public:
         std::cout << ", leaked=" << constructor_count_ - destructor_count_;
         std::cout << std::endl;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
     static int getDefaultOpencvMatType() { return default_opencv_mat_type_; }
     static void setDefaultOpencvMatType(int opencv_mat_type)
         { default_opencv_mat_type_ = opencv_mat_type; }
-    // should be private
-    static int default_opencv_mat_type_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20201204 experiment-- expose a Texture's cv::mat
     const cv::Mat& getCvMat() const { return *raster_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 private:
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201122 temporary for debugging
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
     int valid_top_ = validity_key_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::shared_ptr<cv::Mat> raster_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO just a prototype
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     std::vector<Color> cached_random_color_samples_;
     float cached_high_frequency_score_ = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Global default render size.
     static inline int render_size_ = 511;
     // Global default "render as disk" flag: render disk if true, else square.
     static inline bool render_as_disk_ = true;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20201122 temporary for debugging
+    static int default_opencv_mat_type_;
     int valid_bot_ = validity_key_ / 2;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
