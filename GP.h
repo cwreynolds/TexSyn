@@ -443,7 +443,7 @@ public:
                                      function_set);
             if (per_step_hook_) per_step_hook_(population);
         }
-        Individual* final_best = population.nTopFitness(1).at(0);
+        Individual* final_best = population.bestFitness();
         std::cout << "Final best in population:" << std::endl;
         std::cout << "fitness = " << final_best->getFitness() << std::endl;
         std::cout << final_best->tree().to_string() << std::endl;
@@ -474,7 +474,7 @@ public:
         float closeness_to_hue_constraint =
         measureHueConstraint(texture);
         // This one is just for the sake of logging, is that worthwhile?
-        Individual* topind = population.nTopFitness(1).at(0);
+        Individual* topind = population.bestFitness();
         Texture& toptex = *GP::textureFromIndividual(topind);
         measureHueConstraint(toptex);
         float wiggle_constraint = clip01(1 - wiggliness(texture));
@@ -576,10 +576,9 @@ public:
         float row_spacing = gui_render_size_ + gui_text_height_ + gui_margin_;
         position += Vec2(0, row_spacing);
         // Draw the "top ten" textures in two rows of 5.
-        std::vector<Individual*> tops = population.nTopFitness(10);
         for (int i = 0; i < 10; i++)
         {
-            Individual* ind = tops.at(i);
+            Individual* ind = population.nthBestFitness(i);
             float fit = ind->getFitness();
             if (ind->hasFitness()) drawTextureOnGui(ind, fit, position);
             position += Vec2(gui_margin_ + gui_render_size_, 0);
@@ -637,7 +636,7 @@ public:
             std::ofstream outfile;
             outfile.open(logger_pathname, std::ios_base::app);
             assert(!outfile.fail());
-            Individual* best_individual = p.nTopFitness(1).at(0);
+            Individual* best_individual = p.bestFitness();
             outfile << best_individual->getFitness() << ",";
             outfile << p.averageFitness() << ",";
             outfile << p.averageTreeSize() << std::endl;
