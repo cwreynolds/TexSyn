@@ -419,13 +419,15 @@ class LimitHue
 {
 public:
     // Default constructor.
-    LimitHue() : LimitHue(100, 100, 100, "") {}
+    LimitHue() : LimitHue(100, 4, 100, 100, "") {}
     // Constructor with all parameters.
     LimitHue(int population_size,
+             int subpopulation_count,
              int max_init_tree_size,
              int evolution_steps,
              std::string path_for_saving_images)
-      : population(population_size, max_init_tree_size, function_set),
+      : population(population_size, subpopulation_count,
+                   max_init_tree_size, function_set),
         gui(guiSize(), Vec2(15, 15)),
         evolution_steps_(evolution_steps),
         path_for_saving_images_(path_for_saving_images) {}
@@ -616,6 +618,7 @@ public:
     {
         int runs = 4;
         int pop_size = 100;
+        int subpop_count = 4;
         int tree_size = 100;
         int steps = 2000;
         Timer t("LimitHue::comparison run");
@@ -647,21 +650,21 @@ public:
             std::string run_string = std::to_string(run + 1);
             std::string ab = "_a_";
             LPRS().setSeed(seeds.at(run));
-            LimitHue lh1(pop_size, tree_size, steps, pathname + run_string + ab);
+            LimitHue lh1(pop_size, 1, tree_size, steps,
+                         pathname + run_string + ab);
             logger_pathname = (pathname + run_string + ab +
                                date_hours_minutes() + ".txt");
             lh1.per_step_hook_ = logger;
             lh1.run();
             
-            /*
             ab = "_b_";
             LPRS().setSeed(seeds.at(run));
-            LimitHue lh2(pop_size, tree_size, steps, pathname + run_string + ab);
+            LimitHue lh2(pop_size, subpop_count, tree_size, steps,
+                         pathname + run_string + ab);
             logger_pathname = (pathname + run_string + ab +
                                date_hours_minutes() + ".txt");
             lh2.per_step_hook_ = logger;
             lh2.run();
-             */
         }
     }
 private:
