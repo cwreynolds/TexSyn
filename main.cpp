@@ -4522,8 +4522,22 @@ int main(int argc, const char * argv[])
 
 //    LimitHue(100, 4, 100, 1000, temp_dir).run();
 
-    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
+//    LimitHue::comparison("/Users/cwr/Desktop/TexSyn_temp/");
     
+//    LimitHue(100, 4, 100, 100, temp_dir).run();
+//    LimitHue(500, 10, 100, 2000, temp_dir).run();
+//    LimitHue(100, 4, 100, 100, temp_dir).run();
+    
+//    LimitHue(100, 4, 100, 2000, temp_dir).run();
+    
+//    LimitHue::comparison(temp_dir);
+    
+//    LimitHue(100, 4, 100, 1000, temp_dir).run();
+//    LimitHue(101, 5, 100, 1000, temp_dir).run();
+//    LimitHue(80, 5, 100, 1000, temp_dir).run();
+//    LimitHue(120, 6, 100, 1000, temp_dir).run();
+    LimitHue(120, 7, 100, 1000, temp_dir).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

@@ -440,9 +440,9 @@ public:
         gui.refresh();
         for (step = 0; step < evolution_steps_; step++)
         {
-            population.evolutionStep([&](Individual* individual)
-                                         { return fitnessFunction(individual); },
-                                     function_set);
+            population.evolutionStep([&]
+                                     (Individual* individual)
+                                     { return fitnessFunction(individual); });
             if (per_step_hook_) per_step_hook_(population);
         }
         Individual* final_best = population.bestFitness();
