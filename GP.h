@@ -645,18 +645,47 @@ public:
             outfile << p.averageTreeSize() << std::endl;
             outfile.close();
         };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20210111 new crossover() with min/max tree size
+        
+//        for (int run = 0; run < runs; run++)
+//        {
+//            std::string run_string = std::to_string(run + 1);
+//            std::string ab = "_a_";
+//            LPRS().setSeed(seeds.at(run));
+//            LimitHue lh1(pop_size, 1, tree_size, steps,
+//                         pathname + run_string + ab);
+//            logger_pathname = (pathname + run_string + ab +
+//                               date_hours_minutes() + ".txt");
+//            lh1.per_step_hook_ = logger;
+//            lh1.run();
+//
+//            ab = "_b_";
+//            LPRS().setSeed(seeds.at(run));
+//            LimitHue lh2(pop_size, subpop_count, tree_size, steps,
+//                         pathname + run_string + ab);
+//            logger_pathname = (pathname + run_string + ab +
+//                               date_hours_minutes() + ".txt");
+//            lh2.per_step_hook_ = logger;
+//            lh2.run();
+//        }
+        
         for (int run = 0; run < runs; run++)
         {
             std::string run_string = std::to_string(run + 1);
+            
+            Population::new_crossover = false; // TODO TEMP
             std::string ab = "_a_";
             LPRS().setSeed(seeds.at(run));
-            LimitHue lh1(pop_size, 1, tree_size, steps,
+//            LimitHue lh1(pop_size, 1, tree_size, steps,
+            LimitHue lh1(pop_size, subpop_count, tree_size, steps,
                          pathname + run_string + ab);
             logger_pathname = (pathname + run_string + ab +
                                date_hours_minutes() + ".txt");
             lh1.per_step_hook_ = logger;
             lh1.run();
             
+            Population::new_crossover = true; // TODO TEMP
             ab = "_b_";
             LPRS().setSeed(seeds.at(run));
             LimitHue lh2(pop_size, subpop_count, tree_size, steps,
@@ -666,6 +695,8 @@ public:
             lh2.per_step_hook_ = logger;
             lh2.run();
         }
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 private:
     // TODO set this in default constructor?

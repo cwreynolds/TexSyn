@@ -4536,7 +4536,12 @@ int main(int argc, const char * argv[])
 //    LimitHue(101, 5, 100, 1000, temp_dir).run();
 //    LimitHue(80, 5, 100, 1000, temp_dir).run();
 //    LimitHue(120, 6, 100, 1000, temp_dir).run();
-    LimitHue(120, 7, 100, 1000, temp_dir).run();
+//    LimitHue(120, 7, 100, 1000, temp_dir).run();
+
+//    Population::new_crossover = true;
+//    LimitHue(120, 6, 100, 100, temp_dir).run();
+//    LimitHue(120, 6, 100, 1000, temp_dir).run();
+    LimitHue::comparison(temp_dir);
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
