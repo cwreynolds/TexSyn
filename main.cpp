@@ -4541,8 +4541,39 @@ int main(int argc, const char * argv[])
 //    Population::new_crossover = true;
 //    LimitHue(120, 6, 100, 100, temp_dir).run();
 //    LimitHue(120, 6, 100, 1000, temp_dir).run();
+    
+//    LimitHue::comparison(temp_dir);
+    
+    
+
+//    Vec2 trans(0, 0.5);
+//    float factor = 0.7;
+//    int slices = 5;
+//    ColorNoise cn(Vec2(), Vec2(1, 0), 0.8);
+//    RgbBox recolor(0.5, 1.0,  0.4, 0.6,  0.0, 0.1,  cn);
+//    Texture::displayAndFile(cn);
+//    Texture::displayAndFile(recolor);
+//    Texture::displayAndFile
+//    (Ring(slices, Vec2(0, 1), Vec2(),
+//          Translate(trans,
+//                    Scale(factor,
+//                          Ring(slices, Vec2(0, 1), Vec2(),
+//                               Translate(trans,
+//                                         Scale(factor,
+//                                               Ring(slices, Vec2(0, 1), Vec2(),
+//                                                    Translate(trans,
+//                                                              Spot(Vec2(), 0, recolor, 0.4,
+//                                                                   Uniform(0)))))))))));
+//    Texture::waitKey();
+    
+//        Population::new_crossover = true;
+//    //    LimitHue(120, 6, 100, 100, temp_dir).run();
+//    //    LimitHue(20, 2, 100, 500, temp_dir).run();
+//        LimitHue(100, 5, 100, 1000, temp_dir).run();
+
     LimitHue::comparison(temp_dir);
 
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

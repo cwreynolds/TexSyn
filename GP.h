@@ -444,6 +444,24 @@ public:
                                      (Individual* individual)
                                      { return fitnessFunction(individual); });
             if (per_step_hook_) per_step_hook_(population);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20210116 test min/max crossover limits
+            if (Population::new_crossover == true)
+            {
+                population.setMinCrossoverTreeSize(100);
+                population.setMaxCrossoverTreeSize(110);
+                if (evolution_steps_ > 666)
+                {
+                    population.setMinCrossoverTreeSize(40);
+                    population.setMaxCrossoverTreeSize(50);
+                }
+                if (evolution_steps_ > 1333)
+                {
+                    population.setMinCrossoverTreeSize(70);
+                    population.setMaxCrossoverTreeSize(80);
+                }
+            }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         Individual* final_best = population.bestFitness();
         std::cout << "Final best in population:" << std::endl;
@@ -617,8 +635,12 @@ public:
     static void comparison(std::string pathname)
     {
         int runs = 4;
-        int pop_size = 100;
-        int subpop_count = 4;
+//        int pop_size = 100;
+//        int subpop_count = 4;
+//        int pop_size = 120;
+//        int subpop_count = 6;
+        int pop_size = 125;
+        int subpop_count = 5;
         int tree_size = 100;
         int steps = 2000;
         Timer t("LimitHue::comparison run");
@@ -670,6 +692,32 @@ public:
 //            lh2.run();
 //        }
         
+//            for (int run = 0; run < runs; run++)
+//            {
+//                std::string run_string = std::to_string(run + 1);
+//                
+//                Population::new_crossover = false; // TODO TEMP
+//                std::string ab = "_a_";
+//                LPRS().setSeed(seeds.at(run));
+//    //            LimitHue lh1(pop_size, 1, tree_size, steps,
+//                LimitHue lh1(pop_size, subpop_count, tree_size, steps,
+//                             pathname + run_string + ab);
+//                logger_pathname = (pathname + run_string + ab +
+//                                   date_hours_minutes() + ".txt");
+//                lh1.per_step_hook_ = logger;
+//                lh1.run();
+//                
+//                Population::new_crossover = true; // TODO TEMP
+//                ab = "_b_";
+//                LPRS().setSeed(seeds.at(run));
+//                LimitHue lh2(pop_size, subpop_count, tree_size, steps,
+//                             pathname + run_string + ab);
+//                logger_pathname = (pathname + run_string + ab +
+//                                   date_hours_minutes() + ".txt");
+//                lh2.per_step_hook_ = logger;
+//                lh2.run();
+//            }
+
         for (int run = 0; run < runs; run++)
         {
             std::string run_string = std::to_string(run + 1);
