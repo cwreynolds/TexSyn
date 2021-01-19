@@ -4509,10 +4509,10 @@ int main(int argc, const char * argv[])
 //        LimitHue(100, 100, 100, temp_dir).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // 20210101 demes / subpopulations
-    std::cout << "January 1, 2021" << std::endl;
-    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210101_";
+//    // 20210101 demes / subpopulations
+//    std::cout << "January 1, 2021" << std::endl;
+//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    std::string path = temp_dir + "20210101_";
     
 //    LimitHue(100, 100, 100, temp_dir).run();
     
@@ -4571,9 +4571,18 @@ int main(int argc, const char * argv[])
 //    //    LimitHue(20, 2, 100, 500, temp_dir).run();
 //        LimitHue(100, 5, 100, 1000, temp_dir).run();
 
-    LimitHue::comparison(temp_dir);
+//    LimitHue::comparison(temp_dir);
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 20210101 fix bug in new crossover min/max tree size limits.
+    std::cout << "January 18, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210118_";
 
     
+//    LimitHue(100, 5, 100, 1000, temp_dir).run();
+    LimitHue(100, 5, 100, 100, temp_dir).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
