@@ -12,6 +12,7 @@
 		843D95C12452653A00741263 /* Disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843D95BF2452653A00741263 /* Disk.cpp */; };
 		849FF57723A70EC2008B4326 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57623A70EC2008B4326 /* main.cpp */; };
 		849FF57F23A70F93008B4326 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57D23A70F93008B4326 /* Texture.cpp */; };
+		84BC108C25B7B4410095F83B /* texsyn in CopyFiles */ = {isa = PBXBuildFile; fileRef = 849FF57323A70EC2008B4326 /* texsyn */; };
 		84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3C23A85C1F00911365 /* UnitTests.cpp */; };
 		84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3F23A85E0A00911365 /* Utilities.cpp */; };
 		84F6BB4423AC6AF800911365 /* Vec2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB4223AC6AF800911365 /* Vec2.cpp */; };
@@ -21,12 +22,13 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		849FF57123A70EC2008B4326 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = /usr/local/bin;
 			dstSubfolderSpec = 0;
 			files = (
+				84BC108C25B7B4410095F83B /* texsyn in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
