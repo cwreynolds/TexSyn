@@ -8,6 +8,10 @@
 
 #include "TexSyn.h"
 #include "GP.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20210120 add Camouflage.h module
+#include "Camouflage.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
 
@@ -4574,15 +4578,23 @@ int main(int argc, const char * argv[])
 //    LimitHue::comparison(temp_dir);
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//        // 20210101 fix bug in new crossover min/max tree size limits.
+//        std::cout << "January 18, 2021" << std::endl;
+//        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//        std::string path = temp_dir + "20210118_";
+//
+//
+//    //    LimitHue(100, 5, 100, 1000, temp_dir).run();
+//        LimitHue(100, 5, 100, 100, temp_dir).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // 20210101 fix bug in new crossover min/max tree size limits.
-    std::cout << "January 18, 2021" << std::endl;
+    std::cout << "January 20, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210118_";
-
+    std::string path = temp_dir + "20210120_";
     
-//    LimitHue(100, 5, 100, 1000, temp_dir).run();
-    LimitHue(100, 5, 100, 100, temp_dir).run();
-
+    Camouflage().test();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

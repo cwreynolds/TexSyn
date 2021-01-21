@@ -10,19 +10,34 @@
 //------------------------------------------------------------------------------
 
 #pragma once
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20210120 add Camouflage.h module
+
+//    #pragma clang diagnostic push
+//    #pragma clang diagnostic ignored "-Wdocumentation"
+//    #include <opencv2/core/core.hpp>
+//    #include <opencv2/highgui/highgui.hpp>
+//    #include <opencv2/imgproc/imgproc.hpp>
+//    // TODO 20201202 very experimental putText()
+//    #include <opencv2/freetype.hpp>
+//    #pragma clang diagnostic pop
+//
+//    //#include "Vec2.h"
+//    //#include "Color.h"
+//
+//    #include "Texture.h"
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-// TODO 20201202 very experimental putText()
 #include <opencv2/freetype.hpp>
 #pragma clang diagnostic pop
 
-//#include "Vec2.h"
-//#include "Color.h"
-
 #include "Texture.h"
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class GUI
 {
@@ -72,6 +87,10 @@ public:
         Vec2 position = top_center_position - Vec2(ts.width / 2, 0);
         drawText(text, font_height, position, color);
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20210121 add API for drawing cv::Mat, maybe redo drawTexture to use?
+    
     // TODO ideally this should clip the rectangle to be "not outside" image_.
     void drawTexture(const Texture& texture,
                      const Vec2& upper_left_position,
@@ -83,6 +102,22 @@ public:
         cv::Mat submat = cv::Mat(image_, target_rect);
         texture.getCvMat().copyTo(submat);
     }
+    
+    // TODO 20210121 currently this is "draw a portion of a huge mat on image_"
+    //               probably needs more parameters.
+    void drawMat(const cv::Mat& cv_mat,
+                 const Vec2& upper_left_position,
+                 const Vec2& size_in_pixels)
+    {
+        image_ = cv::Mat(cv_mat,
+                         cv::Rect(upper_left_position.x(),
+                                  upper_left_position.y(),
+                                  size_in_pixels.x(),
+                                  size_in_pixels.y()));
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     const std::string& windowName() const { return window_name_; }
     // TODO reconsider
     void eraseRectangle(Vec2 size_in_pixels, Vec2 upper_left_init_position)
