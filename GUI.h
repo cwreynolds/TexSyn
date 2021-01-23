@@ -51,13 +51,13 @@ public:
         //      to using original highgui putText() if file not there.
         font = cv::freetype::createFreeType2();
         font->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
-        cv::namedWindow(windowName());
-        cv::moveWindow(windowName(),
+        cv::namedWindow(getWindowName());
+        cv::moveWindow(getWindowName(),
                        upper_left_init_position.x(),
                        upper_left_init_position.y());
     };
-    virtual ~GUI() { cv::destroyWindow(windowName()); }
-    void refresh() { cv::imshow(windowName(), image_); cv::waitKey(1); }
+    virtual ~GUI() { cv::destroyWindow(getWindowName()); }
+    void refresh() { cv::imshow(getWindowName(), image_); cv::waitKey(1); }
     void clear() { image_ = backgroundGray(); }
     void drawText(const std::string& text,
                   float font_height,
@@ -88,39 +88,43 @@ public:
         drawText(text, font_height, position, color);
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20210121 add API for drawing cv::Mat, maybe redo drawTexture to use?
-    
+    // Draw a Texture, rendered at the given size, at given position on GUI.
     // TODO ideally this should clip the rectangle to be "not outside" image_.
     void drawTexture(const Texture& texture,
                      const Vec2& upper_left_position,
                      int size)
     {
         texture.rasterizeToImageCache(size, true);
-        Vec2 ulp = upper_left_position;
-        cv::Rect target_rect(ulp.x(), ulp.y(), size, size);
-        cv::Mat submat = cv::Mat(image_, target_rect);
-        texture.getCvMat().copyTo(submat);
+        drawMat(texture.getCvMat(), upper_left_position);
     }
-    
-    // TODO 20210121 currently this is "draw a portion of a huge mat on image_"
-    //               probably needs more parameters.
+
+    // Draw a portion of a huge cv::Mat on whole GUI. TODO probably need a
+    // version to draw a portion of the given Mat on a portion of the GUI.
     void drawMat(const cv::Mat& cv_mat,
                  const Vec2& upper_left_position,
                  const Vec2& size_in_pixels)
     {
-        debugPrint(upper_left_position);
-        debugPrint(size_in_pixels);
         image_ = cv::Mat(cv_mat,
                          cv::Rect(upper_left_position.x(),
                                   upper_left_position.y(),
                                   size_in_pixels.x(),
                                   size_in_pixels.y()));
     }
+    
+    // Draw a "small" cv::Mat on a portion of GUI at given location.
+    void drawMat(const cv::Mat& cv_mat, const Vec2& upper_left_position)
+    {
+        cv::Mat part_of_gui_image = cv::Mat(image_,
+                                            cv::Rect(upper_left_position.x(),
+                                                     upper_left_position.y(),
+                                                     cv_mat.cols,
+                                                     cv_mat.rows));
+        cv_mat.copyTo(part_of_gui_image);
+    }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    const std::string& windowName() const { return window_name_; }
+//    const std::string& windowName() const { return window_name_; }
+    const std::string& getWindowName() const { return window_name_; }
+    void setWindowName(const std::string& name) { window_name_ = name; }
     // TODO reconsider
     void eraseRectangle(Vec2 size_in_pixels, Vec2 upper_left_init_position)
     {
