@@ -25,15 +25,23 @@ class Camouflage
 public:
     
     // TODO very prototype
-    std::string background_image_directory =
+    const std::string background_image_directory =
         "/Users/cwr/Pictures/camouflage backgrounds/oak leaves green brown";
     
-    std::vector<std::string> background_image_filename =
+    const std::vector<std::string> background_image_filename =
     {
         "IMG_6548.jpeg", "IMG_6549.jpeg", "IMG_6550.jpeg",
         "IMG_6551.jpeg", "IMG_6552.jpeg", "IMG_6553.jpeg"
     };
     
+    // The size of background images is adjusted by this value. It is expected
+    // to be less than 1, indicating that the input photographic images are
+    // generally larger than the screen resolution. (If there is need for it
+    // to be bigger than 1 some adjustments may be needed.)
+//    const float background_scale = 0.5;
+//    const float background_scale = 0.25;
+    const float background_scale = 0.4;
+
     void test()
     {
         // TODO maybe want a "background scale" to relate source image size to
@@ -44,8 +52,16 @@ public:
         std::vector<cv::Mat> background_images;
         for (auto& filename : background_image_filename)
         {
+            // Compose absolute pathname for this background image file.
             std::string pathname = background_image_directory + "/" + filename;
-            background_images.push_back(cv::imread(pathname));
+            // Read the image file into an OpenCV image.
+            cv::Mat bg = cv::imread(pathname);
+            // Adjust the size/resolution by "background_scale" parameter.
+            cv::resize(bg, bg,
+                       cv::Size(), background_scale, background_scale,
+                       cv::INTER_CUBIC);
+            // Add to collection of background images.
+            background_images.push_back(bg);
         }
         
         Vec2 gui_size(1430, 850);
@@ -54,10 +70,29 @@ public:
         for (int i = 0; i < 200; i++)
         {
             const cv::Mat& bg = LPRS().randomSelectElement(background_images);
+            
+            debugPrint(bg.cols);
+            debugPrint(bg.rows);
+            debugPrint(std::abs(bg.cols - int(gui_size.x())));
+            debugPrint(std::abs(bg.rows - int(gui_size.y())));
+
+//            gui.drawMat(bg,
+//                        Vec2(LPRS().randomN(bg.cols - int(gui_size.x())),
+//                             LPRS().randomN(bg.rows - int(gui_size.y()))),
+//                        gui_size);
+
             gui.drawMat(bg,
-                        Vec2(LPRS().randomN(bg.cols - int(gui_size.x())),
-                             LPRS().randomN(bg.rows - int(gui_size.y()))),
-                        gui_size);
+//                        Vec2(LPRS().randomN(bg.cols - int(gui_size.x())),
+//                             LPRS().randomN(bg.rows - int(gui_size.y()))),
+                        Vec2(LPRS().randomN(std::abs(bg.cols -
+                                                     int(gui_size.x()))),
+                             LPRS().randomN(std::abs(bg.rows -
+                                                     int(gui_size.y())))),
+                        Vec2(std::min(int(gui_size.x()), int(bg.cols)),
+                             std::min(int(gui_size.y()), bg.rows))
+                        
+                        
+                        );
             gui.refresh();
         }
         Texture::waitKey();

@@ -109,6 +109,8 @@ public:
                  const Vec2& upper_left_position,
                  const Vec2& size_in_pixels)
     {
+        debugPrint(upper_left_position);
+        debugPrint(size_in_pixels);
         image_ = cv::Mat(cv_mat,
                          cv::Rect(upper_left_position.x(),
                                   upper_left_position.y(),
