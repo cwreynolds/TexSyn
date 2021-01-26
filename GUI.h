@@ -104,25 +104,25 @@ public:
                  const Vec2& upper_left_position,
                  const Vec2& size_in_pixels)
     {
-        image_ = cv::Mat(cv_mat,
-                         cv::Rect(upper_left_position.x(),
-                                  upper_left_position.y(),
-                                  size_in_pixels.x(),
-                                  size_in_pixels.y()));
+        cv::Mat on_screen_part_of_given_mat(cv_mat,
+                                            cv::Rect(upper_left_position.x(),
+                                                     upper_left_position.y(),
+                                                     size_in_pixels.x(),
+                                                     size_in_pixels.y()));
+        on_screen_part_of_given_mat.copyTo(image_);
     }
     
     // Draw a "small" cv::Mat on a portion of GUI at given location.
     void drawMat(const cv::Mat& cv_mat, const Vec2& upper_left_position)
     {
-        cv::Mat part_of_gui_image = cv::Mat(image_,
-                                            cv::Rect(upper_left_position.x(),
-                                                     upper_left_position.y(),
-                                                     cv_mat.cols,
-                                                     cv_mat.rows));
-        cv_mat.copyTo(part_of_gui_image);
+        cv::Mat part_of_gui_mat = cv::Mat(image_,
+                                          cv::Rect(upper_left_position.x(),
+                                                   upper_left_position.y(),
+                                                   cv_mat.cols,
+                                                   cv_mat.rows));
+        cv_mat.copyTo(part_of_gui_mat);
     }
 
-//    const std::string& windowName() const { return window_name_; }
     const std::string& getWindowName() const { return window_name_; }
     void setWindowName(const std::string& name) { window_name_ = name; }
     // TODO reconsider
