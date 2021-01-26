@@ -111,27 +111,97 @@ public:
             population.evolutionStep([&]
                                      (TournamentGroup tg)
                                      { return tournamentFunction(tg); });
-            Texture::waitKey();
         }
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+//    TournamentGroup tournamentFunction(TournamentGroup tg)
+//    {
+//        drawRandomBackground();
+//        assert(tg.members().size() == 3);
+//        for (auto& tgm : tg.members())
+//        {
+//            Individual* individual = tgm.individual;
+//            std::any tree_value_as_any = individual->treeValue();
+//            Texture* texture = std::any_cast<Texture*>(tree_value_as_any);
+//            texture->rasterizeToImageCache(textureSize(), true);
+//            Vec2 position(LPRS().randomN(int(guiSize().x()) - textureSize()),
+//                          LPRS().randomN(int(guiSize().y()) - textureSize()));
+//            gui().drawTexture(*texture, position, textureSize());
+//        }
+//        gui().refresh();
+//        return tg;
+//    }
+
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
-        drawRandomBackground();
+        // TODO does this matter? Would anything change if it were 2 or 5?
         assert(tg.members().size() == 3);
+        
+        // Find non-overlapping positions for Textures in TournamentGroup.
+        float margin_size = textureSize() * 1.5;
+        float margin_half = margin_size / 2;
+        Vec2 a(margin_half, margin_half);
+        Vec2 b = guiSize() - a * 2;
+        std::vector<Vec2> disks;
+        for (int i = 0; i < tg.members().size(); i++)
+        {
+            // TODO make "random point in AABB given two corners" utility?
+            disks.push_back(Vec2(LPRS().random2(a.x(), b.x()),
+                                 LPRS().random2(a.y(), b.y())));
+        }
+        
+        // TODO Maybe make this a lightweight utility offered by Disk.h?
+        for (int retry = 0; retry < 1000; retry++)
+        {
+            bool done = true;
+            for (int i = 0; i < tg.members().size(); i++)
+            {
+                for (int j = 0; j < tg.members().size(); j++)
+                {
+                    if (i != j)
+                    {
+                        float min_r = textureSize() * 1.5;
+                        Vec2 pi = disks.at(i);
+                        Vec2 pj = disks.at(j);
+                        Vec2 offset = pi - pj;
+                        float distance = offset.length();
+                        if (distance < min_r)
+                        {
+                            Vec2 direction = offset / distance;
+                            pi += direction * textureSize() * 0.5;
+                            pj += direction * textureSize() * -0.5;
+                            disks.at(i) = Vec2(clip(pi.x(), a.x(), b.x()),
+                                               clip(pi.y(), a.y(), b.y()));
+                            disks.at(j) = Vec2(clip(pj.x(), a.x(), b.x()),
+                                               clip(pj.y(), a.y(), b.y()));
+                            done = false;
+                        }
+                    }
+                }
+            }
+            if (done) break;
+        }
+        int p = 0;
+        drawRandomBackground();
         for (auto& tgm : tg.members())
         {
             Individual* individual = tgm.individual;
             std::any tree_value_as_any = individual->treeValue();
             Texture* texture = std::any_cast<Texture*>(tree_value_as_any);
             texture->rasterizeToImageCache(textureSize(), true);
-            Vec2 position(LPRS().randomN(int(guiSize().x()) - textureSize()),
-                          LPRS().randomN(int(guiSize().y()) - textureSize()));
+            Vec2 position = disks.at(p++);
             gui().drawTexture(*texture, position, textureSize());
         }
         gui().refresh();
+        Texture::waitKey();
+        gui().clear();
+        gui().refresh();
         return tg;
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // The size of background images is adjusted by this value. It is expected
     // to be less than 1, indicating that the input photographic images are
