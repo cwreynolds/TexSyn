@@ -87,14 +87,17 @@ public:
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
         
-        // TODO just an optional preview
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().setWindowName(run_name_);
         gui().refresh();
-        for (int i = 0; i < 50; i++)
-        {
-            drawRandomBackground();
-            gui().refresh();
-        }
+
+//        // TODO just an optional preview
+//        for (int i = 0; i < 50; i++)
+//        {
+//            drawRandomBackground();
+//            gui().refresh();
+//        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     void run()
@@ -139,6 +142,39 @@ public:
         // TODO does this matter? Would anything change if it were 2 or 5?
         assert(tg.members().size() == 3);
         
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO not sure where this should go.
+        //      Per tournamentFunction() or perhaps for whole run()?)
+                
+        auto mcb =
+        []
+        (int event, int x, int y, int flags, void* userdata)
+        {
+            if (event != cv::EVENT_MOUSEMOVE)
+            {
+//                std::cout << "mouse callback!! ";
+//                if (event == cv::EVENT_LBUTTONDOWN)
+//                    std::cout << " left button down";
+//                if (event == cv::EVENT_LBUTTONUP)
+//                    std::cout << " left button up";
+//                std::cout << " x=" << x;
+//                std::cout << " y=" << y;
+//                std::cout << std::endl;
+                
+//                static_cast<Camouflage*>(userdata)->setLastMouseClick(Vec2(x, y));
+                
+                if (event == cv::EVENT_LBUTTONDOWN)
+                {
+                    auto c = static_cast<Camouflage*>(userdata);
+                    c->setLastMouseClick(Vec2(x, y));
+                }
+            }
+        };
+        
+//        cv::setMouseCallback(run_name_, mcb);
+        cv::setMouseCallback(run_name_, mcb, this);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         // Find non-overlapping positions for Textures in TournamentGroup.
         float margin_size = textureSize() * 1.5;
         float margin_half = margin_size / 2;
@@ -195,10 +231,94 @@ public:
             gui().drawTexture(*texture, position, textureSize());
         }
         gui().refresh();
-        Texture::waitKey();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//        Texture::waitKey();
+        
+        waitForMouseClick();
+        
+        std::cout << "choose metric: ";
+        
+//            p = 0;
+//    //        Individual* worst = nullptr;
+//            for (auto& tgm : tg.members())
+//            {
+//    //            Individual* individual = tgm.individual;
+//    //            std::any tree_value_as_any = individual->treeValue();
+//    //            Texture* texture = std::any_cast<Texture*>(tree_value_as_any);
+//    //            texture->rasterizeToImageCache(textureSize(), true);
+//    //            Vec2 position = disks.at(p++);
+//    //            gui().drawTexture(*texture, position, textureSize());
+//
+//    //            Vec2 texture_position = disks.at(p++);
+//    //            float distance = (texture_position - getLastMouseClick()).length();
+//
+//    //            if (distance <= (textureSize() / 2))
+//    //            {
+//    //                worst = tgm.individual;
+//    //            }
+//
+//    //            Vec2 texture_position = disks.at(p++);
+//    //            float distance = (texture_position - getLastMouseClick()).length();
+//    //            tgm.metric = (distance <= (textureSize() / 2)) ? 1 : 0;
+//    //            std::cout << tgm.metric << " ";
+//
+//                Vec2 texture_center = disks.at(p++) + Vec2(1,1) * textureSize() / 2;
+//                float distance = (texture_center - getLastMouseClick()).length();
+//    //            tgm.metric = (distance <= (textureSize() / 2)) ? 1 : 0;
+//                tgm.metric = (distance <= (textureSize() / 2)) ? 0 : 1;
+//                std::cout << tgm.metric << " ";
+//
+//            }
+//    //        assert(worst);
+//        std::cout << std::endl;
+//
+//
+//        // TODO This used to be private
+//        // TODO would it be more direct to has a makeWorst() or makeBest() ?
+//        tg.sort();
+
+        
+        p = 0;
+        Individual* worst = nullptr;
+        for (auto& tgm : tg.members())
+        {
+            Vec2 texture_center = disks.at(p++) + Vec2(1,1) * textureSize() / 2;
+            float distance = (texture_center - getLastMouseClick()).length();
+            if (distance <= (textureSize() / 2))
+            {
+                worst = tgm.individual;
+            }
+        }
+        tg.designateWorstIndividual(worst);
+
+        
+//        Individual* individual = tgm.individual;
+        
+        assert(worst == tg.worstIndividual());
+        std::any tree_value_as_any = tg.worstIndividual()->treeValue();
+        Texture* texture = std::any_cast<Texture*>(tree_value_as_any);
+        texture->rasterizeToImageCache(textureSize(), true);
+//        Vec2 position = disks.at(p++);
+//        gui().drawTexture(*texture, position, textureSize());
+//        Texture::displayAndFile(*texture);
+        Texture::displayAndFile(*texture, "", textureSize());
+
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().clear();
         gui().refresh();
         return tg;
+    }
+
+    
+    void waitForMouseClick()
+    {
+        wait_for_mouse_click_ = true;
+        while(wait_for_mouse_click_)
+        {
+            Texture::waitKey(100);
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -229,6 +349,17 @@ public:
     // TODO very temp
     int textureSize() const { return 201; }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Get/set position of most recent mouse (left) click in GUI.
+    Vec2 getLastMouseClick() const { return last_mouse_click_; }
+    void setLastMouseClick(Vec2 mouse_pos)
+    {
+        last_mouse_click_ = mouse_pos;
+        wait_for_mouse_click_ = false;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    
 private:
     // Name of run, perhaps same as directory holding background image files.
     const std::string run_name_;
@@ -241,8 +372,17 @@ private:
     
     // TODO pick a better default (this is roughly screen size on my MBP).
     // GUI size: drawable area in pixels.
-    Vec2 gui_size_ = {1430, 850};
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Vec2 gui_size_ = {1430, 850};
+    Vec2 gui_size_ = {900, 600};
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // TODO GUI object
     GUI gui_;
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Store position of most recent mouse (left) click in GUI.
+    Vec2 last_mouse_click_;
+    bool wait_for_mouse_click_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
