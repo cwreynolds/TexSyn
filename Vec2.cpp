@@ -49,6 +49,12 @@ Vec2 RandomSequence::randomUnitVector()
     return v.normalize();
 }
 
+Vec2 RandomSequence::randomPointInAxisAlignedRectangle(Vec2 a, Vec2 b)
+{
+    return Vec2(random2(std::min(a.x(), b.x()), std::max(a.x(), b.x())),
+                random2(std::min(a.y(), b.y()), std::max(a.y(), b.y())));
+}
+
 // Is distance between vectors no more than epsilon?
 bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {

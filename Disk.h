@@ -28,6 +28,15 @@ public:
     Vec2 position;
     Vec2 future_position;
     float angle = 0;
+    // Lightweight utility used by Camouflage.
+    static std::vector<Disk>
+        randomNonOverlappingDisksInRectangle(int count,
+                                             float radius_min,
+                                             float radius_max,
+                                             float radius_margin,
+                                             Vec2 corner_min,
+                                             Vec2 corner_max,
+                                             RandomSequence& rs);
 };
 
 // DiskOccupancyGrid -- 2d spatial data structure for collections of Disks.
@@ -264,3 +273,87 @@ private:
     };
     std::vector<std::vector<Cell>> grid_;
 };
+
+// Lightweight utility to randomly place "count" non-overlapping Disks, with
+// radii in the given range, inside an axis-aligned rectangle defined by two
+// diagonally opposite corners. Result returned by value (copied) in an
+// std::vector<Disk>. This is used by the Camouflage module for placing three
+// Textures on a background. I initially tried using DiskOccupancyGrid, but it
+// (currently) requires a square (versus rectangular) grid, and appeared to not
+// adjust such a small number of Disks in its "industrial strength" multi-
+// threaded solver. Rather than try to debug that, and possibly break the
+// LotsOfSpots family of Textures, I wrote this smaller brut force solver. So
+// sue me. TODO maybe merge the two versions at some point?
+inline std::vector<Disk>
+    Disk::randomNonOverlappingDisksInRectangle(int count,
+                                               float radius_min,
+                                               float radius_max,
+                                               float radius_margin,
+                                               Vec2 corner_min,
+                                               Vec2 corner_max,
+                                               RandomSequence& rs)
+{
+    // Collection of random nonoverlapping Disks, initially empty.
+    std::vector<Disk> disks;
+    // Initialize to "count" random disks, inside rectangle, may overlap.
+    for (int i = 0; i < count; i++)
+    {
+        float r = rs.random2(radius_min, radius_max);
+        Vec2 center(rs.random2(corner_min.x() + r, corner_max.x() - r),
+                    rs.random2(corner_min.y() + r, corner_max.y() - r));
+        disks.push_back(Disk(r, center));
+    }
+    // Used below for forcing re-positioned Disks back inside rectangle.
+    auto clip_to_rec = [&]
+    (int index, Vec2 point, float radius)
+    {
+        disks.at(index).position = Vec2(clip(point.x(),
+                                             corner_min.x() + radius,
+                                             corner_max.x() - radius),
+                                        clip(point.y(),
+                                             corner_min.y() + radius,
+                                             corner_max.y() - radius));
+    };
+    // For all pairs of Disks, push apart, repeat up to "max_retry" times.
+    int max_retry = 1000;
+    for (int retry = 0; retry < max_retry; retry++)
+    {
+        bool done = true;
+        for (int i = 0; i < count; i++)
+        {
+            for (int j = 0; j < count; j++)
+            {
+                if (i != j)
+                {
+                    // Copy center position and radius for Disks i and j.
+                    Vec2 pi = disks.at(i).position;
+                    Vec2 pj = disks.at(j).position;
+                    float ri = disks.at(i).radius;
+                    float rj = disks.at(j).radius;
+                    // To prevent overlap and keep given margin between Disks.
+                    float min_distance = ri + rj + radius_margin;
+                    Vec2 offset = pi - pj;
+                    float distance = offset.length();
+                    if (distance < min_distance)
+                    {
+                        // Unit vector along line through both Disk centers.
+                        Vec2 direction = offset / distance;
+                        // Adjustment rate.
+                        float speed = 0.02;
+                        // Vector to incrementally push Disk centers apart.
+                        Vec2 push = direction * min_distance * speed;
+                        pi += push;
+                        pj -= push;
+                        // Constrain repositioned Disks back inside rectangle
+                        clip_to_rec(i, pi, ri);
+                        clip_to_rec(j, pj, rj);
+                        // Continue to adjust until no overlaps found
+                        done = false;
+                    }
+                }
+            }
+        }
+        if (done) break;
+    }
+    return disks;
+}

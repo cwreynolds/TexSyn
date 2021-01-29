@@ -19,6 +19,7 @@
 
 #pragma once
 #include "GP.h"
+#include "Disk.h"
 
 class Camouflage
 {
@@ -125,107 +126,50 @@ public:
         cv::setMouseCallback(gui().getWindowName(), mouse_callback, this);
     }
     
-    // TODO temporary utility for debugging random non-overlapping placement
-    void testdraw(const TournamentGroup& tg, const std::vector<Vec2>& disks)
-    {
-        int p = 0;
-        gui().clear();
-        for (auto& tgm : tg.members())
-        {
-            Texture* texture = GP::textureFromIndividual(tgm.individual);
-            texture->rasterizeToImageCache(textureSize(), true);
-            Vec2 position = disks.at(p++);
-            gui().drawTexture(*texture, position, textureSize());
-        }
-        gui().refresh();
-        Texture::waitKey(2);
-    }
-    
+    // TournamentFunction for "Interactive Evolution of Camouflage".
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
-        // TODO does this matter? Would anything change if it were 2 or 5?
-        assert(tg.members().size() == 3);
-        
-        // Find non-overlapping positions for Textures in TournamentGroup.
-        float margin = 0.1;
-        Vec2 a = Vec2(1, 1) * textureSize() * margin;
-        Vec2 b = guiSize() - (Vec2(1, 1) * textureSize() * (1 + margin * 2));
-        std::vector<Vec2> disks;
-        for (int i = 0; i < tg.members().size(); i++)
-        {
-            // TODO make "random point in AABB given two corners" utility?
-            disks.push_back(Vec2(LPRS().random2(a.x(), b.x()),
-                                 LPRS().random2(a.y(), b.y())));
-        }
-
-        // TODO Maybe make this a lightweight utility offered by Disk.h?
-        for (int retry = 0; retry < 1000; retry++)
-        {
-            float min_distance = textureSize() * 1.5;
-            bool done = true;
-            for (int i = 0; i < tg.members().size(); i++)
-            {
-                for (int j = 0; j < tg.members().size(); j++)
-                {
-                    if (i != j)
-                    {
-                        Vec2 pi = disks.at(i);
-                        Vec2 pj = disks.at(j);
-                        Vec2 noise = LPRS().randomPointInUnitDiameterCircle();
-                        Vec2 offset = (pi - pj) + noise;
-                        float distance = offset.length();
-                        if (distance < min_distance)
-                        {
-                            Vec2 direction = offset / distance;
-                            float speed = 0.02;
-                            Vec2 push = direction * min_distance * speed;
-                            pi += push;
-                            pj -= push;
-                            disks.at(i) = Vec2(clip(pi.x(), a.x(), b.x()),
-                                               clip(pi.y(), a.y(), b.y()));
-                            disks.at(j) = Vec2(clip(pj.x(), a.x(), b.x()),
-                                               clip(pj.y(), a.y(), b.y()));
-                            done = false;
-                        }
-                    }
-                }
-            }
-        }
-
+        // Restrict Texture disks to be completely inside a rectangle inset from
+        // the window edge by 0.1 of a Texture's diameter. Rectangle is defined
+        // by two diagonally opposite corners.
+        float margin = textureSize() * 0.1;
+        Vec2 rect_min = Vec2(margin, margin);
+        Vec2 rect_max = guiSize() - rect_min;
+        // Find non-overlapping positions for the Textures in TournamentGroup.
+        float r = textureSize() / 2;
+        std::vector<Disk> disks;
+        disks = Disk::randomNonOverlappingDisksInRectangle(3, r, r, r,
+                                                           rect_min, rect_max,
+                                                           LPRS());
+        // Draw a randomly selected background, then the 3 testures on top.
         drawRandomBackground();
         int p = 0;
         for (auto& tgm : tg.members())
         {
             Texture* texture = GP::textureFromIndividual(tgm.individual);
             texture->rasterizeToImageCache(textureSize(), true);
-            Vec2 position = disks.at(p++);
+            Vec2 center_to_ul = Vec2(1, 1) * textureSize() / 2;
+            Vec2 position = disks.at(p++).position - center_to_ul;
             gui().drawTexture(*texture, position, textureSize());
         }
+        // Update the onscreen image. Wait for user to click on one texture.
         gui().refresh();
         setMouseCallbackForTournamentFunction();
         waitForMouseClick();
-        
+        // See if click was within a Texture disk, set "worst" Individual if so.
         p = 0;
         Individual* worst = nullptr;
         for (auto& tgm : tg.members())
         {
-            Vec2 texture_center = disks.at(p++) + Vec2(1,1) * textureSize() / 2;
+            Vec2 texture_center = disks.at(p++).position;
             float distance = (texture_center - getLastMouseClick()).length();
-            if (distance <= (textureSize() / 2))
-            {
-                worst = tgm.individual;
-            }
+            if (distance <= (textureSize() / 2)) { worst = tgm.individual; }
         }
+        // Designate clicked Texture's Individual as worst of TournamentGroup.
         tg.designateWorstIndividual(worst);
+        // Clear GUI, return updated TournamentGroup.
         gui().clear();
         gui().refresh();
-        
-        // TODO just for testing designateWorstIndividual()
-        {
-            Texture* texture = GP::textureFromIndividual(tg.worstIndividual());
-            gui().drawTexture(*texture, Vec2(), textureSize());
-            gui().refresh();
-        }
         return tg;
     }
     
@@ -281,20 +225,13 @@ private:
     std::vector<cv::Mat> background_images_;
     // The size of background images is adjusted by this value (usually < 1).
     const float background_scale_ = 1;
-    
-    // TODO pick a better default (this is roughly screen size on my MBP).
     // GUI size: drawable area in pixels.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Vec2 gui_size_ = {1430, 850};
-    Vec2 gui_size_ = {900, 600};
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // TODO GUI object
+    // TODO pick a better default (this is roughly screen size on my MBP).
+    Vec2 gui_size_ = {1430, 850};
+    // GUI object
     GUI gui_;
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
+    // True during wait for user to select one texture on screen
     bool wait_for_mouse_click_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };

@@ -10,22 +10,6 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20210120 add Camouflage.h module
-
-//    #pragma clang diagnostic push
-//    #pragma clang diagnostic ignored "-Wdocumentation"
-//    #include <opencv2/core/core.hpp>
-//    #include <opencv2/highgui/highgui.hpp>
-//    #include <opencv2/imgproc/imgproc.hpp>
-//    // TODO 20201202 very experimental putText()
-//    #include <opencv2/freetype.hpp>
-//    #pragma clang diagnostic pop
-//
-//    //#include "Vec2.h"
-//    //#include "Color.h"
-//
-//    #include "Texture.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
@@ -36,8 +20,6 @@
 #pragma clang diagnostic pop
 
 #include "Texture.h"
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 class GUI
 {

@@ -347,6 +347,9 @@ public:
     // "attractive nuisance" of random utilities which are non-repeatable.
     Vec2 randomPointInUnitDiameterCircle();
     Vec2 randomUnitVector();
+    // Random point (position vector) in an axis aligned rectangle defined by
+    // two diagonally opposite vertices.
+    Vec2 randomPointInAxisAlignedRectangle(Vec2 a, Vec2 b);
     // TODO moved from Color class to here on June 30, 2020:
     Color randomUnitRGB();
     // Set seed (RS state) to given value, or defaultSeed() if none given.
