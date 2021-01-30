@@ -58,6 +58,9 @@ public:
     void rasterizeRowOfDisk(int j, int size, bool disk,
                             cv::Mat& opencv_image,
                             std::mutex& ocv_image_mutex) const;
+    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+    // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+    void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue

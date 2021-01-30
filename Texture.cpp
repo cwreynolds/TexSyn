@@ -151,6 +151,30 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     row_image.copyTo(row_in_full_image);
 }
 
+
+// Copies disk-shaped portion of image cache onto given background cv::Mat.
+// Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+{
+    // Ensure the Texture has been rendered to image cache.
+    rasterizeToImageCache(size, true);
+    // Half the rendering's size corresponds to the disk's center.
+    int half = size / 2;
+    // For each row.
+    for (int j = -half; j <= half; j++)
+    {
+        // First and last pixels on j-th row of time
+        int x_limit = std::sqrt(sq(half) - sq(j));
+        // On j-th row, +/- x_limit from center.
+        cv::Rect row_rect(half - x_limit, half - j, x_limit * 2, 1);
+        // Create two submats (ROI) of the image cache and the destination mat.
+        cv::Mat cache_row(*raster_, row_rect);
+        cv::Mat bg_row(bg, row_rect);
+        // Copy the cache row into the destination row.
+        cache_row.copyTo(bg_row);
+    }
+}
+
 // Display a collection of Textures, each in a window, then wait for a char.
 void Texture::displayInWindow(std::vector<const Texture*> textures,
                               int size,

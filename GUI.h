@@ -118,6 +118,18 @@ public:
                       cv::LINE_AA);
     }
     
+    // Return a "submat"/"ROI" in the GUI's underlying cv::Mat.
+    cv::Mat getCvMatRect(const Vec2& upper_left_position,
+                         const Vec2& size_in_pixels)
+    {
+        return cv::Mat(image_,
+                       cv::Rect(upper_left_position.x(),
+                                upper_left_position.y(),
+                                size_in_pixels.x(),
+                                size_in_pixels.y()));
+        
+    }
+
     static cv::Scalar backgroundGray() { return cv::Scalar::all(127); }
     static cv::Scalar colorToCvScalar(const Color& c)
         { return CV_RGB(255 * c.r(), 255 * c.g(), 255 * c.b()); }

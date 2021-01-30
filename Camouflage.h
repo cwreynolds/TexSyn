@@ -100,7 +100,7 @@ public:
         Population population(individuals, subpops, max_tree_size, GP::fs());
         
         run_setup();
-        for (int i = 0; i < 100; i++)
+        while (true)
         {
             population.evolutionStep([&]
                                      (TournamentGroup tg)
@@ -146,11 +146,13 @@ public:
         int p = 0;
         for (auto& tgm : tg.members())
         {
+            int size = textureSize();
             Texture* texture = GP::textureFromIndividual(tgm.individual);
-            texture->rasterizeToImageCache(textureSize(), true);
-            Vec2 center_to_ul = Vec2(1, 1) * textureSize() / 2;
+            texture->rasterizeToImageCache(size, true);
+            Vec2 center_to_ul = Vec2(1, 1) * size / 2;
             Vec2 position = disks.at(p++).position - center_to_ul;
-            gui().drawTexture(*texture, position, textureSize());
+            cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
+            texture->matteImageCacheDiskOverBG(size, target);
         }
         // Update the onscreen image. Wait for user to click on one texture.
         gui().refresh();
