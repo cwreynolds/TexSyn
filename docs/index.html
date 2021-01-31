@@ -81,6 +81,93 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210129"> <a href="#20210129" class="date">January
+        29, 2021</a>
+      <h1>Early interactive evolution of camouflage</h1>
+      <p>Since the last entry here, there was some work in LazyPredator on tree
+        size limits, then for the last two weeks I've been prototyping a user
+        interface for “interactive evolution of camouflage”, the subject of my <a
+          href="https://www.red3d.com/cwr/iec/">2011 paper</a>. My work on
+        TexSyn and LazyPredator has been aimed as restarting that line of
+        research with a more robust software foundation. <a href="https://rebeccaallen.com/">Rebecca
+          Allen</a>, my friend-since-grad-school, gave me a nudge to get back to
+        camouflage already. My first thought was that there was still lots of
+        infrastructure work to do, but then decided the time was about right.</p>
+      <p>And indeed, except for a small tweak in LazyPredator, most of the work
+        has been on the GUI side. Two weeks in, I have an “almost working”
+        version of the 2010 concept of interactive evolution of camouflage. It
+        is based on an instance of coevolution in nature. Imagine a type of
+        predator that uses vision to locate their prey—and prey who use
+        camouflage to escape detection. Effective camouflage helps prey survive
+        to reproduce and pass on their genes. Effective “camouflage breaking”
+        allows predators to eat and so survive to reproduce and pass on <em>their</em>
+        genes. These adversarial processes coevolve, producing mutual
+        improvement, leading to predators with excellent visual perception, and
+        prey with sometimes astoundingly effective camouflage.</p>
+      <p>In this simple simulation—essentially half of the larger goal—a human
+        user plays the part of the predator. The evolutionary texture synthesis
+        software plays the part of the prey whose camouflage is evolving. This
+        can be thought of as a “game” where the human player competes with the
+        simulation. Each turn of the game corresponds to one tournament/step in
+        the steady-state evolutionary computation: </p>
+      <ul>
+        <li>A random background image is chosen to represent the environment.</li>
+        <ul>
+          <li>A random choice is made from a set of photographs, then a random
+            rectangle is selected in that photo.</li>
+          <li>In the examples below I am using six photos of oak leaf litter,
+            shot on the side of a road near my house last August.</li>
+        </ul>
+        <li>Three unique textures are selected at random from the LazyPredator
+          population.</li>
+        <li>The three textures are placed on the background in random,
+          non-overlapping positions.</li>
+        <li>The software waits for the user/player to indicate (with a mouse
+          click) which of the three is most conspicuous — least well
+          camouflaged.</li>
+        <li>This texture “loses” the tournament, and is replaced in the
+          population by a new offspring, a crossover whose parents are the other
+          two textures in the tournament.</li>
+      </ul>
+      <p>Each time I made a code change, I would play a few rounds of the game
+        to make sure everything was still working as expected. This time I got
+        to step 70 and the texture in the upper left caught my eye:</p>
+      <img src="images/20210129_1746_oak_leaf.png" alt="oak leaf test, step 70"
+        title="oak leaf test, step 70" height="598" width="1051">
+      <p>Hmm, that is not bad. The range of colors in that texture were pretty
+        similar to the background image. The spatial frequencies in that texture
+        were pretty similar to the background image. In fact one could say that
+        texture is pretty well camouflaged against these backgrounds.</p>
+      <p>In the previous steps of the evolutionary selection process, textures
+        that were “obviously wrong” were being weeded out of the population. For
+        example, textures with the wrong colors (like the multi-colored middle
+        texture above) or had spatial frequencies that were too high or too low
+        (like the flat beige texture with gray spots on the right), were removed
+        and replaced with new offspring. In one surprising step, GP crossover
+        created a new texture that had <strong>both</strong> good distributions
+        of colors and frequency pattern. Dang!</p>
+      <p>I continued to “evolve” this run for another 200 steps or so. In this
+        tournament we see a nicely cryptic texture (lower left) and two
+        under-performers. The middle texture seems to be a uniform color with
+        “buttons” of a green/beige texture. Something similar seems to be a
+        component of the camouflage texture in the lower left.</p>
+      <img src="images/20210129_1849_oak_leaf.png" alt="oak leaf test A" title="oak leaf test A"
+        height="713" width="927">
+      <p>Later in the run, the well camouflaged textures are enjoying
+        “reproductive success.” Their good genes are spreading through the
+        population. Below is a turn of the game where all three textures in a
+        tournament are variations on the same successful cryptic texture. If you
+        look closely at the upper left texture, you can see an important
+        property of effective camouflage, some of its boundary/silhouette seems
+        to “dissolve” away. Instead of a hard-edged circle, parts now look
+        nibbled away:</p>
+      <img src="images/20210129_1838_oak_leaf.png" alt="oak leaf test B" title="oak leaf test B"
+        height="608" width="781">
+      <p>Just for a little context, the images above are cropped out of the full
+        GUI. This shows (at a smaller scale) the whole window, full screen on my
+        laptop, relative to three textures:</p>
+      <img src="images/20210129_1827_oak_leaf.png" alt="oak leaf test, full window"
+        title="oak leaf test, full window" height="326" width="511"> </div>
     <div class="post" id="20210110"> <a href="#20210110" class="date">January
         10, 2021</a>
       <h1>LimitHue results from LazyPredator tests</h1>
@@ -5035,6 +5122,5 @@ SoftMatte(spot(0.2),
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
-    
   </body>
 </html>
