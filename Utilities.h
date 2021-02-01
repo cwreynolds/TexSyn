@@ -18,6 +18,7 @@
 #include <chrono>
 #include <any>
 #include <set>
+#include <filesystem>
 class Vec2;
 class Color;
 
@@ -497,4 +498,21 @@ inline std::string date_hours_minutes()
     auto l = std::localtime(&t);
     ss << std::put_time(l, "%Y%m%d_%H%M");
     return ss.str();
+}
+
+// Returns collection of the names of all files in the given directory pathname.
+inline std::vector<std::string> directory_filenames(std::string directory_path)
+{
+    std::vector<std::string> directory_contents;
+    std::filesystem::path directory(directory_path);
+    assert(std::filesystem::is_directory(directory));
+    for (const auto& entry : std::filesystem::directory_iterator(directory))
+    {
+        if (entry.is_regular_file())
+        {
+            directory_contents.push_back(entry.path().filename().string());
+        }
+    }
+    std::sort(directory_contents.begin(), directory_contents.end());
+    return directory_contents;
 }

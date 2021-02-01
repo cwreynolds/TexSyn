@@ -39,16 +39,12 @@ public:
     // Read specified background image files, scale, and save as cv::Mats.
     void collectBackgroundImages()
     {
-        // TODO very temp prototype, should read ("ls") these from directory.
-        const std::vector<std::string> background_image_filename =
-        {
-            "IMG_6548.jpeg", "IMG_6549.jpeg", "IMG_6550.jpeg",
-            "IMG_6551.jpeg", "IMG_6552.jpeg", "IMG_6553.jpeg"
-        };
-        
-        std::cout << "Reading " << background_image_filename.size();
+        // Names of all files in backgroundImageDirectory() (assume image files)
+        const std::vector<std::string> background_image_filenames =
+            directory_filenames(backgroundImageDirectory());
+        std::cout << "Reading " << background_image_filenames.size();
         std::cout << " background images:" << std::endl;
-        for (auto& filename : background_image_filename)
+        for (auto& filename : background_image_filenames)
         {
             // Compose absolute pathname for this background image file.
             std::string pathname = backgroundImageDirectory() + "/" + filename;

@@ -4592,9 +4592,7 @@ int main(int argc, const char * argv[])
     std::cout << "January 21, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
     std::string path = temp_dir + "20210121_";
-    
-//    Camouflage().test();
-    
+        
     std::string run_name = "oak leaf litter green brown";
     std::string bg_dir_dir = "/Users/cwr/Pictures/camouflage backgrounds/";
     std::string bg_image_dir = bg_dir_dir + run_name;
