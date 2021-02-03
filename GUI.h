@@ -9,6 +9,9 @@
 // Simple graphical user interface for a LazyPredator evolution run using Texsyn
 //------------------------------------------------------------------------------
 
+// TODO 20210202 very temp, trying to use custom built OpenCV
+#define TEMP_AVOID_TTF
+
 #pragma once
 
 #pragma clang diagnostic push
@@ -16,7 +19,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#ifndef TEMP_AVOID_TTF
 #include <opencv2/freetype.hpp>
+#endif // TEMP_AVOID_TTF
 #pragma clang diagnostic pop
 
 #include "Texture.h"
@@ -31,8 +36,10 @@ public:
                          CV_8UC3, backgroundGray());
         // TODO hardcoded, should be a settable path, with fall-back
         //      to using original highgui putText() if file not there.
+#ifndef TEMP_AVOID_TTF
         font = cv::freetype::createFreeType2();
         font->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
+#endif // TEMP_AVOID_TTF
         cv::namedWindow(getWindowName());
         cv::moveWindow(getWindowName(),
                        upper_left_init_position.x(),
@@ -46,6 +53,7 @@ public:
                   const Vec2& upper_left_position,
                   const Color& color)
     {
+#ifndef TEMP_AVOID_TTF
         // TODO 20201204 this assumes .ttf file found
         font->putText(image_,
                       text,
@@ -56,6 +64,7 @@ public:
                       cv::FILLED,
                       cv::LINE_AA,
                       false);
+#endif // TEMP_AVOID_TTF
     }
     // Draw given text horizontally centered around given position.
     // TODO 20201212 should centering be an arg to the main func?
@@ -64,10 +73,12 @@ public:
                                   const Vec2& top_center_position,
                                   const Color& color)
     {
+#ifndef TEMP_AVOID_TTF
         int bl = 0;
         cv::Size ts(font->getTextSize(text, font_height, cv::FILLED, &bl));
         Vec2 position = top_center_position - Vec2(ts.width / 2, 0);
         drawText(text, font_height, position, color);
+#endif // TEMP_AVOID_TTF
     }
     
     // Draw a Texture, rendered at the given size, at given position on GUI.
@@ -138,5 +149,7 @@ public:
 private:
     cv::Mat image_;
     std::string window_name_ = "LimitHue run";
+#ifndef TEMP_AVOID_TTF
     cv::Ptr<cv::freetype::FreeType2> font;
+#endif // TEMP_AVOID_TTF
 };

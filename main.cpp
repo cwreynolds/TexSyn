@@ -4588,16 +4588,24 @@ int main(int argc, const char * argv[])
 //        LimitHue(100, 5, 100, 100, temp_dir).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//    // 20210121 prototyping Camouflage class
+//    std::cout << "January 21, 2021" << std::endl;
+//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    std::string path = temp_dir + "20210121_";
+//
+//    std::string run_name = "oak leaf litter green brown";
+//    std::string bg_dir_dir = "/Users/cwr/Pictures/camouflage backgrounds/";
+//    std::string bg_image_dir = bg_dir_dir + run_name;
+//    float bg_scale = 0.5;
+//    Camouflage(run_name, bg_image_dir, bg_scale).run();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // 20210121 prototyping Camouflage class
-    std::cout << "January 21, 2021" << std::endl;
+    std::cout << "January 31, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210121_";
-        
-    std::string run_name = "oak leaf litter green brown";
-    std::string bg_dir_dir = "/Users/cwr/Pictures/camouflage backgrounds/";
-    std::string bg_image_dir = bg_dir_dir + run_name;
-    float bg_scale = 0.5;
-    Camouflage(run_name, bg_image_dir, bg_scale).run();
+    std::string path = temp_dir + "20210131_";
+
+    LimitHue(100, 5, 100, 100, temp_dir).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
