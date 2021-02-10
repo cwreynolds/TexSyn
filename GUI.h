@@ -129,6 +129,9 @@ public:
                                 size_in_pixels.y()));
         
     }
+    
+    // Get current size (in pixels of the cv::Mat underlying the GUI).
+    Vec2 getSize() const { return Vec2(image_.cols, image_.rows); }
 
     static cv::Scalar backgroundGray() { return cv::Scalar::all(127); }
     static cv::Scalar colorToCvScalar(const Color& c)

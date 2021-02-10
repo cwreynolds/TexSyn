@@ -4613,12 +4613,10 @@ int main(int argc, const char * argv[])
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
     std::string path = temp_dir + "20210208_";
     
-    std::string run_name = "oak leaf litter green brown";
-    std::string bg_dir_dir = "/Users/cwr/Pictures/camouflage backgrounds/";
-    std::string bg_image_dir = bg_dir_dir + run_name;
-    float bg_scale = 0.5;
-    Camouflage(run_name, bg_image_dir, bg_scale).run();
-//    Camouflage(argc, argv).run();
+    Camouflage(argc, argv).run();
+    
+    // Sample command line:
+    // texsyn /Users/cwr/Pictures/camouflage\ backgrounds/oak\ leaf\ litter\ green\ brown .
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

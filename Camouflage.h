@@ -35,6 +35,82 @@ public:
         background_scale_(background_scale),
         gui_(gui_size_, Vec2())
     {}
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    // derive run_name_ from rightmost component of background_image_directory?
+    //
+    // evo_camo_game /background/images /evo/run/logs 0.5 1200 800
+    // 0             1                  2             3   4    5
+    //
+    Camouflage(int argc, const char* argv[])
+      : cmd_line_(cmd_line_as_strings(argc, argv)),
+        run_name_("temp run name"),
+        background_image_directory_(cmd_line_.at(1)),
+//        output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
+////                          std::filesystem::current_path().filename().string() :
+//                          (std::filesystem::current_path().root_name().string() +
+//                           std::filesystem::current_path().root_directory().string() +
+//                           std::filesystem::current_path().relative_path().string()) :
+//                          cmd_line_.at(2)),
+//    output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
+//                      whole_path_name(std::filesystem::current_path()) :
+//                      cmd_line_.at(2)),
+    // TODO see conversation with Bob Brown, maybe don't need to check for "."?
+    output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
+                      std::filesystem::current_path().string() :
+                      cmd_line_.at(2)),
+        background_scale_(cmd_line_.at(3).empty() ?
+                          0.5 :
+                          std::stof(cmd_line_.at(3))),
+        gui_(Vec2((cmd_line_.at(4).empty() ?
+                   gui_size_.x() :
+                   std::stof(cmd_line_.at(4))),
+                  (cmd_line_.at(5).empty() ?
+                   gui_size_.y() :
+                   std::stof(cmd_line_.at(5)))),
+             Vec2())
+    {
+        std::cout << "Interactive evolution of camouflage:" << std::endl;
+        debugPrint(vec_to_string(cmd_line_));
+        debugPrint(run_name_);
+        debugPrint(background_image_directory_);
+        debugPrint(output_directory_);
+        debugPrint(background_scale_);
+        debugPrint(gui_.getSize());
+    }
+
+    
+    // TODO to be moved to Utilities.h
+    // Given traditional argc/argv return a vector of std::strings representing
+    // the tokens from a unix-style command line.
+    static
+    std::vector<std::string> cmd_line_as_strings(int argc, const char* argv[])
+    {
+//        std::vector<std::string> cmd_line(100); // Leave space for 100 args.
+        std::vector<std::string> cmd_line;
+        for (int i = 0; i < argc; i++){cmd_line.push_back(std::string(argv[i]));}
+        // Leave space for 100 args.
+        cmd_line.resize(100);
+        return cmd_line;
+    }
+    
+//    // TODO am I missing something? Why not part of class std::filesystem:
+//    // TODO OH this is string():
+//    std::string whole_path_name(const std::filesystem::path& path)
+//    {
+//        return (path.root_name().string() +
+//                path.root_directory().string() +
+//                path.relative_path().string());
+//    }
+    
+    // Parsed version of the ("unix") command line that invoked this run.
+    const std::vector<std::string> cmd_line_;
+    
+    // Pathname of directory into which we can create a run log directory.
+    const std::string output_directory_;
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Read specified background image files, scale, and save as cv::Mats.
     void collectBackgroundImages()
@@ -89,6 +165,10 @@ public:
 
     void run()
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO SUPER TEMP
+        LPRS().setSeed(20210208);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create initial population." << std::endl;
         int individuals = 100;
         int subpops = 5;
@@ -225,7 +305,8 @@ private:
     const float background_scale_ = 1;
     // GUI size: drawable area in pixels.
     // TODO pick a better default (this is roughly screen size on my MBP).
-    Vec2 gui_size_ = {1430, 850};
+//    Vec2 gui_size_ = {1430, 850};
+    Vec2 gui_size_ = {1200, 800};
     // GUI object
     GUI gui_;
     // Store position of most recent mouse (left) click in GUI.
