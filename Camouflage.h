@@ -40,35 +40,35 @@ public:
     
     // derive run_name_ from rightmost component of background_image_directory?
     //
+    // before 20210211:
     // evo_camo_game /background/images /evo/run/logs 0.5 1200 800
     // 0             1                  2             3   4    5
     //
+    // after 20210211:
+    // evo_camo_game /background/images /evo/run/logs 0.5 seed 1200 800
+    // 0             1                  2             3   4    5    6
+    //
     Camouflage(int argc, const char* argv[])
       : cmd_line_(cmd_line_as_strings(argc, argv)),
-        run_name_("temp run name"),
+//        run_name_("temp run name"),
+        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
         background_image_directory_(cmd_line_.at(1)),
-//        output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
-////                          std::filesystem::current_path().filename().string() :
-//                          (std::filesystem::current_path().root_name().string() +
-//                           std::filesystem::current_path().root_directory().string() +
-//                           std::filesystem::current_path().relative_path().string()) :
-//                          cmd_line_.at(2)),
-//    output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
-//                      whole_path_name(std::filesystem::current_path()) :
-//                      cmd_line_.at(2)),
-    // TODO see conversation with Bob Brown, maybe don't need to check for "."?
-    output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
-                      std::filesystem::current_path().string() :
-                      cmd_line_.at(2)),
+        // TODO see conversation with Bob Brown, no need to check for "."?
+        output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
+                          std::filesystem::current_path().string() :
+                          cmd_line_.at(2)),
         background_scale_(cmd_line_.at(3).empty() ?
                           0.5 :
                           std::stof(cmd_line_.at(3))),
-        gui_(Vec2((cmd_line_.at(4).empty() ?
+        random_seed_(cmd_line_.at(4).empty() ?
+                     LPRS().defaultSeed() :
+                     std::stoi(cmd_line_.at(4))),
+        gui_(Vec2((cmd_line_.at(5).empty() ?
                    gui_size_.x() :
-                   std::stof(cmd_line_.at(4))),
-                  (cmd_line_.at(5).empty() ?
+                   std::stof(cmd_line_.at(5))),
+                  (cmd_line_.at(6).empty() ?
                    gui_size_.y() :
-                   std::stof(cmd_line_.at(5)))),
+                   std::stof(cmd_line_.at(6)))),
              Vec2())
     {
         std::cout << "Interactive evolution of camouflage:" << std::endl;
@@ -77,6 +77,7 @@ public:
         debugPrint(background_image_directory_);
         debugPrint(output_directory_);
         debugPrint(background_scale_);
+        debugPrint(random_seed_);
         debugPrint(gui_.getSize());
     }
 
@@ -168,7 +169,9 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO SUPER TEMP
 //        LPRS().setSeed(20210208);
-        LPRS().setSeed(20210210);
+//        LPRS().setSeed(20210210);
+        
+        LPRS().setSeed(random_seed_);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create initial population." << std::endl;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -314,6 +317,11 @@ private:
     Vec2 gui_size_ = {1200, 800};
     // GUI object
     GUI gui_;
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    int random_seed_ = LPRS().defaultSeed();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
     // True during wait for user to select one texture on screen

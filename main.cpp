@@ -4618,6 +4618,7 @@ int main(int argc, const char * argv[])
     // Sample command line:
     // texsyn /Users/cwr/Pictures/camouflage\ backgrounds/oak\ leaf\ litter\ green\ brown .
     // texsyn /Users/cwr/Pictures/camouflage_backgrounds/oak_leaf_litter_green_brown .
+    // texsyn /Users/cwr/Pictures/camouflage_backgrounds/fungus_pores/ . 1.2 20210211
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
