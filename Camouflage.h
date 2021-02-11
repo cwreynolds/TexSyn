@@ -167,11 +167,16 @@ public:
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO SUPER TEMP
-        LPRS().setSeed(20210208);
+//        LPRS().setSeed(20210208);
+        LPRS().setSeed(20210210);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create initial population." << std::endl;
-        int individuals = 100;
-        int subpops = 5;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        int individuals = 100;
+//        int subpops = 5;
+        int individuals = 120;
+        int subpops = 6;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         int max_tree_size = 100;
         Population population(individuals, subpops, max_tree_size, GP::fs());
         

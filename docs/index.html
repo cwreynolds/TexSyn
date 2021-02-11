@@ -81,6 +81,70 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210209"> <a href="#20210209" class="date">February
+        9, 2021</a>
+      <h1>Another prototype camouflage run</h1>
+      <p>After adding handling of “argc/argv” unix-style command line arguments
+        to the <code>Camouflage</code> class, I made another run using that
+        form of specification. (Previously I mostly fiddled with parameters
+        inside my code via my IDE and recompiling.) The results were pretty
+        good, entertaining even, as shown below. For the previous week or so I
+        was looking into ways to distribute binaries of the tool but ran into
+        some roadblocks. For the time being, the only way to use it is to build
+        it yourself from sources. In case anyone reading this is interested,
+        please contact <a href="https://www.red3d.com/cwr/">me</a> for details.</p>
+      <p>I used the same set of background images (“oak leaf litter green
+        brown”) but chose a different seed for the psuedo-random sequence
+        generator. I need to add a command line argument for specifying that.
+        This software is designed to be strongly reproducible (even across
+        platforms) despite being based on randomized algorithms. The results
+        will be identical if you make two runs with all the same parameters
+        (including, in this case of interactive evolution of camouflage, making
+        the same interactive selections). If you <em>want</em> the runs to be
+        different, changing the random seed is required.</p>
+      <p>Near the top of my to-do list is better tools for logging these
+        camouflage runs, and recording images from the run. Initially I want to
+        have a way to say “save the whole window showing the current tournament
+        of three textures” and “save an image of the indicated texture along
+        with its nearby background.” I may also want to add the ability to save
+        the program (<code>GpTree</code>) for a texture. So far I have just been
+        using my laptop's screen capture utility to collect these images. Here
+        is a cropped image of a tournament at around step 700:</p>
+      <img src="images/20210208_2255_oak_leaf.png" alt="" title="" height="762"
+        width="882">
+      <p>Some examples of cryptic (well camouflaged) “prey”, from later in the
+        run, with a bit of the background texture on which they were found:</p>
+      <img src="images/20210208_2257_oak_leaf.png" alt="" title="" height="400"
+        width="400">&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/20210209_1519_oak_leaf.png"
+        alt="" title="" height="400" width="400">
+      <p> </p>
+      <img src="images/20210209_1542_oak_leaf.png" alt="" title="" height="400"
+        width="400">&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/20210209_1658_oak_leaf.png"
+        alt="" title="" height="400" width="400"> <br>
+      <br>
+      <p><strong>A side note:</strong> as you may recall, the user's task in
+        this “game” is to pick out the texture which is “worst” — the <em>least</em>
+        well camouflaged. In the beginning of a run this is difficult since
+        almost all of the textures are bad: they stand out against the
+        background and are not at all camouflaged. It can be hard to decide
+        which of the bad textures are the worst. Early in a run there are lots
+        of textures which are just a single uniform color. While selecting for
+        non-uniform textures, I seem to have given too much of a boost to a
+        species of multi-spot patterns. They were fun to look at but not very
+        well camouflaged:</p>
+      <img src="images/20210208_1919_oak_leaf.png" alt="" title="" height="400"
+        width="400"> <br>
+      <br>
+      <img src="images/20210208_1937_oak_leaf.png" alt="" title="" height="663"
+        width="714"> <br>
+      <br>
+      <img src="images/20210208_1946_oak_leaf.png" alt="" title="" height="684"
+        width="714"> <br>
+      <p>Here is a point where the “spot” species is doing its best to be
+        camouflaged, but losing the race to two different noise-pattern-based
+        species are starting to perform better:</p>
+      <img src="images/20210208_1957_oak_leaf.png" alt="" title="" height="416"
+        width="832"> </div>
     <div class="post" id="20210129"> <a href="#20210129" class="date">January
         29, 2021</a>
       <h1>Early interactive evolution of camouflage</h1>
