@@ -21,6 +21,77 @@
 #include "GP.h"
 #include "Disk.h"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Parsed version of the ("unix") command line that invoked this run.
+const std::vector<std::string> cmd_line_;
+
+// background_scale_(cmd_line_.at(3).empty() ?
+//                   0.5 :
+//                   std::stof(cmd_line_.at(3))),
+
+// Camouflage::positional_argument(5, LPRS().defaultSeed())
+
+//    // Return random element of given std::vector.
+//    template<typename T> T randomSelectElement(const std::vector<T>& collection)
+//    { return collection.at(randomN(collection.size())); }
+
+
+
+//    template <typename T>
+//    T positionalArgument(int arg_index,
+//                         const T& default_value,
+//                         std::function<T(std::string)> caster)
+//    {
+//        return (cmd_line_.at(arg_index).empty() ?
+//                default_value :
+//                caster(cmd_line_.at(arg_index)));
+//    }
+//
+//    //template <typename T>
+//    //T positionalArgument(int arg_index, const T& default_value)
+//    //{
+//    //    return positionalArgument(arg_index,
+//    //                              default_value,
+//    //                              [](std::string s){ return s; });
+//    //}
+//
+//    std::string positionalArgumentX(int arg_index, std::string default_value)
+//    {
+//        return positionalArgument(arg_index,
+//                                  default_value,
+//                                  [](std::string s){ return s; });
+//    }
+
+
+//    // Used only below in FunctionSet, then undef-ed at end of file.
+//    #define name_lookup_util(name, map)               \
+//    [&]()                                             \
+//    {                                                 \
+//        auto it = map.find(name);                     \
+//        assert("unknown type" && (it != map.end()));  \
+//        return &(it->second);                         \
+//    }()
+
+#define positional_argument(arg_index, default_value)  \
+(cmd_line_.at(arg_index).empty() ?                     \
+default_value :                                       \
+cmd_line_.at(arg_index));
+
+void testxxx()
+{
+    //    std::string s = positionalArgument(0, std::string("foo"));
+    std::string s = positional_argument(0, "foo");
+    //    float f = positional_argument(1, 0.5);
+}
+
+// Both prototypes had problems. Still not sure what is wrong with template
+// version. Maybe we just need three overloads for string, int, and float?
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
 class Camouflage
 {
 public:
