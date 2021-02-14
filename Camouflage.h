@@ -121,25 +121,13 @@ public:
     //
     Camouflage(int argc, const char* argv[])
       : cmd_line_(cmd_line_as_strings(argc, argv)),
-//        run_name_("temp run name"),
         run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
         background_image_directory_(cmd_line_.at(1)),
-        // TODO see conversation with Bob Brown, no need to check for "."?
-        output_directory_((cmd_line_.at(2).empty() || cmd_line_.at(2) == ".") ?
-                          std::filesystem::current_path().string() :
-                          cmd_line_.at(2)),
-        background_scale_(cmd_line_.at(3).empty() ?
-                          0.5 :
-                          std::stof(cmd_line_.at(3))),
-        random_seed_(cmd_line_.at(4).empty() ?
-                     LPRS().defaultSeed() :
-                     std::stoi(cmd_line_.at(4))),
-        gui_(Vec2((cmd_line_.at(5).empty() ?
-                   gui_size_.x() :
-                   std::stof(cmd_line_.at(5))),
-                  (cmd_line_.at(6).empty() ?
-                   gui_size_.y() :
-                   std::stof(cmd_line_.at(6)))),
+        output_directory_(positionalArgument(2, ".")),
+        background_scale_(positionalArgument(3, float(0.5))),
+        random_seed_(positionalArgument(4, int(LPRS().defaultSeed()))),
+        gui_(Vec2(positionalArgument(5, gui_size_.x()),
+                  positionalArgument(6, gui_size_.y())),
              Vec2())
     {
         std::cout << "Interactive evolution of camouflage:" << std::endl;
@@ -151,7 +139,6 @@ public:
         debugPrint(random_seed_);
         debugPrint(gui_.getSize());
     }
-
     
     // TODO to be moved to Utilities.h
     // Given traditional argc/argv return a vector of std::strings representing
@@ -159,23 +146,34 @@ public:
     static
     std::vector<std::string> cmd_line_as_strings(int argc, const char* argv[])
     {
-//        std::vector<std::string> cmd_line(100); // Leave space for 100 args.
         std::vector<std::string> cmd_line;
         for (int i = 0; i < argc; i++){cmd_line.push_back(std::string(argv[i]));}
-        // Leave space for 100 args.
-        cmd_line.resize(100);
+        cmd_line.resize(100); // Leave space for 100 args. TODO clean up.
         return cmd_line;
     }
     
-//    // TODO am I missing something? Why not part of class std::filesystem:
-//    // TODO OH this is string():
-//    std::string whole_path_name(const std::filesystem::path& path)
-//    {
-//        return (path.root_name().string() +
-//                path.root_directory().string() +
-//                path.relative_path().string());
-//    }
     
+    // Three overloads for string, int, and float:
+    // (TODO use macro like positional_argument to compress these further?)
+    std::string positionalArgument(int arg_index, std::string default_value)
+    {
+        return (cmd_line_.at(arg_index).empty() ?
+                default_value :
+                cmd_line_.at(arg_index));
+    }
+    int positionalArgument(int arg_index, int default_value)
+    {
+        return (cmd_line_.at(arg_index).empty() ?
+                default_value :
+                std::stoi(cmd_line_.at(arg_index)));
+    }
+    float positionalArgument(int arg_index, float default_value)
+    {
+        return (cmd_line_.at(arg_index).empty() ?
+                default_value :
+                std::stof(cmd_line_.at(arg_index)));
+    }
+
     // Parsed version of the ("unix") command line that invoked this run.
     const std::vector<std::string> cmd_line_;
     
