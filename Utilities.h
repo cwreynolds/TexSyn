@@ -516,3 +516,54 @@ inline std::vector<std::string> directory_filenames(std::string directory_path)
     std::sort(directory_contents.begin(), directory_contents.end());
     return directory_contents;
 }
+
+// Simple command line parser/interpreter.
+// Maybe use someone else's: search for [c++ command line parser header only]
+
+class CommandLine
+{
+public:
+    CommandLine() {}
+    CommandLine(int argc, const char* argv[])
+      : cmd_line_(cmdToStrings(argc, argv)) {}
+    // For non-optional, positional, string arguments
+    // TODO temp? non optional version, just to replace old usage in Camouflage
+    std::string at(int arg_index) const { return cmd_line_.at(arg_index); }
+
+    // Get nth positional argument, defaulting not specified or ""
+    // Three overloads for string, int, and float.
+    // (TODO use macro like positional_argument to compress these further?)
+    std::string positionalArgument(int arg_index, std::string default_value) const
+    {
+        bool d = ((arg_index >= cmd_line_.size()) ||
+                  cmd_line_.at(arg_index).empty());
+        return (d ? default_value : cmd_line_.at(arg_index));
+    }
+    int positionalArgument(int arg_index, int default_value) const
+    {
+        bool d = ((arg_index >= cmd_line_.size()) ||
+                  cmd_line_.at(arg_index).empty());
+        return (d ? default_value : std::stoi(cmd_line_.at(arg_index)));
+    }
+    float positionalArgument(int arg_index, float default_value) const
+    {
+        bool d = ((arg_index >= cmd_line_.size()) ||
+                  cmd_line_.at(arg_index).empty());
+        return (d ? default_value : std::stof(cmd_line_.at(arg_index)));
+    }
+private:
+    // Given traditional main() parameters argc/argv, return BY VALUE an
+    // std::vector of std::strings representing the tokens of a unix-style
+    // command line.
+    static std::vector<std::string> cmdToStrings(int argc, const char* argv[])
+    {
+        std::vector<std::string> cmd_line;
+        for (int i = 0; i < argc; i++)
+        {
+            cmd_line.push_back(std::string(argv[i]));
+        }
+        return cmd_line;
+    }
+    // Parsed version of the ("unix") command line that invoked this run.
+    const std::vector<std::string> cmd_line_;
+};

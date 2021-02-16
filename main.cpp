@@ -4608,17 +4608,27 @@ int main(int argc, const char * argv[])
 //    LimitHue(100, 5, 100, 100, temp_dir).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // 20210208 prototyping Camouflage class
-    std::cout << "Feburary 8, 2021" << std::endl;
-    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210208_";
+//    // 20210208 prototyping Camouflage class
+//    std::cout << "Feburary 8, 2021" << std::endl;
+//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    std::string path = temp_dir + "20210208_";
+//
+//    Camouflage(argc, argv).run();
+//
+//    // Sample command line:
+//    // texsyn /Users/cwr/Pictures/camouflage\ backgrounds/oak\ leaf\ litter\ green\ brown .
+//    // texsyn /Users/cwr/Pictures/camouflage_backgrounds/oak_leaf_litter_green_brown .
+//    // texsyn /Users/cwr/Pictures/camouflage_backgrounds/fungus_pores/ . 1.2 20210211
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // 20210215 prototyping CommandLine class
+    std::cout << "Feburary 15, 2021" << std::endl;
+    
+//    CommandLine cl(0, nullptr);
+//    cl.test();
     
     Camouflage(argc, argv).run();
-    
-    // Sample command line:
-    // texsyn /Users/cwr/Pictures/camouflage\ backgrounds/oak\ leaf\ litter\ green\ brown .
-    // texsyn /Users/cwr/Pictures/camouflage_backgrounds/oak_leaf_litter_green_brown .
-    // texsyn /Users/cwr/Pictures/camouflage_backgrounds/fungus_pores/ . 1.2 20210211
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

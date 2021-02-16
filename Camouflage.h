@@ -22,70 +22,70 @@
 #include "Disk.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Parsed version of the ("unix") command line that invoked this run.
-const std::vector<std::string> cmd_line_;
-
-// background_scale_(cmd_line_.at(3).empty() ?
-//                   0.5 :
-//                   std::stof(cmd_line_.at(3))),
-
-// Camouflage::positional_argument(5, LPRS().defaultSeed())
-
-//    // Return random element of given std::vector.
-//    template<typename T> T randomSelectElement(const std::vector<T>& collection)
-//    { return collection.at(randomN(collection.size())); }
-
-
-
-//    template <typename T>
-//    T positionalArgument(int arg_index,
-//                         const T& default_value,
-//                         std::function<T(std::string)> caster)
+//    // Parsed version of the ("unix") command line that invoked this run.
+//    const std::vector<std::string> cmd_line_;
+//
+//    // background_scale_(cmd_line_.at(3).empty() ?
+//    //                   0.5 :
+//    //                   std::stof(cmd_line_.at(3))),
+//
+//    // Camouflage::positional_argument(5, LPRS().defaultSeed())
+//
+//    //    // Return random element of given std::vector.
+//    //    template<typename T> T randomSelectElement(const std::vector<T>& collection)
+//    //    { return collection.at(randomN(collection.size())); }
+//
+//
+//
+//    //    template <typename T>
+//    //    T positionalArgument(int arg_index,
+//    //                         const T& default_value,
+//    //                         std::function<T(std::string)> caster)
+//    //    {
+//    //        return (cmd_line_.at(arg_index).empty() ?
+//    //                default_value :
+//    //                caster(cmd_line_.at(arg_index)));
+//    //    }
+//    //
+//    //    //template <typename T>
+//    //    //T positionalArgument(int arg_index, const T& default_value)
+//    //    //{
+//    //    //    return positionalArgument(arg_index,
+//    //    //                              default_value,
+//    //    //                              [](std::string s){ return s; });
+//    //    //}
+//    //
+//    //    std::string positionalArgumentX(int arg_index, std::string default_value)
+//    //    {
+//    //        return positionalArgument(arg_index,
+//    //                                  default_value,
+//    //                                  [](std::string s){ return s; });
+//    //    }
+//
+//
+//    //    // Used only below in FunctionSet, then undef-ed at end of file.
+//    //    #define name_lookup_util(name, map)               \
+//    //    [&]()                                             \
+//    //    {                                                 \
+//    //        auto it = map.find(name);                     \
+//    //        assert("unknown type" && (it != map.end()));  \
+//    //        return &(it->second);                         \
+//    //    }()
+//
+//    #define positional_argument(arg_index, default_value)  \
+//    (cmd_line_.at(arg_index).empty() ?                     \
+//    default_value :                                       \
+//    cmd_line_.at(arg_index));
+//
+//    void testxxx()
 //    {
-//        return (cmd_line_.at(arg_index).empty() ?
-//                default_value :
-//                caster(cmd_line_.at(arg_index)));
+//        //    std::string s = positionalArgument(0, std::string("foo"));
+//        std::string s = positional_argument(0, "foo");
+//        //    float f = positional_argument(1, 0.5);
 //    }
 //
-//    //template <typename T>
-//    //T positionalArgument(int arg_index, const T& default_value)
-//    //{
-//    //    return positionalArgument(arg_index,
-//    //                              default_value,
-//    //                              [](std::string s){ return s; });
-//    //}
-//
-//    std::string positionalArgumentX(int arg_index, std::string default_value)
-//    {
-//        return positionalArgument(arg_index,
-//                                  default_value,
-//                                  [](std::string s){ return s; });
-//    }
-
-
-//    // Used only below in FunctionSet, then undef-ed at end of file.
-//    #define name_lookup_util(name, map)               \
-//    [&]()                                             \
-//    {                                                 \
-//        auto it = map.find(name);                     \
-//        assert("unknown type" && (it != map.end()));  \
-//        return &(it->second);                         \
-//    }()
-
-#define positional_argument(arg_index, default_value)  \
-(cmd_line_.at(arg_index).empty() ?                     \
-default_value :                                       \
-cmd_line_.at(arg_index));
-
-void testxxx()
-{
-    //    std::string s = positionalArgument(0, std::string("foo"));
-    std::string s = positional_argument(0, "foo");
-    //    float f = positional_argument(1, 0.5);
-}
-
-// Both prototypes had problems. Still not sure what is wrong with template
-// version. Maybe we just need three overloads for string, int, and float?
+//    // Both prototypes had problems. Still not sure what is wrong with template
+//    // version. Maybe we just need three overloads for string, int, and float?
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -120,18 +120,28 @@ public:
     // 0             1                  2             3   4    5    6
     //
     Camouflage(int argc, const char* argv[])
-      : cmd_line_(cmd_line_as_strings(argc, argv)),
-        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
+//      : cmd_line_(cmd_line_as_strings(argc, argv)),
+//        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
+//        background_image_directory_(cmd_line_.at(1)),
+//        output_directory_(positionalArgument(2, ".")),
+//        background_scale_(positionalArgument(3, float(0.5))),
+//        random_seed_(positionalArgument(4, int(LPRS().defaultSeed()))),
+//        gui_(Vec2(positionalArgument(5, gui_size_.x()),
+//                  positionalArgument(6, gui_size_.y())),
+//             Vec2())
+      : cmd_line_(argc, argv),
+//        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
+        run_name_(std::filesystem::path(cmd_line_.at(1)).filename()),
         background_image_directory_(cmd_line_.at(1)),
-        output_directory_(positionalArgument(2, ".")),
-        background_scale_(positionalArgument(3, float(0.5))),
-        random_seed_(positionalArgument(4, int(LPRS().defaultSeed()))),
-        gui_(Vec2(positionalArgument(5, gui_size_.x()),
-                  positionalArgument(6, gui_size_.y())),
+        output_directory_(cmd_line_.positionalArgument(2, ".")),
+        background_scale_(cmd_line_.positionalArgument(3, float(0.5))),
+        random_seed_(cmd_line_.positionalArgument(4, int(LPRS().defaultSeed()))),
+        gui_(Vec2(cmd_line_.positionalArgument(5, gui_size_.x()),
+                  cmd_line_.positionalArgument(6, gui_size_.y())),
              Vec2())
     {
         std::cout << "Interactive evolution of camouflage:" << std::endl;
-        debugPrint(vec_to_string(cmd_line_));
+//        debugPrint(vec_to_string(cmd_line_));
         debugPrint(run_name_);
         debugPrint(background_image_directory_);
         debugPrint(output_directory_);
@@ -153,29 +163,30 @@ public:
     }
     
     
-    // Three overloads for string, int, and float:
-    // (TODO use macro like positional_argument to compress these further?)
-    std::string positionalArgument(int arg_index, std::string default_value)
-    {
-        return (cmd_line_.at(arg_index).empty() ?
-                default_value :
-                cmd_line_.at(arg_index));
-    }
-    int positionalArgument(int arg_index, int default_value)
-    {
-        return (cmd_line_.at(arg_index).empty() ?
-                default_value :
-                std::stoi(cmd_line_.at(arg_index)));
-    }
-    float positionalArgument(int arg_index, float default_value)
-    {
-        return (cmd_line_.at(arg_index).empty() ?
-                default_value :
-                std::stof(cmd_line_.at(arg_index)));
-    }
+//    // Three overloads for string, int, and float:
+//    // (TODO use macro like positional_argument to compress these further?)
+//    std::string positionalArgument(int arg_index, std::string default_value)
+//    {
+//        return (cmd_line_.at(arg_index).empty() ?
+//                default_value :
+//                cmd_line_.at(arg_index));
+//    }
+//    int positionalArgument(int arg_index, int default_value)
+//    {
+//        return (cmd_line_.at(arg_index).empty() ?
+//                default_value :
+//                std::stoi(cmd_line_.at(arg_index)));
+//    }
+//    float positionalArgument(int arg_index, float default_value)
+//    {
+//        return (cmd_line_.at(arg_index).empty() ?
+//                default_value :
+//                std::stof(cmd_line_.at(arg_index)));
+//    }
 
-    // Parsed version of the ("unix") command line that invoked this run.
-    const std::vector<std::string> cmd_line_;
+//    // Parsed version of the ("unix") command line that invoked this run.
+//    const std::vector<std::string> cmd_line_;
+    const CommandLine cmd_line_;
     
     // Pathname of directory into which we can create a run log directory.
     const std::string output_directory_;
