@@ -120,34 +120,38 @@ public:
     // 0             1                  2             3   4    5    6
     //
     Camouflage(int argc, const char* argv[])
-//      : cmd_line_(cmd_line_as_strings(argc, argv)),
-//        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
-//        background_image_directory_(cmd_line_.at(1)),
-//        output_directory_(positionalArgument(2, ".")),
-//        background_scale_(positionalArgument(3, float(0.5))),
-//        random_seed_(positionalArgument(4, int(LPRS().defaultSeed()))),
-//        gui_(Vec2(positionalArgument(5, gui_size_.x()),
-//                  positionalArgument(6, gui_size_.y())),
-//             Vec2())
-      : cmd_line_(argc, argv),
-//        run_name_(std::filesystem::path(cmd_line_.at(1)).parent_path().filename()),
-        run_name_(std::filesystem::path(cmd_line_.at(1)).filename()),
-        background_image_directory_(cmd_line_.at(1)),
-        output_directory_(cmd_line_.positionalArgument(2, ".")),
-        background_scale_(cmd_line_.positionalArgument(3, float(0.5))),
-        random_seed_(cmd_line_.positionalArgument(4, int(LPRS().defaultSeed()))),
-        gui_(Vec2(cmd_line_.positionalArgument(5, gui_size_.x()),
-                  cmd_line_.positionalArgument(6, gui_size_.y())),
+      : cmd_(argc, argv),
+        run_name_(std::filesystem::path(cmd_.positionalArgument(1)).filename()),
+        background_image_directory_(cmd_.positionalArgument(1)),
+        output_directory_(cmd_.positionalArgument(2, ".")),
+        background_scale_(cmd_.positionalArgument(3, float(0.5))),
+        random_seed_(cmd_.positionalArgument(4, int(LPRS().defaultSeed()))),
+        gui_(Vec2(cmd_.positionalArgument(5, gui_size_.x()),
+                  cmd_.positionalArgument(6, gui_size_.y())),
              Vec2())
     {
-        std::cout << "Interactive evolution of camouflage:" << std::endl;
-//        debugPrint(vec_to_string(cmd_line_));
-        debugPrint(run_name_);
-        debugPrint(background_image_directory_);
-        debugPrint(output_directory_);
-        debugPrint(background_scale_);
-        debugPrint(random_seed_);
-        debugPrint(gui_.getSize());
+        if (background_image_directory_.empty())
+        {
+            std::cout << "Parameters:" << std::endl;
+            std::cout << "    background_image_directory (required)" << std::endl;
+            std::cout << "    output_directory (defaults to .)" << std::endl;
+            std::cout << "    background_scale (defaults to 0.5)" << std::endl;
+            std::cout << "    random_seed (else: default seed)" << std::endl;
+            std::cout << "    window width (defaults to 1200)" << std::endl;
+            std::cout << "    window height (defaults to 800)" << std::endl;
+            std::cout << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            std::cout << "Interactive evolution of camouflage:" << std::endl;
+            debugPrint(run_name_);
+            debugPrint(background_image_directory_);
+            debugPrint(output_directory_);
+            debugPrint(background_scale_);
+            debugPrint(random_seed_);
+            debugPrint(gui_.getSize());
+        }
     }
     
     // TODO to be moved to Utilities.h
@@ -161,33 +165,10 @@ public:
         cmd_line.resize(100); // Leave space for 100 args. TODO clean up.
         return cmd_line;
     }
-    
-    
-//    // Three overloads for string, int, and float:
-//    // (TODO use macro like positional_argument to compress these further?)
-//    std::string positionalArgument(int arg_index, std::string default_value)
-//    {
-//        return (cmd_line_.at(arg_index).empty() ?
-//                default_value :
-//                cmd_line_.at(arg_index));
-//    }
-//    int positionalArgument(int arg_index, int default_value)
-//    {
-//        return (cmd_line_.at(arg_index).empty() ?
-//                default_value :
-//                std::stoi(cmd_line_.at(arg_index)));
-//    }
-//    float positionalArgument(int arg_index, float default_value)
-//    {
-//        return (cmd_line_.at(arg_index).empty() ?
-//                default_value :
-//                std::stof(cmd_line_.at(arg_index)));
-//    }
 
 //    // Parsed version of the ("unix") command line that invoked this run.
-//    const std::vector<std::string> cmd_line_;
-    const CommandLine cmd_line_;
-    
+    const CommandLine cmd_;
+
     // Pathname of directory into which we can create a run log directory.
     const std::string output_directory_;
     

@@ -519,43 +519,42 @@ inline std::vector<std::string> directory_filenames(std::string directory_path)
 
 // Simple command line parser/interpreter.
 // Maybe use someone else's: search for [c++ command line parser header only]
-
 class CommandLine
 {
 public:
-    CommandLine() {}
-    CommandLine(int argc, const char* argv[])
-      : cmd_line_(cmdToStrings(argc, argv)) {}
-    // For non-optional, positional, string arguments
-    // TODO temp? non optional version, just to replace old usage in Camouflage
-    std::string at(int arg_index) const { return cmd_line_.at(arg_index); }
-
-    // Get nth positional argument, defaulting not specified or ""
-    // Three overloads for string, int, and float.
-    // (TODO use macro like positional_argument to compress these further?)
-    std::string positionalArgument(int arg_index, std::string default_value) const
+    CommandLine(){}
+    CommandLine(int argc, const char* argv[]):cmd_line_(toStrings(argc, argv)){}
+    // For positional, non-optional, string arguments.
+    // TODO provide int and float versions?
+    std::string positionalArgument(int index) const
     {
-        bool d = ((arg_index >= cmd_line_.size()) ||
-                  cmd_line_.at(arg_index).empty());
-        return (d ? default_value : cmd_line_.at(arg_index));
+        return positionalArgument(index, std::string(""));
     }
-    int positionalArgument(int arg_index, int default_value) const
+    // Get nth positional argument, defaults if not specified or ""
+    std::string positionalArgument(int index, std::string default_value) const
     {
-        bool d = ((arg_index >= cmd_line_.size()) ||
-                  cmd_line_.at(arg_index).empty());
-        return (d ? default_value : std::stoi(cmd_line_.at(arg_index)));
+        return helper<std::string>(index,
+                                   default_value,
+                                   [](std::string s){ return s; });
+    }
+    int positionalArgument(int index, int default_value) const
+    {
+        return helper<int>(index,
+                           default_value,
+                           [](std::string s){ return std::stoi(s); });
+
     }
     float positionalArgument(int arg_index, float default_value) const
     {
-        bool d = ((arg_index >= cmd_line_.size()) ||
-                  cmd_line_.at(arg_index).empty());
-        return (d ? default_value : std::stof(cmd_line_.at(arg_index)));
+        return helper<float>(arg_index,
+                             default_value,
+                             [](std::string s){ return std::stof(s); });
     }
 private:
     // Given traditional main() parameters argc/argv, return BY VALUE an
     // std::vector of std::strings representing the tokens of a unix-style
     // command line.
-    static std::vector<std::string> cmdToStrings(int argc, const char* argv[])
+    std::vector<std::string> toStrings(int argc, const char* argv[])
     {
         std::vector<std::string> cmd_line;
         for (int i = 0; i < argc; i++)
@@ -563,6 +562,13 @@ private:
             cmd_line.push_back(std::string(argv[i]));
         }
         return cmd_line;
+    }
+    template<typename T>
+    T helper(int index, T default_value, std::function<T(std::string)> f) const
+    {
+        return (((index >= cmd_line_.size()) || cmd_line_.at(index).empty()) ?
+                default_value :
+                f(cmd_line_.at(index)));
     }
     // Parsed version of the ("unix") command line that invoked this run.
     const std::vector<std::string> cmd_line_;
