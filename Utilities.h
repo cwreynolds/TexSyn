@@ -524,6 +524,8 @@ class CommandLine
 public:
     CommandLine(){}
     CommandLine(int argc, const char* argv[]):cmd_line_(toStrings(argc, argv)){}
+    // Constructor to allow injecting "unix style" command line for unit test.
+    CommandLine(std::vector<std::string> cmd_line) : cmd_line_(cmd_line) {}
     // For positional, non-optional, string arguments.
     // TODO provide int and float versions?
     std::string positionalArgument(int index) const

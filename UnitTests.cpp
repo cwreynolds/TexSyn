@@ -73,7 +73,12 @@ bool utilities()
             st(any_to_string<float>(0.5f) == "0.5") &&
             st(any_to_string<std::string>(std::string("abc")) == "abc") &&
             st(set_contains(std::set<int>{1, 2, 3}, 2)) &&
-            st(!set_contains(std::set<int>{1, 2, 3}, 5)));
+            st(!set_contains(std::set<int>{1, 2, 3}, 5)) &&
+            st(CommandLine({"a","10","1.2"}).positionalArgument(0) == "a") &&
+            st(CommandLine({"a","10","1.2"}).positionalArgument(0,"x")=="a") &&
+            st(CommandLine({"a","10","1.2"}).positionalArgument(1,2)==10) &&
+            st(CommandLine({"a","10","1.2"}).positionalArgument(9, "x")=="x")&&
+            st(CommandLine({"a","10","1.2"}).positionalArgument(2,2.3f)==1.2f));
 };
 
 // Tests for Color class.

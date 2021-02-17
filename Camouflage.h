@@ -19,85 +19,14 @@
 
 #pragma once
 #include "GP.h"
-#include "Disk.h"
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    // Parsed version of the ("unix") command line that invoked this run.
-//    const std::vector<std::string> cmd_line_;
-//
-//    // background_scale_(cmd_line_.at(3).empty() ?
-//    //                   0.5 :
-//    //                   std::stof(cmd_line_.at(3))),
-//
-//    // Camouflage::positional_argument(5, LPRS().defaultSeed())
-//
-//    //    // Return random element of given std::vector.
-//    //    template<typename T> T randomSelectElement(const std::vector<T>& collection)
-//    //    { return collection.at(randomN(collection.size())); }
-//
-//
-//
-//    //    template <typename T>
-//    //    T positionalArgument(int arg_index,
-//    //                         const T& default_value,
-//    //                         std::function<T(std::string)> caster)
-//    //    {
-//    //        return (cmd_line_.at(arg_index).empty() ?
-//    //                default_value :
-//    //                caster(cmd_line_.at(arg_index)));
-//    //    }
-//    //
-//    //    //template <typename T>
-//    //    //T positionalArgument(int arg_index, const T& default_value)
-//    //    //{
-//    //    //    return positionalArgument(arg_index,
-//    //    //                              default_value,
-//    //    //                              [](std::string s){ return s; });
-//    //    //}
-//    //
-//    //    std::string positionalArgumentX(int arg_index, std::string default_value)
-//    //    {
-//    //        return positionalArgument(arg_index,
-//    //                                  default_value,
-//    //                                  [](std::string s){ return s; });
-//    //    }
-//
-//
-//    //    // Used only below in FunctionSet, then undef-ed at end of file.
-//    //    #define name_lookup_util(name, map)               \
-//    //    [&]()                                             \
-//    //    {                                                 \
-//    //        auto it = map.find(name);                     \
-//    //        assert("unknown type" && (it != map.end()));  \
-//    //        return &(it->second);                         \
-//    //    }()
-//
-//    #define positional_argument(arg_index, default_value)  \
-//    (cmd_line_.at(arg_index).empty() ?                     \
-//    default_value :                                       \
-//    cmd_line_.at(arg_index));
-//
-//    void testxxx()
-//    {
-//        //    std::string s = positionalArgument(0, std::string("foo"));
-//        std::string s = positional_argument(0, "foo");
-//        //    float f = positional_argument(1, 0.5);
-//    }
-//
-//    // Both prototypes had problems. Still not sure what is wrong with template
-//    // version. Maybe we just need three overloads for string, int, and float?
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
 
 class Camouflage
 {
 public:
-    
-    // TODO specify directory to put run results into?
-    
+    // TODO original constructor for testing. Needs to be updated for newer
+    //      parameters handled by argc/argv constructor. Maybe that one should
+    //      reformat command line inputs to a version of this constructor
+    //      rewritten to have ALL the bells and whistles.
     Camouflage(std::string run_name,
                std::string background_image_directory,
                float background_scale)
@@ -106,19 +35,7 @@ public:
         background_scale_(background_scale),
         gui_(gui_size_, Vec2())
     {}
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    // derive run_name_ from rightmost component of background_image_directory?
-    //
-    // before 20210211:
-    // evo_camo_game /background/images /evo/run/logs 0.5 1200 800
-    // 0             1                  2             3   4    5
-    //
-    // after 20210211:
-    // evo_camo_game /background/images /evo/run/logs 0.5 seed 1200 800
-    // 0             1                  2             3   4    5    6
-    //
+    // This constructor parses a "unix style" command line for parameters.
     Camouflage(int argc, const char* argv[])
       : cmd_(argc, argv),
         run_name_(std::filesystem::path(cmd_.positionalArgument(1)).filename()),
@@ -126,19 +43,27 @@ public:
         output_directory_(cmd_.positionalArgument(2, ".")),
         background_scale_(cmd_.positionalArgument(3, float(0.5))),
         random_seed_(cmd_.positionalArgument(4, int(LPRS().defaultSeed()))),
-        gui_(Vec2(cmd_.positionalArgument(5, gui_size_.x()),
-                  cmd_.positionalArgument(6, gui_size_.y())),
-             Vec2())
+        gui_size_(cmd_.positionalArgument(5, 1200),
+                  cmd_.positionalArgument(6, 800)),
+        gui_(gui_size_, Vec2()),
+        individuals_(cmd_.positionalArgument(7, 120)),
+        subpops_(cmd_.positionalArgument(8, 6)),
+        max_tree_size_(cmd_.positionalArgument(9, 100))
+
     {
         if (background_image_directory_.empty())
         {
-            std::cout << "Parameters:" << std::endl;
+            // Exit with failure after listing command arguments.
+            std::cout << "evo_camo_game parameters:" << std::endl;
             std::cout << "    background_image_directory (required)" << std::endl;
             std::cout << "    output_directory (defaults to .)" << std::endl;
             std::cout << "    background_scale (defaults to 0.5)" << std::endl;
             std::cout << "    random_seed (else: default seed)" << std::endl;
             std::cout << "    window width (defaults to 1200)" << std::endl;
             std::cout << "    window height (defaults to 800)" << std::endl;
+            std::cout << "    individuals (defaults to 120)" << std::endl;
+            std::cout << "    subpopulations (defaults to 6)" << std::endl;
+            std::cout << "    max_tree_size (defaults to 100)" << std::endl;
             std::cout << std::endl;
             exit(EXIT_FAILURE);
         }
@@ -151,29 +76,11 @@ public:
             debugPrint(background_scale_);
             debugPrint(random_seed_);
             debugPrint(gui_.getSize());
+            debugPrint(individuals_);
+            debugPrint(subpops_);
+            debugPrint(max_tree_size_);
         }
     }
-    
-    // TODO to be moved to Utilities.h
-    // Given traditional argc/argv return a vector of std::strings representing
-    // the tokens from a unix-style command line.
-    static
-    std::vector<std::string> cmd_line_as_strings(int argc, const char* argv[])
-    {
-        std::vector<std::string> cmd_line;
-        for (int i = 0; i < argc; i++){cmd_line.push_back(std::string(argv[i]));}
-        cmd_line.resize(100); // Leave space for 100 args. TODO clean up.
-        return cmd_line;
-    }
-
-//    // Parsed version of the ("unix") command line that invoked this run.
-    const CommandLine cmd_;
-
-    // Pathname of directory into which we can create a run log directory.
-    const std::string output_directory_;
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     // Read specified background image files, scale, and save as cv::Mats.
     void collectBackgroundImages()
     {
@@ -199,6 +106,8 @@ public:
         assert(!backgroundImages().empty());
     }
     
+    // Randomly select one of the given backgrounds, then randomly select a
+    // window-sized rectangle within it.
     void drawRandomBackground()
     {
         const cv::Mat& bg = LPRS().randomSelectElement(backgroundImages());
@@ -217,34 +126,18 @@ public:
         }
     }
 
-    void run_setup()
-    {
-        // Read specified background image files, save as cv::Mats.
-        collectBackgroundImages();        
-        gui().setWindowName(run_name_);
-        gui().refresh();
-    }
-
+    // Run the evolution simulation.
     void run()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO SUPER TEMP
-//        LPRS().setSeed(20210208);
-//        LPRS().setSeed(20210210);
-        
         LPRS().setSeed(random_seed_);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create initial population." << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        int individuals = 100;
-//        int subpops = 5;
-        int individuals = 120;
-        int subpops = 6;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        int max_tree_size = 100;
-        Population population(individuals, subpops, max_tree_size, GP::fs());
-        
-        run_setup();
+        Population population(individuals_, subpops_, max_tree_size_, GP::fs());
+        // Read specified background image files, save as cv::Mats.
+        collectBackgroundImages();
+        // Init GUI window.
+        gui().setWindowName(run_name_);
+        gui().refresh();
+        // Loop ("forever") performing interactive evolution steps.
         while (true)
         {
             population.evolutionStep([&]
@@ -253,6 +146,7 @@ public:
         }
     }
     
+    // Controls mouse behavior during a tournament.
     void setMouseCallbackForTournamentFunction()
     {
         auto mouse_callback =
@@ -320,6 +214,7 @@ public:
         return tg;
     }
     
+    // Ad hoc idle loop, waiting for mouse click. (Better if waited for event.)
     void waitForMouseClick()
     {
         wait_for_mouse_click_ = true;
@@ -364,25 +259,28 @@ public:
     }
     
 private:
+    // Parsed version of the ("unix") command line that invoked this run.
+    const CommandLine cmd_;
     // Name of run, perhaps same as directory holding background image files.
     const std::string run_name_;
     // Pathname of directory containing raw background image files.
     const std::string background_image_directory_;
+    // Pathname of directory into which we can create a run log directory.
+    const std::string output_directory_;
     // Collection of cv::Mat to be used as background image source material.
     std::vector<cv::Mat> background_images_;
     // The size of background images is adjusted by this value (usually < 1).
     const float background_scale_ = 1;
     // GUI size: drawable area in pixels.
-    // TODO pick a better default (this is roughly screen size on my MBP).
-//    Vec2 gui_size_ = {1430, 850};
-    Vec2 gui_size_ = {1200, 800};
+    Vec2 gui_size_;
     // GUI object
     GUI gui_;
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Seed for RandomSequence LPRS() to be used during this run
     int random_seed_ = LPRS().defaultSeed();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    // Default parameters for Population
+    int individuals_ = 120;
+    int subpops_ = 6;
+    int max_tree_size_ = 100;
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
     // True during wait for user to select one texture on screen
