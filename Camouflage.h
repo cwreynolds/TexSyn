@@ -48,14 +48,17 @@ public:
         gui_(gui_size_, Vec2()),
         individuals_(cmd_.positionalArgument(7, 120)),
         subpops_(cmd_.positionalArgument(8, 6)),
-        max_tree_size_(cmd_.positionalArgument(9, 100))
-
+        max_init_tree_size_(cmd_.positionalArgument(9, 100)),
+        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
+        max_crossover_tree_size_(max_init_tree_size_ * 1.5)
     {
         if (background_image_directory_.empty())
         {
             // Exit with failure after listing command arguments.
-            std::cout << "evo_camo_game parameters:" << std::endl;
-            std::cout << "    background_image_directory (required)" << std::endl;
+            std::cout << cmd_.positionalArgument(0);
+            std::cout << " requires at least one pathname parameter,";
+            std::cout << " others may be omitted from the end:" << std::endl;
+            std::cout << "    background_image_directory (required)"<<std::endl;
             std::cout << "    output_directory (defaults to .)" << std::endl;
             std::cout << "    background_scale (defaults to 0.5)" << std::endl;
             std::cout << "    random_seed (else: default seed)" << std::endl;
@@ -64,6 +67,8 @@ public:
             std::cout << "    individuals (defaults to 120)" << std::endl;
             std::cout << "    subpopulations (defaults to 6)" << std::endl;
             std::cout << "    max_tree_size (defaults to 100)" << std::endl;
+            std::cout << "    min_crossover_tree_size (default 50)"<<std::endl;
+            std::cout << "    max_crossover_tree_size (default 150)"<<std::endl;
             std::cout << std::endl;
             exit(EXIT_FAILURE);
         }
@@ -78,7 +83,9 @@ public:
             debugPrint(gui_.getSize());
             debugPrint(individuals_);
             debugPrint(subpops_);
-            debugPrint(max_tree_size_);
+            debugPrint(max_init_tree_size_);
+            debugPrint(min_crossover_tree_size_);
+            debugPrint(max_crossover_tree_size_);
         }
     }
     // Read specified background image files, scale, and save as cv::Mats.
@@ -131,13 +138,18 @@ public:
     {
         LPRS().setSeed(random_seed_);
         std::cout << "Create initial population." << std::endl;
-        Population population(individuals_, subpops_, max_tree_size_, GP::fs());
+        Population population(individuals_,
+                              subpops_,
+                              max_init_tree_size_,
+                              min_crossover_tree_size_,
+                              max_crossover_tree_size_,
+                              GP::fs());
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
         // Init GUI window.
         gui().setWindowName(run_name_);
         gui().refresh();
-        // Loop ("forever") performing interactive evolution steps.
+        // Loop "forever" performing interactive evolution steps.
         while (true)
         {
             population.evolutionStep([&]
@@ -280,7 +292,9 @@ private:
     // Default parameters for Population
     int individuals_ = 120;
     int subpops_ = 6;
-    int max_tree_size_ = 100;
+    int max_init_tree_size_ = 100;
+    int min_crossover_tree_size_ = 50;
+    int max_crossover_tree_size_ = 150;
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
     // True during wait for user to select one texture on screen
