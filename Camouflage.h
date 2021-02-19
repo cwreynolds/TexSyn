@@ -38,7 +38,7 @@ public:
     // This constructor parses a "unix style" command line for parameters.
     Camouflage(int argc, const char* argv[])
       : cmd_(argc, argv),
-        run_name_(std::filesystem::path(cmd_.positionalArgument(1)).filename()),
+        run_name_(runNameDefault()),
         background_image_directory_(cmd_.positionalArgument(1)),
         output_directory_(cmd_.positionalArgument(2, ".")),
         background_scale_(cmd_.positionalArgument(3, float(0.5))),
@@ -270,6 +270,15 @@ public:
         wait_for_mouse_click_ = false;
     }
     
+    // Get default run name from background_image_directory_.
+    // (Provides consistent behavior with and without trailing "/".)
+    std::string runNameDefault()
+    {
+        std::filesystem::path path = cmd_.positionalArgument(1);
+        std::string fn = path.filename();
+        return (fn != "") ? fn : std::string(path.parent_path().filename());
+    }
+
 private:
     // Parsed version of the ("unix") command line that invoked this run.
     const CommandLine cmd_;
