@@ -128,7 +128,27 @@ public:
                       cv::FILLED,
                       cv::LINE_AA);
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    void drawRectangle(Vec2 size_in_pixels,
+                       Vec2 upper_left_init_position,
+                       Color color)
+    {
+        cv::rectangle(image_,
+                      vec2ToCvPoint(upper_left_init_position),
+                      vec2ToCvPoint(upper_left_init_position + size_in_pixels),
+                      colorToCvScalar(color),
+                      cv::FILLED,
+                      cv::LINE_AA);
+    }
     
+    // Draw given circle (unfilled, fixed thickness, add more args later?)
+    void drawCircle(float radius, Vec2 center, Color color)
+    {
+        cv::circle(image_, vec2ToCvPoint(center), radius, colorToCvScalar(color));
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Return a "submat"/"ROI" in the GUI's underlying cv::Mat.
     cv::Mat getCvMatRect(const Vec2& upper_left_position,
                          const Vec2& size_in_pixels)
