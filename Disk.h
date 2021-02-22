@@ -29,7 +29,7 @@ public:
     Vec2 future_position;
     float angle = 0;
     // Lightweight utility used by Camouflage.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO viz_func used only for debugging, can be removed eventually.
     static std::vector<Disk>
         randomNonOverlappingDisksInRectangle(int count,
                                              float radius_min,
@@ -37,16 +37,10 @@ public:
                                              float radius_margin,
                                              Vec2 corner_min,
                                              Vec2 corner_max,
-                                             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                                             RandomSequence& rs);
-                                             
                                              RandomSequence& rs,
                                              std::function
                                              <void(const std::vector<Disk>&)>
                                              viz_func);
-
-                                             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // DiskOccupancyGrid -- 2d spatial data structure for collections of Disks.
@@ -294,6 +288,7 @@ private:
 // threaded solver. Rather than try to debug that, and possibly break the
 // LotsOfSpots family of Textures, I wrote this smaller brut force solver. So
 // sue me. TODO maybe merge the two versions at some point?
+// TODO viz_func used only for debugging, can be removed eventually.
 inline std::vector<Disk>
     Disk::randomNonOverlappingDisksInRectangle(int count,
                                                float radius_min,
@@ -301,13 +296,10 @@ inline std::vector<Disk>
                                                float radius_margin,
                                                Vec2 corner_min,
                                                Vec2 corner_max,
-                                               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                                               RandomSequence& rs)
                                                RandomSequence& rs,
                                                std::function
                                                <void(const std::vector<Disk>&)>
                                                viz_func)
-                                               //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
     // Collection of random nonoverlapping Disks, initially empty.
     std::vector<Disk> disks;
@@ -330,18 +322,11 @@ inline std::vector<Disk>
                                              corner_min.y() + radius,
                                              corner_max.y() - radius));
     };
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Vec2 center = (corner_min + corner_max) / 2;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // For all pairs of Disks, push apart, repeat up to "max_retry" times.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    int max_retry = 1000;
     int max_retry = 100;
     bool done = true;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     for (int retry = 0; retry < max_retry; retry++)
     {
-//        bool done = true;
         done = true;
         for (int i = 0; i < count; i++)
         {
@@ -355,94 +340,38 @@ inline std::vector<Disk>
                     float ri = disks.at(i).radius;
                     float rj = disks.at(j).radius;
                     // To prevent overlap and keep given margin between Disks.
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                    float min_distance = ri + rj + radius_margin;
-
-//                    float min_distance = 2 * std::sqrt(sq(ri + radius_margin) +
-//                                                       sq(rj + radius_margin));
-
-//                    float foo = (ri + radius_margin) + (rj + radius_margin);
-//                    float foo = 4 * radius_margin;
-                    
-//                    float foo = 3 * radius_margin;
-//                    float min_distance = std::sqrt(sq(foo) + sq(foo));
-                    
                     float min_distance = ri + rj + radius_margin;
-                    
-//                    debugPrint(min_distance);
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     Vec2 offset = pi - pj;
                     float distance = offset.length();
                     if (distance < min_distance)
                     {
                         // Unit vector along line through both Disk centers.
                         Vec2 direction = offset / distance;
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        
-                        // TODO use randomization. this direction vector is no longer normalized , but I can't see how that would matter
-                        
-//                        direction += rs.randomUnitVector() * 0.2;
-//                        direction += rs.randomUnitVector() * 0.5;
-//                        direction += rs.randomUnitVector() * 0.3;
-
-//                        direction = (direction + rs.randomUnitVector()) / 2;
+                        // Add randomization, vector no longer normalized, but
+                        // I can't see how that would matter as used here.
                         direction = direction + rs.randomUnitVector() * 0.4;
-
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         // Adjustment rate.
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                        float speed = 0.02;
-//                        float speed = 0.1;
-//                        float speed = 0.01;
-//                        float speed = 0.05;
-//                        float speed = 0.01;
-//                        float speed = 0.05;
                         float speed = 0.02;
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         // Vector to incrementally push Disk centers apart.
                         Vec2 push = direction * min_distance * speed;
                         pi += push;
                         pj -= push;
-                        
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        
-//                        pi -= (pi - center) * speed * 0.2;
-//                        pj -= (pj - center) * speed * 0.2;
-                        
-//                        pi -= (pi - center) * speed * 0.5;
-//                        pj -= (pj - center) * speed * 0.5;
-                        
-                        // TODO maybe randomness instead?
-                        
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
                         // Constrain repositioned Disks back inside rectangle
                         clip_to_rec(i, pi, ri);
                         clip_to_rec(j, pj, rj);
                         // Continue to adjust until no overlaps found
                         done = false;
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         viz_func(disks);
-//                        debugPrint(retry);
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     }
                 }
             }
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (done)
-        {
-            debugPrint(retry);
-            break;
-        }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if (done) { break; }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (!done)
     {
         std::cout << "Disk::randomNonOverlappingDisksInRectangle, ";
         std::cout << "unable to position without overlap" << std::endl;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     return disks;
 }

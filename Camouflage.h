@@ -176,80 +176,15 @@ public:
         };
         cv::setMouseCallback(gui().getWindowName(), mouse_callback, this);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // TODO temporary utility for debugging random non-overlapping placement
-    
-//    TournamentGroup testdrawTG;
-//    void testdraw(const std::vector<Disk>& disks)
-    
-//        void testdraw(const TournamentGroup& tg,
-//                      const std::vector<Disk>& disks,
-//                      Vec2 rect_min,
-//                      Vec2 rect_max,
-//                      float min_center_to_center)
-//        {
-//            int p = 0;
-//            gui().clear();
-//
-//            gui().drawRectangle(rect_max - rect_min, rect_min, Color(0.6));
-//
-//
-//            for (auto& tgm : tg.members())
-//            {
-//                Texture* texture = GP::textureFromIndividual(tgm.individual);
-//                texture->rasterizeToImageCache(textureSize(), true);
-//                Vec2 center_to_ul = Vec2(1, 1) * textureSize() / 2;
-//                Vec2 position = disks.at(p++).position - center_to_ul;
-//
-//                int size = textureSize();
-//                Vec2 size2(size, size);
-//    //            gui().drawRectangle(size2, position, Color(0.8));
-//    //            gui().drawRectangle(size2 * 2,
-//    //                                position - size2 / 2,
-//    //                                Color(0.8));
-//    //            Vec2 size3 = size2 * 1.5;
-//
-//                // TODO very temp
-//                float min_distance = 424.264;
-//                Vec2 md2(min_distance, min_distance);
-//
-//    //            gui().drawRectangle(md2,
-//    //                                disks.at(p-1).position - md2/2,
-//    //                                Color(0.8));
-//
-//    //            gui().drawCircle(min_distance / 2,
-//    //                             disks.at(p-1).position,
-//    //                             Color(0.8));
-//
-//    //            gui().drawCircle(min_center_to_center,
-//    //                             disks.at(p-1).position,
-//    //                             Color(0.8));
-//
-//
-//                gui().drawRectangle(size2 * 2,
-//    //                                disks.at(p-1).position - (size2 * 2),
-//                                    disks.at(p-1).position - size2,
-//    //                                Color(0.8));
-//                                    Color(0.7));
-//
-//                gui().drawCircle(min_center_to_center - size / 2,
-//                                 disks.at(p-1).position,
-//                                 Color(1));
-//
-//                cv::Mat target = gui().getCvMatRect(position, size2);
-//                texture->matteImageCacheDiskOverBG(size, target);
-//            }
-//            gui().refresh();
-//            Texture::waitKey(2);
-//        }
-    
+    // TODO to be removed eventually
     void testdraw(const TournamentGroup& tg,
                   const std::vector<Disk>& disks,
                   Vec2 rect_min,
                   Vec2 rect_max,
                   float min_center_to_center)
     {
-        /*
         int p = 0;
         gui().clear();
         gui().drawRectangle(rect_max - rect_min, rect_min, Color(0.6));
@@ -272,45 +207,29 @@ public:
         }
         gui().refresh();
         Texture::waitKey(2);
-         */
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // TournamentFunction for "Interactive Evolution of Camouflage".
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
-        // Restrict Texture disks to be completely inside a rectangle inset from
-        // the window edge by 0.1 of a Texture's diameter. Rectangle is defined
-        // by two diagonally opposite corners.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        float margin = textureSize() * 0.5;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Vec2 rect_min = Vec2(margin, margin);
+        // Restrict Texture disks to be completely inside a rectangle inset
+        // from the window edge a Texture's radius. Rectangle defined by two
+        // diagonally opposite corners.
+        float radius = textureSize() / 2;
+        Vec2 rect_min = Vec2(radius, radius);
         Vec2 rect_max = guiSize() - rect_min;
         // Find non-overlapping positions for the Textures in TournamentGroup.
-        float r = textureSize() / 2;
         std::vector<Disk> disks;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        disks = Disk::randomNonOverlappingDisksInRectangle(3, r, r, r,
-//                                                           rect_min, rect_max,
-//                                                           LPRS());
-                
-        float min_center_to_center = r * ((2 * std::sqrt(2)) + 1);
-        float neo_margin = min_center_to_center - (r * 2);
-
+        float min_center_to_center = radius * ((2 * std::sqrt(2)) + 1);
+        float margin = min_center_to_center - (radius * 2);
         auto overlap_viz = [&](const std::vector<Disk>& disks)
         {
-            testdraw(tg, disks, rect_min, rect_max, min_center_to_center);
+            // testdraw(tg, disks, rect_min, rect_max, min_center_to_center);
         };
-        disks = Disk::randomNonOverlappingDisksInRectangle(3,
-                                                           r, r,
-                                                           neo_margin,
-                                                           rect_min,
-                                                           rect_max,
-                                                           LPRS(),
-                                                           overlap_viz);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        disks = Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
+                                                           margin,
+                                                           rect_min, rect_max,
+                                                           LPRS(), overlap_viz);
         // Draw a randomly selected background, then the 3 testures on top.
         drawRandomBackground();
         int p = 0;

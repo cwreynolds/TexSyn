@@ -129,7 +129,6 @@ public:
                       cv::LINE_AA);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void drawRectangle(Vec2 size_in_pixels,
                        Vec2 upper_left_init_position,
                        Color color)
@@ -147,7 +146,6 @@ public:
     {
         cv::circle(image_, vec2ToCvPoint(center), radius, colorToCvScalar(color));
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Return a "submat"/"ROI" in the GUI's underlying cv::Mat.
     cv::Mat getCvMatRect(const Vec2& upper_left_position,
