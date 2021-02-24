@@ -91,11 +91,13 @@ public:
     // Read specified background image files, scale, and save as cv::Mats.
     void collectBackgroundImages()
     {
-        // Names of all files in backgroundImageDirectory() (assume image files)
+        // Names of all files in backgroundImageDirectory() (expect image files)
         const std::vector<std::string> background_image_filenames =
             directory_filenames(backgroundImageDirectory());
         std::cout << "Reading " << background_image_filenames.size();
         std::cout << " background images:" << std::endl;
+        int min_x = std::numeric_limits<int>::max();
+        int min_y = std::numeric_limits<int>::max();
         for (auto& filename : background_image_filenames)
         {
             // Compose absolute pathname for this background image file.
@@ -103,6 +105,9 @@ public:
             std::cout << "    " << pathname << std::endl;
             // Read the image file into an OpenCV image.
             cv::Mat bg = cv::imread(pathname);
+            // Keep track of smallest image dimensions.
+            if (min_x > bg.cols) { min_x = bg.cols; }
+            if (min_y > bg.rows) { min_y = bg.rows; }
             // Adjust the size/resolution by "background_scale" parameter.
             cv::resize(bg, bg,
                        cv::Size(), backgroundScale(), backgroundScale(),
@@ -111,6 +116,29 @@ public:
             addBackgroundImage(bg);
         }
         assert(!backgroundImages().empty());
+        checkBackgroundImageSizes(min_x, min_y);
+    }
+    
+    // Verify all background images (as scaled) are larger than GUI window.
+    void checkBackgroundImageSizes(int min_x, int min_y)
+    {
+        float s = backgroundScale();
+        int s_min_x = s * min_x;
+        int s_min_y = s * min_y;
+        if ((s_min_x < guiSize().x()) || (s_min_y < guiSize().y()))
+        {
+            std::cout << std::endl
+                << "ERROR: BACKGROUND IMAGE IS TOO SMALL FOR WINDOW."
+                << std::endl << "The smallest of " << backgroundImages().size()
+                << " background images is " << min_x << "×" << min_y
+                << " pixels." << std::endl << "Background scale " << s
+                << " produces " << s_min_x << "×" << s_min_y << " image, "
+                << "smaller than " << guiSize().x() << "×" << guiSize().y()
+                << " window size." << std::endl
+                << "Increase scale, reduce window size, or choose other images."
+                << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
     
     // Randomly select one of the given backgrounds, then randomly select a
