@@ -189,6 +189,10 @@ public:
         { default_opencv_mat_type_ = opencv_mat_type; }
     // TODO 20201204 experiment-- expose a Texture's cv::mat
     const cv::Mat& getCvMat() const { return *raster_; }
+    // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
+    static cv::Mat getCvMatRect(const Vec2& upper_left_position,
+                                const Vec2& size_in_pixels,
+                                const cv::Mat cv_mat);
 private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;

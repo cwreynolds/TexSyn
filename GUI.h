@@ -151,12 +151,9 @@ public:
     cv::Mat getCvMatRect(const Vec2& upper_left_position,
                          const Vec2& size_in_pixels)
     {
-        return cv::Mat(image_,
-                       cv::Rect(upper_left_position.x(),
-                                upper_left_position.y(),
-                                size_in_pixels.x(),
-                                size_in_pixels.y()));
-        
+        return Texture::getCvMatRect(upper_left_position,
+                                     size_in_pixels,
+                                     image_);
     }
     
     // Get current size (in pixels of the cv::Mat underlying the GUI).

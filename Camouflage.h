@@ -143,22 +143,17 @@ public:
     
     // Randomly select one of the given backgrounds, then randomly select a
     // window-sized rectangle within it.
-    void drawRandomBackground()
+    cv::Mat selectRandomBackgroundForWindow()
     {
+        // Pick one of the given background images at random.
         const cv::Mat& bg = LPRS().randomSelectElement(backgroundImages());
+        // Find how much bigger (than GUI window) the original background is.
         int dx = std::max(0, int(bg.cols - guiSize().x()));
         int dy = std::max(0, int(bg.rows - guiSize().y()));
-        // Is background image larger than GUI window?
-        if ((dx > 0) && (dy > 0))
-        {
-            Vec2 random_position(LPRS().randomN(dx), LPRS().randomN(dy));
-            gui().drawMat(bg, random_position, guiSize());
-        }
-        else
-        {
-            gui().eraseRectangle(guiSize(), Vec2());
-            gui().drawMat(bg, Vec2());
-        }
+        // Randomly select an offset within that size difference.
+        Vec2 random_position(LPRS().randomN(dx), LPRS().randomN(dy));
+        // Return a "submat" reference into the random rectangle inside "bg".
+        return Texture::getCvMatRect(random_position, guiSize(), bg);
     }
 
     // Run the evolution simulation.
@@ -258,8 +253,9 @@ public:
                                                            margin,
                                                            rect_min, rect_max,
                                                            LPRS(), overlap_viz);
-        // Draw a randomly selected background, then the 3 testures on top.
-        drawRandomBackground();
+        // Draw a randomly selected background, then the 3 textures on top.
+        cv::Mat bg = selectRandomBackgroundForWindow();
+        gui().drawMat(bg, Vec2());
         int p = 0;
         for (auto& tgm : tg.members())
         {

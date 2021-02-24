@@ -432,3 +432,16 @@ const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
 // TODO 20201207 seems to be working fine, switch over to this as default
 //               eventually remove the conditionalization.
 int Texture::default_opencv_mat_type_ = CV_8UC3;
+
+// Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
+cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
+                              const Vec2& size_in_pixels,
+                              const cv::Mat cv_mat)
+{
+    return cv::Mat(cv_mat,
+                   cv::Rect(upper_left_position.x(),
+                            upper_left_position.y(),
+                            size_in_pixels.x(),
+                            size_in_pixels.y()));
+    
+}
