@@ -193,7 +193,16 @@ public:
                 if (event == cv::EVENT_LBUTTONDOWN)
                 {
                     auto c = static_cast<Camouflage*>(userdata);
-                    c->setLastMouseClick(Vec2(x, y));
+                    if (flags & cv::EVENT_FLAG_SHIFTKEY)
+                    {
+                        c->writeThubnailImageToFile();
+                    }
+                    // else if (flags & cv::EVENT_FLAG_CTRLKEY) {}
+                    // else if (flags & cv::EVENT_FLAG_ALTKEY) {}
+                    else
+                    {
+                        c->setLastMouseClick(Vec2(x, y));
+                    }
                 }
             }
         };
@@ -289,13 +298,33 @@ public:
     }
     
     // Ad hoc idle loop, waiting for mouse click. (Better if waited for event.)
+    // Listens for and executes single character commands. (Only "t" for now.)
     void waitForMouseClick()
     {
         wait_for_mouse_click_ = true;
-        while(wait_for_mouse_click_)
+        int previous_key = cv::waitKeyEx(1);
+        // Loop until mouse is clicked in window.
+        while (wait_for_mouse_click_)
         {
-            Texture::waitKey(250);  // 1/4 second (250/1000)
+            // Wait for 1/4 second, and read any key typed during that time.
+            int key = cv::waitKey(250);  // 1/4 second (250/1000)
+            // When newly-pressed (key down) event.
+            if ((key > 0) && (key != previous_key))
+            {
+                // For "t" command: write whole window tournament image to file.
+                if (key == 't') { writeTournamentImageToFile(); }
+            }
+            previous_key = key;
         }
+    }
+
+    void writeTournamentImageToFile()
+    {
+        std::cout << "mock writeTournamentImageToFile()" << std::endl;
+    }
+    void writeThubnailImageToFile()
+    {
+        std::cout << "mock writeThubnailImageToFile()" << std::endl;
     }
 
     // The size of background images is adjusted by this value. It is expected
