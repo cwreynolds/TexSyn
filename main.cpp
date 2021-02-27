@@ -17,6 +17,7 @@ bool run_unit_tests = true;
 
 int main(int argc, const char * argv[])
 {
+    std::cout << texsyn_version_string << std::endl;
     if (run_unit_tests) UnitTests::allTestsOK();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

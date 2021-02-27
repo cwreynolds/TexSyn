@@ -181,34 +181,6 @@ public:
         }
     }
     
-    // Controls mouse behavior during a tournament.
-    void setMouseCallbackForTournamentFunction()
-    {
-        auto mouse_callback =
-        []
-        (int event, int x, int y, int flags, void* userdata)
-        {
-            if (event != cv::EVENT_MOUSEMOVE)
-            {
-                if (event == cv::EVENT_LBUTTONDOWN)
-                {
-                    auto c = static_cast<Camouflage*>(userdata);
-                    if (flags & cv::EVENT_FLAG_SHIFTKEY)
-                    {
-                        c->writeThubnailImageToFile();
-                    }
-                    // else if (flags & cv::EVENT_FLAG_CTRLKEY) {}
-                    // else if (flags & cv::EVENT_FLAG_ALTKEY) {}
-                    else
-                    {
-                        c->setLastMouseClick(Vec2(x, y));
-                    }
-                }
-            }
-        };
-        cv::setMouseCallback(gui().getWindowName(), mouse_callback, this);
-    }
-
     // TODO temporary utility for debugging random non-overlapping placement
     // TODO to be removed eventually
     void testdraw(const TournamentGroup& tg,
@@ -251,17 +223,19 @@ public:
         Vec2 rect_min = Vec2(radius, radius);
         Vec2 rect_max = guiSize() - rect_min;
         // Find non-overlapping positions for the Textures in TournamentGroup.
-        std::vector<Disk> disks;
         float min_center_to_center = radius * ((2 * std::sqrt(2)) + 1);
         float margin = min_center_to_center - (radius * 2);
         auto overlap_viz = [&](const std::vector<Disk>& disks)
         {
             // testdraw(tg, disks, rect_min, rect_max, min_center_to_center);
         };
-        disks = Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
-                                                           margin,
-                                                           rect_min, rect_max,
-                                                           LPRS(), overlap_viz);
+        // Initialize "global variables" used by mouse callback handler.
+        tournament_group_ = tg;
+        disks_ = Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
+                                                            margin,
+                                                            rect_min, rect_max,
+                                                            LPRS(),
+                                                            overlap_viz);
         // Draw a randomly selected background, then the 3 textures on top.
         cv::Mat bg = selectRandomBackgroundForWindow();
         gui().drawMat(bg, Vec2());
@@ -272,23 +246,14 @@ public:
             Texture* texture = GP::textureFromIndividual(tgm.individual);
             texture->rasterizeToImageCache(size, true);
             Vec2 center_to_ul = Vec2(1, 1) * size / 2;
-            Vec2 position = disks.at(p++).position - center_to_ul;
+            Vec2 position = disks_.at(p++).position - center_to_ul;
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
         }
         // Update the onscreen image. Wait for user to click on one texture.
         gui().refresh();
         setMouseCallbackForTournamentFunction();
-        waitForMouseClick();
-        // See if click was within a Texture disk, set "worst" Individual if so.
-        p = 0;
-        Individual* worst = nullptr;
-        for (auto& tgm : tg.members())
-        {
-            Vec2 texture_center = disks.at(p++).position;
-            float distance = (texture_center - getLastMouseClick()).length();
-            if (distance <= (textureSize() / 2)) { worst = tgm.individual; }
-        }
+        Individual* worst = selectIndividualFromMouseClick(waitForMouseClick());
         // Designate clicked Texture's Individual as worst of TournamentGroup.
         tg.designateWorstIndividual(worst);
         // Clear GUI, return updated TournamentGroup.
@@ -298,8 +263,8 @@ public:
     }
     
     // Ad hoc idle loop, waiting for mouse click. (Better if waited for event.)
-    // Listens for and executes single character commands. (Only "t" for now.)
-    void waitForMouseClick()
+    // Listens for and executes single character commands: "t" and "Q".
+    Vec2 waitForMouseClick()
     {
         wait_for_mouse_click_ = true;
         int previous_key = cv::waitKeyEx(1);
@@ -313,18 +278,64 @@ public:
             {
                 // For "t" command: write whole window tournament image to file.
                 if (key == 't') { writeTournamentImageToFile(); }
+                // For "Q" command: exit app immediately.
+                if (key == 'Q') { exit(EXIT_SUCCESS); }
             }
             previous_key = key;
         }
+        return getLastMouseClick();
     }
 
+    // Controls mouse behavior during a tournament.
+    void setMouseCallbackForTournamentFunction()
+    {
+        auto mouse_callback =
+        []
+        (int event, int x, int y, int flags, void* userdata)
+        {
+            if (event == cv::EVENT_LBUTTONDOWN)
+            {
+                auto c = static_cast<Camouflage*>(userdata);
+                Vec2 click(x, y);
+                if (flags & cv::EVENT_FLAG_SHIFTKEY)
+                {
+                    Individual* i = c->selectIndividualFromMouseClick(click);
+                    c->writeThubnailImageToFile(i);
+                }
+                // else if (flags & cv::EVENT_FLAG_CTRLKEY) {}
+                // else if (flags & cv::EVENT_FLAG_ALTKEY) {}
+                else
+                {
+                    c->setLastMouseClick(click);
+                }
+            }
+        };
+        cv::setMouseCallback(gui().getWindowName(), mouse_callback, this);
+    }
+
+    // See if click was within a Texture disk, set "worst" Individual if so.
+    Individual* selectIndividualFromMouseClick(Vec2 mouse_click_position)
+    {
+        int p = 0;
+        Individual* selected = nullptr;
+        for (auto& tgm : tournament_group_.members())
+        {
+            Vec2 texture_center = disks_.at(p++).position;
+            float distance = (texture_center - mouse_click_position).length();
+            if (distance <= (textureSize() / 2)) { selected = tgm.individual; }
+        }
+        return selected;
+    }
+    
     void writeTournamentImageToFile()
     {
         std::cout << "mock writeTournamentImageToFile()" << std::endl;
     }
-    void writeThubnailImageToFile()
+
+    void writeThubnailImageToFile(Individual* individual)
     {
-        std::cout << "mock writeThubnailImageToFile()" << std::endl;
+        std::cout << "mock writeThubnailImageToFile() ";
+        std::cout << "individual=" << individual << std::endl;
     }
 
     // The size of background images is adjusted by this value. It is expected
@@ -395,8 +406,20 @@ private:
     int max_init_tree_size_ = 100;
     int min_crossover_tree_size_ = 50;
     int max_crossover_tree_size_ = 150;
+    
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    // Note: the four variables below communicate "global" state with the mouse
+    // callback handler. This is not thread safe and would need redesign for
+    // multithreading. But then, since this connects directly to the GUI for an
+    // interactive task, multithreading seems unlikely?
+    //
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
-    // True during wait for user to select one texture on screen
+    // True during wait for user to select one texture on screen.
     bool wait_for_mouse_click_;
+    // Collection of Disks describing layout of Textures in GUI window.
+    std::vector<Disk> disks_;
+    // TournamentGroup with pointers to 3 textures of most recent tournament.
+    TournamentGroup tournament_group_;
+    //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
