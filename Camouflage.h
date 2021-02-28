@@ -41,6 +41,7 @@ public:
         run_name_(runNameDefault()),
         background_image_directory_(cmd_.positionalArgument(1)),
         output_directory_(cmd_.positionalArgument(2, ".")),
+        output_directory_this_run_(runOutputDirectory()),
         background_scale_(cmd_.positionalArgument(3, float(0.5))),
         random_seed_(cmd_.positionalArgument(4, int(LPRS().defaultSeed()))),
         gui_size_(cmd_.positionalArgument(5, 1200),
@@ -59,6 +60,8 @@ public:
             std::cout << " requires at least one pathname parameter,";
             std::cout << " others may be omitted from the end:" << std::endl;
             std::cout << "    background_image_directory (required)"<<std::endl;
+            // TODO this should say something about creating a time-stamped
+            // directory under this for output from this run.
             std::cout << "    output_directory (defaults to .)" << std::endl;
             std::cout << "    background_scale (defaults to 0.5)" << std::endl;
             std::cout << "    random_seed (else: default seed)" << std::endl;
@@ -78,6 +81,7 @@ public:
             debugPrint(run_name_);
             debugPrint(background_image_directory_);
             debugPrint(output_directory_);
+            debugPrint(output_directory_this_run_);
             debugPrint(background_scale_);
             debugPrint(random_seed_);
             debugPrint(gui_.getSize());
@@ -169,12 +173,19 @@ public:
                               GP::fs());
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
+        std::filesystem::path out = output_directory_this_run_;
+        std::cout << "Create output directory for this run: ";
+        std::cout << out << std::endl;
+        std::filesystem::create_directory(out);
         // Init GUI window.
         gui().setWindowName(run_name_);
         gui().refresh();
         // Loop "forever" performing interactive evolution steps.
         while (true)
         {
+            // Store to allow access in mouse handler.
+            step_ = population.getStepCount();
+            // Evolution step with wrapped Camouflage::tournamentFunction().
             population.evolutionStep([&]
                                      (TournamentGroup tg)
                                      { return tournamentFunction(tg); });
@@ -220,7 +231,7 @@ public:
         // from the window edge a Texture's radius. Rectangle defined by two
         // diagonally opposite corners.
         float radius = textureSize() / 2;
-        Vec2 rect_min = Vec2(radius, radius);
+        Vec2 rect_min = Vec2(radius + 1, radius + 1);
         Vec2 rect_max = guiSize() - rect_min;
         // Find non-overlapping positions for the Textures in TournamentGroup.
         float min_center_to_center = radius * ((2 * std::sqrt(2)) + 1);
@@ -300,7 +311,7 @@ public:
                 if (flags & cv::EVENT_FLAG_SHIFTKEY)
                 {
                     Individual* i = c->selectIndividualFromMouseClick(click);
-                    c->writeThubnailImageToFile(i);
+                    c->writeThumbnailImageToFile(i);
                 }
                 // else if (flags & cv::EVENT_FLAG_CTRLKEY) {}
                 // else if (flags & cv::EVENT_FLAG_ALTKEY) {}
@@ -327,15 +338,59 @@ public:
         return selected;
     }
     
+    // Write the entire "tournament" image (3 textures and background) to file.
+    //
+    // TODO perhaps writeTournamentImageToFile() and writeThumbnailImageToFile()
+    // should share a common utility?
     void writeTournamentImageToFile()
     {
-        std::cout << "mock writeTournamentImageToFile()" << std::endl;
+        // TODO maybe I need a way to say "get whole thing" (getCvMat()) ?
+        cv::Mat image = gui().getCvMatRect(Vec2(), guiSize());
+        std::filesystem::path path = output_directory_this_run_;
+        // TODO Is there a more portable way to specify the extension?
+        path /= "step_" + std::to_string(step_) + ".png";
+        std::cout << "Writing tournament image to file " << path << std::endl;
+        cv::imwrite(path, image);
     }
-
-    void writeThubnailImageToFile(Individual* individual)
+    
+    // Write a "thumbnail" with a texture and its background neighborhood.
+    //
+    // TODO perhaps writeTournamentImageToFile() and writeThumbnailImageToFile()
+    // should share a common utility?
+    void writeThumbnailImageToFile(Individual* individual)
     {
-        std::cout << "mock writeThubnailImageToFile() ";
-        std::cout << "individual=" << individual << std::endl;
+        // Get index of this Individual within current TournamentGroup.
+        int index = individualToTournamentIndex(individual);
+        // Construct a name for the thumbnail image file.
+        std::vector<std::string> suffix = {"_a", "_b", "_c"};
+        std::string filename = ("thumbnail_" +
+                                std::to_string(step_) +
+                                suffix.at(index) +
+                                // TODO portable way to specify the extension?
+                                ".png");
+        // Construct a reference into a rectangular window of GUI.
+        Vec2 size2(textureSize(), textureSize());
+        Vec2 center = disks_.at(index).position;
+        cv::Mat image = gui().getCvMatRect(center - size2, size2 * 2);
+        // Construct pathname for file.
+        std::filesystem::path path = output_directory_this_run_;
+        path /= filename;
+        std::cout << "Writing thumbnail image to file " << path << std::endl;
+        // Write file.
+        cv::imwrite(path, image);
+    }
+    
+    // Given an Individual, find its index within the current TournamentGroup.
+    int individualToTournamentIndex(Individual* individual) const
+    {
+        int i = 0;
+        int k = 0;
+        for (auto& tgm : tournament_group_.members())
+        {
+            if (tgm.individual == individual) i = k;
+            k++;
+        }
+        return i;
     }
 
     // The size of background images is adjusted by this value. It is expected
@@ -380,6 +435,14 @@ public:
         std::string fn = path.filename();
         return (fn != "") ? fn : std::string(path.parent_path().filename());
     }
+    
+    // A subdirectory under output_directory_ for results from this run.
+    std::string runOutputDirectory()
+    {
+        std::filesystem::path run_output_dir = output_directory_;
+        run_output_dir /= (run_name_ + "_" + date_hours_minutes());
+        return run_output_dir;
+    }
 
 private:
     // Parsed version of the ("unix") command line that invoked this run.
@@ -390,6 +453,8 @@ private:
     const std::string background_image_directory_;
     // Pathname of directory into which we can create a run log directory.
     const std::string output_directory_;
+    // A subdirectory under output_directory_ for results from this run.
+    const std::string output_directory_this_run_;
     // Collection of cv::Mat to be used as background image source material.
     std::vector<cv::Mat> background_images_;
     // The size of background images is adjusted by this value (usually < 1).
@@ -408,7 +473,7 @@ private:
     int max_crossover_tree_size_ = 150;
     
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    // Note: the four variables below communicate "global" state with the mouse
+    // Note: the five variables below communicate "global" state with the mouse
     // callback handler. This is not thread safe and would need redesign for
     // multithreading. But then, since this connects directly to the GUI for an
     // interactive task, multithreading seems unlikely?
@@ -421,5 +486,7 @@ private:
     std::vector<Disk> disks_;
     // TournamentGroup with pointers to 3 textures of most recent tournament.
     TournamentGroup tournament_group_;
+    // Set to step count of Population in run() loop.
+    int step_ = 0;
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
