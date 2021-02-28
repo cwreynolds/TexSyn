@@ -242,14 +242,30 @@ public:
         };
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
+        background_image_ = selectRandomBackgroundForWindow();
         disks_ = Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
                                                             margin,
                                                             rect_min, rect_max,
                                                             LPRS(),
                                                             overlap_viz);
-        // Draw a randomly selected background, then the 3 textures on top.
-        cv::Mat bg = selectRandomBackgroundForWindow();
-        gui().drawMat(bg, Vec2());
+        // Draw the randomly selected background, then the 3 textures on top.
+        gui().drawMat(background_image_, Vec2());
+        drawTournamentGroupOverBackground(tg);
+        // Update the onscreen image. Wait for user to click on one texture.
+        gui().refresh();
+        setMouseCallbackForTournamentFunction();
+        Individual* worst = selectIndividualFromMouseClick(waitForMouseClick());
+        // Designate clicked Texture's Individual as worst of TournamentGroup.
+        tg.designateWorstIndividual(worst);
+        // Clear GUI, return updated TournamentGroup.
+        gui().clear();
+        gui().refresh();
+        return tg;
+    }
+    
+    // Draw Textures of TournamentGroup over current background in GUI.
+    void drawTournamentGroupOverBackground(const TournamentGroup& tg)
+    {
         int p = 0;
         for (auto& tgm : tg.members())
         {
@@ -261,16 +277,6 @@ public:
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
         }
-        // Update the onscreen image. Wait for user to click on one texture.
-        gui().refresh();
-        setMouseCallbackForTournamentFunction();
-        Individual* worst = selectIndividualFromMouseClick(waitForMouseClick());
-        // Designate clicked Texture's Individual as worst of TournamentGroup.
-        tg.designateWorstIndividual(worst);
-        // Clear GUI, return updated TournamentGroup.
-        gui().clear();
-        gui().refresh();
-        return tg;
     }
     
     // Ad hoc idle loop, waiting for mouse click. (Better if waited for event.)
@@ -339,9 +345,6 @@ public:
     }
     
     // Write the entire "tournament" image (3 textures and background) to file.
-    //
-    // TODO perhaps writeTournamentImageToFile() and writeThumbnailImageToFile()
-    // should share a common utility?
     void writeTournamentImageToFile()
     {
         // TODO maybe I need a way to say "get whole thing" (getCvMat()) ?
@@ -352,11 +355,8 @@ public:
         std::cout << "Writing tournament image to file " << path << std::endl;
         cv::imwrite(path, image);
     }
-    
-    // Write a "thumbnail" with a texture and its background neighborhood.
-    //
-    // TODO perhaps writeTournamentImageToFile() and writeThumbnailImageToFile()
-    // should share a common utility?
+        
+    // Write a "thumbnail" image with Texture and its background neighborhood.
     void writeThumbnailImageToFile(Individual* individual)
     {
         // Get index of this Individual within current TournamentGroup.
@@ -368,10 +368,17 @@ public:
                                 suffix.at(index) +
                                 // TODO portable way to specify the extension?
                                 ".png");
-        // Construct a reference into a rectangular window of GUI.
+        // Construct reference into a rectangular window of current background.
         Vec2 size2(textureSize(), textureSize());
         Vec2 center = disks_.at(index).position;
-        cv::Mat image = gui().getCvMatRect(center - size2, size2 * 2);
+        cv::Mat cropped_bg = Texture::getCvMatRect(center - size2,
+                                                   size2 * 2,
+                                                   background_image_);
+        // Construct image with Texture matted over cropped/cloned background.
+        cv::Mat image = cropped_bg.clone();
+        Texture* texture = GP::textureFromIndividual(individual);
+        cv::Mat image_middle = Texture::getCvMatRect(size2/2, size2, image);
+        texture->matteImageCacheDiskOverBG(textureSize(), image_middle);
         // Construct pathname for file.
         std::filesystem::path path = output_directory_this_run_;
         path /= filename;
@@ -379,8 +386,8 @@ public:
         // Write file.
         cv::imwrite(path, image);
     }
-    
-    // Given an Individual, find its index within the current TournamentGroup.
+
+    // Given an Individual, find its index within the "current" TournamentGroup.
     int individualToTournamentIndex(Individual* individual) const
     {
         int i = 0;
@@ -473,7 +480,7 @@ private:
     int max_crossover_tree_size_ = 150;
     
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    // Note: the five variables below communicate "global" state with the mouse
+    // Note: the six variables below communicate "global" state with the mouse
     // callback handler. This is not thread safe and would need redesign for
     // multithreading. But then, since this connects directly to the GUI for an
     // interactive task, multithreading seems unlikely?
@@ -488,5 +495,7 @@ private:
     TournamentGroup tournament_group_;
     // Set to step count of Population in run() loop.
     int step_ = 0;
+    // Randomly selected rectagle of randomly selected background image.
+    cv::Mat background_image_;
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
