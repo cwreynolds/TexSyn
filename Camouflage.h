@@ -211,9 +211,6 @@ public:
             Vec2 position = disks.at(p++).position - center_to_ul;
             int size = textureSize();
             Vec2 size2(size, size);
-            gui().drawRectangle(size2 * 2,
-                                disks.at(p-1).position - size2,
-                                Color(0.7));
             gui().drawCircle(min_center_to_center - size / 2,
                              disks.at(p-1).position,
                              Color(1));
@@ -221,7 +218,7 @@ public:
             texture->matteImageCacheDiskOverBG(size, target);
         }
         gui().refresh();
-        Texture::waitKey(2);
+        Texture::waitKey(10);
     }
 
     // TournamentFunction for "Interactive Evolution of Camouflage".
@@ -234,11 +231,10 @@ public:
         Vec2 rect_min = Vec2(radius + 1, radius + 1);
         Vec2 rect_max = guiSize() - rect_min;
         // Find non-overlapping positions for the Textures in TournamentGroup.
-        float min_center_to_center = radius * ((2 * std::sqrt(2)) + 1);
-        float margin = min_center_to_center - (radius * 2);
+        float margin = radius;
         auto overlap_viz = [&](const std::vector<Disk>& disks)
         {
-            // testdraw(tg, disks, rect_min, rect_max, min_center_to_center);
+            //testdraw(tg, disks, rect_min, rect_max, textureSize() + margin);
         };
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
@@ -487,7 +483,7 @@ private:
     //
     // Store position of most recent mouse (left) click in GUI.
     Vec2 last_mouse_click_;
-    // True during wait for user to select one texture on screen.
+    // True while waiting for user to select one texture on screen.
     bool wait_for_mouse_click_;
     // Collection of Disks describing layout of Textures in GUI window.
     std::vector<Disk> disks_;
