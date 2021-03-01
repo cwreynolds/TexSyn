@@ -146,6 +146,9 @@ public:
     {
         cv::circle(image_, vec2ToCvPoint(center), radius, colorToCvScalar(color));
     }
+    
+    // Return the entire cv::Mat for this GUI. (See also getCvMatRect())
+    cv::Mat getCvMat() { return image_; }
 
     // Return a "submat"/"ROI" in the GUI's underlying cv::Mat.
     cv::Mat getCvMatRect(const Vec2& upper_left_position,

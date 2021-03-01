@@ -343,43 +343,37 @@ public:
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-        // TODO maybe I need a way to say "get whole thing" (getCvMat()) ?
-        cv::Mat image = gui().getCvMatRect(Vec2(), guiSize());
+        cv::Mat image = gui().getCvMat();
         std::filesystem::path path = output_directory_this_run_;
-        // TODO Is there a more portable way to specify the extension?
         path /= "step_" + std::to_string(step_) + ".png";
         std::cout << "Writing tournament image to file " << path << std::endl;
         cv::imwrite(path, image);
     }
-        
+    
     // Write a "thumbnail" image with Texture and its background neighborhood.
     void writeThumbnailImageToFile(Individual* individual)
     {
         // Get index of this Individual within current TournamentGroup.
         int index = individualToTournamentIndex(individual);
-        // Construct a name for the thumbnail image file.
-        std::vector<std::string> suffix = {"_a", "_b", "_c"};
-        std::string filename = ("thumbnail_" +
-                                std::to_string(step_) +
-                                suffix.at(index) +
-                                // TODO portable way to specify the extension?
-                                ".png");
-        // Construct reference into a rectangular window of current background.
+        // Construct reference to thumbnail-sized square of current background.
         Vec2 size2(textureSize(), textureSize());
         Vec2 center = disks_.at(index).position;
-        cv::Mat cropped_bg = Texture::getCvMatRect(center - size2,
-                                                   size2 * 2,
-                                                   background_image_);
-        // Construct image with Texture matted over cropped/cloned background.
+        cv::Mat cropped_bg =
+            Texture::getCvMatRect(center - size2, size2 * 2, background_image_);
+        // Construct image with Texture matted over cloned (cropped) background.
         cv::Mat image = cropped_bg.clone();
         Texture* texture = GP::textureFromIndividual(individual);
         cv::Mat image_middle = Texture::getCvMatRect(size2/2, size2, image);
         texture->matteImageCacheDiskOverBG(textureSize(), image_middle);
+        // Construct a name for the thumbnail image file.
+        std::vector<std::string> suffix = {"_a", "_b", "_c"};
+        std::string filename = ("thumbnail_" + std::to_string(step_) +
+                                suffix.at(index) + ".png");
         // Construct pathname for file.
         std::filesystem::path path = output_directory_this_run_;
         path /= filename;
-        std::cout << "Writing thumbnail image to file " << path << std::endl;
         // Write file.
+        std::cout << "Writing thumbnail image to file " << path << std::endl;
         cv::imwrite(path, image);
     }
 
