@@ -185,6 +185,9 @@ public:
         {
             // Store to allow access in mouse handler.
             step_ = population.getStepCount();
+            // Display step count in GUI title bar.
+            std::string step_string = " (step " + std::to_string(step_) + ")";
+            gui().setWindowTitle(run_name_ + step_string);
             // Evolution step with wrapped Camouflage::tournamentFunction().
             population.evolutionStep([&]
                                      (TournamentGroup tg)

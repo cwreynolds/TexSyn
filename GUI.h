@@ -116,8 +116,15 @@ public:
         cv_mat.copyTo(part_of_gui_mat);
     }
 
+    // Get/set window name (its ID).
     const std::string& getWindowName() const { return window_name_; }
     void setWindowName(const std::string& name) { window_name_ = name; }
+    // Set title (without changing ID).
+    void setWindowTitle(const std::string& new_title)
+    {
+        cv::setWindowTitle(window_name_, new_title);
+    }
+    
     // TODO reconsider
     void eraseRectangle(Vec2 size_in_pixels, Vec2 upper_left_init_position)
     {

@@ -8,6 +8,6 @@
 //  Top level header file for TexSyn library. Should provide all you need.
 
 #pragma once
-#define texsyn_version_string "TexSyn version 0.9.2 (alpha macOS x86-64)"
+#define texsyn_version_string "TexSyn version 0.9.2 (alpha macOS-x86_64)"
 #include "Operators.h"
 #include "UnitTests.h"
