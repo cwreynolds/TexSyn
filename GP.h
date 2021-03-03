@@ -428,7 +428,7 @@ public:
              std::string path_for_saving_images)
       : population(population_size, subpopulation_count,
                    max_init_tree_size, function_set),
-        gui(guiSize(), Vec2(15, 15)),
+        gui(guiSize(), Vec2(15, 15), "LimitHue run"),
         evolution_steps_(evolution_steps),
         path_for_saving_images_(path_for_saving_images) {}
     // Run the evolutionary computation for given number of steps.

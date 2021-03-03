@@ -33,7 +33,7 @@ public:
       : run_name_(run_name),
         background_image_directory_(background_image_directory),
         background_scale_(background_scale),
-        gui_(gui_size_, Vec2())
+        gui_(gui_size_, Vec2(), run_name_)
     {}
     // This constructor parses a "unix style" command line for parameters.
     Camouflage(int argc, const char* argv[])
@@ -46,7 +46,7 @@ public:
         random_seed_(cmd_.positionalArgument(4, int(LPRS().defaultSeed()))),
         gui_size_(cmd_.positionalArgument(5, 1200),
                   cmd_.positionalArgument(6, 800)),
-        gui_(gui_size_, Vec2()),
+        gui_(gui_size_, Vec2(), run_name_),
         individuals_(cmd_.positionalArgument(7, 120)),
         subpops_(cmd_.positionalArgument(8, 6)),
         max_init_tree_size_(cmd_.positionalArgument(9, 100)),

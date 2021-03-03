@@ -30,16 +30,19 @@ class GUI
 {
 public:
     // Note that OpenCV's coordinate system has zero in upper left
-    GUI(Vec2 size_in_pixels, Vec2 upper_left_init_position)
+    GUI(Vec2 size_in_pixels,
+        Vec2 upper_left_init_position,
+        std::string window_name)
     {
         image_ = cv::Mat(size_in_pixels.y(), size_in_pixels.x(),
                          CV_8UC3, backgroundGray());
+#ifndef TEMP_AVOID_TTF
         // TODO hardcoded, should be a settable path, with fall-back
         //      to using original highgui putText() if file not there.
-#ifndef TEMP_AVOID_TTF
         font = cv::freetype::createFreeType2();
         font->loadFontData("/opt/X11/share/fonts/TTF/Vera.ttf", 0);
 #endif // TEMP_AVOID_TTF
+        setWindowName(window_name);
         cv::namedWindow(getWindowName());
         cv::moveWindow(getWindowName(),
                        upper_left_init_position.x(),
@@ -176,7 +179,7 @@ public:
         { return cv::Point(v.x(), v.y()); }
 private:
     cv::Mat image_;
-    std::string window_name_ = "LimitHue run";
+    std::string window_name_;
 #ifndef TEMP_AVOID_TTF
     cv::Ptr<cv::freetype::FreeType2> font;
 #endif // TEMP_AVOID_TTF
