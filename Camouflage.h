@@ -98,27 +98,33 @@ public:
         // Names of all files in backgroundImageDirectory() (expect image files)
         const std::vector<std::string> background_image_filenames =
             directory_filenames(backgroundImageDirectory());
-        std::cout << "Reading " << background_image_filenames.size();
-        std::cout << " background images:" << std::endl;
+        std::cout << "Reading background images:" << std::endl;
         int min_x = std::numeric_limits<int>::max();
         int min_y = std::numeric_limits<int>::max();
         for (auto& filename : background_image_filenames)
         {
             // Compose absolute pathname for this background image file.
             std::string pathname = backgroundImageDirectory() + "/" + filename;
-            std::cout << "    " << pathname << std::endl;
             // Read the image file into an OpenCV image.
             cv::Mat bg = cv::imread(pathname);
-            // Keep track of smallest image dimensions.
-            if (min_x > bg.cols) { min_x = bg.cols; }
-            if (min_y > bg.rows) { min_y = bg.rows; }
-            // Adjust the size/resolution by "background_scale" parameter.
-            cv::resize(bg, bg,
-                       cv::Size(), backgroundScale(), backgroundScale(),
-                       cv::INTER_CUBIC);
-            // Add to collection of background images.
-            addBackgroundImage(bg);
+            // When valid image file. (TODO less hackish way to do? cv::imread
+            // returns empty cv::Mat for random file like foo.txt or .DS_Store)
+            if ((bg.cols > 0) && (bg.rows > 0))
+            {
+                std::cout << "    " << pathname << std::endl;
+                // Keep track of smallest image dimensions.
+                if (min_x > bg.cols) { min_x = bg.cols; }
+                if (min_y > bg.rows) { min_y = bg.rows; }
+                // Adjust the size/resolution by "background_scale" parameter.
+                cv::resize(bg, bg,
+                           cv::Size(), backgroundScale(), backgroundScale(),
+                           cv::INTER_CUBIC);
+                // Add to collection of background images.
+                addBackgroundImage(bg);
+            }
         }
+        std::cout << "Found " << backgroundImages().size();
+        std::cout << " background images." << std::endl;
         assert(!backgroundImages().empty());
         checkBackgroundImageSizes(min_x, min_y);
     }
@@ -403,11 +409,11 @@ public:
     
     // Pathname of directory containing raw background image files.
     const std::string backgroundImageDirectory() const
-    { return background_image_directory_; }
+        { return background_image_directory_; }
     
     // Collection of cv::Mat to be used as background image source material.
     const std::vector<cv::Mat>& backgroundImages() const
-    { return background_images_; }
+        { return background_images_; }
     // Add cv::Mat to collection of background images.
     void addBackgroundImage(cv::Mat& bg) { background_images_.push_back(bg); }
     
