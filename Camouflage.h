@@ -375,15 +375,31 @@ public:
         cv::Mat image_middle = Texture::getCvMatRect(size2/2, size2, image);
         texture->matteImageCacheDiskOverBG(textureSize(), image_middle);
         // Construct a name for the thumbnail image file.
-        std::vector<std::string> suffix = {"_a", "_b", "_c"};
-        std::string filename = ("thumbnail_" + std::to_string(step_) +
-                                suffix.at(index) + ".png");
+        std::vector<std::string> suffixes = {"_a", "_b", "_c"};
+        std::string suffix = suffixes.at(index);
+        std::string step = std::to_string(step_);
+        // Construct pathname for file.
+        std::filesystem::path path = output_directory_this_run_;
+        path /= ("thumbnail_" + step + suffix + ".png");
+        // Write image file.
+        std::cout << "Writing thumbnail image to file " << path << std::endl;
+        cv::imwrite(path, image);
+        // Write source code file.
+        writeSourceCodeToFile(individual, "source_" + step + suffix + ".txt");
+    }
+    
+    // Write text source code for an Individual: indented "C"-style notation.
+    void writeSourceCodeToFile(Individual* individual, std::string filename)
+    {
         // Construct pathname for file.
         std::filesystem::path path = output_directory_this_run_;
         path /= filename;
-        // Write file.
-        std::cout << "Writing thumbnail image to file " << path << std::endl;
-        cv::imwrite(path, image);
+        std::cout << "Writing source code to file " << path << std::endl;
+        // Open stream to file.
+        std::ofstream output_file_stream(path);
+        // Generate indented functional notation for given Individual's GpTree.
+        output_file_stream << individual->tree().to_string(true);
+        output_file_stream.close();
     }
 
     // Given an Individual, find its index within the "current" TournamentGroup.
