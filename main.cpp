@@ -4623,14 +4623,38 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210215 prototyping CommandLine class
-    std::cout << "Feburary 15, 2021" << std::endl;
+//    // 20210215 prototyping CommandLine class
+//    std::cout << "Feburary 15, 2021" << std::endl;
+//
+//    //    CommandLine cl(0, nullptr);
+//    //    cl.test();
+//
+//    Camouflage(argc, argv).run();
     
-//    CommandLine cl(0, nullptr);
-//    cl.test();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    Camouflage(argc, argv).run();
-
+    // 20210307 prototyping Gabor Noise texture.
+    std::cout << "March 7, 2021" << std::endl;
+    
+    {
+        Uniform c0(1, 0.5, 0);
+        Uniform c1(0, 0.5, 1);
+        {
+            Timer t("GaborNoiseTest");
+            Texture::displayAndFile(GaborNoiseTest(400,
+                                                   0.1, 0.2,
+                                                   0.01, 0.02,
+                                                   0, pi / 2,
+                                                   c0, c1));
+        }
+        Texture::displayAndFile(Scale(0.14,
+                                      GaborNoiseTest(400,
+                                                     0.1, 0.2,
+                                                     0.01, 0.02,
+                                                     0, pi / 2,
+                                                     c0, c1)) );
+        Texture::waitKey();
+    }
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

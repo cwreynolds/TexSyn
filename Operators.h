@@ -1576,3 +1576,73 @@ private:
     const float value;
     const Texture& texture;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO just an experiment
+
+class GaborNoiseTest : public Texture
+{
+public:
+    GaborNoiseTest(int kernels,
+                   float min_radius, float max_radius,
+                   float min_wavelength, float max_wavelength,
+                   float min_angle, float max_angle,
+                   const Texture& texture0,
+                   const Texture& texture1)
+      : kernels_(kernels),
+        min_radius_(min_radius),
+        max_radius_(max_radius),
+        min_wavelength_(min_wavelength),
+        max_wavelength_(max_wavelength),
+        min_angle_(min_angle),
+        max_angle_(max_angle),
+        texture0_(texture0),
+        texture1_(texture1),
+    
+        disk_occupancy_grid_
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+
+    {
+        // TODO better choice of RandomSeqeunce?
+        RandomSequence rs(79798323);
+        // Randomize with uniform distributions of r, x, and y.
+        for (int i = 0; i < kernels_; i++)
+        {
+            float radius = rs.frandom2(min_radius, max_radius);
+            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            disks_.push_back(Disk(radius, center));
+        }
+        // Insert randomized Disks into DiskOccupancyGrid.
+        for (Disk& spot : disks_) {disk_occupancy_grid_->insertDiskWrap(spot);}
+    }
+    Color getColor(Vec2 position) const override
+    {
+        float matte = 0;
+        // TODO do this better with DiskOccupancyGrid::findNearbyDisks()
+        for (auto& disk : disks_)
+        {
+            Vec2 offset = position - disk.position;
+            if (offset.length() < disk.radius) { matte = 1; break; }
+        }
+        return interpolatePointOnTextures(matte,
+                                          position, position,
+                                          texture0_, texture1_);
+    }
+private:
+    const int kernels_;
+    const float min_radius_;
+    const float max_radius_;
+    const float min_wavelength_;
+    const float max_wavelength_;
+    const float min_angle_;
+    const float max_angle_;
+    const Texture& texture0_;
+    const Texture& texture1_;
+    
+    // TODO should this be const?
+    std::vector<Disk> disks_;
+    
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
