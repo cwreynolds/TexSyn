@@ -4639,22 +4639,56 @@ int main(int argc, const char * argv[])
     {
         Uniform c0(1, 0.5, 0);
         Uniform c1(0, 0.5, 1);
+//        Texture::displayAndFile(GaborNoiseTest(600,
+//                                               0.1, 0.2,
+//                                               0.01, 0.02,
+//                                               0, pi / 2,
+//                                               c0, c1));
+//        Texture::displayAndFile(Scale(0.14,
+//                                      GaborNoiseTest(600,
+//                                                     0.1, 0.2,
+//                                                     0.01, 0.02,
+//                                                     0, pi / 2,
+//                                                     c0, c1)) );
+
+//        {
+//            Timer t("GaborNoiseTestLinear");
+//            Texture::displayAndFile(GaborNoiseTestLinear(1000,
+//                                                         0.1, 0.2,
+//                                                         0.01, 0.02,
+//                                                         0, pi / 2,
+//                                                         c0, c1));
+//        }
+//        {
+//            Timer t("GaborNoiseTestGrid");
+//            Texture::displayAndFile(GaborNoiseTestGrid(1000,
+//                                                       0.1, 0.2,
+//                                                       0.01, 0.02,
+//                                                       0, pi / 2,
+//                                                       c0, c1));
+//        }
+
         {
-            Timer t("GaborNoiseTest");
-            Texture::displayAndFile(GaborNoiseTest(400,
-                                                   0.1, 0.2,
-                                                   0.01, 0.02,
-                                                   0, pi / 2,
-                                                   c0, c1));
+            Timer t("GaborNoiseTestLinear");
+            Texture::displayAndFile(GaborNoiseTestLinear(500,
+                                                         0.2, 0.5,
+                                                         0.01, 0.02,
+                                                         0, pi / 2,
+                                                         c0, c1));
         }
-        Texture::displayAndFile(Scale(0.14,
-                                      GaborNoiseTest(400,
-                                                     0.1, 0.2,
-                                                     0.01, 0.02,
-                                                     0, pi / 2,
-                                                     c0, c1)) );
+        {
+            Timer t("GaborNoiseTestGrid");
+            Texture::displayAndFile(GaborNoiseTestGrid(500,
+                                                       0.2, 0.5,
+                                                       0.01, 0.02,
+                                                       0, pi / 2,
+                                                       c0, c1));
+        }
+
         Texture::waitKey();
     }
+    
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

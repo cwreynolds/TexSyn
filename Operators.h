@@ -1580,10 +1580,10 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO just an experiment
 
-class GaborNoiseTest : public Texture
+class GaborNoiseTestLinear : public Texture
 {
 public:
-    GaborNoiseTest(int kernels,
+    GaborNoiseTestLinear(int kernels,
                    float min_radius, float max_radius,
                    float min_wavelength, float max_wavelength,
                    float min_angle, float max_angle,
@@ -1603,9 +1603,8 @@ public:
             (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
 
     {
-        // TODO better choice of RandomSeqeunce?
-        RandomSequence rs(79798323);
         // Randomize with uniform distributions of r, x, and y.
+        RandomSequence rs(seedForRandomSequence());
         for (int i = 0; i < kernels_; i++)
         {
             float radius = rs.frandom2(min_radius, max_radius);
@@ -1617,17 +1616,34 @@ public:
     }
     Color getColor(Vec2 position) const override
     {
-        float matte = 0;
-        // TODO do this better with DiskOccupancyGrid::findNearbyDisks()
-        for (auto& disk : disks_)
+        Color bg(1, 0.5, 0);
+        Color inside(0, 0.5, 1);
+        Color nearby(0, 1, 0);
+        Color result = bg;
         {
-            Vec2 offset = position - disk.position;
-            if (offset.length() < disk.radius) { matte = 1; break; }
+            for (auto& disk : disks_)
+            {
+                Vec2 offset = position - disk.position;
+                if (offset.length() < disk.radius) { result = inside; break; }
+            }
         }
-        return interpolatePointOnTextures(matte,
-                                          position, position,
-                                          texture0_, texture1_);
+        if (withinEpsilon(0, position.length(), 1.0 / 200))
+            { result = Color(1); }
+        return result;
     }
+    
+    // Seed the random number sequence from some operator parameters.
+    size_t seedForRandomSequence()
+    {
+        return (hash_float(kernels_) ^
+                hash_float(min_radius_) ^
+                hash_float(max_radius_) ^
+                hash_float(min_wavelength_) ^
+                hash_float(max_wavelength_) ^
+                hash_float(min_angle_) ^
+                hash_float(max_angle_));
+    }
+
 private:
     const int kernels_;
     const float min_radius_;
@@ -1638,7 +1654,103 @@ private:
     const float max_angle_;
     const Texture& texture0_;
     const Texture& texture1_;
+
+    // TODO should this be const? Later: yes I think it should.
+    std::vector<Disk> disks_;
     
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+};
+
+class GaborNoiseTestGrid : public Texture
+{
+public:
+    GaborNoiseTestGrid(int kernels,
+                   float min_radius, float max_radius,
+                   float min_wavelength, float max_wavelength,
+                   float min_angle, float max_angle,
+                   const Texture& texture0,
+                   const Texture& texture1)
+      : kernels_(kernels),
+        min_radius_(min_radius),
+        max_radius_(max_radius),
+        min_wavelength_(min_wavelength),
+        max_wavelength_(max_wavelength),
+        min_angle_(min_angle),
+        max_angle_(max_angle),
+        texture0_(texture0),
+        texture1_(texture1),
+    
+        disk_occupancy_grid_
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+
+    {
+        // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+        // TODO maybe should init a const vector, to emphasize it can't change.
+        RandomSequence rs(seedForRandomSequence());
+        for (int i = 0; i < kernels_; i++)
+        {
+            float radius = rs.frandom2(min_radius, max_radius);
+            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            disks_.push_back(Disk(radius, center));
+        }
+        // Insert randomized Disks into DiskOccupancyGrid.
+        for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+    }
+    Color getColor(Vec2 position) const override
+    {
+        Color bg(1, 0.5, 0);
+        Color inside(0, 0.5, 1);
+        Color nearby(0, 1, 0);
+        Color result = bg;
+        Vec2 center;
+        std::set<Disk*> nearby_disks;
+
+        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+
+        // Recolor when this disk contains BOTH pixel "position" and "center".
+        for (auto& disk : nearby_disks)
+        {
+            if (((position - disk->position).length() < disk->radius) &&
+                ((center - disk->position).length() < disk->radius))
+            {
+                result = nearby; break;
+            }
+        }
+
+        // Draw center.
+        if (withinEpsilon(0, (position - center).length(), 1.0 / 200))
+            { result = Color(0); }
+
+        //return interpolatePointOnTextures(matte,
+        //                                  position, position,
+        //                                  texture0_, texture1_);
+        return result;
+    }
+
+    // Seed the random number sequence from some operator parameters.
+    size_t seedForRandomSequence()
+    {
+        return (hash_float(kernels_) ^
+                hash_float(min_radius_) ^
+                hash_float(max_radius_) ^
+                hash_float(min_wavelength_) ^
+                hash_float(max_wavelength_) ^
+                hash_float(min_angle_) ^
+                hash_float(max_angle_));
+    }
+
+private:
+    const int kernels_;
+    const float min_radius_;
+    const float max_radius_;
+    const float min_wavelength_;
+    const float max_wavelength_;
+    const float min_angle_;
+    const float max_angle_;
+    const Texture& texture0_;
+    const Texture& texture1_;
+
     // TODO should this be const?
     std::vector<Disk> disks_;
     
