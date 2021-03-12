@@ -8,17 +8,19 @@
     <h1><code>evo_camo_game</code></h1>
     <h2>Interactive Evolution of Camouflage</h2>
     <h3>Instructions for installation and use.</h3>
-    <h3>Based on: TexSyn version 0.9.3 (alpha macOS-x86_64)</h3>
     <div class="moz-text-html" lang="x-unicode">
-      <p>March 10, 2021<br>
+      <p><strong>March 10, 2021</strong><br>
+        Based on: <strong>TexSyn version 0.9.3 (alpha macOS-x86_64)</strong><br>
         For any problems or questions, contact Craig Reynolds: <a href="mailto:cwr@red3d.com">cwr@red3d.com</a></p>
-      <p><a href="mailto:cwr@red3d.com"></a><br>
-      </p>
+      <p><a href="mailto:cwr@red3d.com"></a></p>
+      <p>&nbsp;</p>
       <p>This is an alpha test version of software for “interactive evolution of
         camouflage” as described in the 2011 paper: <a href="https://www.red3d.com/cwr/iec/">Interactive
-          Evolution of Camouflage</a>. <code>evo_camo_game</code> is built from
-        the <a href="https://github.com/cwreynolds/TexSyn">TexSyn</a> and <a href="https://github.com/cwreynolds/LazyPredator">LazyPredator</a>
-        libraries. For more information see the <a href="https://cwreynolds.github.io/TexSyn/">development
+          Evolution of Camouflage</a>. The app <code>evo_camo_game</code> is
+        built from the <a href="https://github.com/cwreynolds/TexSyn">TexSyn</a>
+        library for procedural texture synthesis, and the <a href="https://github.com/cwreynolds/LazyPredator">LazyPredator</a>
+        library for evolutionary optimization via genetic programming. For more
+        information see the <a href="https://cwreynolds.github.io/TexSyn/">development
           blog for TexSyn</a>.</p>
       <h3>Caveats</h3>
       <ul>
@@ -29,10 +31,15 @@
         <li>This software is distributed as a pre-compiled binary.</li>
         <ul>
           <li>It will only work on macOS machines with Intel CPUs.</li>
-          <li>It has been verified to work only on the <em>Catalina</em> and <em>Big
-              Sur</em> versions of macOS.</li>
-          <li>Despite being native macOS, it is just a Unix style executable,
-            with non-macOS standard GUI. </li>
+          <li>It has been verified to work only on macOS versions <em>Catalina</em>
+            and <em>Big Sur</em>. Probably others are OK.</li>
+          <li>Despite requiring macOS, it is just a Unix style executable, with
+            not-macOS-standard GUI. </li>
+        </ul>
+        <li>This uses OpenCV for displaying textures and image file I/O. OpenCV
+          knows not of “Retina” displays so its images are displayed at half the
+          screen resolution.</li>
+        <ul>
         </ul>
       </ul>
       <h3>Installation</h3>
@@ -113,34 +120,28 @@
       <p>To use the app you will need a collection of background images. That
         “oak leaf litter” set (see <a class="moz-txt-link-freetext" href="https://cwreynolds.github.io/TexSyn/#20210209">https://cwreynolds.github.io/TexSyn/#20210209</a>)
         is six photos taken with my phone's camera. Later we can talk more about
-        how to curate those. The photos in a set should be visually similar, and
-        contain a “granular” structure, say a collection of many leaves, or
-        pebbles, or flowers, or beads... You've seen samples of this in my 2011
-        paper or those presentation slides you looked at. I think it works best
-        when the camera is pointed directly at a mostly flat surface (so no
-        perspective) and all photos in the set should be from about the same
-        distance (so same texture scale).<br>
+        how to curate such background image sets. The photos in a set should be
+        visually similar. They will work best if they contain a “granular”
+        structure, say a collection of many leaves, or pebbles, or flowers, or
+        beads... You've seen samples of this in my 2011 paper or those
+        presentation slides you looked at. I think it works best when the camera
+        is pointed directly at a mostly flat surface (so no perspective) and all
+        photos in the set should be from about the same distance (so same
+        texture scale).<br>
       </p>
       <p>You can arrange files however you want, but lets say under
         /Users/Rebecca you make a new folder “camouflage” with two sub folders
         “backgrounds” and “runs”. Let's say you shot a handful of photos of a
         bed of clover. So the folders might looks like:</p>
-      <p><font face="monospace">/User/<br>
-          &nbsp;&nbsp;&nbsp; Rebecca/<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; camouflage/<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          backgrounds/<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          clover/<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          IMG_9821.jpeg<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          IMG_9825.jpeg<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          IMG_9826.jpeg<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          runs/<br>
-        </font></p>
+      <pre>    /User/
+        Rebecca/
+            camouflage/
+                backgrounds/
+                    clover/
+                        IMG_9821.jpeg
+                        IMG_9825.jpeg
+                        IMG_9826.jpeg
+                runs/</pre>
       <p>To run the app you would type in Terminal at least:</p>
       <p><font face="monospace">&gt; evo_camo_game ~/</font><font face="monospace">camouflage/</font><font
           face="monospace">backgrounds/</font><font face="monospace">clover</font></p>
@@ -161,7 +162,8 @@
       </p>
       <p>The app supports a few GUI actions:</p>
       <div>
-        <table width="100%" cellspacing="2" cellpadding="2" border="0">
+        <table style="padding-left: 2em;" width="100%" cellspacing="2" cellpadding="2"
+          border="0">
           <tbody>
             <tr>
               <td valign="top"><b>mouse</b> (left) click</td>
@@ -171,7 +173,7 @@
               </td>
             </tr>
             <tr>
-              <td valign="top"><b>shift</b><b> mouse</b> (left) click</td>
+              <td valign="top"><b>shift&nbsp;mouse&nbsp;</b>(left)&nbsp;click&nbsp;&nbsp;</td>
               <td valign="top">Save thumbnail image file for indicated prey
                 texture. This is a .png image file with the prey centered,
                 surrounded by a bit of its background neighborhood. It also
@@ -205,7 +207,8 @@
       <p>The command allows you to set a lot of parameters on the command line,
         which you can ignore at first, but fyi they are listed if you run the
         command with no augments:</p>
-      <pre>&gt; evo_camo_game evo_camo_game parameters:
+      <pre>&gt; evo_camo_game
+evo_camo_game requires at least one pathname parameter, others may be omitted from the end:
     background_image_directory (required)
     output_directory (defaults to .)
     background_scale (defaults to 0.5)
@@ -218,12 +221,12 @@
     min_crossover_tree_size (default 50)
     max_crossover_tree_size (default 150)</pre>
       <p>So for example:</p>
-      <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover ~/camouflage/runs 0.3 20210217 1600 1000 200 10 150 100 200</pre>
+      <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover ~/camouflage/runs 0.3 20210310 1600 1000 200 10 150 100 200</pre>
       <p>The background scale allows you to adjust the size of the photos
         relative to the window.</p>
       <p>If you do two runs, you may notice some of the same textures coming
         back in the second run. You can use “random seed” to avoid this. I've
-        been just using the date (as in 2021-02-17) to make sure today's run is
+        been just using the date (as in 2021-03-10) to make sure today's run is
         different from yesterday's. Any number will do.</p>
       <h3>Future Plans</h3>
       <p>Lots, but a key one is a version to run on the M1 processor.</p>

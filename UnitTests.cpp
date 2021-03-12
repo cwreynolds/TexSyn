@@ -25,61 +25,179 @@
     return _e_ok;                                          \
 }()
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//// Tests Utilities.h.
+//bool utilities()
+//{
+//    float e = 0.0000001;
+//    return (st(withinEpsilon(1, 1, 0)) &&
+//            st(withinEpsilon(1.1, 1.2, 0.2)) &&
+//            st(withinEpsilon(-1.1, -1.2, 0.2)) &&
+//            st(!withinEpsilon(1.1, 1.2, 0.01)) &&
+//            st(sq(2) == 4) &&
+//            st(interpolate(0.1, 0, 10) == 1) &&
+//            st(interpolate(0.1, 0, -10) == -1) &&
+//            st(clip(2, 1, 3) == 2) &&
+//            st(clip(0, 1, 2) == 1) &&
+//            st(clip(3, 1, 2) == 2) &&
+//            st(clip(0, 1, 1) == 1) &&
+//            st(clip(3, 1, 1) == 1) &&
+//            st(clip(2, 3, 1) == 2) &&
+//            st(clip(0, 3, 1) == 1) &&
+//            st(clip(4, 3, 1) == 3) &&
+//            st(sinusoid(0) == 0) &&
+//            st(sinusoid(0.25) < 0.25) &&
+//            st(sinusoid(0.5) == 0.5) &&
+//            st(sinusoid(0.75) > 0.75) &&
+//            st(sinusoid(1) == 1) &&
+//            st(remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+//            st(remapInterval(2, 1, 4, 10, 40) == 20) &&
+//            st(remapIntervalClip(5, 1, 4, 10, 40) == 40) &&
+//            st(remapInterval(1.5, 1, 2, 30, 20) == 25) &&
+//            st(remapInterval(2, 1, 3, 30, 10) == 20) &&
+//            st(remapIntervalClip(5, 1, 4, 40, 10) == 10) &&
+//            st(!std::isnan(remapInterval(1, 1, 1, 2, 3))) &&
+//            st(!std::isnan(remapIntervalClip(1, 1, 1, 2, 3))) &&
+//            st(withinEpsilon(fmod_floor(1, 1.23), 1, e)) &&
+//            st(withinEpsilon(fmod_floor(2, 1.23), 0.77, e)) &&
+//            st(withinEpsilon(fmod_floor(-1, 1.23), 0.23, e)) &&
+//            st(withinEpsilon(fmod_floor(-2, 1.23), 0.46, e)) &&
+//            st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)) &&
+//            st(nearestOddInt(0.1) == 1) &&
+//            st(nearestOddInt(1.0) == 1) &&
+//            st(nearestOddInt(1.9) == 1) &&
+//            st(nearestOddInt(2.1) == 3) &&
+//            st(nearestOddInt(-0.1) == -1) &&
+//            st(nearestOddInt(-1.0) == -1) &&
+//            st(nearestOddInt(-1.9) == -1) &&
+//            st(nearestOddInt(-2.1) == -3) &&
+//            st(any_to_string<float>(0.5f) == "0.5") &&
+//            st(any_to_string<std::string>(std::string("abc")) == "abc") &&
+//            st(set_contains(std::set<int>{1, 2, 3}, 2)) &&
+//            st(!set_contains(std::set<int>{1, 2, 3}, 5)) &&
+//            st(CommandLine({"a","10","1.2"}).positionalArgument(0) == "a") &&
+//            st(CommandLine({"a","10","1.2"}).positionalArgument(0,"x")=="a") &&
+//            st(CommandLine({"a","10","1.2"}).positionalArgument(1,2)==10) &&
+//            st(CommandLine({"a","10","1.2"}).positionalArgument(9, "x")=="x")&&
+//            st(CommandLine({"a","10","1.2"}).positionalArgument(2,2.3f)==1.2f));
+//};
+
 // Tests Utilities.h.
 bool utilities()
 {
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//    debugPrint(grating_utility(Vec2(),       Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(0.5, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(1, 0),   Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(1.5, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(2, 0),   Vec2(), 0, 1));
+    debugPrint(grating_utility(Vec2(0.00, 0), Vec2(), 0, 1));
+    debugPrint(grating_utility(Vec2(0.25, 0), Vec2(), 0, 1));
+    debugPrint(grating_utility(Vec2(0.50, 0), Vec2(), 0, 1));
+    debugPrint(grating_utility(Vec2(0.75, 0), Vec2(), 0, 1));
+    debugPrint(grating_utility(Vec2(2.00, 0), Vec2(), 0, 1));
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     float e = 0.0000001;
-    return (st(withinEpsilon(1, 1, 0)) &&
-            st(withinEpsilon(1.1, 1.2, 0.2)) &&
-            st(withinEpsilon(-1.1, -1.2, 0.2)) &&
-            st(!withinEpsilon(1.1, 1.2, 0.01)) &&
-            st(sq(2) == 4) &&
-            st(interpolate(0.1, 0, 10) == 1) &&
-            st(interpolate(0.1, 0, -10) == -1) &&
-            st(clip(2, 1, 3) == 2) &&
-            st(clip(0, 1, 2) == 1) &&
-            st(clip(3, 1, 2) == 2) &&
-            st(clip(0, 1, 1) == 1) &&
-            st(clip(3, 1, 1) == 1) &&
-            st(clip(2, 3, 1) == 2) &&
-            st(clip(0, 3, 1) == 1) &&
-            st(clip(4, 3, 1) == 3) &&
-            st(sinusoid(0) == 0) &&
-            st(sinusoid(0.25) < 0.25) &&
-            st(sinusoid(0.5) == 0.5) &&
-            st(sinusoid(0.75) > 0.75) &&
-            st(sinusoid(1) == 1) &&
-            st(remapInterval(1.5, 1, 2, 20, 30) == 25) &&
-            st(remapInterval(2, 1, 4, 10, 40) == 20) &&
-            st(remapIntervalClip(5, 1, 4, 10, 40) == 40) &&
-            st(remapInterval(1.5, 1, 2, 30, 20) == 25) &&
-            st(remapInterval(2, 1, 3, 30, 10) == 20) &&
-            st(remapIntervalClip(5, 1, 4, 40, 10) == 10) &&
-            st(!std::isnan(remapInterval(1, 1, 1, 2, 3))) &&
-            st(!std::isnan(remapIntervalClip(1, 1, 1, 2, 3))) &&
-            st(withinEpsilon(fmod_floor(1, 1.23), 1, e)) &&
-            st(withinEpsilon(fmod_floor(2, 1.23), 0.77, e)) &&
-            st(withinEpsilon(fmod_floor(-1, 1.23), 0.23, e)) &&
-            st(withinEpsilon(fmod_floor(-2, 1.23), 0.46, e)) &&
-            st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)) &&
-            st(nearestOddInt(0.1) == 1) &&
-            st(nearestOddInt(1.0) == 1) &&
-            st(nearestOddInt(1.9) == 1) &&
-            st(nearestOddInt(2.1) == 3) &&
-            st(nearestOddInt(-0.1) == -1) &&
-            st(nearestOddInt(-1.0) == -1) &&
-            st(nearestOddInt(-1.9) == -1) &&
-            st(nearestOddInt(-2.1) == -3) &&
-            st(any_to_string<float>(0.5f) == "0.5") &&
-            st(any_to_string<std::string>(std::string("abc")) == "abc") &&
-            st(set_contains(std::set<int>{1, 2, 3}, 2)) &&
-            st(!set_contains(std::set<int>{1, 2, 3}, 5)) &&
-            st(CommandLine({"a","10","1.2"}).positionalArgument(0) == "a") &&
-            st(CommandLine({"a","10","1.2"}).positionalArgument(0,"x")=="a") &&
-            st(CommandLine({"a","10","1.2"}).positionalArgument(1,2)==10) &&
-            st(CommandLine({"a","10","1.2"}).positionalArgument(9, "x")=="x")&&
-            st(CommandLine({"a","10","1.2"}).positionalArgument(2,2.3f)==1.2f));
+    return
+    (st(withinEpsilon(1, 1, 0)) &&
+     st(withinEpsilon(1.1, 1.2, 0.2)) &&
+     st(withinEpsilon(-1.1, -1.2, 0.2)) &&
+     st(!withinEpsilon(1.1, 1.2, 0.01)) &&
+     st(sq(2) == 4) &&
+     st(interpolate(0.1, 0, 10) == 1) &&
+     st(interpolate(0.1, 0, -10) == -1) &&
+     st(clip(2, 1, 3) == 2) &&
+     st(clip(0, 1, 2) == 1) &&
+     st(clip(3, 1, 2) == 2) &&
+     st(clip(0, 1, 1) == 1) &&
+     st(clip(3, 1, 1) == 1) &&
+     st(clip(2, 3, 1) == 2) &&
+     st(clip(0, 3, 1) == 1) &&
+     st(clip(4, 3, 1) == 3) &&
+     st(sinusoid(0) == 0) &&
+     st(sinusoid(0.25) < 0.25) &&
+     st(sinusoid(0.5) == 0.5) &&
+     st(sinusoid(0.75) > 0.75) &&
+     st(sinusoid(1) == 1) &&
+     st(remapInterval(1.5, 1, 2, 20, 30) == 25) &&
+     st(remapInterval(2, 1, 4, 10, 40) == 20) &&
+     st(remapIntervalClip(5, 1, 4, 10, 40) == 40) &&
+     st(remapInterval(1.5, 1, 2, 30, 20) == 25) &&
+     st(remapInterval(2, 1, 3, 30, 10) == 20) &&
+     st(remapIntervalClip(5, 1, 4, 40, 10) == 10) &&
+     st(!std::isnan(remapInterval(1, 1, 1, 2, 3))) &&
+     st(!std::isnan(remapIntervalClip(1, 1, 1, 2, 3))) &&
+     st(withinEpsilon(fmod_floor(1, 1.23), 1, e)) &&
+     st(withinEpsilon(fmod_floor(2, 1.23), 0.77, e)) &&
+     st(withinEpsilon(fmod_floor(-1, 1.23), 0.23, e)) &&
+     st(withinEpsilon(fmod_floor(-2, 1.23), 0.46, e)) &&
+     st(withinEpsilon(fmod_floor(1.23, 1.23), 0, e)) &&
+     st(nearestOddInt(0.1) == 1) &&
+     st(nearestOddInt(1.0) == 1) &&
+     st(nearestOddInt(1.9) == 1) &&
+     st(nearestOddInt(2.1) == 3) &&
+     st(nearestOddInt(-0.1) == -1) &&
+     st(nearestOddInt(-1.0) == -1) &&
+     st(nearestOddInt(-1.9) == -1) &&
+     st(nearestOddInt(-2.1) == -3) &&
+     st(any_to_string<float>(0.5f) == "0.5") &&
+     st(any_to_string<std::string>(std::string("abc")) == "abc") &&
+     st(set_contains(std::set<int>{1, 2, 3}, 2)) &&
+     st(!set_contains(std::set<int>{1, 2, 3}, 5)) &&
+     st(CommandLine({"a","10","1.2"}).positionalArgument(0) == "a") &&
+     st(CommandLine({"a","10","1.2"}).positionalArgument(0,"x")=="a") &&
+     st(CommandLine({"a","10","1.2"}).positionalArgument(1,2)==10) &&
+     st(CommandLine({"a","10","1.2"}).positionalArgument(9, "x")=="x") &&
+     st(CommandLine({"a","10","1.2"}).positionalArgument(2,2.3f)==1.2f)
+     
+     
+//     st(sinusoid(0) == 0) &&
+//     st(sinusoid(0.25) < 0.25) &&
+//     st(sinusoid(0.5) == 0.5) &&
+//     st(sinusoid(0.75) > 0.75) &&
+//     st(sinusoid(1) == 1) &&
+//
+     
+//     &&
+//     st (spot_utility(Vec2(), Vec2(), 0.1, 1) == 1)
+//     &&
+//     st (spot_utility(Vec2(), Vec2(), 0, 1) == 1)
+     
+//     &&
+//     st(spot_utility(Vec2(1.0, 1), Vec2(1, 1), 0.1, 0.9) == 0.0) &&
+//     st(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9) == 0.5f) &&
+//     st(spot_utility(Vec2(2.0, 1), Vec2(1, 1), 0.1, 0.9) == 1.0)
+
+//         &&
+//         st(withinEpsilon(spot_utility(Vec2(1.0, 1), Vec2(1, 1), 0.1, 0.9), 0, e)) &&
+//         st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
+//    //                      0.5, e)) &&
+//    //                      0.5, 0.00001)) &&
+//                          0.5, 0.000001)) &&
+//    //                      0.5, 0.0000001)) &&
+//         st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
+//                          (0.1 + 0.9) / 2, e)) &&
+//         st(withinEpsilon(spot_utility(Vec2(2.0, 1), Vec2(1, 1), 0.1, 0.9), 1, e))
+
+//             &&
+//         st(withinEpsilon(spot_utility(Vec2(1.0, 1), Vec2(1, 1), 0.1, 0.9), 1, e)) &&
+//         st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
+//                          0.5, 0.000001)) &&
+//    //     st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
+//    //                      (0.1 + 0.9) / 2, e)) &&
+//         st(withinEpsilon(spot_utility(Vec2(2.0, 1), Vec2(1, 1), 0.1, 0.9), 0, e))
+
+     &&
+     st(spot_utility(Vec2(1.0, 1), Vec2(1, 1), 0.1, 0.9) == 1) &&
+     st(spot_utility(Vec2(2.0, 1), Vec2(1, 1), 0.1, 0.9) == 0) &&
+     st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
+                      0.5, 0.000001))
+
+     
+     );
 };
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Tests for Color class.
 bool color_constructors()

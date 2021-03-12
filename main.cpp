@@ -4684,6 +4684,14 @@ int main(int argc, const char * argv[])
                                                        0, pi / 2,
                                                        c0, c1));
         }
+        {
+            Timer t("TestGaborKernel");
+            Texture::displayAndFile(TestGaborKernel(500,
+                                                       0.2, 0.5,
+                                                       0.01, 0.02,
+                                                       0, pi / 2,
+                                                       c0, c1));
+        }
 
         Texture::waitKey();
     }

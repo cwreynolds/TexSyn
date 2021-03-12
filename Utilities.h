@@ -575,3 +575,20 @@ private:
     // Parsed version of the ("unix") command line that invoked this run.
     const std::vector<std::string> cmd_line_;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO experimental code to support Gabor noise.
+
+// Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
+// position, and given spot parameters (center, inner_radius, outer_radius)
+// as in Spot::getColor(), etc.
+float spot_utility(Vec2 position,
+                   Vec2 center,
+                   float inner_radius,
+                   float outer_radius);
+
+// TODO to be used by Gabor noise. Something like the Grating texture operator,
+// but transform is via an angle and center point, assumes sinosoid (softness=1)
+float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
