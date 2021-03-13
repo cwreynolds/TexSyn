@@ -1792,14 +1792,27 @@ public:
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
     }
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color bg(1, 0.5, 0);
+//            Color inside(0, 0.5, 1);
+//            Color nearby(0, 1, 0);
+//    //        Color result = interpolate(grating_utility(position, Vec2(), pi/4, 0.1),
+//    //                                   bg, inside);
+//            Vec2 center;
+//            float grating = grating_utility(position, Vec2(), pi/4, 0.1);
+//            float spot = spot_utility(position, center, 0, 0.5);
+//            Color result = interpolate(spot * grating, bg, inside);
+//            return result;
+//        }
     Color getColor(Vec2 position) const override
     {
-        Color bg(1, 0.5, 0);
-        Color inside(0, 0.5, 1);
-        Color nearby(0, 1, 0);
-        Color result = interpolate(grating_utility(position, Vec2(), pi/4, 0.1),
-                                   bg, inside);
-        return result;
+        Vec2 center;
+//        float grating = grating_utility(position, Vec2(), pi/4, 0.1);
+//        float spot = spot_utility(position, center, 0, 0.5);
+        float grating = grating_utility(position, Vec2(), pi/4, 0.02);
+        float spot = spot_utility(position, center, 0, 0.5);
+        return interpolate(spot * grating, Color(0), Color(1));
     }
     
     // Seed the random number sequence from some operator parameters.

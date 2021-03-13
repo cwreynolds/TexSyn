@@ -28,6 +28,9 @@ public:
     Vec2 position;
     Vec2 future_position;
     float angle = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    float wavelength = 0; // TODO experimental for Gabor noise kernels. Needed?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Lightweight utility used by Camouflage.
     // TODO viz_func used only for debugging, can be removed eventually.
     static std::vector<Disk>

@@ -71,50 +71,48 @@
         </li>
         <li>click Open</li>
       </ul>
-      <p><br>
-        At this point, if you are lucky, it should print ~30 lines and exit:</p>
-      <blockquote>
-        <p><font face="monospace">&gt; evo_camo_game<br>
-            &nbsp;&nbsp;&nbsp; pass utilities<br>
-            &nbsp;&nbsp;&nbsp; pass color_constructors<br>
-            &nbsp;&nbsp;&nbsp; pass color_equality<br>
-            &nbsp;&nbsp;&nbsp; pass color_assignment<br>
-            &nbsp;&nbsp;&nbsp; pass color_basic_operators<br>
-            &nbsp;&nbsp;&nbsp; pass color_luminance<br>
-            &nbsp;&nbsp;&nbsp; pass color_hsv<br>
-            &nbsp;&nbsp;&nbsp; pass color_clip<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_constructors<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_equality<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_assignment<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_vector_operations<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_basic_operators<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_random_point<br>
-            &nbsp;&nbsp;&nbsp; pass vec2_rotate<br>
-            &nbsp;&nbsp;&nbsp; pass gradation_test<br>
-            &nbsp;&nbsp;&nbsp; pass spot_test<br>
-            &nbsp;&nbsp;&nbsp; pass grating_test<br>
-            &nbsp;&nbsp;&nbsp; pass operators_minimal_test<br>
-            &nbsp;&nbsp;&nbsp; pass noise_ranges<br>
-            &nbsp;&nbsp;&nbsp; pass interpolate_float_rounding<br>
-            &nbsp;&nbsp;&nbsp; pass two_point_transform<br>
-            <br>
-            All tests PASS.<br>
-            <br>
-            Run time for unit test suite: 0.0515489 seconds<br>
-            Feburary 15, 2021<br>
-            evo_camo_game parameters:<br>
-            &nbsp;&nbsp;&nbsp; background_image_directory (required)<br>
-            &nbsp;&nbsp;&nbsp; output_directory (defaults to .)<br>
-            &nbsp;&nbsp;&nbsp; background_scale (defaults to 0.5)<br>
-            &nbsp;&nbsp;&nbsp; random_seed (else: default seed)<br>
-            &nbsp;&nbsp;&nbsp; window width (defaults to 1200)<br>
-            &nbsp;&nbsp;&nbsp; window height (defaults to 800)<br>
-            &nbsp;&nbsp;&nbsp; individuals (defaults to 120)<br>
-            &nbsp;&nbsp;&nbsp; subpopulations (defaults to 6)<br>
-            &nbsp;&nbsp;&nbsp; max_tree_size (defaults to 100)<br>
-            &gt;</font><br>
-        </p>
-      </blockquote>
+      <p>At this point, if you are lucky, it should print ~40 lines and exit:</p>
+      <pre>    &gt; evo_camo_game
+        pass utilities
+        pass color_constructors
+        pass color_equality
+        pass color_assignment
+        pass color_basic_operators
+        pass color_luminance
+        pass color_hsv
+        pass color_clip
+        pass vec2_constructors
+        pass vec2_equality
+        pass vec2_assignment
+        pass vec2_vector_operations
+        pass vec2_basic_operators
+        pass vec2_random_point
+        pass vec2_rotate
+        pass gradation_test
+        pass spot_test
+        pass grating_test
+        pass operators_minimal_test
+        pass noise_ranges
+        pass interpolate_float_rounding
+        pass two_point_transform
+
+    All tests PASS.
+
+    Run time for unit test suite: 0.0515489 seconds
+    March 10, 2021
+    evo_camo_game parameters:
+        background_image_directory (required)
+        output_directory (defaults to .)
+        background_scale (defaults to 0.5)
+        random_seed (else: default seed)
+        window width (defaults to 1200)
+        window height (defaults to 800)
+        individuals (defaults to 120)
+        subpopulations (defaults to 6)
+        max_tree_size (defaults to 100)
+        min_crossover_tree_size (default 50)
+        max_crossover_tree_size (default 150)
+    &gt;</pre>
       <p>If you get that far, all is well.</p>
       <h3>Usage</h3>
       <p>To use the app you will need a collection of background images. That
@@ -130,11 +128,11 @@
         texture scale).<br>
       </p>
       <p>You can arrange files however you want, but lets say under
-        /Users/Rebecca you make a new folder “camouflage” with two sub folders
+        /Users/YourName you make a new folder “camouflage” with two sub folders
         “backgrounds” and “runs”. Let's say you shot a handful of photos of a
-        bed of clover. So the folders might looks like:</p>
+        bed of clover. So the folders might look like:</p>
       <pre>    /User/
-        Rebecca/
+        YourName/
             camouflage/
                 backgrounds/
                     clover/
@@ -143,22 +141,23 @@
                         IMG_9826.jpeg
                 runs/</pre>
       <p>To run the app you would type in Terminal at least:</p>
-      <p><font face="monospace">&gt; evo_camo_game ~/</font><font face="monospace">camouflage/</font><font
-          face="monospace">backgrounds/</font><font face="monospace">clover</font></p>
-      <p>(By the way, you can literally drag things from the Finder into the
-        Terminal window. So you could type “evo_” [tab to complete], drag the
-        “clover” folder from a Finder window into Terminal, and you will have
-        the result above.)<br>
-      </p>
+      <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover</pre>
+      <p>(Note: you can literally drag things from the Finder into the Terminal
+        window. So you could type “evo_” [tab to complete], drag the “clover”
+        folder from a Finder window into Terminal, and you will have the result
+        above.)</p>
+      <p> To keep track of your output files, better to specify the place to put
+        run results. Each run with create a time-stamped folder under “runs”:</p>
+      <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover ~/camouflage/runs</pre>
       <p>This should pop up a window, its title will be “clover”. You will see
         some portion of one of your clover photos, with a “tournament” of three
         textures. Remember they are completely random at this point, so will
         look nothing like the background. Do your best to pick the one <b>least</b>
         like the background (in this case it might be bright orange, or black
-        and white stripes) and click on it. The window will clear, then redraw.
-        Then just repeat that process hundreds to thousands of times. Try
-        200-300 and see if you notice the textures looking more like the
-        background. <br>
+        and white stripes, whatever is least like clover) and click on it. The
+        window will clear, then redraw. Then just repeat that process hundreds
+        to thousands of times. Try 200-300 and see if you notice the textures
+        looking more like the background.<br>
       </p>
       <p>The app supports a few GUI actions:</p>
       <div>
@@ -170,6 +169,8 @@
               <td valign="top">End a step by clicking on one of the prey to
                 indicate: “eat this prey” / “this one is least-well camouflaged”
                 / “most conspicuous”<br>
+                (Clicking anywhere ends the step, if you do not click on a prey,
+                it is as if a random choice is made.)<br>
               </td>
             </tr>
             <tr>
