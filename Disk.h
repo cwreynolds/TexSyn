@@ -22,6 +22,10 @@ class Disk
 public:
     Disk(){}
     Disk(float r, Vec2 p) : radius(r), position(p), future_position(p) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Disk(float r, Vec2 p, float a, float w)
+      : radius(r), position(p), future_position(p), angle(a), wavelength(w) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     float area() const { return pi * sq(radius); }
     Disk translate(Vec2 t) const { return Disk(radius, t + position); }
     float radius = 0;

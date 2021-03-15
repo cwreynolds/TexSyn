@@ -1881,26 +1881,52 @@ public:
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
     }
 
+//    Color getColor(Vec2 position) const override
+//    {
+//        float rot_1_3 = (2 * pi / 3);
+//        Vec2 p0(0, 0.2);
+//        Vec2 p1 = p0.rotate(rot_1_3);
+//        Vec2 p2 = p1.rotate(rot_1_3);
+//
+//        auto kernel = [&](Vec2 center, float angle)
+//        {
+//            float g = grating_utility(position, center, angle, 0.06);
+//            float s = spot_utility(position, center, 0, 0.5);
+//            return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
+//        };
+//
+//        float k0 = kernel(p0, 0);
+//        float k1 = kernel(p1, -rot_1_3);
+//        float k2 = kernel(p2, rot_1_3);
+//        // Sum, weight by number of kernels, bias up by 0.5
+//        float sum = ((k0 + k1 + k2) / 3) + 0.5;
+//        return Color(sum);
+//    }
+
     Color getColor(Vec2 position) const override
     {
         float rot_1_3 = (2 * pi / 3);
         Vec2 p0(0, 0.2);
         Vec2 p1 = p0.rotate(rot_1_3);
         Vec2 p2 = p1.rotate(rot_1_3);
-
-        auto kernel = [&](Vec2 center, float angle)
+        float r = 0.5;
+        float w = 0.02;
+        // TODO temp 3 test Disks
+        std::vector<Disk> disks = { {r, p0,        0, w},
+                                    {r, p1, -rot_1_3, w},
+                                    {r, p2,  rot_1_3, w} };
+        // Evaluate the kernel at a given position.
+        auto kernel = [](Vec2 p, const Disk& d)
         {
-            float g = grating_utility(position, center, angle, 0.06);
-            float s = spot_utility(position, center, 0, 0.5);
+            float g = grating_utility(p, d.position, d.angle, d.wavelength);
+            float s = spot_utility(p, d.position, 0, d.radius);
             return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
         };
-
-        float k0 = kernel(p0, 0);
-        float k1 = kernel(p1, -rot_1_3);
-        float k2 = kernel(p2, rot_1_3);
-        // Sum, weight by number of kernels, bias up by 0.5
-        float sum = ((k0 + k1 + k2) / 3) + 0.5;
-        return Color(sum);
+        // Sum up the contribition, on [-0.5, +0.5], from each kernel
+        float sum = 0;
+        for (auto& disk : disks) { sum += kernel(position, disk); }
+        // Normalize sum by number of kernels, bias up by 0.5
+        return Color((sum / 3) + 0.5);
     }
 
     // Seed the random number sequence from some operator parameters.
