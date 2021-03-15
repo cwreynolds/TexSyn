@@ -4700,6 +4700,31 @@ int main(int argc, const char * argv[])
                                                        0, pi / 2,
                                                        c0, c1));
         }
+        {
+            Timer t("GaborNoise");
+            Texture::displayAndFile(GaborNoise(500,
+//                                               0.2, 0.5,
+//                                               0.5, 1.0,
+//                                               0.2, 0.8,
+//                                               0.2, 0.3,
+//                                               0.6, 0.8,
+                                               0.3, 0.4,
+//                                               0.01, 0.02,
+//                                               0.01, 0.05,
+                                               0.01, 0.01,
+//                                               0, pi / 2,
+                                               0, pi / 4,
+                                               c0, c1));
+        }
+        {
+            Timer t("GaborNoise zoomed out");
+            Texture::displayAndFile(Scale(0.14,
+                                          GaborNoise(500,
+                                                     0.3, 0.4,
+                                                     0.01, 0.01,
+                                                     0, pi / 4,
+                                                     c0, c1)));
+        }
 
         Texture::waitKey();
     }
