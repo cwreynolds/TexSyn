@@ -4632,7 +4632,7 @@ int main(int argc, const char * argv[])
 //    Camouflage(argc, argv).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
+/*
     // 20210307 prototyping Gabor Noise texture.
     std::cout << "March 7, 2021" << std::endl;
     
@@ -4728,7 +4728,14 @@ int main(int argc, const char * argv[])
 
         Texture::waitKey();
     }
+*/
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+    // 20210316 tag the 0.9.4 "release"
+    std::cout << "March 16, 2021" << std::endl;
+
+    Camouflage(argc, argv).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

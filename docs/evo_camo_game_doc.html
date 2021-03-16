@@ -9,8 +9,8 @@
     <h2>Interactive Evolution of Camouflage</h2>
     <h3>Instructions for installation and use.</h3>
     <div class="moz-text-html" lang="x-unicode">
-      <p><strong>March 10, 2021</strong><br>
-        Based on: <strong>TexSyn version 0.9.3 (alpha macOS-x86_64)</strong><br>
+      <p><strong>March 16, 2021</strong><br>
+        Based on: <strong>TexSyn version 0.9.4 (alpha macOS-x86_64)</strong><br>
         For any problems or questions, contact Craig Reynolds: <a href="mailto:cwr@red3d.com">cwr@red3d.com</a></p>
       <p><a href="mailto:cwr@red3d.com"></a></p>
       <p>&nbsp;</p>
@@ -22,6 +22,20 @@
         library for evolutionary optimization via genetic programming. For more
         information see the <a href="https://cwreynolds.github.io/TexSyn/">development
           blog for TexSyn</a>.</p>
+      <p><strong>Very quick overview:</strong> this program is a crude
+        simulation of the evolution of camouflage in nature. There is a
+        predator-prey system. Software for texture optimization plays the part
+        of an evolving population of camouflaged “prey.” The human user serves
+        as the predator, who hunts it prey with&nbsp; vision. This can be seen
+        as a minimalist “game” or a “human based computation.” The app displays
+        a window with a portion of a given set of photographs. Over that is
+        drawn three randomly positions disks of synthetic texture, three “prey.”
+        The human user/player then decides which of the three textures/prey is <strong>most
+          conspicuous</strong> or <strong>least well camouflaged</strong>,
+        indicating their selection by clicking/tapping on that prey. The window
+        will go blank then display the next step. Runs typically consist of 1000
+        such steps or more. They can be stopped at any time. Results are
+        currently saves as image files as described below.</p>
       <h3>Caveats</h3>
       <ul>
         <li><b>Alpha software:</b> may contain sharp edges! Might not work, but
@@ -43,9 +57,9 @@
         </ul>
       </ul>
       <h3>Installation</h3>
-      <p>Download <code>evo_camo_game_0_9_3.zip</code> from <a href="https://drive.google.com/file/d/1rU6D5Mo7iGSONTCSYSsBPfakR7iJPCPn/view?usp=sharing">this
-          Gdrive page</a>. Click the download button in the upper right. It
-        should download and unzip, putting the <code>evo_camo_game</code>
+      <p>Download <code>evo_camo_game_0_9_4.zip</code> from <a href="https://drive.google.com/file/d/1F4pQqoFfbhKozU5RWkIjLWcjsHfSBBhK/view?usp=sharing">this
+          Google drive page</a>. Click the download button in the upper right.
+        It should download and unzip, putting the <code>evo_camo_game</code>
         executable file in your Downloads folder. (Its icon says “exec.”)</p>
       <p> Open a new Finder window, use ⇧⌘G (shift-cmd-G) then type in <code>/usr/local/bin</code>
         [return]</p>
@@ -99,7 +113,7 @@
     All tests PASS.
 
     Run time for unit test suite: 0.0515489 seconds
-    March 10, 2021
+    March 16, 2021
     evo_camo_game parameters:
         background_image_directory (required)
         output_directory (defaults to .)
@@ -142,7 +156,7 @@
                 runs/</pre>
       <p>To run the app you would type in Terminal at least:</p>
       <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover</pre>
-      <p>(Note: you can literally drag things from the Finder into the Terminal
+      <p>(Note: ou can literally drag things from the Finder into the Terminal
         window. So you could type “evo_” [tab to complete], drag the “clover”
         folder from a Finder window into Terminal, and you will have the result
         above.)</p>
@@ -178,9 +192,8 @@
               <td valign="top">Save thumbnail image file for indicated prey
                 texture. This is a .png image file with the prey centered,
                 surrounded by a bit of its background neighborhood. It also
-                writes out a .txt file (with the same filename as the .png file)
-                that contains the source code than can be used to re-render the
-                texture at arbitrary resolution.</td>
+                writes out a .txt file that contains the source code than can be
+                used to re-render the texture at arbitrary resolution.</td>
             </tr>
             <tr>
               <td valign="top"><b>t</b> key<br>

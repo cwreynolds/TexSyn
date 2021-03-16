@@ -92,11 +92,12 @@ bool utilities()
 //    debugPrint(grating_utility(Vec2(1, 0),   Vec2(), 0, 1));
 //    debugPrint(grating_utility(Vec2(1.5, 0), Vec2(), 0, 1));
 //    debugPrint(grating_utility(Vec2(2, 0),   Vec2(), 0, 1));
-    debugPrint(grating_utility(Vec2(0.00, 0), Vec2(), 0, 1));
-    debugPrint(grating_utility(Vec2(0.25, 0), Vec2(), 0, 1));
-    debugPrint(grating_utility(Vec2(0.50, 0), Vec2(), 0, 1));
-    debugPrint(grating_utility(Vec2(0.75, 0), Vec2(), 0, 1));
-    debugPrint(grating_utility(Vec2(2.00, 0), Vec2(), 0, 1));
+    
+//    debugPrint(grating_utility(Vec2(0.00, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(0.25, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(0.50, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(0.75, 0), Vec2(), 0, 1));
+//    debugPrint(grating_utility(Vec2(2.00, 0), Vec2(), 0, 1));
     //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     float e = 0.0000001;
     return
