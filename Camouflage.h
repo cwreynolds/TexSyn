@@ -189,6 +189,9 @@ public:
         // Loop "forever" performing interactive evolution steps.
         while (true)
         {
+            //~~~~~~~~~~~~~~~~~~~
+//            waitForMouseUp();
+            //~~~~~~~~~~~~~~~~~~~
             // Store to allow access in mouse handler.
             step_ = population.getStepCount();
             // Display step count in GUI title bar.
@@ -258,6 +261,9 @@ public:
         drawTournamentGroupOverBackground(tg);
         // Update the onscreen image. Wait for user to click on one texture.
         gui().refresh();
+        //~~~~~~~~~~~~~~~~~~~
+        waitForMouseUp();
+        //~~~~~~~~~~~~~~~~~~~
         setMouseCallbackForTournamentFunction();
         Individual* worst = selectIndividualFromMouseClick(waitForMouseClick());
         // Designate clicked Texture's Individual as worst of TournamentGroup.
@@ -284,6 +290,9 @@ public:
         }
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO maybe this should be called waitForUserInput() ?
+    
     // Ad hoc idle loop, waiting for mouse click. (Better if waited for event.)
     // Listens for and executes single character commands: "t" and "Q".
     Vec2 waitForMouseClick()
@@ -305,8 +314,26 @@ public:
             }
             previous_key = key;
         }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO now needs to wait for mouse UP, wait_for_mouse_click_ needs
+        //      to be multi-state or two flags
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return getLastMouseClick();
     }
+    
+    void waitForMouseUp()
+    {
+//        debugPrint(mouse_left_button_down_);
+//        while (mouse_left_button_down_)
+//        {
+//            cv::waitKey(250);  // 1/4 second (250/1000)
+//        }
+        
+        // Wait (1/4 second at a time) until mouse_left_button_down_ is false.
+        while (mouse_left_button_down_) { cv::waitKey(250); }
+    }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Controls mouse behavior during a tournament.
     void setMouseCallbackForTournamentFunction()
@@ -315,9 +342,15 @@ public:
         []
         (int event, int x, int y, int flags, void* userdata)
         {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            auto c = static_cast<Camouflage*>(userdata);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (event == cv::EVENT_LBUTTONDOWN)
             {
-                auto c = static_cast<Camouflage*>(userdata);
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                auto c = static_cast<Camouflage*>(userdata);
+                c->mouse_left_button_down_ = true;
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 Vec2 click(x, y);
                 if (flags & cv::EVENT_FLAG_SHIFTKEY)
                 {
@@ -331,6 +364,16 @@ public:
                     c->setLastMouseClick(click);
                 }
             }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            if (event == cv::EVENT_LBUTTONUP)
+            {
+                c->mouse_left_button_down_ = false;
+//                c->wait_for_mouse_click_ = false;
+            }
+            
+//            debugPrint(c->mouse_left_button_down_);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
         cv::setMouseCallback(gui().getWindowName(), mouse_callback, this);
     }
@@ -446,7 +489,9 @@ public:
     void setLastMouseClick(Vec2 mouse_pos)
     {
         last_mouse_click_ = mouse_pos;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         wait_for_mouse_click_ = false;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     
     // Get default run name from background_image_directory_.
@@ -512,5 +557,8 @@ private:
     int step_ = 0;
     // Randomly selected rectagle of randomly selected background image.
     cv::Mat background_image_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    bool mouse_left_button_down_ = false;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
