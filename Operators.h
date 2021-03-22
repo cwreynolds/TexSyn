@@ -1958,7 +1958,388 @@ private:
     std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
 };
 
-// TODO preliminary, but "candidate final"
+//    // TODO preliminary, but "candidate final"
+//
+//    class GaborNoise : public Texture
+//    {
+//    public:
+//        GaborNoise(int kernels,
+//                   float min_radius, float max_radius,
+//                   float min_wavelength, float max_wavelength,
+//                   float min_angle, float max_angle,
+//                   const Texture& texture0,
+//                   const Texture& texture1)
+//          : kernels_(kernels),
+//            min_radius_(min_radius),
+//            max_radius_(max_radius),
+//            min_wavelength_(min_wavelength),
+//            max_wavelength_(max_wavelength),
+//            min_angle_(min_angle),
+//            max_angle_(max_angle),
+//            texture0_(texture0),
+//            texture1_(texture1),
+//            disk_occupancy_grid_
+//                (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+//        {
+//            // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+//            // TODO maybe should init a const vector, to emphasize it can't change.
+//            RandomSequence rs(seedForRandomSequence());
+//            for (int i = 0; i < kernels_; i++)
+//            {
+//    //            float radius = rs.frandom2(min_radius, max_radius);
+//    //            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+//    //            disks_.push_back(Disk(radius, center));
+//                float radius = rs.frandom2(min_radius, max_radius);
+//                Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+//                float angle = rs.frandom2(min_angle, max_angle);
+//                float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+//                disks_.push_back(Disk(radius, center, angle, wavelength));
+//            }
+//            // Insert randomized Disks into DiskOccupancyGrid.
+//            for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+//        }
+//
+//
+//    //    Color getColor(Vec2 position) const override
+//    //    {
+//    //        float rot_1_3 = (2 * pi / 3);
+//    //        Vec2 p0(0, 0.2);
+//    //        Vec2 p1 = p0.rotate(rot_1_3);
+//    //        Vec2 p2 = p1.rotate(rot_1_3);
+//    //        float r = 0.5;
+//    //        float w = 0.02;
+//    //        // TODO temp 3 test Disks
+//    //        std::vector<Disk> disks = { {r, p0,        0, w},
+//    //                                    {r, p1, -rot_1_3, w},
+//    //                                    {r, p2,  rot_1_3, w} };
+//    //        // Evaluate the kernel at a given position.
+//    //        auto kernel = [](Vec2 p, const Disk& d)
+//    //        {
+//    //            float g = grating_utility(p, d.position, d.angle, d.wavelength);
+//    //            float s = spot_utility(p, d.position, 0, d.radius);
+//    //            return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
+//    //        };
+//    //        // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//    //        float sum = 0;
+//    //        for (auto& disk : disks) { sum += kernel(position, disk); }
+//    //        // Normalize sum by number of kernels, bias up by 0.5
+//    //        return Color((sum / 3) + 0.5);
+//    //    }
+//
+//    //        Color getColor(Vec2 position) const override
+//    //        {
+//    //    //        float rot_1_3 = (2 * pi / 3);
+//    //    //        Vec2 p0(0, 0.2);
+//    //    //        Vec2 p1 = p0.rotate(rot_1_3);
+//    //    //        Vec2 p2 = p1.rotate(rot_1_3);
+//    //    //        float r = 0.5;
+//    //    //        float w = 0.02;
+//    //    //        // TODO temp 3 test Disks
+//    //    //        std::vector<Disk> disks = { {r, p0,        0, w},
+//    //    //            {r, p1, -rot_1_3, w},
+//    //    //            {r, p2,  rot_1_3, w} };
+//    //            // Evaluate the kernel at a given position.
+//    //            auto kernel_sample = [](Vec2 p, const Disk& d)
+//    //            {
+//    //                float g = grating_utility(p, d.position, d.angle, d.wavelength);
+//    //                float s = spot_utility(p, d.position, 0, d.radius);
+//    //                return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
+//    //            };
+//    //            // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//    //            float sum = 0;
+//    //
+//    //    //        for (auto& disk : disks) { sum += kernel_sample(position, disk); }
+//    //
+//    //
+//    //
+//    //            std::set<Disk*> nearby_disks;
+//    //
+//    //            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//    //            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//    //
+//    //    //        if (nearby_disks.empty()) debugPrint(nearby_disks.size());
+//    //
+//    //            // Recolor when this disk contains BOTH pixel "position" and "center".
+//    //            for (auto& disk : nearby_disks)
+//    //            {
+//    //                // TODO this test could be moved inside kernel_sample()
+//    //                if ((position - disk->position).length() < disk->radius)
+//    //                {
+//    //                    sum += kernel_sample(position, *disk);
+//    //                }
+//    //            }
+//    //
+//    //
+//    //    //        for (auto& disk : disks) { sum += kernel_sample(position, disk); }
+//    //
+//    //
+//    //            // Normalize sum by number of kernels, bias up by 0.5
+//    //    //        return Color((sum / 3) + 0.5);
+//    //
+//    //    //        Color result(0);
+//    //    //        if (!nearby_disks.empty())
+//    //    //        {
+//    //    //            result = (sum / nearby_disks.size()) + 0.5;
+//    //    //        }
+//    //
+//    //            Color result(nearby_disks.empty() ?
+//    //                         0 :
+//    //                         (sum / nearby_disks.size()) + 0.5);
+//    //            return result;
+//    //        }
+//
+//        Color getColor(Vec2 position) const override
+//        {
+//            // Evaluate the kernel at a given position.
+//            auto kernel_sample = [](Vec2 p, const Disk& d)
+//            {
+//                float g = grating_utility(p, d.position, d.angle, d.wavelength);
+//                float s = spot_utility(p, d.position, 0, d.radius);
+//    //            return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
+//                return s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+//            };
+//            // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//            float sum = 0;
+//            std::set<Disk*> nearby_disks;
+//            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//
+//            // Count kernels that cover this "position"
+//            int count = 0;
+//
+//            // TOD) new comment
+//            // Recolor when this disk contains BOTH pixel "position" and "center".
+//            for (auto& disk : nearby_disks)
+//            {
+//    //            // TODO this test could be moved inside kernel_sample()
+//    //            if ((position - disk->position).length() < disk->radius)
+//    //            {
+//    //                sum += kernel_sample(position, *disk);
+//    //                count++;
+//    //            }
+//                // TODO this test could be moved inside kernel_sample()
+//                if ((tiled_pos - disk->position).length() < disk->radius)
+//                {
+//                    sum += kernel_sample(tiled_pos, *disk);
+//                    count++;
+//                }
+//            }
+//
+//    //        Color result(nearby_disks.empty() ?
+//    //                     0 :
+//    //                     (sum / nearby_disks.size()) + 0.5);
+//    //        Color result(count == 0 ? 0 : (sum / count) + 0.5);
+//            Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
+//            return result;
+//        }
+//
+//        // Seed the random number sequence from some operator parameters.
+//        size_t seedForRandomSequence()
+//        {
+//            return (hash_float(kernels_) ^
+//                    hash_float(min_radius_) ^
+//                    hash_float(max_radius_) ^
+//                    hash_float(min_wavelength_) ^
+//                    hash_float(max_wavelength_) ^
+//                    hash_float(min_angle_) ^
+//                    hash_float(max_angle_));
+//        }
+//
+//    private:
+//        const int kernels_;
+//        const float min_radius_;
+//        const float max_radius_;
+//        const float min_wavelength_;
+//        const float max_wavelength_;
+//        const float min_angle_;
+//        const float max_angle_;
+//        const Texture& texture0_;
+//        const Texture& texture1_;
+//
+//        // TODO should this be const?
+//        std::vector<Disk> disks_;
+//
+//        std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+//    };
+
+
+//    // TODO 20210321 preliminary, but "candidate final"
+//
+//    class GaborNoise : public Texture
+//    {
+//    public:
+//        GaborNoise(int kernels,
+//                   float min_radius, float max_radius,
+//                   float min_wavelength, float max_wavelength,
+//                   float min_angle, float max_angle,
+//                   const Texture& texture0,
+//                   const Texture& texture1)
+//          : kernels_(kernels),
+//            min_radius_(min_radius),
+//            max_radius_(max_radius),
+//            min_wavelength_(min_wavelength),
+//            max_wavelength_(max_wavelength),
+//            min_angle_(min_angle),
+//            max_angle_(max_angle),
+//            texture0_(texture0),
+//            texture1_(texture1),
+//            disk_occupancy_grid_
+//                (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+//        {
+//            // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+//            // TODO maybe should init a const vector, to emphasize it can't change.
+//            RandomSequence rs(seedForRandomSequence());
+//            for (int i = 0; i < kernels_; i++)
+//            {
+//                float radius = rs.frandom2(min_radius, max_radius);
+//                Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+//                float angle = rs.frandom2(min_angle, max_angle);
+//                float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+//                disks_.push_back(Disk(radius, center, angle, wavelength));
+//            }
+//            // Insert randomized Disks into DiskOccupancyGrid.
+//            for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+//        }
+//
+//    //        // TODO this prototype is returning only the "matte" signal, not blending
+//    //        // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]
+//    //        Color getColor(Vec2 position) const override
+//    //        {
+//    //            // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//    //            float sum = 0;
+//    //            std::set<Disk*> nearby_disks;
+//    //            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//    //            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//    //
+//    //            // Count kernels that cover this "position"
+//    //            int count = 0;
+//    //
+//    //            // Evaluate the kernel at a given position.
+//    //            auto kernel_sample = [](Vec2 p, const Disk& d)
+//    //            {
+//    //                // Both g and s range on [0, 1]
+//    //                float g = grating_utility(p, d.position, d.angle, d.wavelength);
+//    //
+//    //                assert(between(g, 0, 1));
+//    //                assert(between(g - 0.5, -0.5, +0.5));
+//    //
+//    //                float s = spot_utility(p, d.position, 0, d.radius);
+//    //                return s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+//    //            };
+//    //    //        // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//    //    //        float sum = 0;
+//    //    //        std::set<Disk*> nearby_disks;
+//    //    //        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//    //    //        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//    //    //
+//    //    //        // Count kernels that cover this "position"
+//    //    //        int count = 0;
+//    //
+//    //            // TODO new comment
+//    //            // Recolor when this disk contains BOTH pixel "position" and "center".
+//    //            for (auto& disk : nearby_disks)
+//    //            {
+//    //                // TODO this test could be moved inside kernel_sample()
+//    //                if ((tiled_pos - disk->position).length() < disk->radius)
+//    //    //            if ((tiled_pos - disk_occupancy_grid_->wrapToCenterTile(disk->position)).length() < disk->radius)
+//    //                {
+//    //                    sum += kernel_sample(tiled_pos, *disk);
+//    //                    count++;
+//    //                }
+//    //            }
+//    //
+//    //            // TODO so "sum" ranges over [-0.5 * count, +0.5 * count]
+//    //
+//    //            Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
+//    //            return result;
+//    //        }
+//
+//        // TODO this prototype is returning only the "matte" signal, not blending
+//        // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]
+//        Color getColor(Vec2 position) const override
+//        {
+//            // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//            float sum = 0;
+//            std::set<Disk*> nearby_disks;
+//            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//
+//            // Count kernels that cover this "position"
+//            int count = 0;
+//
+//            // Evaluate the kernel at a given position.
+//    //        auto kernel_sample = [](Vec2 p, const Disk& d)
+//            auto kernel_sample = [&](const Disk& d)
+//            {
+//                // Both g and s range on [0, 1]
+//    //            float g = grating_utility(p, d.position, d.angle, d.wavelength);
+//                float g = grating_utility(tiled_pos, d.position, d.angle, d.wavelength);
+//
+//                assert(between(g, 0, 1));
+//                assert(between(g - 0.5, -0.5, +0.5));
+//
+//    //            float s = spot_utility(p, d.position, 0, d.radius);
+//                float s = spot_utility(tiled_pos, d.position, 0, d.radius);
+//    //            return s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+//                float k = s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+//
+//                // TODO this test could be moved inside kernel_sample()
+//                if ((tiled_pos - d.position).length() < d.radius)
+//                {
+//                    sum += k;
+//                    count++;
+//                }
+//
+//            };
+//
+//            // TODO new comment
+//            for (auto& disk : nearby_disks)
+//            {
+//    //            // TODO this test could be moved inside kernel_sample()
+//    //            if ((tiled_pos - disk->position).length() < disk->radius)
+//    //            {
+//    //                sum += kernel_sample(tiled_pos, *disk);
+//    //                count++;
+//    //            }
+//                kernel_sample(*disk);
+//            }
+//
+//            // TODO so "sum" ranges over [-0.5 * count, +0.5 * count]
+//
+//            Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
+//            return result;
+//        }
+//
+//        // Seed the random number sequence from some operator parameters.
+//        size_t seedForRandomSequence()
+//        {
+//            return (hash_float(kernels_) ^
+//                    hash_float(min_radius_) ^
+//                    hash_float(max_radius_) ^
+//                    hash_float(min_wavelength_) ^
+//                    hash_float(max_wavelength_) ^
+//                    hash_float(min_angle_) ^
+//                    hash_float(max_angle_));
+//        }
+//
+//    private:
+//        const int kernels_;
+//        const float min_radius_;
+//        const float max_radius_;
+//        const float min_wavelength_;
+//        const float max_wavelength_;
+//        const float min_angle_;
+//        const float max_angle_;
+//        const Texture& texture0_;
+//        const Texture& texture1_;
+//
+//        // TODO should this be const?
+//        std::vector<Disk> disks_;
+//
+//        std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+//    };
+
+// TODO 20210321 preliminary, but "candidate final"
 
 class GaborNoise : public Texture
 {
@@ -1986,9 +2367,6 @@ public:
         RandomSequence rs(seedForRandomSequence());
         for (int i = 0; i < kernels_; i++)
         {
-//            float radius = rs.frandom2(min_radius, max_radius);
-//            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
-//            disks_.push_back(Disk(radius, center));
             float radius = rs.frandom2(min_radius, max_radius);
             Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
             float angle = rs.frandom2(min_angle, max_angle);
@@ -1999,136 +2377,47 @@ public:
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
     }
 
-
-//    Color getColor(Vec2 position) const override
-//    {
-//        float rot_1_3 = (2 * pi / 3);
-//        Vec2 p0(0, 0.2);
-//        Vec2 p1 = p0.rotate(rot_1_3);
-//        Vec2 p2 = p1.rotate(rot_1_3);
-//        float r = 0.5;
-//        float w = 0.02;
-//        // TODO temp 3 test Disks
-//        std::vector<Disk> disks = { {r, p0,        0, w},
-//                                    {r, p1, -rot_1_3, w},
-//                                    {r, p2,  rot_1_3, w} };
-//        // Evaluate the kernel at a given position.
-//        auto kernel = [](Vec2 p, const Disk& d)
-//        {
-//            float g = grating_utility(p, d.position, d.angle, d.wavelength);
-//            float s = spot_utility(p, d.position, 0, d.radius);
-//            return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
-//        };
-//        // Sum up the contribition, on [-0.5, +0.5], from each kernel
-//        float sum = 0;
-//        for (auto& disk : disks) { sum += kernel(position, disk); }
-//        // Normalize sum by number of kernels, bias up by 0.5
-//        return Color((sum / 3) + 0.5);
-//    }
-
-//        Color getColor(Vec2 position) const override
-//        {
-//    //        float rot_1_3 = (2 * pi / 3);
-//    //        Vec2 p0(0, 0.2);
-//    //        Vec2 p1 = p0.rotate(rot_1_3);
-//    //        Vec2 p2 = p1.rotate(rot_1_3);
-//    //        float r = 0.5;
-//    //        float w = 0.02;
-//    //        // TODO temp 3 test Disks
-//    //        std::vector<Disk> disks = { {r, p0,        0, w},
-//    //            {r, p1, -rot_1_3, w},
-//    //            {r, p2,  rot_1_3, w} };
-//            // Evaluate the kernel at a given position.
-//            auto kernel_sample = [](Vec2 p, const Disk& d)
-//            {
-//                float g = grating_utility(p, d.position, d.angle, d.wavelength);
-//                float s = spot_utility(p, d.position, 0, d.radius);
-//                return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
-//            };
-//            // Sum up the contribition, on [-0.5, +0.5], from each kernel
-//            float sum = 0;
-//
-//    //        for (auto& disk : disks) { sum += kernel_sample(position, disk); }
-//
-//
-//
-//            std::set<Disk*> nearby_disks;
-//
-//            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
-//            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
-//
-//    //        if (nearby_disks.empty()) debugPrint(nearby_disks.size());
-//
-//            // Recolor when this disk contains BOTH pixel "position" and "center".
-//            for (auto& disk : nearby_disks)
-//            {
-//                // TODO this test could be moved inside kernel_sample()
-//                if ((position - disk->position).length() < disk->radius)
-//                {
-//                    sum += kernel_sample(position, *disk);
-//                }
-//            }
-//
-//
-//    //        for (auto& disk : disks) { sum += kernel_sample(position, disk); }
-//
-//
-//            // Normalize sum by number of kernels, bias up by 0.5
-//    //        return Color((sum / 3) + 0.5);
-//
-//    //        Color result(0);
-//    //        if (!nearby_disks.empty())
-//    //        {
-//    //            result = (sum / nearby_disks.size()) + 0.5;
-//    //        }
-//
-//            Color result(nearby_disks.empty() ?
-//                         0 :
-//                         (sum / nearby_disks.size()) + 0.5);
-//            return result;
-//        }
-
+    // TODO this prototype is returning only the "matte" signal, not blending
+    // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]
     Color getColor(Vec2 position) const override
     {
-        // Evaluate the kernel at a given position.
-        auto kernel_sample = [](Vec2 p, const Disk& d)
-        {
-            float g = grating_utility(p, d.position, d.angle, d.wavelength);
-            float s = spot_utility(p, d.position, 0, d.radius);
-//            return (g * s) - 0.5; // bias down from [-1, 1] to [-0.5, +0.5].
-            return s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
-        };
         // Sum up the contribition, on [-0.5, +0.5], from each kernel
         float sum = 0;
-        std::set<Disk*> nearby_disks;
+        // Adjust "position" to be in center tile of grid.
         Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+        // Find all disks that touch "tiled_pos".
+        std::set<Disk*> nearby_disks;
         disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
-
         // Count kernels that cover this "position"
         int count = 0;
-        
-        // TOD) new comment
-        // Recolor when this disk contains BOTH pixel "position" and "center".
-        for (auto& disk : nearby_disks)
+        // Evaluate one kernel at "tiled_pos".
+        auto kernel_sample = [&](const Disk& d)
         {
-//            // TODO this test could be moved inside kernel_sample()
-//            if ((position - disk->position).length() < disk->radius)
+//            // Both g and s range on [0, 1]
+//            float g = grating_utility(tiled_pos, d.position, d.angle, d.wavelength);
+//            float s = spot_utility(tiled_pos, d.position, 0, d.radius);
+//            float k = s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+//            if ((tiled_pos - d.position).length() < d.radius)
 //            {
-//                sum += kernel_sample(position, *disk);
+//                sum += k;
 //                count++;
 //            }
-            // TODO this test could be moved inside kernel_sample()
-            if ((tiled_pos - disk->position).length() < disk->radius)
+            Vec2 dp = disk_occupancy_grid_->wrapToCenterTile(d.position);
+            // Both g and s range on [0, 1]
+            float g = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
+            float s = spot_utility(tiled_pos, dp, 0, d.radius);
+            float k = s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
+            if ((tiled_pos - dp).length() < d.radius)
             {
-                sum += kernel_sample(tiled_pos, *disk);
+                sum += k;
                 count++;
             }
-        }
-
-//        Color result(nearby_disks.empty() ?
-//                     0 :
-//                     (sum / nearby_disks.size()) + 0.5);
-//        Color result(count == 0 ? 0 : (sum / count) + 0.5);
+        };
+        
+        // Sum up contributions for all nearby kernels.
+        for (auto& disk : nearby_disks) { kernel_sample(*disk); }
+        
+        // "Sum" ranges on [-0.5 * count, +0.5 * count], normalize to [0, 1].
         Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
         return result;
     }

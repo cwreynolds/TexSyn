@@ -4632,7 +4632,7 @@ int main(int argc, const char * argv[])
 //    Camouflage(argc, argv).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-/*
+
     // 20210307 prototyping Gabor Noise texture.
     std::cout << "March 7, 2021" << std::endl;
     
@@ -4725,17 +4725,28 @@ int main(int argc, const char * argv[])
                                                      0, pi / 4,
                                                      c0, c1)));
         }
+        
+        {
+            Timer t("GaborNoise very sparse");
+//            Texture::displayAndFile(GaborNoise(100,
+            Texture::displayAndFile(GaborNoise(150,
+                                               0.3, 0.4,
+//                                               0.4, 0.6,
+                                               0.01, 0.01,
+                                               0, pi / 4,
+                                               c0, c1));
+        }
+
 
         Texture::waitKey();
     }
-*/
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210316 tag the 0.9.4 "release"
-    std::cout << "March 16, 2021" << std::endl;
-
-    Camouflage(argc, argv).run();
+//    // 20210316 tag the 0.9.4 "release"
+//    std::cout << "March 16, 2021" << std::endl;
+//
+//    Camouflage(argc, argv).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
