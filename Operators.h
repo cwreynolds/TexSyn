@@ -2365,14 +2365,30 @@ public:
         // Randomize Disks (kernels) with uniform distributions of r, x, and y.
         // TODO maybe should init a const vector, to emphasize it can't change.
         RandomSequence rs(seedForRandomSequence());
-        for (int i = 0; i < kernels_; i++)
+        //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
+        // TODO debugging
+        if (kernels_ == 2)
         {
-            float radius = rs.frandom2(min_radius, max_radius);
-            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
-            float angle = rs.frandom2(min_angle, max_angle);
-            float wavelength = rs.frandom2(min_wavelength, max_wavelength);
-            disks_.push_back(Disk(radius, center, angle, wavelength));
+//            disks_.push_back(Disk(0.5, Vec2(+0.25, 0), pi / +4, 0.01));
+//            disks_.push_back(Disk(0.5, Vec2(-0.25, 0), pi / -4, 0.01));
+            Vec2 p(0, 0.25);
+            float a1 = 2 * pi / 3;
+            disks_.push_back(Disk(0.5, p,              0, 0.02));
+            disks_.push_back(Disk(0.5, p.rotate(a1), -a1, 0.02));
+            disks_.push_back(Disk(0.5, p.rotate(-a1), a1, 0.02));
         }
+        else
+        {
+            for (int i = 0; i < kernels_; i++)
+            {
+                float radius = rs.frandom2(min_radius, max_radius);
+                Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+                float angle = rs.frandom2(min_angle, max_angle);
+                float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+                disks_.push_back(Disk(radius, center, angle, wavelength));
+            }
+        }
+        //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
     }
@@ -2393,22 +2409,13 @@ public:
         // Evaluate one kernel at "tiled_pos".
         auto kernel_sample = [&](const Disk& d)
         {
-//            // Both g and s range on [0, 1]
-//            float g = grating_utility(tiled_pos, d.position, d.angle, d.wavelength);
-//            float s = spot_utility(tiled_pos, d.position, 0, d.radius);
-//            float k = s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
-//            if ((tiled_pos - d.position).length() < d.radius)
-//            {
-//                sum += k;
-//                count++;
-//            }
             Vec2 dp = disk_occupancy_grid_->wrapToCenterTile(d.position);
-            // Both g and s range on [0, 1]
-            float g = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
-            float s = spot_utility(tiled_pos, dp, 0, d.radius);
-            float k = s * (g - 0.5); // bias down from [0, 1] to [-0.5, +0.5].
             if ((tiled_pos - dp).length() < d.radius)
             {
+                // Both g and s range on [0, 1]
+                float g = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
+                float s = spot_utility(tiled_pos, dp, 0, d.radius);
+                float k = s * (g - 0.5); // bias from [0, 1] to [-0.5, +0.5].
                 sum += k;
                 count++;
             }
@@ -2417,8 +2424,17 @@ public:
         // Sum up contributions for all nearby kernels.
         for (auto& disk : nearby_disks) { kernel_sample(*disk); }
         
+        // TODO just for debugging
+        if (max < sum) max = sum;
+        if (min > sum) min = sum;
+        if (position.y() == 0)
+        {
+            std::cout << "count=" << count << " sum=" << sum << std::endl;
+        }
+        
         // "Sum" ranges on [-0.5 * count, +0.5 * count], normalize to [0, 1].
-        Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
+//        Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
+        Color result(count == 0 ? 0.5 : sum + 0.5);
         return result;
     }
 
@@ -2433,6 +2449,11 @@ public:
                 hash_float(min_angle_) ^
                 hash_float(max_angle_));
     }
+
+    // TODO temp for debugging
+    static inline float max = 0;
+    static inline float min = 0;
+
     
 private:
     const int kernels_;
@@ -2449,6 +2470,7 @@ private:
     std::vector<Disk> disks_;
     
     std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+    
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

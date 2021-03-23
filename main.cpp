@@ -4728,13 +4728,21 @@ int main(int argc, const char * argv[])
         
         {
             Timer t("GaborNoise very sparse");
+            
+            GaborNoise::max = 0;
+            GaborNoise::min = 0;
+
+            
 //            Texture::displayAndFile(GaborNoise(100,
-            Texture::displayAndFile(GaborNoise(150,
+//            Texture::displayAndFile(GaborNoise(150,
+            Texture::displayAndFile(GaborNoise(2,
                                                0.3, 0.4,
 //                                               0.4, 0.6,
                                                0.01, 0.01,
                                                0, pi / 4,
                                                c0, c1));
+            debugPrint(GaborNoise::max);
+            debugPrint(GaborNoise::min);
         }
 
 
