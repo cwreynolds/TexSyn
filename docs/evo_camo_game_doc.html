@@ -156,23 +156,26 @@
                 runs/</pre>
       <p>To run the app you would type in Terminal at least:</p>
       <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover</pre>
-      <p>(Note: ou can literally drag things from the Finder into the Terminal
+      <p>(Note: you can literally drag things from the Finder into the Terminal
         window. So you could type “evo_” [tab to complete], drag the “clover”
         folder from a Finder window into Terminal, and you will have the result
         above.)</p>
       <p> To keep track of your output files, better to specify the place to put
         run results. Each run with create a time-stamped folder under “runs”:</p>
       <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover ~/camouflage/runs</pre>
-      <p>This should pop up a window, its title will be “clover”. You will see
-        some portion of one of your clover photos, with a “tournament” of three
-        textures. Remember they are completely random at this point, so will
-        look nothing like the background. Do your best to pick the one <b>least</b>
-        like the background (in this case it might be bright orange, or black
-        and white stripes, whatever is least like clover) and click on it. The
-        window will clear, then redraw. Then just repeat that process hundreds
-        to thousands of times. Try 200-300 and see if you notice the textures
-        looking more like the background.<br>
-      </p>
+      <p>This should pop up a window, its title will be “clover (step 0)” (see
+        below). You will see some portion of one of your clover photos, with a
+        “tournament” of three competing textures. Remember they are completely
+        random at this point, so will look nothing like the background. Do your
+        best to pick the one <b>least</b> like the background and click on it.
+        (In the example below, I might go for the one in the upper right, but it
+        is up to you, whatever seems least like background.) The window will
+        clear, then redraw. Then just repeat that process hundreds to thousands
+        of times. Try 200-300 and see if you notice the textures looking more
+        like the background. When I do a “full” run, it is about 2000 to 3000
+        steps.</p>
+      <img src="images/20210323_clover_step_0.jpg" alt="clover (step 0)" title="clover (step 0)"
+        width="1312" height="934">
       <p>The app supports a few GUI actions:</p>
       <div>
         <table style="padding-left: 2em;" width="100%" cellspacing="2" cellpadding="2"
@@ -214,10 +217,15 @@
       </div>
       <p>These image files are saved into the output directory given as the
         second argument on the command line. <code>evo_camo_game</code> creates
-        a sub directory for the run with a name like: clover_20210228_1834 (that
-        is RunName_yyyymmdd_hhmm). If you start a run then don't want to save
-        anything, feel free to delete the run dir. Later other run records, like
-        logging and saving the evolved source code for thumbnail images.</p>
+        a sub directory for the run with a name like: <code>clover_20210228_1834</code>
+        (that is: RunName_yyyymmdd_hhmm). If you start a run then don't want to
+        save anything, feel free to delete the run directory. Eventually other
+        run records, like logging and check-pointing populations, will be stored
+        in this directory. A saved “tournament” image is similar to the clover
+        image above, minus the title bar of the window. A saved “thumbnail”
+        image looks like this:</p>
+      <img src="images/20210220_oak_leaf_1902.png" alt="20210220_oak_leaf_1902"
+        title="20210220_oak_leaf_1902" width="402" height="402">
       <p>The command allows you to set a lot of parameters on the command line,
         which you can ignore at first, but fyi they are listed if you run the
         command with no augments:</p>
