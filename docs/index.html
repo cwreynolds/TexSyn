@@ -64,13 +64,14 @@
     <br>
     <p><strong>TexSyn</strong> is an idiosyncratic library for procedural
       texture synthesis. It is not primarily intended for use “by human hands.”
-      TexSyn programs will be automatically generated and optimized using a
-      Genetic Programming system. This is a blog (or a lab notebook? a design
-      diary?) about making TexSyn. It is not proper documentation, although it
-      might be some sort of a starting point. Mostly this describes in “blog
-      order” the steps and design decisions made in its construction. There is
-      some background and introductory information, at the bottom of this page,
-      in the entry for <a href="#20191215">December 15, 2019</a>.</p>
+      For the most part,TexSyn programs will be automatically generated and
+      optimized using a Genetic Programming system. This is a blog (or a lab
+      notebook? a design diary?) about making TexSyn. It is not proper
+      documentation, although it might be some sort of a starting point. Mostly
+      this describes in “blog order” the steps and design decisions made in its
+      construction. There is some background and introductory information, at
+      the bottom of this page, in the entry for <a href="#20191215">December
+        15, 2019</a>.</p>
     <p>(While the library is written in c++, many of the code samples below are
       shown in a simplified style: textures are often written as an isolated
       expression rather than a complete c++ statement, semicolons are often
@@ -81,6 +82,68 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210322"> <a href="#20210322" class="date">March 22,
+        2021</a>
+      <h1>UV lichen</h1>
+      <p>This camouflage run was based on another unique image from helpful
+        folks on the Facebook group <a href="https://www.facebook.com/groups/172285406121262">Lichens,
+          Mosses, Ferns and Fungi</a>. <a href="https://www.facebook.com/steve.axford.12">Stephen
+          Axford</a> kindly gave me permission to use <a href="https://www.facebook.com/steve.axford.12/posts/10219530105028665">this
+          image</a>. He lives in Australia but travels the world to photograph
+        and study fungi. (See his lovely video <a href="https://www.youtube.com/watch?v=KYunPJQWZ1o">autobiography</a>.)
+        This photo however was taken at his home. It is the lichen-covered trunk
+        of a “<a href="https://en.wikipedia.org/wiki/Archontophoenix_cunninghamiana">Bangalow
+          Palm</a>” illuminated by 365nm UV (ultraviolet) light. These lichens
+        (but apparently not all?) fluoresce in ultraviolet. So the unusual
+        colors are from the UV and the irregular shape of the colored patches
+        are due to the growth and competition for space between the various
+        lichens. For context, here is <a href="https://www.facebook.com/photo?fbid=10219361101363679">another
+          view</a> from further away.</p>
+      <p>Below are views of two competitive “tournaments” each showing three
+        circular prey with their evolved camouflage textures. In the first image
+        (at step 1374, not quite half way through the run) they were trying,
+        without much success, to find a version of those rainbow noise patterns
+        that would blend in the with background. The brightness and saturation
+        were in the correct range, but the distribution of hues are off (there
+        is no green in the background). Also the spatial frequencies do not
+        match well.</p>
+      <img src="images/20210321_step_1374.png" alt="20210321_step_1374" title="20210321_step_1374"
+        width="800" height="533">
+      <p>By the end of the run at step 3000, things had improved, but the
+        quality of camouflage is “only OK.” The circular features allow coloring
+        something like the scale of patches in the background. But to my eyes,
+        their geometric regularity stands out and “breaks” the camouflage:</p>
+      <img src="images/20210321_step_3000.png" alt="20210321_step_3000" title="20210321_step_3000"
+        width="800" height="533">
+      <p>Here are “thumbnail” images of interesting evolved camouflage textures
+        during roughly the second half of this run, at steps 1205, 1724, 2033,
+        2260, 2414, 2551, 2882, 2896, 2979, and 2983:</p>
+      <img src="images/20210321_thumbnail_2983_a.png" alt="20210321_thumbnail_2983_a"
+        title="20210321_thumbnail_2983_a" width="402" height="402"> &nbsp;&nbsp;
+      <img src="images/20210321_thumbnail_1205_c.png" alt="20210321_thumbnail_1205_c"
+        title="20210321_thumbnail_1205_c" width="402" height="402"> <br>
+      <br>
+      <img src="images/20210321_thumbnail_1724_b.png" alt="20210321_thumbnail_1724_b"
+        title="20210321_thumbnail_1724_b" width="402" height="402"> &nbsp;&nbsp;
+      <img src="images/20210321_thumbnail_2033_b.png" alt="20210321_thumbnail_2033_b"
+        title="20210321_thumbnail_2033_b" width="402" height="402"> <br>
+      <br>
+      <img src="images/20210321_thumbnail_2260_a.png" alt="20210321_thumbnail_2260_a"
+        title="20210321_thumbnail_2260_a" width="402" height="402"> &nbsp;&nbsp;
+      <img src="images/20210321_thumbnail_2414_c.png" alt="20210321_thumbnail_2414_c"
+        title="20210321_thumbnail_2414_c" width="402" height="402"> <br>
+      <br>
+      <img src="images/20210321_thumbnail_2551_c.png" alt="20210321_thumbnail_2551_c"
+        title="20210321_thumbnail_2551_c" width="402" height="402"> &nbsp;&nbsp;
+      <img src="images/20210321_thumbnail_2882_c.png" alt="20210321_thumbnail_2882_c"
+        title="20210321_thumbnail_2882_c" width="402" height="402"> <br>
+      <br>
+      <img src="images/20210321_thumbnail_2896_a.png" alt="20210321_thumbnail_2896_a"
+        title="20210321_thumbnail_2896_a" width="402" height="402"> &nbsp;&nbsp;
+      <img src="images/20210321_thumbnail_2979_b.png" alt="20210321_thumbnail_2979_b"
+        title="20210321_thumbnail_2979_b" width="402" height="402"> <br>
+      <br>
+    </div>
     <div class="post" id="20210315"> <a href="#20210315" class="date">March 15,
         2021 🎂</a>
       <h1>Parking lot trees</h1>
@@ -122,10 +185,10 @@
         width="800" height="533">
       <p>Shown below are “thumbnail” images of an individual camouflaged prey,
         and a bit of its surrounding background for context. These were hand
-        selected by similar criteria—good quality camouflage in
-        effective locations—but in isolation, without regard to the other prey
-        in the tournament. These are in order of “evolutionary time” at step:
-        131, 257, 1332, 1593, 1858, 2270, 2571, 2662, 2845, and 2976:</p>
+        selected by similar criteria—good quality camouflage in effective
+        locations—but in isolation, without regard to the other prey in the
+        tournament. These are in order of “evolutionary time” at step: 131, 257,
+        1332, 1593, 1858, 2270, 2571, 2662, 2845, and 2976:</p>
       <img src="images/20210313_thumbnail_131_c.png" alt="20210313_thumbnail_131_c"
         title="20210313_thumbnail_131_c" width="402" height="402"> &nbsp;&nbsp;
       <img src="images/20210313_thumbnail_257_b.png" alt="20210313_thumbnail_257_b"
