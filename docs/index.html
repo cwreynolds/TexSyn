@@ -82,6 +82,30 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210326"> <a href="#20210326" class="date">March 26,
+        2021</a>
+      <h1>Selection weights for initial random <code>GpTrees</code></h1>
+      <p>Yesterday I added a new feature to LazyPredator: a new optional
+        parameter to the constructor for <code>GpFunction</code> to adjust the
+        likelihood a given function is selected during construction of the
+        initial random population of <code>GpTrees</code> for a run. See
+        details <a href="https://cwreynolds.github.io/LazyPredator/#20210325">here</a>.
+        It seemed to me that the three “lots of spots” texture patterns were
+        overrepresented. Now this might have been my own fault for favoring
+        those as better camouflage. Or it could have been that there are three
+        such operators (<em>LotsOfSpots</em>, <em>ColoredSpots</em>, and <em>LotsOfButtons</em>)
+        and so, in combination, they were chosen three times more often. So in
+        TexSyn's <code>GP::fs()</code> I changed these three operators to have
+        ⅓ the chance of being selected. In addition “because I could” I doubled
+        the likelihood of choosing <em>SoftMatte</em>, my favorite texture
+        operator.</p>
+      <p>I did a quick run to “shake down” these code changes, and in the
+        process added some illustrations to the “<a href="https://cwreynolds.github.io/TexSyn/evo_camo_game_doc.html">doc</a>”
+        for the alpha version of the <strong><code>evo_camo_game</code></strong>
+        app. Step ~2000 of a run using a “clover” background is shown below:</p>
+      <img src="images/20210325_clover_step_1982.png" alt="20210325_clover_step_1982"
+        title="20210325_clover_step_1982" width="1200" height="800">
+    </div>
     <div class="post" id="20210322"> <a href="#20210322" class="date">March 22,
         2021</a>
       <h1>UV lichen</h1>

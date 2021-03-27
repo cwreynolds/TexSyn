@@ -97,7 +97,8 @@ public:
             },
             {
                 "SoftMatte", "Texture", {"Texture", "Texture", "Texture"},
-                evalTexture(SoftMatte(argTexture(), argTexture(), argTexture()))
+                evalTexture(SoftMatte(argTexture(), argTexture(), argTexture())),
+                2 // make SoftMatte twice as likely to be selected
             },
             {
                 "Add", "Texture", {"Texture", "Texture"},
@@ -272,7 +273,8 @@ public:
                                         argFloat(),
                                         argFloat(),
                                         argTexture(),
-                                        argTexture()))
+                                        argTexture())),
+                1.0/3.0 // make 3 "spots" operators 1/3 as likely to be selected
             },
             {
                 "ColoredSpots",
@@ -285,7 +287,8 @@ public:
                                          argFloat(),
                                          argFloat(),
                                          argTexture(),
-                                         argTexture()))
+                                         argTexture())),
+                1.0/3.0 // make 3 "spots" operators 1/3 as likely to be selected
             },
             {
                 "LotsOfButtons",
@@ -300,7 +303,8 @@ public:
                                           argVec2(),
                                           argTexture(),
                                           argFloat(),
-                                          argTexture()))
+                                          argTexture())),
+                1.0/3.0 // make 3 "spots" operators 1/3 as likely to be selected
             },
             {
                 "Gamma", "Texture", {"Float_0_10", "Texture"},
