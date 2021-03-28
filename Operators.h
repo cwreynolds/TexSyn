@@ -2397,6 +2397,9 @@ public:
     // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]
     Color getColor(Vec2 position) const override
     {
+//        bool print = position == Vec2(); // TODO XXX temp
+        bool print = position.y() == 0; // TODO XXX temp
+
         // Sum up the contribition, on [-0.5, +0.5], from each kernel
         float sum = 0;
         // Adjust "position" to be in center tile of grid.
@@ -2416,9 +2419,18 @@ public:
                 float g = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
                 float s = spot_utility(tiled_pos, dp, 0, d.radius);
                 float k = s * (g - 0.5); // bias from [0, 1] to [-0.5, +0.5].
+                
+                // TODO XXX temp
+                if (print) debugPrint(g);
+                if (print) debugPrint(s);
+                if (print) debugPrint(k);
+
                 sum += k;
                 count++;
             }
+            
+            // TODO XXX temp
+            if (print) debugPrint(sum);
         };
         
         // Sum up contributions for all nearby kernels.
@@ -2427,14 +2439,15 @@ public:
         // TODO just for debugging
         if (max < sum) max = sum;
         if (min > sum) min = sum;
-        if (position.y() == 0)
+//        if (position.y() == 0)
+//        if ((position.y() == 0) && (position.x() == 0))
+        if (print)  // TODO XXX temp
         {
             std::cout << "count=" << count << " sum=" << sum << std::endl;
         }
         
         // "Sum" ranges on [-0.5 * count, +0.5 * count], normalize to [0, 1].
-//        Color result(count == 0 ? 0.5 : (sum / count) + 0.5);
-        Color result(count == 0 ? 0.5 : sum + 0.5);
+        Color result((count == 0) ? 0.5 : ((sum / count) + 0.5));
         return result;
     }
 
