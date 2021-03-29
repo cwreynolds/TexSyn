@@ -2391,6 +2391,11 @@ public:
         //~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~  ~~
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+        
+        
+        // TODO XXX TEMP experiment 20210328 start to space them out a little
+        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
+
     }
 
     // TODO this prototype is returning only the "matte" signal, not blending
@@ -2398,7 +2403,7 @@ public:
     Color getColor(Vec2 position) const override
     {
 //        bool print = position == Vec2(); // TODO XXX temp
-        bool print = position.y() == 0; // TODO XXX temp
+//        bool print = position.y() == 0; // TODO XXX temp
 
         // Sum up the contribition, on [-0.5, +0.5], from each kernel
         float sum = 0;
@@ -2420,17 +2425,17 @@ public:
                 float s = spot_utility(tiled_pos, dp, 0, d.radius);
                 float k = s * (g - 0.5); // bias from [0, 1] to [-0.5, +0.5].
                 
-                // TODO XXX temp
-                if (print) debugPrint(g);
-                if (print) debugPrint(s);
-                if (print) debugPrint(k);
+//                // TODO XXX temp
+//                if (print) debugPrint(g);
+//                if (print) debugPrint(s);
+//                if (print) debugPrint(k);
 
                 sum += k;
                 count++;
             }
             
-            // TODO XXX temp
-            if (print) debugPrint(sum);
+//            // TODO XXX temp
+//            if (print) debugPrint(sum);
         };
         
         // Sum up contributions for all nearby kernels.
@@ -2441,14 +2446,23 @@ public:
         if (min > sum) min = sum;
 //        if (position.y() == 0)
 //        if ((position.y() == 0) && (position.x() == 0))
-        if (print)  // TODO XXX temp
-        {
-            std::cout << "count=" << count << " sum=" << sum << std::endl;
-        }
+//        if (print)  // TODO XXX temp
+//        {
+//            std::cout << "count=" << count << " sum=" << sum << std::endl;
+//        }
         
         // "Sum" ranges on [-0.5 * count, +0.5 * count], normalize to [0, 1].
-        Color result((count == 0) ? 0.5 : ((sum / count) + 0.5));
-        return result;
+//        Color result((count == 0) ? 0.5 : ((sum / count) + 0.5));
+//        Color result((count == 0) ? 0.5 : (sum / count) + 0.5);
+//        Color result(0.5 + ((count == 0) ? 0 : sum / count));
+//        Color result(0 + ((count == 0) ? 0 : sum / count));
+//        Color result(clip01(sum + 0.5));
+//
+//        return result;
+        
+        return interpolatePointOnTextures(clip01(sum + 0.5),
+                                          position, position,
+                                          texture0_, texture1_);
     }
 
     // Seed the random number sequence from some operator parameters.

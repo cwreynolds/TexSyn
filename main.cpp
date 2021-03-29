@@ -4633,12 +4633,12 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // 20210307 prototyping Gabor Noise texture.
-    std::cout << "March 7, 2021" << std::endl;
-    
-    {
-        Uniform c0(1, 0.5, 0);
-        Uniform c1(0, 0.5, 1);
+//    // 20210307 prototyping Gabor Noise texture.
+//    std::cout << "March 7, 2021" << std::endl;
+//
+//    {
+//        Uniform c0(1, 0.5, 0);
+//        Uniform c1(0, 0.5, 1);
 //        Texture::displayAndFile(GaborNoiseTest(600,
 //                                               0.1, 0.2,
 //                                               0.01, 0.02,
@@ -4668,85 +4668,110 @@ int main(int argc, const char * argv[])
 //                                                       c0, c1));
 //        }
 
-        {
-            Timer t("GaborNoiseTestLinear");
-            Texture::displayAndFile(GaborNoiseTestLinear(500,
-                                                         0.2, 0.5,
-                                                         0.01, 0.02,
-                                                         0, pi / 2,
-                                                         c0, c1));
-        }
-        {
-            Timer t("GaborNoiseTestGrid");
-            Texture::displayAndFile(GaborNoiseTestGrid(500,
-                                                       0.2, 0.5,
-                                                       0.01, 0.02,
-                                                       0, pi / 2,
-                                                       c0, c1));
-        }
-        {
-            Timer t("TestGaborKernel");
-            Texture::displayAndFile(TestGaborKernel(500,
-                                                    0.2, 0.5,
-                                                    0.01, 0.02,
-                                                    0, pi / 2,
-                                                    c0, c1));
-        }
-        {
-            Timer t("TestGaborKernelTwo");
-            Texture::displayAndFile(TestGaborKernelTwo(500,
-                                                       0.2, 0.5,
-                                                       0.01, 0.02,
-                                                       0, pi / 2,
-                                                       c0, c1));
-        }
-        {
-            Timer t("GaborNoise");
-            Texture::displayAndFile(GaborNoise(500,
-//                                               0.2, 0.5,
-//                                               0.5, 1.0,
-//                                               0.2, 0.8,
-//                                               0.2, 0.3,
-//                                               0.6, 0.8,
-                                               0.3, 0.4,
-//                                               0.01, 0.02,
-//                                               0.01, 0.05,
-                                               0.01, 0.01,
-//                                               0, pi / 2,
-                                               0, pi / 4,
-                                               c0, c1));
-        }
-        {
-            Timer t("GaborNoise zoomed out");
-            Texture::displayAndFile(Scale(0.14,
-                                          GaborNoise(500,
-                                                     0.3, 0.4,
-                                                     0.01, 0.01,
-                                                     0, pi / 4,
-                                                     c0, c1)));
-        }
-        
-        {
-            Timer t("GaborNoise very sparse");
-            std::cout << std::endl << "GaborNoise very sparse" << std::endl;
-            GaborNoise::max = 0;
-            GaborNoise::min = 0;
-            
-//            Texture::displayAndFile(GaborNoise(100,
-//            Texture::displayAndFile(GaborNoise(150,
-            Texture::displayAndFile(GaborNoise(2,
-                                               0.3, 0.4,
-//                                               0.4, 0.6,
-                                               0.01, 0.01,
-                                               0, pi / 4,
-                                               c0, c1));
-            debugPrint(GaborNoise::max);
-            debugPrint(GaborNoise::min);
-        }
+//            {
+//                Timer t("GaborNoiseTestLinear");
+//                Texture::displayAndFile(GaborNoiseTestLinear(500,
+//                                                             0.2, 0.5,
+//                                                             0.01, 0.02,
+//                                                             0, pi / 2,
+//                                                             c0, c1));
+//            }
+//            {
+//                Timer t("GaborNoiseTestGrid");
+//                Texture::displayAndFile(GaborNoiseTestGrid(500,
+//                                                           0.2, 0.5,
+//                                                           0.01, 0.02,
+//                                                           0, pi / 2,
+//                                                           c0, c1));
+//            }
+//            {
+//                Timer t("TestGaborKernel");
+//                Texture::displayAndFile(TestGaborKernel(500,
+//                                                        0.2, 0.5,
+//                                                        0.01, 0.02,
+//                                                        0, pi / 2,
+//                                                        c0, c1));
+//            }
+//            {
+//                Timer t("TestGaborKernelTwo");
+//                Texture::displayAndFile(TestGaborKernelTwo(500,
+//                                                           0.2, 0.5,
+//                                                           0.01, 0.02,
+//                                                           0, pi / 2,
+//                                                           c0, c1));
+//            }
+//            {
+//                Timer t("GaborNoise");
+//                Texture::displayAndFile(GaborNoise(500,
+//    //                                               0.2, 0.5,
+//    //                                               0.5, 1.0,
+//    //                                               0.2, 0.8,
+//    //                                               0.2, 0.3,
+//    //                                               0.6, 0.8,
+//                                                   0.3, 0.4,
+//    //                                               0.01, 0.02,
+//    //                                               0.01, 0.05,
+//                                                   0.01, 0.01,
+//    //                                               0, pi / 2,
+//                                                   0, pi / 4,
+//                                                   c0, c1));
+//            }
+//            {
+//                Timer t("GaborNoise zoomed out");
+//                Texture::displayAndFile(Scale(0.14,
+//                                              GaborNoise(500,
+//                                                         0.3, 0.4,
+//                                                         0.01, 0.01,
+//                                                         0, pi / 4,
+//                                                         c0, c1)));
+//            }
+//
+//            {
+//                Timer t("GaborNoise very sparse");
+//                std::cout << std::endl << "GaborNoise very sparse" << std::endl;
+//                GaborNoise::max = 0;
+//                GaborNoise::min = 0;
+//
+//    //            Texture::displayAndFile(GaborNoise(100,
+//    //            Texture::displayAndFile(GaborNoise(150,
+//                Texture::displayAndFile(GaborNoise(2,
+//                                                   0.3, 0.4,
+//    //                                               0.4, 0.6,
+//                                                   0.01, 0.01,
+//                                                   0, pi / 4,
+//                                                   c0, c1));
+//                debugPrint(GaborNoise::max);
+//                debugPrint(GaborNoise::min);
+//            }
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-        Texture::waitKey();
+    // 20210328 Gabor kernel noise experiment
+    std::cout << "March 28, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210328_";
+    Uniform c0(1.0, 0.5, 0.1);
+    Uniform c1(0.1, 0.5, 1.0);
+    {
+        Timer t("GaborNoise A");
+        Texture::displayAndFile(GaborNoise(1000,
+                                           0.3, 0.6,
+                                           0.01, 0.03,
+                                           0, pi / 4,
+                                           c0, c1)
+                                );  // , path + "GaborNoise_test_a");
     }
+    {
+        Timer t("GaborNoise B");
+        Texture::displayAndFile(GaborNoise(1000,
+                                           0.2, 0.8,
+                                           0.01, 0.03,
+//                                           0, pi * 0.33,
+                                           pi * 0.33, pi * 0.66,
+                                           c0, c1)
+                                );  // , path + "GaborNoise_test_b");
+    }
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
