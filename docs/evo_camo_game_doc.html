@@ -124,9 +124,9 @@
         window height (defaults to 800)
         individuals (defaults to 120)
         subpopulations (defaults to 6)
-        max_tree_size (defaults to 100)
-        min_crossover_tree_size (default 50)
-        max_crossover_tree_size (default 150)
+        max_init_tree_size (defaults to 100)
+        min_crossover_tree_size (default max_init_tree_size_ * 0.5)
+        max_crossover_tree_size (default max_init_tree_size_ * 1.5)
     &gt;</pre>
       <p>If you get that far, all is well.</p>
       <h3>Usage</h3>
@@ -250,9 +250,9 @@ evo_camo_game requires at least one pathname parameter, others may be omitted fr
     window height (defaults to 800)
     individuals (defaults to 120)
     subpopulations (defaults to 6)
-    max_tree_size (defaults to 100)
-    min_crossover_tree_size (default 50)
-    max_crossover_tree_size (default 150)</pre>
+    max_init_tree_size (defaults to 100)
+    min_crossover_tree_size (default max_init_tree_size_ * 0.5)
+    max_crossover_tree_size (default max_init_tree_size_ * 1.5)</pre>
       <p>So for example:</p>
       <pre>&gt; evo_camo_game ~/camouflage/backgrounds/clover ~/camouflage/runs 0.3 20210310 1600 1000 200 10 150 100 200</pre>
       <p>The background scale allows you to adjust the size of the photos

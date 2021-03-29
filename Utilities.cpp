@@ -433,39 +433,6 @@ void abnormal_value_report()
     }
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO experimental code to support Gabor noise.
-
-// For reference, Spot::getColor()
-
-//    Color getColor(Vec2 position) const override
-//    {
-//        // Distance from sample position to spot center.
-//        float d = (position - center).length();
-//        // Fraction for interpolation: 0 inside, 1 outside, ramp between.
-//        float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
-//        // Sinusoidal interpolation between inner and outer colors.
-//        return interpolatePointOnTextures(sinusoid(f), position, position,
-//                                          inner_texture, outer_texture);
-//    }
-
-//    // Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
-//    // position, and given spot parameters (center, inner_radius, outer_radius)
-//    // as in Spot::getColor(), etc.
-//    float spot_utility(Vec2 position,
-//                       Vec2 center,
-//                       float inner_radius,
-//                       float outer_radius)
-//    {
-//        // Distance from sample position to spot center.
-//        float d = (position - center).length();
-//        // Fraction for interpolation: 0 inside, 1 outside, ramp between.
-//        float f = remapIntervalClip(d, inner_radius, outer_radius, 0, 1);
-//        // map interval [0, 1] to cosine curve.
-//        return sinusoid(f);
-//    }
-
-
 // Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
 // position, and given spot parameters (center, inner_radius, outer_radius)
 // as in Spot::getColor(), etc. (TODO use it there?)
@@ -488,9 +455,5 @@ float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength)
 {
     Vec2 moved = position - center;
     Vec2 rotated = moved.rotate(angle);
-//    return 1 - sinusoid(wavelength * 2 * rotated.x());
     return 1 - sinusoid(rotated.x() / (wavelength * 2));
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-

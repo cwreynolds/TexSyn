@@ -69,9 +69,11 @@ public:
             std::cout << "    window height (defaults to 800)" << std::endl;
             std::cout << "    individuals (defaults to 120)" << std::endl;
             std::cout << "    subpopulations (defaults to 6)" << std::endl;
-            std::cout << "    max_tree_size (defaults to 100)" << std::endl;
-            std::cout << "    min_crossover_tree_size (default 50)"<<std::endl;
-            std::cout << "    max_crossover_tree_size (default 150)"<<std::endl;
+            std::cout << "    max_init_tree_size (defaults to 100)"<< std::endl;
+            std::cout << "    min_crossover_tree_size "
+                         "(default max_init_tree_size_ * 0.5)" << std::endl;
+            std::cout << "    max_crossover_tree_size "
+                         "(default max_init_tree_size_ * 1.5)" << std::endl;
             std::cout << std::endl;
             exit(EXIT_FAILURE);
         }

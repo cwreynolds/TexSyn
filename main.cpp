@@ -4754,21 +4754,20 @@ int main(int argc, const char * argv[])
     Uniform c1(0.1, 0.5, 1.0);
     {
         Timer t("GaborNoise A");
-        Texture::displayAndFile(GaborNoise(1000,
-                                           0.3, 0.6,
-                                           0.01, 0.03,
-                                           0, pi / 4,
-                                           c0, c1)
+        Texture::displayAndFile(GaborNoisePrototype(1000,
+                                                    0.3, 0.6,
+                                                    0.01, 0.03,
+                                                    0, pi / 4,
+                                                    c0, c1)
                                 );  // , path + "GaborNoise_test_a");
     }
     {
         Timer t("GaborNoise B");
-        Texture::displayAndFile(GaborNoise(1000,
-                                           0.2, 0.8,
-                                           0.01, 0.03,
-//                                           0, pi * 0.33,
-                                           pi * 0.33, pi * 0.66,
-                                           c0, c1)
+        Texture::displayAndFile(GaborNoisePrototype(1000,
+                                                    0.2, 0.8,
+                                                    0.01, 0.03,
+                                                    pi * 0.33, pi * 0.66,
+                                                    c0, c1)
                                 );  // , path + "GaborNoise_test_b");
     }
     Texture::waitKey();
