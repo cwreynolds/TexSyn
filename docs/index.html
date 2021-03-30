@@ -85,31 +85,31 @@
     <div class="post" id="20210328"> <a href="#20210328" class="date">March 28,
         2021</a>
       <h1>Gabor noise experiments</h1>
-      <p>And now for something completely different, the TexSyn devo blog
-        presents: texture synthesis! First post on that topic since <a href="#20200731">July
-          31, 2020</a>.</p>
-      <p>Have you ever built something incorrectly, then repeatedly tried
-        tweaking it, without understanding the larger underlying problem?
-        What...no? Hmm, right, me neither.</p>
-      <p>On a completely unrelated topic, here is a (<em>finally working!</em>)
+      <p>And now for the first time since <a href="#20200731">July 31, 2020</a>,
+        a post in this TexSyn devo blog about texture synthesis! Have you ever
+        built something incorrectly, then repeatedly tried tweaking it, while
+        failing to understand the underlying problem? What...no? Hmm, right, me
+        neither...</p>
+      <p>On a completely unrelated topic, here is a (<em>now finally working!</em>)
         prototype of noise pattern synthesis using sparse Gabor kernels. This is
         roughly based on the SIGGRAPH paper <a href="https://doi.org/10.1145/1576246.1531360">Procedural
-          noise using sparse Gabor convolution</a> (2009, Lagae, <em>et al.</em>)
-        A preprint of which appeared while I was working on an earlier version
-        of this library, so I make a <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090509">quick
+          noise using sparse Gabor convolution</a> (2009, Lagae, <em>et al.</em>).
+        A preprint of that appeared while I was working on an earlier version of
+        this library, so I make a <a href="https://www.red3d.com/cwr/texsyn/diary.html#20090509">quick
           prototype</a>. It was too slow to use as-was, so I did not use this
-        category of noise texture in my earlier work. Much later I happened onto
+        category of noise texture in my earlier work. Much later, I found
         another SIGGRAPH paper <a href="https://doi.org/10.1145/3306346.3322990">Procedural
           phasor noise</a> (2019, Tricard/Efremov, <em>et al.</em>) which
-        improved on this approach to noise synthesis.</p>
-      <p>I wanted to start with the 2009 version. This prototype <em>GaborNoise</em>
-        texture operator mattes between two given textures based on a scalar
-        texture composed of many randomized Gabor kernels. The parameters are:
-        the number of kernels (<span style="font-size: 80%;">over a 10x10
-          region, whereas the renderings below have a diameter of 2</span>), min
-        and max bounds for random kernel radius, min and max bounds for random
-        kernel wavelength, min and max bounds for random kernel rotation, and
-        the two input textures:</p>
+        improved on this approach to noise synthesis. That technique is next on
+        my agenda.</p>
+      <p>I wanted to start with the 2009 version. This <em>GaborNoisePrototype</em>
+        texture operator combines two given textures based on a scalar texture
+        composed of many randomized Gabor kernels. The parameters are: the
+        number of kernels (<span style="font-size: 80%;">over a 10x10 region,
+          whereas the renderings below have a diameter of 2</span>), min and max
+        bounds for random kernel radius, min and max bounds for random kernel
+        wavelength, min and max bounds for random kernel rotation, and the two
+        input textures:</p>
       <pre>Uniform orange   (1.0, 0.5, 0.1)
 Uniform cyan_blue(0.1, 0.5, 1.0)
 GaborNoisePrototype(1000,   0.3, 0.6,   0.01, 0.03,           0, pi * 0.25,   orange, cyan_blue))
