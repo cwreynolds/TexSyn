@@ -193,6 +193,9 @@ public:
         {
             // Store to allow access in mouse handler.
             step_ = population.getStepCount();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            population_ = &population;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Display step count in GUI title bar.
             std::string step_string = " (step " + std::to_string(step_) + ")";
             gui().setWindowTitle(run_name_ + step_string);
@@ -259,6 +262,11 @@ public:
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
         // Update the onscreen image. Wait for user to click on one texture.
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        std::chrono::time_point<std::chrono::high_resolution_clock>
+        now_time = std::chrono::high_resolution_clock::now();
+        population_->setStartTime(now_time);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().refresh();
         setMouseCallbackForTournamentFunction();
         waitForMouseUp();
@@ -527,5 +535,8 @@ private:
     cv::Mat background_image_;
     // Monitor up/down status of (left) mouse button.
     bool mouse_left_button_down_ = false;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Population* population_ = nullptr;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
