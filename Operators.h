@@ -1057,7 +1057,7 @@ class Mirror : public Texture
 {
 public:
     Mirror(Vec2 _line_tangent, Vec2 _center, const Texture& _texture)
-      : line_tangent(_line_tangent),
+      : line_tangent(_line_tangent.normalize()),
         perpendicular(line_tangent.rotate90degCW()),
         center(_center),
         texture(_texture) {}

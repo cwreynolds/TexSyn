@@ -4774,11 +4774,196 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210316 tag the 0.9.4 "release"
-    std::cout << "March 16, 2021" << std::endl;
+//    // 20210316 tag the 0.9.4 "release"
+//    std::cout << "March 16, 2021" << std::endl;
+//
+//    Camouflage(argc, argv).run();
 
-    Camouflage(argc, argv).run();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // TODO 20210401 very temp test
+    
+    // 20210401 Gabor kernel noise experiment
+    std::cout << "April 1, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210401_";
+
+    
+    // Original
+    Texture::displayAndFile(Mirror(Vec2(3.21816, -3.75822),
+                                   Vec2(3.35559, -2.45618),
+                                   LotsOfButtons(0.525498,
+                                                 0.961501,
+                                                 0.142252,
+                                                 0.435903,
+                                                 0.113291,
+                                                 Vec2(1.57994, 4.01201),
+                                                 Gradation(Vec2(1.80012, -2.66427),
+                                                           Gamma(9.51904,
+                                                                 Uniform(0.960211, 0.096008, 0.597687)),
+                                                           Vec2(1.78565, 2.38711),
+                                                           Blur(0.409173,
+                                                                BrightnessWrap(0.271493,
+                                                                               0.0877538,
+                                                                               BrightnessToHue(0.55085,
+                                                                                               AdjustSaturation(0.231542,
+                                                                                                                EdgeDetect(0.598311,
+                                                                                                                           Uniform(0.814141, 0.52608, 0.431994))))))),
+                                                 0.754812,
+                                                 Twist(2.92905,
+                                                       1.55438,
+                                                       Vec2(-2.18284, 4.04233),
+                                                       BrightnessWrap(0.887923,
+                                                                      0.72951,
+                                                                      Affine(Vec2(-0.3471, 4.48348),
+                                                                             Vec2(-3.05151, -0.422401),
+                                                                             AdjustBrightness(0.635429,
+                                                                                              Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                                                       BrightnessWrap(0.940368,
+                                                                                                                      0.6996,
+                                                                                                                      Uniform(0.538748, 0.0987566, 0.542896)))))))))
+                            );  //  , path + "original");
+    
+    Texture::displayAndFile(Mirror(Vec2(3.21816, -3.75822).normalize(),
+                                   Vec2(3.35559, -2.45618),
+                                   LotsOfButtons(0.525498,
+                                                 0.961501,
+                                                 0.142252,
+                                                 0.435903,
+                                                 0.113291,
+                                                 Vec2(1.57994, 4.01201),
+                                                 Gradation(Vec2(1.80012, -2.66427),
+                                                           Gamma(9.51904,
+                                                                 Uniform(0.960211, 0.096008, 0.597687)),
+                                                           Vec2(1.78565, 2.38711),
+                                                           Blur(0.409173,
+                                                                BrightnessWrap(0.271493,
+                                                                               0.0877538,
+                                                                               BrightnessToHue(0.55085,
+                                                                                               AdjustSaturation(0.231542,
+                                                                                                                EdgeDetect(0.598311,
+                                                                                                                           Uniform(0.814141, 0.52608, 0.431994))))))),
+                                                 0.754812,
+                                                 Twist(2.92905,
+                                                       1.55438,
+                                                       Vec2(-2.18284, 4.04233),
+                                                       BrightnessWrap(0.887923,
+                                                                      0.72951,
+                                                                      Affine(Vec2(-0.3471, 4.48348),
+                                                                             Vec2(-3.05151, -0.422401),
+                                                                             AdjustBrightness(0.635429,
+                                                                                              Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                                                       BrightnessWrap(0.940368,
+                                                                                                                      0.6996,
+                                                                                                                      Uniform(0.538748, 0.0987566, 0.542896)))))))))
+                            );  //  path + "normalized");
+
+    //LotsOfButtons(<#float _spot_density#>, <#float _min_radius#>, <#float _max_radius#>, <#float _soft_edge_width#>, <#float _margin#>, <#Vec2 _button_center#>, <#const Texture &_button_texture#>, <#float _button_random_rotate#>, <#const Texture &_background_texture#>)
+    Texture::displayAndFile(LotsOfButtons(0.525498,
+                                          0.961501,
+                                          0.142252,
+                                          0.435903,
+                                          0.113291,
+                                          Vec2(1.57994, 4.01201),
+                                          Gradation(Vec2(1.80012, -2.66427),
+                                                    Gamma(9.51904,
+                                                          Uniform(0.960211, 0.096008, 0.597687)),
+                                                    Vec2(1.78565, 2.38711),
+                                                    Blur(0.409173,
+                                                         BrightnessWrap(0.271493,
+                                                                        0.0877538,
+                                                                        BrightnessToHue(0.55085,
+                                                                                        AdjustSaturation(0.231542,
+                                                                                                         EdgeDetect(0.598311,
+                                                                                                                    Uniform(0.814141, 0.52608, 0.431994))))))),
+                                          0.754812,
+                                          Twist(2.92905,
+                                                1.55438,
+                                                Vec2(-2.18284, 4.04233),
+                                                BrightnessWrap(0.887923,
+                                                               0.72951,
+                                                               Affine(Vec2(-0.3471, 4.48348),
+                                                                      Vec2(-3.05151, -0.422401),
+                                                                      AdjustBrightness(0.635429,
+                                                                                       Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                                                BrightnessWrap(0.940368,
+                                                                                                               0.6996,
+                                                                                                               Uniform(0.538748, 0.0987566, 0.542896))))))))
+                            );  //  path + "buttons");
+    
+    // Mirror(<#Vec2 _line_tangent#>, <#Vec2 _center#>, <#const Texture &_texture#>)
+    Uniform red(1, 0, 0);
+    Uniform blue(0, 0, 1);
+    Texture::displayAndFile(Mirror(Vec2(3.21816, -3.75822),
+                                   Vec2(3.35559, -2.45618),
+                                   Spot(Vec2(), 0, red, 0.5, blue)));
+    // debugPrint(Vec2(3.21816, -3.75822).length());
+    // Vec2(3.21816, -3.75822).length() = 4.9478
+    
+    // Button texture:
+    Texture::displayAndFile
+    (Gradation(Vec2(1.80012, -2.66427),
+               Gamma(9.51904,
+                     Uniform(0.960211, 0.096008, 0.597687)),
+               Vec2(1.78565, 2.38711),
+               Blur(0.409173,
+                    BrightnessWrap(0.271493,
+                                   0.0877538,
+                                   BrightnessToHue(0.55085,
+                                                   AdjustSaturation(0.231542,
+                                                                    EdgeDetect(0.598311,
+                                                                               Uniform(0.814141, 0.52608, 0.431994))))))));
+    
+    // Background texture:
+    Texture::displayAndFile(Twist(2.92905,
+                                  1.55438,
+                                  Vec2(-2.18284, 4.04233),
+                                  BrightnessWrap(0.887923,
+                                                 0.72951,
+                                                 Affine(Vec2(-0.3471, 4.48348),
+                                                        Vec2(-3.05151, -0.422401),
+                                                        AdjustBrightness(0.635429,
+                                                                         Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                                  BrightnessWrap(0.940368,
+                                                                                                 0.6996,
+                                                                                                 Uniform(0.538748, 0.0987566, 0.542896))))))));
+    
+//    Texture::displayAndFile(Scale(0.14,
+    Texture::displayAndFile(Scale(0.07,
+                                  Mirror(Vec2(3.21816, -3.75822),
+                                         Vec2(3.35559, -2.45618),
+                                         LotsOfButtons(0.525498,
+                                                       0.961501,
+                                                       0.142252,
+                                                       0.435903,
+                                                       0.113291,
+                                                       Vec2(1.57994, 4.01201),
+                                                       Gradation(Vec2(1.80012, -2.66427),
+                                                                 Gamma(9.51904,
+                                                                       Uniform(0.960211, 0.096008, 0.597687)),
+                                                                 Vec2(1.78565, 2.38711),
+                                                                 Blur(0.409173,
+                                                                      BrightnessWrap(0.271493,
+                                                                                     0.0877538,
+                                                                                     BrightnessToHue(0.55085,
+                                                                                                     AdjustSaturation(0.231542,
+                                                                                                                      EdgeDetect(0.598311,
+                                                                                                                                 Uniform(0.814141, 0.52608, 0.431994))))))),
+                                                       0.754812,
+                                                       Twist(2.92905,
+                                                             1.55438,
+                                                             Vec2(-2.18284, 4.04233),
+                                                             BrightnessWrap(0.887923,
+                                                                            0.72951,
+                                                                            Affine(Vec2(-0.3471, 4.48348),
+                                                                                   Vec2(-3.05151, -0.422401),
+                                                                                   AdjustBrightness(0.635429,
+                                                                                                    Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                                                             BrightnessWrap(0.940368,
+                                                                                                                            0.6996,
+                                                                                                                            Uniform(0.538748, 0.0987566, 0.542896)))))))))));
+
+    Texture::waitKey();
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

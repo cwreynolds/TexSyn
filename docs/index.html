@@ -82,6 +82,92 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210401"> <a href="#20210401" class="date">April 1,
+        2021</a>
+      <h1><em>Mirror</em> should not scale, and other stories</h1>
+      <p>Today I found a bug in the <em>Mirror</em> texture operator. (See post
+        on <a href="#20200309">March 9, 2020</a>, making it a 388 day old bug,
+        yikes!) I would suggest that by the <a href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">principle
+          of least surprise</a>, applying <em>Mirror</em> to a texture should
+        simply mirror it about the given line. Unfortunately, as originally
+        written, the given tangent(-to-the-mirror-line) vector was treated as a
+        basis vector of the new space, so had the unintended effect of scaling
+        the input texture by 1/length.</p>
+      <p>This bug was very simple to fix, but shows a problem with doing your
+        testing with self-designed examples. I am a fan of unit tests (and <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>)
+        but in the end, they only test for the failures you anticipate. I made
+        simple test cases, by hand, when working on <em>Mirror</em>, which in
+        retrospect were too simple. For example: passing in pre-normalized
+        vectors, probably parallel to the coordinate system axes. <a href="https://www.karlsims.com/">Karl
+          Sims</a> did pioneering work in <a href="https://www.karlsims.com/papers/siggraph94.pdf">evolutionary</a>(/<a
+          href="https://www.karlsims.com/papers/alife94.pdf">co-evolutionary</a>)
+        morphogenesis and behavior. He noted that evolution was great at coming
+        up with unanticipated test cases, exposing bugs, which evolution would
+        then exploit to increase fitness.</p>
+      <p>How this came up: I was doing a quick check of <code>evo_camo_game</code>
+        after a code modification, to verify things were behaving correctly.
+        This camouflaged prey appeared at step 324 of a run on my “clover”
+        background:</p>
+      <img src="images/20210401_thumbnail_324_b.png" alt="thumbnail" title="thumbnail"
+        width="402" height="402">
+      <p>I had been surprised by similar textures before, so decided to dig in.
+        This texture exhibits an obvious square tiling. TexSyn supports such
+        textures (see last example on <a href="#20200312">March 12, 2020</a>)
+        but I've seen too many like this (perpendicular, square, axis-aligned)
+        to believe that was the source. I suspected it was a scaled down version
+        of the “large” tiling used for spot patterns. I saved the thumbnail
+        above, which now also saves the source code:</p>
+      <pre>Mirror(Vec2(3.21816, -3.75822),
+       Vec2(3.35559, -2.45618),
+       LotsOfButtons(0.525498,
+                     0.961501,
+                     0.142252,
+                     0.435903,
+                     0.113291,
+                     Vec2(1.57994, 4.01201),
+                     Gradation(Vec2(1.80012, -2.66427),
+                               Gamma(9.51904,
+                                     Uniform(0.960211, 0.096008, 0.597687)),
+                               Vec2(1.78565, 2.38711),
+                               Blur(0.409173,
+                                    BrightnessWrap(0.271493,
+                                                   0.0877538,
+                                                   BrightnessToHue(0.55085,
+                                                                   AdjustSaturation(0.231542,
+                                                                                    EdgeDetect(0.598311,
+                                                                                               Uniform(0.814141, 0.52608, 0.431994))))))),
+                     0.754812,
+                     Twist(2.92905,
+                           1.55438,
+                           Vec2(-2.18284, 4.04233),
+                           BrightnessWrap(0.887923,
+                                          0.72951,
+                                          Affine(Vec2(-0.3471, 4.48348),
+                                                 Vec2(-3.05151, -0.422401),
+                                                 AdjustBrightness(0.635429,
+                                                                  Subtract(Uniform(0.165418, 0.545178, 0.589462),
+                                                                           BrightnessWrap(0.940368,
+                                                                                          0.6996,
+                                                                                          Uniform(0.538748, 0.0987566, 0.542896)))))))))</pre>
+      <p>Looking at just the first three lines, indeed there is a <em>LotsOfButtons</em>
+        operator, wrapped by a <em>Mirror</em> operator. I re-rendered the
+        texture:</p>
+      <img src="images/20210401_original.png" alt="original" title="original" width="511"
+        height="511">
+      <p>Once I changed Mirror to normalize its line_tangent parameter, I got:</p>
+      <img src="images/20210401_normalized.png" alt="normalized" title="normalized"
+        width="511" height="511">
+      <p>And indeed, when I rendered just the third parameter to Mirror, the <em>LotsOfButtons</em>
+        operator itself, I get the same thing, which is (I <em>think</em>) what
+        it should be:</p>
+      <img src="images/20210401_buttons.png" alt="buttons" title="buttons" width="511"
+        height="511">
+      <p>But this is a good news / bad news situation, or perhaps a “twofer” of
+        old bug discovery. I suspect the “spots” (the textured “buttons”) should
+        all be visually similar, the same gradient between two shades of orange.
+        Instead, I see some orange and some a more red color. More on that as I
+        dig further.</p>
+    </div>
     <div class="post" id="20210328"> <a href="#20210328" class="date">March 28,
         2021</a>
       <h1>Gabor noise experiments</h1>
