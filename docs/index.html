@@ -98,25 +98,26 @@
         but in the end, they only test for the failures you anticipate. I made
         simple test cases, by hand, when working on <em>Mirror</em>, which in
         retrospect were too simple. For example: passing in pre-normalized
-        vectors, probably parallel to the coordinate system axes. <a href="https://www.karlsims.com/">Karl
-          Sims</a> did pioneering work in <a href="https://www.karlsims.com/papers/siggraph94.pdf">evolutionary</a>(/<a
-          href="https://www.karlsims.com/papers/alife94.pdf">co-evolutionary</a>)
-        morphogenesis and behavior. He noted that evolution was great at coming
-        up with unanticipated test cases, exposing bugs, which evolution would
-        then exploit to increase fitness.</p>
+        vectors, parallel to the main axes. In 1994 <a href="https://www.karlsims.com/">Karl
+          Sims</a> did pioneering work <a href="https://www.karlsims.com/papers/siggraph94.pdf">evolving</a>(/<a
+          href="https://www.karlsims.com/papers/alife94.pdf">co-evolving</a>)
+        morphogenesis and behavior for virtual creatures. He noted that
+        evolution was great at coming up with unanticipated test cases, so
+        exposing bugs, which evolution would then exploit to increase fitness.</p>
       <p>How this came up: I was doing a quick check of <code>evo_camo_game</code>
-        after a code modification, to verify things were behaving correctly.
-        This camouflaged prey appeared at step 324 of a run on my “clover”
+        after a code change, to verify things were behaving correctly. This
+        camouflaged prey appeared at step 324 of a run on my “clover”
         background:</p>
       <img src="images/20210401_thumbnail_324_b.png" alt="thumbnail" title="thumbnail"
         width="402" height="402">
       <p>I had been surprised by similar textures before, so decided to dig in.
-        This texture exhibits an obvious square tiling. TexSyn supports such
-        textures (see last example on <a href="#20200312">March 12, 2020</a>)
-        but I've seen too many like this (perpendicular, square, axis-aligned)
-        to believe that was the source. I suspected it was a scaled down version
-        of the “large” tiling used for spot patterns. I saved the thumbnail
-        above, which now also saves the source code:</p>
+        This texture exhibits an annoyingly obvious square tiling. TexSyn
+        supports such textures (see last example on <a href="#20200312">March
+          12, 2020</a>) but I've seen too many like this (perpendicular, square,
+        axis-aligned) to believe that was the source. I suspected it was a
+        scaled down version of the “large” tiling used for spot patterns. I
+        saved the thumbnail above, which now also saves the source code in a
+        text file:</p>
       <pre>Mirror(Vec2(3.21816, -3.75822),
        Vec2(3.35559, -2.45618),
        LotsOfButtons(0.525498,
@@ -149,17 +150,19 @@
                                                                            BrightnessWrap(0.940368,
                                                                                           0.6996,
                                                                                           Uniform(0.538748, 0.0987566, 0.542896)))))))))</pre>
-      <p>Looking at just the first three lines, indeed there is a <em>LotsOfButtons</em>
-        operator, wrapped by a <em>Mirror</em> operator. I re-rendered the
-        texture:</p>
+      <p>Ignoring the details, it is a <em>LotsOfButtons</em> operator, wrapped
+        by a <em>Mirror</em> operator:</p>
+      <pre>Mirror(Vec2(...), Vec2(...), LotsOfButtons(...))</pre>
+      <p>I re-rendered the texture from that source code:</p>
       <img src="images/20210401_original.png" alt="original" title="original" width="511"
         height="511">
-      <p>Once I changed Mirror to normalize its line_tangent parameter, I got:</p>
+      <p>Then after I changed <em>Mirror</em> to normalize its <code>line_tangent</code>
+        parameter, I got:</p>
       <img src="images/20210401_normalized.png" alt="normalized" title="normalized"
         width="511" height="511">
-      <p>And indeed, when I rendered just the third parameter to Mirror, the <em>LotsOfButtons</em>
-        operator itself, I get the same thing, which is (I <em>think</em>) what
-        it should be:</p>
+      <p>And indeed, when I rendered just the third parameter to <em>Mirror</em>,
+        the <em>LotsOfButtons</em> operator itself, I get the same thing. I <em>think</em>
+        that is the desired result, but I was wrong before:</p>
       <img src="images/20210401_buttons.png" alt="buttons" title="buttons" width="511"
         height="511">
       <p>But this is a good news / bad news situation, or perhaps a “twofer” of
@@ -188,14 +191,13 @@
           phasor noise</a> (2019, Tricard/Efremov, <em>et al.</em>) which
         improved on this approach to noise synthesis. That technique is next on
         my agenda.</p>
-      <p>I wanted to start with the 2009 version. This <em>GaborNoisePrototype</em>
+      <p>I wanted to start with the 2009 approach. This <em>GaborNoisePrototype</em>
         texture operator combines two given textures based on a scalar texture
         composed of many randomized Gabor kernels. The parameters are: the
         number of kernels (<span style="font-size: 80%;">over a 10x10 region,
-          whereas the renderings below have a diameter of 2</span>), min and max
-        bounds for random kernel radius, min and max bounds for random kernel
-        wavelength, min and max bounds for random kernel rotation, and the two
-        input textures:</p>
+          whereas the renderings below have a diameter of 2</span>), then min
+        and max bounds for uniform random selection of: kernel radius, kernel
+        wavelength, kernel rotation, and lastly the two input textures:</p>
       <pre>Uniform orange   (1.0, 0.5, 0.1)
 Uniform cyan_blue(0.1, 0.5, 1.0)
 GaborNoisePrototype(1000,   0.3, 0.6,   0.01, 0.03,           0, pi * 0.25,   orange, cyan_blue))
