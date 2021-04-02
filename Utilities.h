@@ -245,6 +245,10 @@ typedef std::complex<float> Complex;
 Complex inverse_mobius_transform(Complex z,
                                  Complex a, Complex b, Complex c, Complex d);
 
+typedef std::chrono::high_resolution_clock TimeClock;
+typedef std::chrono::time_point<TimeClock> TimePoint;
+typedef std::chrono::duration<double> TimeDuration;
+
 // Simple tool for inline timing sections of code. For example:
 //    void foo()
 //    {

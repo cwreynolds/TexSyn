@@ -4774,13 +4774,13 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//    // 20210316 tag the 0.9.4 "release"
-//    std::cout << "March 16, 2021" << std::endl;
-//
-//    Camouflage(argc, argv).run();
+    // 20210316 tag the 0.9.4 "release"
+    std::cout << "March 16, 2021" << std::endl;
+
+    Camouflage(argc, argv).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+/*
     // TODO 20210401 very temp test
     
     // 20210401 Gabor kernel noise experiment
@@ -4964,6 +4964,7 @@ int main(int argc, const char * argv[])
                                                                                                                             Uniform(0.538748, 0.0987566, 0.542896)))))))))));
 
     Texture::waitKey();
+ */
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

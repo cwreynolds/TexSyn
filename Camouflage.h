@@ -193,9 +193,7 @@ public:
         {
             // Store to allow access in mouse handler.
             step_ = population.getStepCount();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             population_ = &population;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Display step count in GUI title bar.
             std::string step_string = " (step " + std::to_string(step_) + ")";
             gui().setWindowTitle(run_name_ + step_string);
@@ -262,15 +260,11 @@ public:
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
         // Update the onscreen image. Wait for user to click on one texture.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        std::chrono::time_point<std::chrono::high_resolution_clock>
-        now_time = std::chrono::high_resolution_clock::now();
-        population_->setStartTime(now_time);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        TimePoint time_start_waiting = TimeClock::now();
         gui().refresh();
         setMouseCallbackForTournamentFunction();
-        waitForMouseUp();
         waitForUserInput();
+        population_->setIdleTime(TimeClock::now() - time_start_waiting);
         // Designate selected Texture's Individual as worst of TournamentGroup.
         Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
         tg.designateWorstIndividual(worst);
@@ -301,6 +295,7 @@ public:
     // executes single character commands: "t" and "Q".
     void waitForUserInput()
     {
+        waitForMouseUp();  // In case mouse button still down from last click.
         wait_for_mouse_click_ = true;
         int previous_key = cv::waitKeyEx(1);
         // Loop until mouse is clicked in window.
@@ -535,8 +530,7 @@ private:
     cv::Mat background_image_;
     // Monitor up/down status of (left) mouse button.
     bool mouse_left_button_down_ = false;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO Temp replace with shared pointer to heap-allocated instance.
     Population* population_ = nullptr;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
