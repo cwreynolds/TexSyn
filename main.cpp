@@ -4774,10 +4774,10 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210316 tag the 0.9.4 "release"
-    std::cout << "March 16, 2021" << std::endl;
-
-    Camouflage(argc, argv).run();
+//    // 20210316 tag the 0.9.4 "release"
+//    std::cout << "March 16, 2021" << std::endl;
+//
+//    Camouflage(argc, argv).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 /*
@@ -4965,6 +4965,26 @@ int main(int argc, const char * argv[])
 
     Texture::waitKey();
  */
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // 20210403 refactor Camouflage constructor to take a CommandLine argument.
+    std::cout << "April 3, 2021" << std::endl;
+    
+    // Obsolete:
+    // Camouflage(argc, argv).run();
+    
+    // To build command:
+    // Camouflage(CommandLine(argc, argv)).run();
+    
+    // For debugging from here inside Xcode.
+    CommandLine cmdlin({"evo_camo_game",
+                        "/Users/cwr/Pictures/camouflage_backgrounds/clover",
+                        "/Users/cwr/Desktop/TexSyn_temp/",
+                        "0.5",
+                        "63612358"});
+    Camouflage(cmdlin).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
