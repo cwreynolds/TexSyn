@@ -161,12 +161,12 @@ public:
     {
         LPRS().setSeed(random_seed_);
         std::cout << "Create initial population." << std::endl;
-        Population population(individuals_,
-                              subpops_,
-                              max_init_tree_size_,
-                              min_crossover_tree_size_,
-                              max_crossover_tree_size_,
-                              GP::fs());
+        setPopulation(std::make_shared<Population>(individuals_,
+                                                   subpops_,
+                                                   max_init_tree_size_,
+                                                   min_crossover_tree_size_,
+                                                   max_crossover_tree_size_,
+                                                   GP::fs()));
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
         std::filesystem::path out = output_directory_this_run_;
@@ -179,17 +179,16 @@ public:
         // Loop "forever" performing interactive evolution steps.
         while (true)
         {
-            // Store to allow access in mouse handler.
-            step_ = population.getStepCount();
-            population_ = &population;
             // Display step count in GUI title bar.
-            std::string step_string = " (step " + std::to_string(step_) + ")";
+            std::string step_string = " (step " + getStepAsString() + ")";
             gui().setWindowTitle(run_name_ + step_string);
             // Evolution step with wrapped Camouflage::tournamentFunction().
-            population.evolutionStep([&]
-                                     (TournamentGroup tg)
-                                     { return tournamentFunction(tg); });
+            getPopulation()->evolutionStep([&]
+                                           (TournamentGroup tg)
+                                           { return tournamentFunction(tg); });
         }
+        // TODO not currently reachable because of "infinite loop" above.
+        setPopulation(nullptr);
     }
     
     // TODO temporary utility for debugging random non-overlapping placement
@@ -252,7 +251,8 @@ public:
         gui().refresh();
         setMouseCallbackForTournamentFunction();
         waitForUserInput();
-        population_->setIdleTime(TimeClock::now() - time_start_waiting);
+        // Note time user took to respond. Ignored in logging of time per frame.
+        getPopulation()->setIdleTime(TimeClock::now() - time_start_waiting);
         // Designate selected Texture's Individual as worst of TournamentGroup.
         Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
         tg.designateWorstIndividual(worst);
@@ -362,7 +362,7 @@ public:
     {
         cv::Mat image = gui().getCvMat();
         std::filesystem::path path = output_directory_this_run_;
-        path /= "step_" + std::to_string(step_) + ".png";
+        path /= "step_" + getStepAsString() + ".png";
         std::cout << "Writing tournament image to file " << path << std::endl;
         cv::imwrite(path, image);
     }
@@ -385,7 +385,7 @@ public:
         // Construct a name for the thumbnail image file.
         std::vector<std::string> suffixes = {"_a", "_b", "_c"};
         std::string suffix = suffixes.at(index);
-        std::string step = std::to_string(step_);
+        std::string step = getStepAsString();
         // Construct pathname for file.
         std::filesystem::path path = output_directory_this_run_;
         path /= ("thumbnail_" + step + suffix + ".png");
@@ -469,6 +469,17 @@ public:
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
     }
+        
+    // Returns, as a string, current Population evolution "step" number.
+    std::string getStepAsString() const
+    {
+        return std::to_string(getPopulation()->getStepCount());
+    }
+
+    // Get/set a shared_ptr to this run's current Population.
+    std::shared_ptr<Population> getPopulation() { return population_; };
+    std::shared_ptr<Population> getPopulation() const { return population_; };
+    void setPopulation(std::shared_ptr<Population> p) { population_ = p; };
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
@@ -510,13 +521,11 @@ private:
     std::vector<Disk> disks_;
     // TournamentGroup with pointers to 3 textures of most recent tournament.
     TournamentGroup tournament_group_;
-    // Set to step count of Population in run() loop.
-    int step_ = 0;
     // Randomly selected rectagle of randomly selected background image.
     cv::Mat background_image_;
     // Monitor up/down status of (left) mouse button.
     bool mouse_left_button_down_ = false;
-    // TODO Temp replace with shared pointer to heap-allocated instance.
-    Population* population_ = nullptr;
+    // Points to heap-allocated Population instance during run() function.
+    std::shared_ptr<Population> population_ = nullptr;
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
