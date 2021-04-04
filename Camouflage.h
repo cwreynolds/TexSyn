@@ -176,8 +176,9 @@ public:
         // Init GUI window.
         gui().setWindowName(run_name_);
         gui().refresh();
-        // Loop "forever" performing interactive evolution steps.
-        while (true)
+        // Loop of interactive evolution steps, until "Q" command or forced exit.
+        running_ = true;
+        while (running_)
         {
             // Display step count in GUI title bar.
             std::string step_string = " (step " + getStepAsString() + ")";
@@ -187,7 +188,7 @@ public:
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
         }
-        // TODO not currently reachable because of "infinite loop" above.
+        // Delete Population instance.
         setPopulation(nullptr);
     }
     
@@ -296,8 +297,12 @@ public:
             {
                 // For "t" command: write whole window tournament image to file.
                 if (key == 't') { writeTournamentImageToFile(); }
-                // For "Q" command: exit app immediately.
-                if (key == 'Q') { exit(EXIT_SUCCESS); }
+                // For "Q" command: exit run() loop.
+                if (key == 'Q')
+                {
+                    running_ = false;
+                    wait_for_mouse_click_ = false;
+                }
             }
             previous_key = key;
         }
@@ -527,5 +532,7 @@ private:
     bool mouse_left_button_down_ = false;
     // Points to heap-allocated Population instance during run() function.
     std::shared_ptr<Population> population_ = nullptr;
+    // True during the step loop in run(). Set to false by "Q" command.
+    bool running_ = false;
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
