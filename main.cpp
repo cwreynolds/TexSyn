@@ -4891,7 +4891,6 @@ int main(int argc, const char * argv[])
                                                                                                                Uniform(0.538748, 0.0987566, 0.542896))))))))
                             );  //  path + "buttons");
     
-    // Mirror(<#Vec2 _line_tangent#>, <#Vec2 _center#>, <#const Texture &_texture#>)
     Uniform red(1, 0, 0);
     Uniform blue(0, 0, 1);
     Texture::displayAndFile(Mirror(Vec2(3.21816, -3.75822),
@@ -4968,22 +4967,29 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210403 refactor Camouflage constructor to take a CommandLine argument.
-    std::cout << "April 3, 2021" << std::endl;
+//    // 20210403 refactor Camouflage constructor to take a CommandLine argument.
+//    std::cout << "April 3, 2021" << std::endl;
+//
+//    // Obsolete:
+//    // Camouflage(argc, argv).run();
+//
+//    // To build command:
+//    // Camouflage(CommandLine(argc, argv)).run();
+//
+//    // For debugging from here inside Xcode.
+//    CommandLine cmdlin({"evo_camo_game",
+//                        "/Users/cwr/Pictures/camouflage_backgrounds/clover",
+//                        "/Users/cwr/Desktop/TexSyn_temp/",
+//                        "0.5",
+//                        "63612358"});
+//    Camouflage(cmdlin).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Obsolete:
-    // Camouflage(argc, argv).run();
-    
-    // To build command:
-    // Camouflage(CommandLine(argc, argv)).run();
-    
-    // For debugging from here inside Xcode.
-    CommandLine cmdlin({"evo_camo_game",
-                        "/Users/cwr/Pictures/camouflage_backgrounds/clover",
-                        "/Users/cwr/Desktop/TexSyn_temp/",
-                        "0.5",
-                        "63612358"});
-    Camouflage(cmdlin).run();
+    // 20210405 tag the evo_camo_game 0.9.5 "release"
+    std::cout << "April 5, 2021" << std::endl;
+        
+    Camouflage(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
