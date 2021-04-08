@@ -1681,10 +1681,12 @@ private:
 class PhasorNoisePrototype : public Texture
 {
 public:
-    PhasorNoisePrototype(const Texture& texture0,
-                         const Texture& texture1)
-      : texture0_(texture0),
-        texture1_(texture1) {}
+    PhasorNoisePrototype() : texture0_(*this), texture1_(*this) {}
+
+    //    PhasorNoisePrototype(const Texture& texture0,
+//                         const Texture& texture1)
+//      : texture0_(texture0),
+//        texture1_(texture1) {}
     
     // TODO code below originally copied from https://www.shadertoy.com/view/wlsXWf
     
@@ -1762,7 +1764,10 @@ public:
     // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
     float LocallyCoherentRandomDirectionField(Vec2 uv)
     {
-        return PerlinNoise::unitNoise2d(uv / 10);
+//        return PerlinNoise::unitNoise2d(uv / 10);
+//        return PerlinNoise::unitNoise2d(uv * 10);
+//        return PerlinNoise::unitNoise2d(uv);
+        return PerlinNoise::unitNoise2d(uv * 3);
     }
 
 
@@ -1817,8 +1822,13 @@ public:
 //            vec2 trueUv = ((vec2(ij) + impulse_centre) *cellsz) *  iResolution.yy / iResolution.xy;
 //            trueUv.y = -trueUv.y;
 //            float aspect_ratio = iResolution.y() / iResolution.x();
-            Vec2 trueUv = ((Vec2(i, j) + impulse_centre) * cellsz) * _aspect_ratio;
-            trueUv = Vec2(trueUv.x(), -trueUv.y());
+            
+//            Vec2 trueUv = ((Vec2(i, j) + impulse_centre) * cellsz) * _aspect_ratio;
+//            trueUv = Vec2(trueUv.x(), -trueUv.y());
+            // TODO cwr april 7
+            Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
+//            trueUv = Vec2(trueUv.x(), -trueUv.y());
+
 //            float o = texture(iChannel0, trueUv).x *2.0* M_PI;
 //            noise += phasor(d, f, b ,o,rp );
 //            float o = texture(iChannel0, trueUv).x() * 2 * pi;
@@ -1888,7 +1898,7 @@ public:
     float PWM(float x, float r)
     {
 //        return mod(x,2.0*M_PI)> 2.0*M_PI *r ? 1.0 : 0.0;
-        return std::fmod(x,2.0*pi)> 2.0*pi *r ? 1.0 : 0.0;
+        return (std::fmod(x, 2 * pi) > 2 * pi * r) ? 1 : 0;
     }
     
     float square(float x)
@@ -1938,18 +1948,27 @@ public:
 //    void mainImage( out vec4 fragColor, in vec2 fragCoord )
     Color mainImage(Vec2 fragCoord)
     {
+        // TODO cwr April 7
+        if ((fragCoord.x() < 0) || (fragCoord.y() < 0)) return 0;
+                
 //        uv = fragCoord/iResolution.y;
 //        uv.y=-uv.y;
-        uv = fragCoord / iResolution.y();
-        uv = Vec2(uv.x(), -uv.y());
+        // TODO cwr April 7
+//        uv = fragCoord / iResolution.y();
+//        uv = Vec2(uv.x(), -uv.y());
         
         init_noise();
 //        float o = iMouse.x/iResolution.x * 2.0*M_PI;
 //        vec2 phasorNoise = eval_noise(uv,_f,_b);
-        Vec2 phasorNoise = eval_noise(uv, _f, _b);
+//        Vec2 phasorNoise = eval_noise(uv, _f, _b);
+        Vec2 complex_phasor_noise = eval_noise(uv, _f, _b);
+
 //        vec2 dir = vec2(cos(o),sin(o));
 //        float phi = atan(phasorNoise.y,phasorNoise.x);
-        float phi = phasorNoise.atan2();
+//        float phi = phasorNoise.atan2();
+//        float phi = complex_phasor_noise.atan2();
+        float phi = std::atan2(complex_phasor_noise.y(), complex_phasor_noise.x());
+
 //        float I = length(phasorNoise);
 //        float I = phasorNoise.length();
 //        float angle = texture(iChannel0,fragCoord/iResolution.xy ).x;
@@ -1971,8 +1990,15 @@ public:
         
 //        phasorfield = vec3(profile/sumGaus);
 //        fragColor = vec4(phasorfield,1.0);
-        Color phasorfield = Color(profile/sumGaus);
-        return phasorfield;
+        
+        // TODO cwr April 7
+//        Color phasorfield = Color(profile/sumGaus);
+//        return phasorfield;
+//        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
+//        return Color(complex_phasor_noise.x(), complex_phasor_noise.y(), 0);
+//        return Color(phi, 0, 0);
+//        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
+        return Color(LocallyCoherentRandomDirectionField(fragCoord));
     }
 
     
@@ -1990,6 +2016,33 @@ public:
 private:
     const Texture& texture0_;
     const Texture& texture1_;
+};
+
+
+inline static int foo = 0;
+inline static PhasorNoisePrototype phasor_noise;
+
+
+class PhasorNoiseWrapper : public Texture
+{
+public:
+    PhasorNoiseWrapper() {}
+//    PhasorNoiseWrapper() : texture0_(*this), texture1_(*this) {}
+    
+//    PhasorNoisePrototype(const Texture& texture0,
+//                         const Texture& texture1)
+//      : texture0_(texture0),
+//        texture1_(texture1) {}
+    
+    Color getColor(Vec2 position) const override
+    {
+//        return interpolatePointOnTextures(phasor_noise.mainImage(position),
+//                                          position,
+//                                          position,
+//                                          texture0_,
+//                                          texture1_);
+        return Color(phasor_noise.mainImage(position));
+    }
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

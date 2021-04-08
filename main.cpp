@@ -4986,10 +4986,21 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // 20210405 tag the evo_camo_game 0.9.5 "release"
-    std::cout << "April 5, 2021" << std::endl;
-        
-    Camouflage(CommandLine(argc, argv)).run();
+//    // 20210405 tag the evo_camo_game 0.9.5 "release"
+//    std::cout << "April 5, 2021" << std::endl;
+//
+//    Camouflage(CommandLine(argc, argv)).run();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // 20210407 testing phasor noise.
+    std::cout << "April 7, 2021" << std::endl;
+    
+    {
+        Timer timer("PhasorNoiseWrapper");
+        Texture::displayAndFile(PhasorNoiseWrapper());
+    }
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
