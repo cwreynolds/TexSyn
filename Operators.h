@@ -1949,7 +1949,9 @@ public:
     Color mainImage(Vec2 fragCoord)
     {
         // TODO cwr April 7
+        assert(fragCoord.length() <= 1);
         if ((fragCoord.x() < 0) || (fragCoord.y() < 0)) return 0;
+        debugPrint(fragCoord);
                 
 //        uv = fragCoord/iResolution.y;
 //        uv.y=-uv.y;
@@ -1962,12 +1964,14 @@ public:
 //        vec2 phasorNoise = eval_noise(uv,_f,_b);
 //        Vec2 phasorNoise = eval_noise(uv, _f, _b);
         Vec2 complex_phasor_noise = eval_noise(uv, _f, _b);
+//        debugPrint(complex_phasor_noise);
 
 //        vec2 dir = vec2(cos(o),sin(o));
 //        float phi = atan(phasorNoise.y,phasorNoise.x);
 //        float phi = phasorNoise.atan2();
 //        float phi = complex_phasor_noise.atan2();
         float phi = std::atan2(complex_phasor_noise.y(), complex_phasor_noise.x());
+//        debugPrint(phi);
 
 //        float I = length(phasorNoise);
 //        float I = phasorNoise.length();
@@ -1995,12 +1999,48 @@ public:
 //        Color phasorfield = Color(profile/sumGaus);
 //        return phasorfield;
 //        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-//        return Color(complex_phasor_noise.x(), complex_phasor_noise.y(), 0);
+        return Color(complex_phasor_noise.x(), complex_phasor_noise.y(), 0);
 //        return Color(phi, 0, 0);
 //        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-        return Color(LocallyCoherentRandomDirectionField(fragCoord));
+//        return Color(LocallyCoherentRandomDirectionField(fragCoord));
     }
 
+    
+    // TODO 20210408
+    // And this, I think, is the “main” to initialize “texture(iChannel0,…)”
+    // Oh jeez. This "BufferA" code is slightly different from the "Image" code.
+    // eval_noise() and cell() each take another parameter: float f.
+
+//    void mainImage( out vec4 fragColor, in vec2 fragCoord )
+//    {
+//        uv = fragCoord/iResolution.y;
+//        uv.y=-uv.y;
+//        init_noise();
+//        float o = iMouse.x/iResolution.x * 2.0*M_PI;
+//        vec2 gaussian_field = vec2(eval_noise(uv,_b));
+//        gaussian_field = normalize(gaussian_field);
+//        float angle = atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
+//        fragColor = vec4(vec3(angle,0, 0),1.0);
+//    }
+
+//    //    void mainImage( out vec4 fragColor, in vec2 fragCoord )
+//    float mock_iChannel0(Vec2 fragCoord)
+//    {
+////        uv = fragCoord/iResolution.y;
+////        uv.y=-uv.y;
+//        init_noise();
+////        float o = iMouse.x/iResolution.x * 2.0*M_PI;
+////        vec2 gaussian_field = vec2(eval_noise(uv,_b));
+////        gaussian_field = normalize(gaussian_field);
+//        Vec2 gaussian_field = eval_noise(uv,_b).norm;
+//        gaussian_field = normalize(gaussian_field);
+////        float angle = atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
+//        float angle = std::atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
+////        fragColor = vec4(vec3(angle,0, 0),1.0);
+//        return angle;
+//    }
+
+    
     
     // TODO can't do this yet because the shader code is not const
 //    Color getColor(Vec2 position) const override
