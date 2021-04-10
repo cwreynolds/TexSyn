@@ -146,6 +146,15 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
     // Wait to grab lock for access to image. (Lock released at end of block)
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+        // TODO EXPERIMENT 20210409 tried this today to stop TexSyn render from
+        // locking up the whole machine. Did not work very well. Is there a more
+        // direct way to let other threads run?
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(1ms);
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const std::lock_guard<std::mutex> lock(ocv_image_mutex);
     // Copy line_image into the j-th row of opencv_image.
     row_image.copyTo(row_in_full_image);

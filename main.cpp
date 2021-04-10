@@ -4994,11 +4994,24 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // 20210407 testing phasor noise.
-    std::cout << "April 7, 2021" << std::endl;
+    std::cout << "April 9, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210409_";
+
     
     {
         Timer timer("PhasorNoiseWrapper");
-        Texture::displayAndFile(PhasorNoiseWrapper());
+        Texture::setDefaultRenderAsDisk(false);
+//        Texture::displayAndFile(PhasorNoiseWrapper());
+        
+        Texture::displayAndFile(PhasorNoiseWrapper()
+                                ); // , path + "first_phasor");
+
+        // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
+        Texture::sqrt_of_aa_subsample_count = 3;
+
+        Texture::displayAndFile(PhasorNoiseWrapper()
+                                ); // , path + "first_phasor_3_3");
     }
     Texture::waitKey();
 
