@@ -1807,7 +1807,9 @@ public:
 //        return PerlinNoise::unitNoise2d(uv / 10);
 //        return PerlinNoise::unitNoise2d(uv * 10);
 //        return PerlinNoise::unitNoise2d(uv);
-        return PerlinNoise::unitNoise2d(v * 3);
+//        return PerlinNoise::unitNoise2d(v * 3);
+//        return PerlinNoise::unitNoise2d(v * 10);
+        return PerlinNoise::unitNoise2d(v * 100);
     }
 
 
