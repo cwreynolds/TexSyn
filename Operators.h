@@ -1705,7 +1705,8 @@ public:
     // TODO 20210409 cwr new
 //    const float _f = 50.0;
 //    const float _f = 20;
-    const float _f = 30;
+//    const float _f = 30;
+    const float _f = 50;
 
     const float _b = 32.0;
     const float _o = 1.0;
@@ -1761,14 +1762,14 @@ public:
     
     
 
-    int morton(int x, int y)
-    {
-        int z = 0;
-        for (int i = 0 ; i < 32* 4 ; i++) {
-            z |= ((x & (1 << i)) << i) | ((y & (1 << i)) << (i + 1));
-        }
-        return z;
-    }
+//    int morton(int x, int y)
+//    {
+//        int z = 0;
+//        for (int i = 0 ; i < 32* 4 ; i++) {
+//            z |= ((x & (1 << i)) << i) | ((y & (1 << i)) << (i + 1));
+//        }
+//        return z;
+//    }
     
     
     
@@ -1795,10 +1796,10 @@ public:
 //            _kr = sqrt(-log(0.05) / pi) / _b;
 //        }
     
-    // TODO I think this comes from the Shadertoy framework, trying to mock...
-    Vec2 iResolution = Vec2(1280, 720);
+//    // TODO I think this comes from the Shadertoy framework, trying to mock...
+//    Vec2 iResolution = Vec2(1280, 720);
     
-    float _aspect_ratio = iResolution.y() / iResolution.x();
+//    float _aspect_ratio = iResolution.y() / iResolution.x();
 
 
     // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
@@ -1807,9 +1808,9 @@ public:
 //        return PerlinNoise::unitNoise2d(uv / 10);
 //        return PerlinNoise::unitNoise2d(uv * 10);
 //        return PerlinNoise::unitNoise2d(uv);
-//        return PerlinNoise::unitNoise2d(v * 3);
+        return PerlinNoise::unitNoise2d(v * 3);
 //        return PerlinNoise::unitNoise2d(v * 10);
-        return PerlinNoise::unitNoise2d(v * 100);
+//        return PerlinNoise::unitNoise2d(v * 100);
     }
 
 
@@ -2091,7 +2092,8 @@ public:
 //        }
 
 //    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-    Color mainImage(Vec2 fragCoord)
+//    Color mainImage(Vec2 fragCoord)
+    float mainImage(Vec2 fragCoord)
     {
 //        Vec2 before = fragCoord;
         
@@ -2156,7 +2158,9 @@ public:
 //        float duty_cycle = remapInterval(uv.y(), 0, 1, 0.2, 0.8);
 //        float duty_cycle = uv.y();
         float duty_cycle = remapInterval(uv.y(), 0, 1, 0.3, 1);
-        return Color(soft_square_wave(phase, softness, duty_cycle));
+//        return Color(soft_square_wave(phase, softness, duty_cycle));
+//        return soft_square_wave(phase, softness, duty_cycle);
+        return soft_square_wave(phase, 1, 0.5);
     }
 
     
@@ -2217,26 +2221,47 @@ inline static int foo = 0;
 inline static PhasorNoisePrototype phasor_noise;
 
 
+//    class PhasorNoiseWrapper : public Texture
+//    {
+//    public:
+//        PhasorNoiseWrapper() {}
+//    //    PhasorNoiseWrapper() : texture0_(*this), texture1_(*this) {}
+//
+//    //    PhasorNoisePrototype(const Texture& texture0,
+//    //                         const Texture& texture1)
+//    //      : texture0_(texture0),
+//    //        texture1_(texture1) {}
+//
+//        Color getColor(Vec2 position) const override
+//        {
+//    //        return interpolatePointOnTextures(phasor_noise.mainImage(position),
+//    //                                          position,
+//    //                                          position,
+//    //                                          texture0_,
+//    //                                          texture1_);
+//            return Color(phasor_noise.mainImage(position));
+//        }
+//    };
+
 class PhasorNoiseWrapper : public Texture
 {
 public:
-    PhasorNoiseWrapper() {}
-//    PhasorNoiseWrapper() : texture0_(*this), texture1_(*this) {}
-    
-//    PhasorNoisePrototype(const Texture& texture0,
-//                         const Texture& texture1)
-//      : texture0_(texture0),
-//        texture1_(texture1) {}
+    PhasorNoiseWrapper(const Texture& texture0,
+                       const Texture& texture1)
+      : texture0_(texture0),
+        texture1_(texture1) {}
     
     Color getColor(Vec2 position) const override
     {
-//        return interpolatePointOnTextures(phasor_noise.mainImage(position),
-//                                          position,
-//                                          position,
-//                                          texture0_,
-//                                          texture1_);
-        return Color(phasor_noise.mainImage(position));
+        return interpolatePointOnTextures(phasor_noise.mainImage(position),
+                                          position,
+                                          position,
+                                          texture0_,
+                                          texture1_);
     }
+private:
+    const Texture& texture0_;
+    const Texture& texture1_;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

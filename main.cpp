@@ -4994,25 +4994,52 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // 20210407 testing phasor noise.
-    std::cout << "April 9, 2021" << std::endl;
+    std::cout << "April 11, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210409_";
+    std::string path = temp_dir + "20210411_";
 
     
+//    {
+//        Timer timer("PhasorNoiseWrapper");
+//        Texture::setDefaultRenderAsDisk(false);
+////        Texture::displayAndFile(PhasorNoiseWrapper());
+//
+//        Texture::displayAndFile(PhasorNoiseWrapper()
+//                                ); // , path + "first_phasor");
+//
+//        // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
+//        Texture::sqrt_of_aa_subsample_count = 3;
+//
+//        Texture::displayAndFile(PhasorNoiseWrapper()
+//                                ); // , path + "first_phasor_3_3");
+//    }
+    
+    Uniform red_orange(1, 0.3, 0);
+    Uniform orange(1, 0.5, 0);
+//    Uniform cyan(0, 1, 1);
+    Uniform blue(0, 0, 1);
+    Uniform cyan_blue(0, 0.5, 1);
+
+//        [&](const Texture& texture0, const Texture& texture1)
+//        {
+//            Timer timer("PhasorNoiseWrapper");
+//            Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
+//                                    , path + "color0");
+//        }
+//    //    (LotsOfSpots(0.7, 0.1, 0.3, 0.02, 0.05, red_orange, orange),
+//    //     Grating(Vec2(), cyan, Vec2(0.1, 0.1), cyan_blue, 0.5, 0.3));
+//        (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),
+//         Grating(Vec2(), blue, Vec2(0.1, 0.2), cyan_blue, 0.5, 0.3));
+
+    [&](const Texture& texture0, const Texture& texture1)
     {
         Timer timer("PhasorNoiseWrapper");
         Texture::setDefaultRenderAsDisk(false);
-//        Texture::displayAndFile(PhasorNoiseWrapper());
-        
-        Texture::displayAndFile(PhasorNoiseWrapper()
-                                ); // , path + "first_phasor");
-
-        // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
-        Texture::sqrt_of_aa_subsample_count = 3;
-
-        Texture::displayAndFile(PhasorNoiseWrapper()
-                                ); // , path + "first_phasor_3_3");
+        Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
+                                );  // , path + "first_light");
     }
+    (Uniform(0), Uniform(1));
+
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
