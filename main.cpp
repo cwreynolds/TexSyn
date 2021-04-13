@@ -5022,7 +5022,7 @@ int main(int argc, const char * argv[])
     [&](const Texture& texture0, const Texture& texture1)
     {
         Timer timer("PhasorNoiseWrapper");
-        Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
+        Texture::displayAndFile(PhasorNoisePrototype(texture0, texture1)
                                 );  // , path + "color0");
     }
     (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),

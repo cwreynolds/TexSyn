@@ -1676,25 +1676,24 @@ private:
 
 // TODO WIP prototype
 // Source for "Procedural phasor noise" https://www.shadertoy.com/view/wlsXWf
+
 class PhasorNoisePrototype : public Texture
 {
 public:
-    PhasorNoisePrototype() {}
-
-    //phasor noise parameters
-    //    const float _f = 50.0;
-    //    const float _f = 20;
-    //    const float _f = 30;
-    const float _f = 50;
-    const float _b = 32.0;
-    const float _o = 1.0;
-    const float _kr = sqrt(-log(0.05) / pi) / _b;
-    const int _impPerKernel = 16;
+    PhasorNoisePrototype(const Texture& texture0, const Texture& texture1)
+      : texture0_(texture0),
+        texture1_(texture1) {}
+    Color getColor(Vec2 position) const override
+    {
+        return interpolatePointOnTextures(mainImage(position),
+                                          position, position,
+                                          texture0_, texture1_);
+    }
 
     // TODO
     // Returns a complex phasor value.
     // TODO do "o" and "phi" need to be separate?
-    Vec2 phasor(Vec2 x, float f, float b, float o, float phi)
+    Vec2 phasor(Vec2 x, float f, float b, float o, float phi) const
     {
         float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
         float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
@@ -1703,7 +1702,7 @@ public:
     }
 
     // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
-    float LocallyCoherentRandomDirectionField(Vec2 v)
+    float LocallyCoherentRandomDirectionField(Vec2 v) const
     {
         // return PerlinNoise::unitNoise2d(uv);
         return PerlinNoise::unitNoise2d(v * 3);
@@ -1715,7 +1714,7 @@ public:
     // something about creating 16 random kernel locations (deterministically so
     // they can be re-created each pixel/fragment) and summing up the kernel
     // contributions to the sample at "uv"(?).
-    Vec2 cell(int i, int j, Vec2 uv, float f, float b)
+    Vec2 cell(int i, int j, Vec2 uv, float f, float b) const
     {
         // Initialize local RandomSequence by hashing grid cell coordinates.
         RandomSequence rs(Vec2(i, j).hash());
@@ -1747,7 +1746,7 @@ public:
     // TODO Evaluates the noise at a given location based on "f" and "b" ?
     // TODO seems to be evaluating 5x5 neighborhood. Why is that needed? Is it
     //      just part of finding overlapping kernels in nearby cells?
-    Vec2 eval_noise(Vec2 uv, float f, float b)
+    Vec2 eval_noise(Vec2 uv, float f, float b) const
     {
         float cellsz = 2.0 *_kr;
         
@@ -1769,7 +1768,7 @@ public:
     }
 
     // TODO returns a scalar on [0, 1] at position "fragCoord"
-    float mainImage(Vec2 fragCoord)
+    float mainImage(Vec2 fragCoord) const
     {
         // transform from [-1, +1] to [0, 1]
         Vec2 uv = Vec2(remapInterval(fragCoord.x(), -1, 1, 0, 1),
@@ -1783,28 +1782,20 @@ public:
         return soft_square_wave(phase, softness, duty_cycle);
         // return soft_square_wave(phase, 1, 0.5);
     }
-};
 
-class PhasorNoiseWrapper : public Texture
-{
-public:
-    PhasorNoiseWrapper(const Texture& texture0,
-                       const Texture& texture1)
-      : texture0_(texture0),
-        texture1_(texture1),
-        phasor_noise(std::make_shared<PhasorNoisePrototype>()) {}
-    Color getColor(Vec2 position) const override
-    {
-        return interpolatePointOnTextures(phasor_noise->mainImage(position),
-                                          position,
-                                          position,
-                                          texture0_,
-                                          texture1_);
-    }
 private:
+    //phasor noise parameters
+    //    const float _f = 50.0;
+    //    const float _f = 20;
+    //    const float _f = 30;
+    const float _f = 50;
+    const float _b = 32.0;
+    //    const float _o = 1.0;
+    const float _kr = sqrt(-log(0.05) / pi) / _b;
+    const int _impPerKernel = 16;
+
     const Texture& texture0_;
     const Texture& texture1_;
-    std::shared_ptr<PhasorNoisePrototype> phasor_noise;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
