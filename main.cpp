@@ -5007,7 +5007,7 @@ int main(int argc, const char * argv[])
 //        Texture::displayAndFile(PhasorNoiseWrapper()
 //                                ); // , path + "first_phasor");
 //
-//        // Each rendered pixel uses an NxN jittered grid of subsamples, where N is:
+//        // Each rendered pixel uses an NxN jittered grid of subsamples, N is:
 //        Texture::sqrt_of_aa_subsample_count = 3;
 //
 //        Texture::displayAndFile(PhasorNoiseWrapper()
@@ -5016,29 +5016,26 @@ int main(int argc, const char * argv[])
     
     Uniform red_orange(1, 0.3, 0);
     Uniform orange(1, 0.5, 0);
-//    Uniform cyan(0, 1, 1);
     Uniform blue(0, 0, 1);
     Uniform cyan_blue(0, 0.5, 1);
-
-//        [&](const Texture& texture0, const Texture& texture1)
-//        {
-//            Timer timer("PhasorNoiseWrapper");
-//            Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
-//                                    , path + "color0");
-//        }
-//    //    (LotsOfSpots(0.7, 0.1, 0.3, 0.02, 0.05, red_orange, orange),
-//    //     Grating(Vec2(), cyan, Vec2(0.1, 0.1), cyan_blue, 0.5, 0.3));
-//        (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),
-//         Grating(Vec2(), blue, Vec2(0.1, 0.2), cyan_blue, 0.5, 0.3));
 
     [&](const Texture& texture0, const Texture& texture1)
     {
         Timer timer("PhasorNoiseWrapper");
-        Texture::setDefaultRenderAsDisk(false);
         Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
-                                );  // , path + "first_light");
+                                );  // , path + "color0");
     }
-    (Uniform(0), Uniform(1));
+    (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),
+     Grating(Vec2(), blue, Vec2(0.1, 0.2), cyan_blue, 0.5, 0.3));
+
+    //    [&](const Texture& texture0, const Texture& texture1)
+    //    {
+    //        Timer timer("PhasorNoiseWrapper");
+    //        Texture::setDefaultRenderAsDisk(false);
+    //        Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
+    //                                );  // , path + "first_light");
+    //    }
+    //    (Uniform(0), Uniform(1));
 
     Texture::waitKey();
 

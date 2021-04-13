@@ -1674,574 +1674,116 @@ private:
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// TODO WIP prototype
 // Source for "Procedural phasor noise" https://www.shadertoy.com/view/wlsXWf
-
-
-// TODO WIP prototype, perhaps to be replaced with "Procedural phasor noise"?
 class PhasorNoisePrototype : public Texture
 {
 public:
-    PhasorNoisePrototype() : texture0_(*this), texture1_(*this) {}
-
-    //    PhasorNoisePrototype(const Texture& texture0,
-//                         const Texture& texture1)
-//      : texture0_(texture0),
-//        texture1_(texture1) {}
-    
-    // TODO code below originally copied from https://www.shadertoy.com/view/wlsXWf
-    
-    // TODO 20210409 cwr new, add const to identify non-thread-safe parts:
+    PhasorNoisePrototype() {}
 
     //phasor noise parameters
-//        float _f = 50.0;
-//        float _b = 32.0;
-//        float _o = 1.0;
-//        float _kr;
-//        int _impPerKernel = 16;
-//        int _seed = 1;
-//    //    vec2 uv;
-//        Vec2 uv;
-
-    // TODO 20210409 cwr new
-//    const float _f = 50.0;
-//    const float _f = 20;
-//    const float _f = 30;
+    //    const float _f = 50.0;
+    //    const float _f = 20;
+    //    const float _f = 30;
     const float _f = 50;
-
     const float _b = 32.0;
     const float _o = 1.0;
-//    float _kr;
     const float _kr = sqrt(-log(0.05) / pi) / _b;
-
-    
     const int _impPerKernel = 16;
-//    int _seed = 1;
-//    vec2 uv;
-//    Vec2 uv;
 
-    
-    ///////////////////////////////////////////////
-    //prng
-    ///////////////////////////////////////////////
-    
-    
-//    // TODO 20210409 cwr new:
-//    RandomSequence rs_;
-
-    
-    // TODO locally defined random number generator
-    
-//        int N = 15487469;
-//        int x_;
-//    //    void seed(int s){x_ = s;}
-//        void seed(int s) { x_ = s; }
-//    //    int next() { x_ *= 3039177861; x_ = x_ % N;return x_; }
-//        int next()
-//        {
-//            x_ *= 3039177861;
-//            x_ = x_ % N;
-//            return x_;
-//        }
-//    //    float uni_0_1() { return float(next()) / float(N); }
-//    //    float uni(float min, float max) { return min + (uni_0_1() * (max - min));}
-//        float uni_0_1()
-//        {
-//    //        float n = next();
-//    //        float result = n / float(N);
-//    //        assert(between(result, 0, 1));
-//    //        return result;
-//            return rs_.frandom01();
-//        }
-//        float uni(float min, float max)
-//        {
-//    //        float result = min + (uni_0_1() * (max - min));
-//    //        assert(between(result, min, max));
-//    //        return result;
-//            return rs_.frandom2(min, max);
-//        }
-    
-    
-
-//    int morton(int x, int y)
-//    {
-//        int z = 0;
-//        for (int i = 0 ; i < 32* 4 ; i++) {
-//            z |= ((x & (1 << i)) << i) | ((y & (1 << i)) << (i + 1));
-//        }
-//        return z;
-//    }
-    
-    
-    
-//    vec2 phasor(vec2 x, float f, float b, float o, float phi)
+    // TODO
+    // Returns a complex phasor value.
+    // TODO do "o" and "phi" need to be separate?
     Vec2 phasor(Vec2 x, float f, float b, float o, float phi)
     {
-        
-//        float a = exp(-M_PI * (b * b) * ((x.x * x.x) + (x.y * x.y)));
-//        float s = sin (2.0* M_PI * f  * (x.x*cos(o) + x.y*sin(o))+phi);
-//        float c = cos (2.0* M_PI * f  * (x.x*cos(o) + x.y*sin(o))+phi);
-//        return vec2(a*c,a*s);
         float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
         float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
         float c = cos (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
         return Vec2(a * c, a * s);
     }
-    
-    
-    // TODO 20210409 _kr seems to always be 0.0305159, remove this runtime set
-
-//        void init_noise()
-//        {
-//    //        _kr = sqrt(-log(0.05) / M_PI) / _b;
-//            _kr = sqrt(-log(0.05) / pi) / _b;
-//        }
-    
-//    // TODO I think this comes from the Shadertoy framework, trying to mock...
-//    Vec2 iResolution = Vec2(1280, 720);
-    
-//    float _aspect_ratio = iResolution.y() / iResolution.x();
-
 
     // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
     float LocallyCoherentRandomDirectionField(Vec2 v)
     {
-//        return PerlinNoise::unitNoise2d(uv / 10);
-//        return PerlinNoise::unitNoise2d(uv * 10);
-//        return PerlinNoise::unitNoise2d(uv);
+        // return PerlinNoise::unitNoise2d(uv);
         return PerlinNoise::unitNoise2d(v * 3);
-//        return PerlinNoise::unitNoise2d(v * 10);
-//        return PerlinNoise::unitNoise2d(v * 100);
+        // return PerlinNoise::unitNoise2d(v * 10);
+        // return PerlinNoise::unitNoise2d(v * 100);
     }
 
-
-    // TODO restart on 20210406
-    
-//    vec2 cell(ivec2 ij, vec2 uv, float f, float b)
-//    {
-//        int s= morton(ij.x,ij.y) + 333;
-//        s = s==0? 1: s +_seed;
-//        seed(s);
-//        int impulse  =0;
-//        int nImpulse = _impPerKernel;
-//        float  cellsz = 2.0 * _kr;
-//        vec2 noise = vec2(0.0);
-//        while (impulse <= nImpulse){
-//            vec2 impulse_centre = vec2(uni_0_1(),uni_0_1());
-//            vec2 d = (uv - impulse_centre) *cellsz;
-//            float rp = uni(0.0,2.0*M_PI) ;
-//            vec2 trueUv = ((vec2(ij) + impulse_centre) *cellsz) *  iResolution.yy / iResolution.xy;
-//            trueUv.y = -trueUv.y;
-//            float o = texture(iChannel0, trueUv).x *2.0* M_PI;
-//            noise += phasor(d, f, b ,o,rp );
-//            impulse++;
-//        }
-//        return noise;
-//    }
-
-    
-//    vec2 cell(ivec2 ij, vec2 uv, float f, float b)
+    // TODO
+    // something about creating 16 random kernel locations (deterministically so
+    // they can be re-created each pixel/fragment) and summing up the kernel
+    // contributions to the sample at "uv"(?).
     Vec2 cell(int i, int j, Vec2 uv, float f, float b)
     {
-        // TODO 20210409 cwr remove old random numbers generator:
-
-//    //        int s= morton(ij.x,ij.y) + 333;
-//            int s = morton(i, j) + 333;
-//    //        s = s==0? 1: s +_seed;
-//            s = s == 0? 1 : s + _seed;
-//            seed(s);
-        
-        // TODO 20210409 cwr new:
+        // Initialize local RandomSequence by hashing grid cell coordinates.
         RandomSequence rs(Vec2(i, j).hash());
 
-
-        
-//        int impulse  =0;
         int impulse = 0;
         int nImpulse = _impPerKernel;
-//        float  cellsz = 2.0 * _kr;
         float cellsz = 2.0 * _kr;
-        
-//        debugPrint(_kr);
-//        debugPrint(cellsz);
-
-//        vec2 noise = vec2(0.0);
-//        while (impulse <= nImpulse){
-//            vec2 impulse_centre = vec2(uni_0_1(),uni_0_1());
-//            vec2 d = (uv - impulse_centre) *cellsz;
         Vec2 noise;
         while (impulse <= nImpulse)
         {
-            // TODO 20210409 cwr new
-//            Vec2 impulse_centre = Vec2(uni_0_1(), uni_0_1());
             Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
-
             Vec2 d = (uv - impulse_centre) * cellsz;
             
-            // TODO 20210409 cwr new
-//            float rp = uni(0.0,2.0*M_PI) ;
+            // TODO don't know what "rp" (random phi?) means but this is the
+            // first random rotation for the kernel
             float rp = rs.frandom2(0, 2 * pi);
 
-//            vec2 trueUv = ((vec2(ij) + impulse_centre) *cellsz) *  iResolution.yy / iResolution.xy;
-//            trueUv.y = -trueUv.y;
-//            float aspect_ratio = iResolution.y() / iResolution.x();
-            
-//            Vec2 trueUv = ((Vec2(i, j) + impulse_centre) * cellsz) * _aspect_ratio;
-//            trueUv = Vec2(trueUv.x(), -trueUv.y());
-            // TODO cwr april 7
+            // TODO global texture coordinates?
             Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
-//            trueUv = Vec2(trueUv.x(), -trueUv.y());
-
-//            float o = texture(iChannel0, trueUv).x *2.0* M_PI;
-//            noise += phasor(d, f, b ,o,rp );
-//            float o = texture(iChannel0, trueUv).x() * 2 * pi;
-//            float o = LCRDF(trueUv).x() * 2 * pi;
+            // TODO look up "curl noise" in global space.
             float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+            // Add (complex?) phasor value from this kernel into accumulator.
             noise += phasor(d, f, b, o, rp);
             impulse++;
         }
         return noise;
     }
 
-    
-//    vec2 eval_noise(vec2 uv, float f, float b)
-//    {
-//        float cellsz = 2.0 *_kr;
-//        vec2 _ij = uv / cellsz;
-//        ivec2  ij = ivec2(_ij);
-//        vec2  fij = _ij - vec2(ij);
-//        vec2 noise = vec2(0.0);
-//        for (int j = -2; j <= 2; j++) {
-//            for (int i = -2; i <= 2; i++) {
-//                ivec2 nij = ivec2(i, j);
-//                noise += cell(ij + nij , fij - vec2(nij),f,b);
-//            }
-//        }
-//        return noise;
-//    }
-
-//    vec2 eval_noise(vec2 uv, float f, float b)
+    // TODO Evaluates the noise at a given location based on "f" and "b" ?
+    // TODO seems to be evaluating 5x5 neighborhood. Why is that needed? Is it
+    //      just part of finding overlapping kernels in nearby cells?
     Vec2 eval_noise(Vec2 uv, float f, float b)
     {
         float cellsz = 2.0 *_kr;
         
-//        vec2 _ij = uv / cellsz;
         Vec2 _ij = uv / cellsz;
         
-//        ivec2  ij = ivec2(_ij);
-//        vec2  fij = _ij - vec2(ij);
         int i = _ij.x();
         int j = _ij.y();
         Vec2  fij = _ij - Vec2(i, j);
 
-//        vec2 noise = vec2(0.0);
         Vec2 noise;
-
-//        for (int j = -2; j <= 2; j++) {
-//            for (int i = -2; i <= 2; i++) {
-//                ivec2 nij = ivec2(i, j);
-//                noise += cell(ij + nij , fij - vec2(nij),f,b);
-//            }
-//        }
-        
         for (int jj = -2; jj <= 2; jj++)
         {
             for (int ii = -2; ii <= 2; ii++)
             {
-//                ivec2 nij = ivec2(i, j);
-//                noise += cell(ij + nij , fij - vec2(nij),f,b);
                 noise += cell(i + ii, j + jj , fij - Vec2(ii, jj), f, b);
             }
         }
-
         return noise;
     }
 
-    
-    float PWM(float x, float r)
-    {
-//        return mod(x,2.0*M_PI)> 2.0*M_PI *r ? 1.0 : 0.0;
-        return (std::fmod(x, 2 * pi) > 2 * pi * r) ? 1 : 0;
-    }
-    
-    float square(float x)
-    {
-        return PWM(x,0.5);
-    }
-    
-    float sawTooth(float x)
-    {
-//        return mod(x,2.0*M_PI)/(2.0*M_PI);
-        return std::fmod(x,2.0*pi)/(2.0*pi);
-    }
-    
-//    vec3 hsv2rgb(vec3 c)
-//    {
-//        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-//        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-//        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-//    }
-    
-//    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-//    {
-//        uv = fragCoord/iResolution.y;
-//        uv.y=-uv.y;
-//        init_noise();
-//        float o = iMouse.x/iResolution.x * 2.0*M_PI;
-//        vec2 phasorNoise = eval_noise(uv,_f,_b);
-//        vec2 dir = vec2(cos(o),sin(o));
-//        float phi = atan(phasorNoise.y,phasorNoise.x);
-//        float I = length(phasorNoise);
-//        float angle = texture(iChannel0,fragCoord/iResolution.xy ).x;
-//        float p1 = PWM(phi, uv.x+0.2 *0.5);
-//        float g1 = exp(-(uv.x-0.3)*(uv.x-0.3)*20.0);
-//        float p2 = sawTooth(phi);
-//        float g2 = exp(-(uv.x-0.9)*(uv.x-0.9)*20.0);
-//        float p3 = sin(phi+M_PI)+0.5*0.5;
-//        float g3 = exp(-(uv.x-1.5)*(uv.x-1.5)*20.0);
-//        vec3 phasorfield  = vec3(sin(phi)*0.3 +0.5);
-//
-//        float profile =p1*g1+p2*g2+p3*g3;
-//        float sumGaus= g1+g2+g3;
-//
-//        phasorfield = vec3(profile/sumGaus);
-//        fragColor = vec4(phasorfield,1.0);
-//    }
-
-//    //    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-//        Color mainImage(Vec2 fragCoord)
-//        {
-//
-//
-//            // TODO 20210409 cwr new -- transform from [-1, +1] to [0, 1]
-//    //        fragCoord = Vec2(1, 1) + fragCoord / 2;
-//            fragCoord = Vec2(remapInterval(fragCoord.x(), -1, 1, 0, 1),
-//                             remapInterval(fragCoord.y(), -1, 1, 0, 1));
-//
-//
-//
-//            // TODO cwr April 7
-//    //        assert(fragCoord.length() <= 1);
-//    //        if ((fragCoord.x() < 0) || (fragCoord.y() < 0)) return Color(0);
-//    //        debugPrint(fragCoord);
-//
-//    //        uv = fragCoord/iResolution.y;
-//    //        uv.y=-uv.y;
-//            // TODO cwr April 7
-//    //        uv = fragCoord / iResolution.y();
-//    //        uv = Vec2(uv.x(), -uv.y());
-//
-//            // TODO 20210409 cwr new -- wait did I leave "uv" uninitialized?
-//            Vec2 uv = fragCoord;
-//
-//
-//            // TODO 20210409 _kr seems to always be 0.0305159, remove this runtime set
-//    //        init_noise();
-//
-//    //        float o = iMouse.x/iResolution.x * 2.0*M_PI;
-//    //        vec2 phasorNoise = eval_noise(uv,_f,_b);
-//    //        Vec2 phasorNoise = eval_noise(uv, _f, _b);
-//            Vec2 complex_phasor_noise = eval_noise(uv, _f, _b);
-//    //        debugPrint(complex_phasor_noise);
-//
-//    //        vec2 dir = vec2(cos(o),sin(o));
-//    //        float phi = atan(phasorNoise.y,phasorNoise.x);
-//    //        float phi = phasorNoise.atan2();
-//    //        float phi = complex_phasor_noise.atan2();
-//            float phi = std::atan2(complex_phasor_noise.y(), complex_phasor_noise.x());
-//    //        debugPrint(phi);
-//
-//    //        float I = length(phasorNoise);
-//    //        float I = phasorNoise.length();
-//    //        float angle = texture(iChannel0,fragCoord/iResolution.xy ).x;
-//    //        float p1 = PWM(phi, uv.x+0.2 *0.5);
-//            float p1 = PWM(phi, (uv.x() + 0.2) * 0.5);
-//    //        float g1 = exp(-(uv.x-0.3)*(uv.x-0.3)*20.0);
-//            float g1 = exp(-(uv.x() - 0.3) * (uv.x() - 0.3) * 20);
-//            float p2 = sawTooth(phi);
-//    //        float g2 = exp(-(uv.x-0.9)*(uv.x-0.9)*20.0);
-//            float g2 = exp(-(uv.x() - 0.9) * (uv.x() - 0.9) * 20);
-//            float p3 = sin(phi+M_PI)+0.5*0.5;
-//    //        float g3 = exp(-(uv.x-1.5)*(uv.x-1.5)*20.0);
-//            float g3 = exp(-(uv.x() - 1.5) * (uv.x() - 1.5) * 20);
-//    //        vec3 phasorfield  = vec3(sin(phi)*0.3 +0.5);
-//    //        Color phasorfield = Color(sin(phi)*0.3 +0.5);
-//
-//            float profile =p1*g1+p2*g2+p3*g3;
-//            float sumGaus= g1+g2+g3;
-//
-//    //        phasorfield = vec3(profile/sumGaus);
-//    //        fragColor = vec4(phasorfield,1.0);
-//
-//            // TODO cwr April 7
-//    //        Color phasorfield = Color(profile/sumGaus);
-//    //        return phasorfield;
-//    //        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-//    //        return Color(complex_phasor_noise.x(), complex_phasor_noise.y(), 0);
-//    //        return Color(phi, 0, 0);
-//    //        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-//    //        return Color(LocallyCoherentRandomDirectionField(fragCoord));
-//
-//            // TODO 20210409 cwr new
-//    //        return Color(profile/sumGaus);
-//    //        return Color(p1);
-//            return Color(soft_square_wave(phi,
-//                                          uv.x(),
-//                                          uv.y()));
-//
-//            // soft_square_wave(<#float fraction#>, <#float softness#>, <#float duty_cycle#>)
-//        }
-
-//    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-//    Color mainImage(Vec2 fragCoord)
+    // TODO returns a scalar on [0, 1] at position "fragCoord"
     float mainImage(Vec2 fragCoord)
     {
-//        Vec2 before = fragCoord;
-        
-        
-        // TODO 20210409 cwr new -- transform from [-1, +1] to [0, 1]
-//        fragCoord = Vec2(1, 1) + fragCoord / 2;
-//        fragCoord = Vec2(remapInterval(fragCoord.x(), -1, 1, 0, 1),
-//                         remapInterval(fragCoord.y(), -1, 1, 0, 1));
-        
-//        // TODO 20210409 cwr new -- wait did I leave "uv" uninitialized?
-        
         // transform from [-1, +1] to [0, 1]
         Vec2 uv = Vec2(remapInterval(fragCoord.x(), -1, 1, 0, 1),
                        remapInterval(fragCoord.y(), -1, 1, 0, 1));
-;
-
-        
-        
-//        {
-//            grabPrintLock();
-//            std::cout << "before " << before;
-//            std::cout << " after " << fragCoord << std::endl;
-//        }
-
-
-
-
-        
-        Vec2 complex_phasor_noise = eval_noise(uv, _f, _b);
-
-        float phi = std::atan2(complex_phasor_noise.y(), complex_phasor_noise.x());
-//        float p1 = PWM(phi, (uv.x() + 0.2) * 0.5);
-//        float g1 = exp(-(uv.x() - 0.3) * (uv.x() - 0.3) * 20);
-//        float p2 = sawTooth(phi);
-//        float g2 = exp(-(uv.x() - 0.9) * (uv.x() - 0.9) * 20);
-//        float p3 = sin(phi+M_PI)+0.5*0.5;
-//        float g3 = exp(-(uv.x() - 1.5) * (uv.x() - 1.5) * 20);
-//
-//        float profile =p1*g1+p2*g2+p3*g3;
-//        float sumGaus= g1+g2+g3;
-
-        // TODO cwr April 7
-//        Color phasorfield = Color(profile/sumGaus);
-//        return phasorfield;
-//        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-//        return Color(complex_phasor_noise.x(), complex_phasor_noise.y(), 0);
-//        return Color(phi, 0, 0);
-//        return Color(remapInterval(sin(phi + pi), -1, +1, 0, 1));
-//        return Color(LocallyCoherentRandomDirectionField(fragCoord));
-        
-        // TODO 20210409 cwr new
-//        return Color(profile/sumGaus);
-//        return Color(p1);
-        
+        Vec2 c_phasor_noise = eval_noise(uv, _f, _b);
+        float phi = std::atan2(c_phasor_noise.y(), c_phasor_noise.x());
         float phase = phi / (2 * pi);
-//        float softness = uv.x();
-//        float duty_cycle = uv.y();
-//        float softness = sinusoid(uv.x());
-//        float duty_cycle = sinusoid(uv.y());
-//        float softness = remapInterval(uv.x(), 0, 1, 0.2, 0.8);
         float softness = uv.x();
-//        float duty_cycle = remapInterval(uv.y(), 0, 1, 0.2, 0.8);
-//        float duty_cycle = uv.y();
         float duty_cycle = remapInterval(uv.y(), 0, 1, 0.3, 1);
-//        return Color(soft_square_wave(phase, softness, duty_cycle));
-//        return soft_square_wave(phase, softness, duty_cycle);
-        return soft_square_wave(phase, 1, 0.5);
+        // return Color(soft_square_wave(phase, softness, duty_cycle));
+        return soft_square_wave(phase, softness, duty_cycle);
+        // return soft_square_wave(phase, 1, 0.5);
     }
-
-    
-    // TODO 20210408
-    // And this, I think, is the “main” to initialize “texture(iChannel0,…)”
-    // Oh jeez. This "BufferA" code is slightly different from the "Image" code.
-    // eval_noise() and cell() each take another parameter: float f.
-
-//    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-//    {
-//        uv = fragCoord/iResolution.y;
-//        uv.y=-uv.y;
-//        init_noise();
-//        float o = iMouse.x/iResolution.x * 2.0*M_PI;
-//        vec2 gaussian_field = vec2(eval_noise(uv,_b));
-//        gaussian_field = normalize(gaussian_field);
-//        float angle = atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
-//        fragColor = vec4(vec3(angle,0, 0),1.0);
-//    }
-
-//    //    void mainImage( out vec4 fragColor, in vec2 fragCoord )
-//    float mock_iChannel0(Vec2 fragCoord)
-//    {
-////        uv = fragCoord/iResolution.y;
-////        uv.y=-uv.y;
-//        init_noise();
-////        float o = iMouse.x/iResolution.x * 2.0*M_PI;
-////        vec2 gaussian_field = vec2(eval_noise(uv,_b));
-////        gaussian_field = normalize(gaussian_field);
-//        Vec2 gaussian_field = eval_noise(uv,_b).norm;
-//        gaussian_field = normalize(gaussian_field);
-////        float angle = atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
-//        float angle = std::atan(gaussian_field.y,gaussian_field.x)/2.0/M_PI;
-////        fragColor = vec4(vec3(angle,0, 0),1.0);
-//        return angle;
-//    }
-
-    
-    
-    // TODO can't do this yet because the shader code is not const
-//    Color getColor(Vec2 position) const override
-//    {
-//        return interpolatePointOnTextures(mainImage(position),
-//                                          position,
-//                                          position,
-//                                          texture0_,
-//                                          texture1_);
-//    }
-
-    
-private:
-    const Texture& texture0_;
-    const Texture& texture1_;
 };
-
-
-inline static int foo = 0;
-inline static PhasorNoisePrototype phasor_noise;
-
-
-//    class PhasorNoiseWrapper : public Texture
-//    {
-//    public:
-//        PhasorNoiseWrapper() {}
-//    //    PhasorNoiseWrapper() : texture0_(*this), texture1_(*this) {}
-//
-//    //    PhasorNoisePrototype(const Texture& texture0,
-//    //                         const Texture& texture1)
-//    //      : texture0_(texture0),
-//    //        texture1_(texture1) {}
-//
-//        Color getColor(Vec2 position) const override
-//        {
-//    //        return interpolatePointOnTextures(phasor_noise.mainImage(position),
-//    //                                          position,
-//    //                                          position,
-//    //                                          texture0_,
-//    //                                          texture1_);
-//            return Color(phasor_noise.mainImage(position));
-//        }
-//    };
 
 class PhasorNoiseWrapper : public Texture
 {
@@ -2249,11 +1791,11 @@ public:
     PhasorNoiseWrapper(const Texture& texture0,
                        const Texture& texture1)
       : texture0_(texture0),
-        texture1_(texture1) {}
-    
+        texture1_(texture1),
+        phasor_noise(std::make_shared<PhasorNoisePrototype>()) {}
     Color getColor(Vec2 position) const override
     {
-        return interpolatePointOnTextures(phasor_noise.mainImage(position),
+        return interpolatePointOnTextures(phasor_noise->mainImage(position),
                                           position,
                                           position,
                                           texture0_,
@@ -2262,6 +1804,7 @@ public:
 private:
     const Texture& texture0_;
     const Texture& texture1_;
+    std::shared_ptr<PhasorNoisePrototype> phasor_noise;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
