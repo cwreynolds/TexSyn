@@ -1677,12 +1677,174 @@ private:
 // TODO WIP prototype
 // Source for "Procedural phasor noise" https://www.shadertoy.com/view/wlsXWf
 
+//    class PhasorNoisePrototype : public Texture
+//    {
+//    public:
+//        PhasorNoisePrototype(const Texture& texture0, const Texture& texture1)
+//          : texture0_(texture0),
+//            texture1_(texture1) {}
+//
+//        Color getColor(Vec2 position) const override
+//        {
+//            return interpolatePointOnTextures(mainImage(position),
+//                                              position, position,
+//                                              texture0_, texture1_);
+//        }
+//
+//        // TODO
+//        // Returns a complex phasor value.
+//        // TODO do "o" and "phi" need to be separate?
+//        Vec2 phasor(Vec2 x, float f, float b, float o, float phi) const
+//        {
+//            float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
+//            float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
+//            float c = cos (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
+//            return Vec2(a * c, a * s);
+//        }
+//
+//        // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
+//        float LocallyCoherentRandomDirectionField(Vec2 v) const
+//        {
+//            // return PerlinNoise::unitNoise2d(uv);
+//            return PerlinNoise::unitNoise2d(v * 3);
+//            // return PerlinNoise::unitNoise2d(v * 10);
+//            // return PerlinNoise::unitNoise2d(v * 100);
+//        }
+//
+//        // TODO
+//        // something about creating 16 random kernel locations (deterministically so
+//        // they can be re-created each pixel/fragment) and summing up the kernel
+//        // contributions to the sample at "uv"(?).
+//        Vec2 cell(int i, int j, Vec2 uv, float f, float b) const
+//        {
+//            // Initialize local RandomSequence by hashing grid cell coordinates.
+//            RandomSequence rs(Vec2(i, j).hash());
+//
+//            int impulse = 0;
+//            int nImpulse = _impPerKernel;
+//            float cellsz = 2.0 * _kr;
+//            Vec2 noise;
+//            while (impulse <= nImpulse)
+//            {
+//                Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
+//                Vec2 d = (uv - impulse_centre) * cellsz;
+//
+//                // TODO don't know what "rp" (random phi?) means but this is the
+//                // first random rotation for the kernel
+//                float rp = rs.frandom2(0, 2 * pi);
+//
+//                // TODO global texture coordinates?
+//                Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
+//                // TODO look up "curl noise" in global space.
+//                float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+//                // Add (complex?) phasor value from this kernel into accumulator.
+//                noise += phasor(d, f, b, o, rp);
+//                impulse++;
+//            }
+//            return noise;
+//        }
+//
+//        // TODO Evaluates the noise at a given location based on "f" and "b" ?
+//        // TODO seems to be evaluating 5x5 neighborhood. Why is that needed? Is it
+//        //      just part of finding overlapping kernels in nearby cells?
+//        Vec2 eval_noise(Vec2 uv, float f, float b) const
+//        {
+//            float cellsz = 2.0 *_kr;
+//
+//            Vec2 _ij = uv / cellsz;
+//
+//            int i = _ij.x();
+//            int j = _ij.y();
+//            Vec2  fij = _ij - Vec2(i, j);
+//
+//            Vec2 noise;
+//            for (int jj = -2; jj <= 2; jj++)
+//            {
+//                for (int ii = -2; ii <= 2; ii++)
+//                {
+//                    noise += cell(i + ii, j + jj , fij - Vec2(ii, jj), f, b);
+//                }
+//            }
+//            return noise;
+//        }
+//
+//        // TODO returns a scalar on [0, 1] at position "fragCoord"
+//        float mainImage(Vec2 fragCoord) const
+//        {
+//            // transform from [-1, +1] to [0, 1]
+//            Vec2 uv = Vec2(remapInterval(fragCoord.x(), -1, 1, 0, 1),
+//                           remapInterval(fragCoord.y(), -1, 1, 0, 1));
+//            Vec2 c_phasor_noise = eval_noise(uv, _f, _b);
+//            float phi = std::atan2(c_phasor_noise.y(), c_phasor_noise.x());
+//            float phase = phi / (2 * pi);
+//            float softness = uv.x();
+//            float duty_cycle = remapInterval(uv.y(), 0, 1, 0.3, 1);
+//            // return Color(soft_square_wave(phase, softness, duty_cycle));
+//            return soft_square_wave(phase, softness, duty_cycle);
+//            // return soft_square_wave(phase, 1, 0.5);
+//        }
+//
+//    private:
+//        //phasor noise parameters
+//        //    const float _f = 50.0;
+//        //    const float _f = 20;
+//        //    const float _f = 30;
+//        const float _f = 50;
+//        const float _b = 32.0;
+//        //    const float _o = 1.0;
+//        const float _kr = sqrt(-log(0.05) / pi) / _b;
+//        const int _impPerKernel = 16;
+//
+//        const Texture& texture0_;
+//        const Texture& texture1_;
+//
+//        std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+//    };
+
 class PhasorNoisePrototype : public Texture
 {
 public:
-    PhasorNoisePrototype(const Texture& texture0, const Texture& texture1)
-      : texture0_(texture0),
-        texture1_(texture1) {}
+//    PhasorNoisePrototype(const Texture& texture0, const Texture& texture1)
+//      : texture0_(texture0),
+//        texture1_(texture1) {}
+    
+    PhasorNoisePrototype(int kernels,
+                        float min_radius, float max_radius,
+                        float min_wavelength, float max_wavelength,
+                        float min_angle, float max_angle,
+                        const Texture& texture0,
+                        const Texture& texture1)
+      : kernels_(kernels),
+        min_radius_(min_radius),
+        max_radius_(max_radius),
+        min_wavelength_(min_wavelength),
+        max_wavelength_(max_wavelength),
+        min_angle_(min_angle),
+        max_angle_(max_angle),
+        texture0_(texture0),
+        texture1_(texture1),
+        disk_occupancy_grid_
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+    {
+        // TODO 20210414 copied directly from GaborNoisePrototype
+        
+        // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+        // TODO maybe should init a const vector, to emphasize it can't change.
+        RandomSequence rs(seedForRandomSequence());
+        for (int i = 0; i < kernels_; i++)
+        {
+            float radius = rs.frandom2(min_radius, max_radius);
+            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            float angle = rs.frandom2(min_angle, max_angle);
+            float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+            disks_.push_back(Disk(radius, center, angle, wavelength));
+        }
+        // Insert randomized Disks into DiskOccupancyGrid.
+        for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+        // TODO XXX TEMP experiment 20210328 start to space them out a little
+        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
+    }
+
     Color getColor(Vec2 position) const override
     {
         return interpolatePointOnTextures(mainImage(position),
@@ -1695,6 +1857,8 @@ public:
     // TODO do "o" and "phi" need to be separate?
     Vec2 phasor(Vec2 x, float f, float b, float o, float phi) const
     {
+        // TODO 20210414 I suspect "a" corresponds to Equation 6 in the paper:  ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        //      “a centered Gaussian of bandwidth b”
         float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
         float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
         float c = cos (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
@@ -1723,6 +1887,9 @@ public:
         int nImpulse = _impPerKernel;
         float cellsz = 2.0 * _kr;
         Vec2 noise;
+
+        // TODO 20210414 this loop SHOULD get nearby Disks from disk_occupancy_grid_ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
         while (impulse <= nImpulse)
         {
             Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
@@ -1782,6 +1949,22 @@ public:
         return soft_square_wave(phase, softness, duty_cycle);
         // return soft_square_wave(phase, 1, 0.5);
     }
+    
+    // TODO 20210414 copied directly from GaborNoisePrototype
+    // may need to be updated
+
+    // Seed the random number sequence from some operator parameters.
+    size_t seedForRandomSequence()
+    {
+        return (hash_float(kernels_) ^
+                hash_float(min_radius_) ^
+                hash_float(max_radius_) ^
+                hash_float(min_wavelength_) ^
+                hash_float(max_wavelength_) ^
+                hash_float(min_angle_) ^
+                hash_float(max_angle_));
+    }
+
 
 private:
     //phasor noise parameters
@@ -1793,9 +1976,19 @@ private:
     //    const float _o = 1.0;
     const float _kr = sqrt(-log(0.05) / pi) / _b;
     const int _impPerKernel = 16;
-
+    
+    // TODO 20210414 copied directly from GaborNoisePrototype
+    const int kernels_;
+    const float min_radius_;
+    const float max_radius_;
+    const float min_wavelength_;
+    const float max_wavelength_;
+    const float min_angle_;
+    const float max_angle_;
     const Texture& texture0_;
     const Texture& texture1_;
+    std::vector<Disk> disks_;  // TODO should this be const?
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

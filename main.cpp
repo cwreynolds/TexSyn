@@ -4993,51 +4993,81 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // 20210407 testing phasor noise.
+//    std::cout << "April 11, 2021" << std::endl;
+//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    std::string path = temp_dir + "20210411_";
+//
+//    //    {
+//    //        Timer timer("PhasorNoiseWrapper");
+//    //        Texture::setDefaultRenderAsDisk(false);
+//    //        // Texture::displayAndFile(PhasorNoiseWrapper());
+//    //
+//    //        Texture::displayAndFile(PhasorNoiseWrapper()
+//    //                                ); // , path + "first_phasor");
+//    //
+//    //        // Each rendered pixel uses an NxN jittered grid of subsamples...
+//    //        Texture::sqrt_of_aa_subsample_count = 3;
+//    //
+//    //        Texture::displayAndFile(PhasorNoiseWrapper()
+//    //                                ); // , path + "first_phasor_3_3");
+//    //    }
+//
+//    Uniform red_orange(1, 0.3, 0);
+//    Uniform orange(1, 0.5, 0);
+//    Uniform blue(0, 0, 1);
+//    Uniform cyan_blue(0, 0.5, 1);
+//
+//    [&](const Texture& texture0, const Texture& texture1)
+//    {
+//        Timer timer("PhasorNoiseWrapper");
+//        Texture::displayAndFile(PhasorNoisePrototype(texture0, texture1)
+//                                );  // , path + "color0");
+//    }
+//    (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),
+//     Grating(Vec2(), blue, Vec2(0.1, 0.2), cyan_blue, 0.5, 0.3));
+//
+//    //    [&](const Texture& texture0, const Texture& texture1)
+//    //    {
+//    //        Timer timer("PhasorNoiseWrapper");
+//    //        Texture::setDefaultRenderAsDisk(false);
+//    //        Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
+//    //                                );  // , path + "first_light");
+//    //    }
+//    //    (Uniform(0), Uniform(1));
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+//    // 20210413 to launch run redwood_leaf_litter_20210413_1441
+//    std::cout << "April 13, 2021" << std::endl;
+//    Camouflage(CommandLine(argc, argv)).run();
+    
+    [&](const Texture& texture0, const Texture& texture1)
+    {
+        Timer timer("PhasorNoiseWrapper");
+        Texture::setDefaultRenderAsDisk(false);
+//        Texture::displayAndFile(PhasorNoisePrototype(texture0, texture1)
+//                                );  // , path + "first_light");
+        
+        Texture::displayAndFile(PhasorNoisePrototype(1000,
+                                                     0.2, 0.8,
+                                                     0.01, 0.03,
+                                                     pi * 0.33, pi * 0.66,
+                                                     texture0, texture1));
+    }
+    (Uniform(0), Uniform(1));
+    
+    Texture::waitKey();
+
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
     // 20210407 testing phasor noise.
     std::cout << "April 11, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
     std::string path = temp_dir + "20210411_";
-
-    
-//    {
-//        Timer timer("PhasorNoiseWrapper");
-//        Texture::setDefaultRenderAsDisk(false);
-////        Texture::displayAndFile(PhasorNoiseWrapper());
-//
-//        Texture::displayAndFile(PhasorNoiseWrapper()
-//                                ); // , path + "first_phasor");
-//
-//        // Each rendered pixel uses an NxN jittered grid of subsamples, N is:
-//        Texture::sqrt_of_aa_subsample_count = 3;
-//
-//        Texture::displayAndFile(PhasorNoiseWrapper()
-//                                ); // , path + "first_phasor_3_3");
-//    }
-    
-    Uniform red_orange(1, 0.3, 0);
-    Uniform orange(1, 0.5, 0);
-    Uniform blue(0, 0, 1);
-    Uniform cyan_blue(0, 0.5, 1);
-
-    [&](const Texture& texture0, const Texture& texture1)
-    {
-        Timer timer("PhasorNoiseWrapper");
-        Texture::displayAndFile(PhasorNoisePrototype(texture0, texture1)
-                                );  // , path + "color0");
-    }
-    (LotsOfSpots(0.8, 0.2, 0.3, 0.04, 0.05, red_orange, orange),
-     Grating(Vec2(), blue, Vec2(0.1, 0.2), cyan_blue, 0.5, 0.3));
-
-    //    [&](const Texture& texture0, const Texture& texture1)
-    //    {
-    //        Timer timer("PhasorNoiseWrapper");
-    //        Texture::setDefaultRenderAsDisk(false);
-    //        Texture::displayAndFile(PhasorNoiseWrapper(texture0, texture1)
-    //                                );  // , path + "first_light");
-    //    }
-    //    (Uniform(0), Uniform(1));
-
-    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
