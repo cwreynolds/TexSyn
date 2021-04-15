@@ -82,7 +82,59 @@
       will produce a texture that looks different from the one shown in the doc.
       It will generally be brighter and less saturated.</p>
     <br style="--------------------------------------------------------------------------">
-    <!-- --------------------------------------------------------------------------- -->
+    <div class="post" id="20210414"> <a href="#20210414" class="date">April 14,
+        2021</a>
+      <h1>Camouflage on redwood leaf litter</h1>
+      <p>This <code>evo_camo_game</code> run (tagged
+        redwood_leaf_litter_20210413_1441) uses the same parameters as other
+        recent runs, except for one. I was curious if I had been forcing the
+        individual prey to limit the complexity of their texture specification.
+        I had been using the default of the parameter which limits the max
+        GpTree size during crossover. (It does not enforce a hard limit, but
+        once parent trees exceed this size threshold, crossover fragments are
+        chosen to reduce the size of offspring trees.) Parameter <code>max_init_tree_size</code>
+        defaults to 100, and <code>max_crossover_tree_size</code> defaults to
+        1.5 time that: 150. Instead I specified a value of 200. But that seemed
+        to make no difference in tree sizes averaged over the whole population.
+        In this run, the highest average tree size was 132, lower that the
+        default max limit of 150, and well below 200, the max limit specified
+        for this run.</p>
+      <p>These background images show fallen leaves/needles of some redwood
+        trees in my neighborhood. The wind had blown them into the gutter on the
+        opposite side of the street. As they slowly dry, they change from bright
+        green to reddish brown. Shown below, two images of all three prey in
+        competition at steps 2575 and 2618, of the total 3000 steps of this run:</p>
+      <img src="images/20210414_step_2575.png" alt="20210414_step_2575" title="20210414_step_2575"
+        width="800" height="533"> <br>
+      <br>
+      <img src="images/20210414_step_2618.png" alt="20210414_step_2618" title="20210414_step_2618"
+        width="800" height="533">
+      <p>Many of the better camouflage patterns blend in by both matching the
+        mix of background colors, and by “disrupting” their circular boundary
+        with black features that visually match up with inky shadows in these
+        photos shot in bright afternoon sun. Shown below are thumbnails of
+        individual prey from step 1294 to 2867:</p>
+      <img src="images/20210414_thumbnail_1294_a.png" alt="20210414_thumbnail_1294_a"
+        title="20210414_thumbnail_1294_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_1903_a.png"
+        alt="20210414_thumbnail_1903_a" title="20210414_thumbnail_1903_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_1979_a.png"
+        alt="20210414_thumbnail_1979_a" title="20210414_thumbnail_1979_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2016_a.png"
+        alt="20210414_thumbnail_2016_a" title="20210414_thumbnail_2016_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2083_b.png"
+        alt="20210414_thumbnail_2083_b" title="20210414_thumbnail_2083_b" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2108_b.png"
+        alt="20210414_thumbnail_2108_b" title="20210414_thumbnail_2108_b" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2375_a.png"
+        alt="20210414_thumbnail_2375_a" title="20210414_thumbnail_2375_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2420_a.png"
+        alt="20210414_thumbnail_2420_a" title="20210414_thumbnail_2420_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2845_a.png"
+        alt="20210414_thumbnail_2845_a" title="20210414_thumbnail_2845_a" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> <img src="images/20210414_thumbnail_2867_b.png"
+        alt="20210414_thumbnail_2867_b" title="20210414_thumbnail_2867_b" style="padding-right: 1em; padding-bottom: 1em;"
+        width="402" height="402"> </div>
     <div class="post" id="20210411"> <a href="#20210411" class="date">April 11,
         2021</a>
       <h1>Phasor noise prototype</h1>
@@ -97,13 +149,7 @@
         in shader languages, global variables are treated like c++'s <code>thread_local</code>,
         with a separate copy for each thread. Fixing that allowed it to work:</p>
       <img src="images/20210411_first_light.png" alt="first phasor noise" title="first phasor noise"
-        width="511" height="511">
-      <!--
-      <p>...</p>
-      <img src="images/xxx" alt="" title="" width="511" height="511">
-      -->
-    </div>
-    <!-- --------------------------------------------------------------------------- -->
+        width="511" height="511"> </div>
     <div class="post" id="20210410"> <a href="#20210410" class="date">April 10,
         2021</a>
       <h1>Camouflage run on Eric's redbud</h1>
@@ -5686,6 +5732,5 @@ SoftMatte(spot(0.2),
       <p>This page, and the software it describes, by <a href="https://www.red3d.com/cwr">Craig
           Reynolds</a></p>
     </div>
-    
   </body>
 </html>
