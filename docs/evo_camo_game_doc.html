@@ -26,17 +26,18 @@
       <p>This program is a crude simulation of the evolution of camouflage in
         nature. There is a predator-prey system. Software for texture
         optimization plays the part of an evolving population of camouflaged
-        “prey.” The human user serves as the predator, who hunts its prey with
-        vision. This can be seen as a minimalist “game” or a “human
-        based computation.” The app displays a window with a portion of a given
-        set of photographs. Over that is drawn three randomly positions disks of
-        synthetic texture, three “prey.” The human user/player then decides
-        which of the three textures/prey is <strong>most conspicuous</strong>
-        or <strong>least well camouflaged</strong>, indicating their selection
-        by clicking/tapping on that prey. The window will go blank then display
-        the next step. Runs typically consist of 1000 such steps or more. They
-        can be stopped at any time. Results are currently saved during as image
-        files, and texture “source code” in text files, as described below.</p>
+        “prey.” The human user serves as a predator hunting its prey with
+        vision. This can be seen as a minimalist “game” or a <a href="https://en.wikipedia.org/wiki/Human-based_computation">human
+          based computation</a>. The app displays a window with a random portion
+        taken from a given set of photographs. Over that background are drawn
+        three randomly positions disks of synthetic texture—three “prey.” The
+        human user/player/predator then decides which of the three textures/prey
+        is <strong>most conspicuous</strong> or <strong>least well camouflaged</strong>,
+        indicating their selection by clicking/tapping on that prey. The window
+        will go blank then display the next step. Runs typically consist of 1000
+        such steps or more. They can be stopped at any time. Results are
+        currently saved during as image files, and texture “source code” in text
+        files, as described below.</p>
       <h3>Caveats</h3>
       <ul>
         <li><b>Alpha software:</b> may contain sharp edges! Might not work, but
@@ -45,9 +46,9 @@
           version may work differently.</li>
         <li>This software is distributed as a pre-compiled binary.</li>
         <ul>
-          <li>It will only work on macOS machines with Intel CPUs.</li>
+          <li><strong>It will only work on macOS machines with Intel CPUs.</strong></li>
           <li>It has been verified to work only on macOS versions <em>Catalina</em>
-            and <em>Big Sur</em>. Probably others are OK.</li>
+            and <em>Big Sur</em>. Other versions may work too.</li>
           <li>Despite requiring macOS, it is just a Unix style executable, with
             not-macOS-standard GUI. </li>
         </ul>
@@ -176,7 +177,7 @@
         like the background. When I do a “full” run, it is about 2000 to 3000
         steps.</p>
       <img src="images/20210325_clover_step_0.jpg" alt="clover (step 0)" title="clover (step 0)"
-        width="1312" height="934">
+        height="934" width="1312">
       <p>The app supports a few GUI actions:</p>
       <div>
         <table style="padding-left: 2em;" width="100%" cellspacing="2" cellpadding="2"
@@ -226,17 +227,17 @@
         image above, minus the title bar of the window. Here we see tournaments
         from steps 102, 1000, and 1982:</p>
       <img src="images/20210325_clover_step_102.png" alt="20210325_clover_step_102"
-        title="20210325_clover_step_102" style="padding-left: 2em;" width="1200"
-        height="800"> <img src="images/20210325_clover_step_1000.png" alt="20210325_clover_step_1000"
+        title="20210325_clover_step_102" style="padding-left: 2em;" height="800"
+        width="1200"> <img src="images/20210325_clover_step_1000.png" alt="20210325_clover_step_1000"
         title="20210325_clover_step_1000" style="padding-left: 2em; padding-top: 10px"
-        width="1200" height="800"> <img src="images/20210325_clover_step_1982.png"
+        height="800" width="1200"> <img src="images/20210325_clover_step_1982.png"
         alt="20210325_clover_step_1982" title="20210325_clover_step_1982" style="padding-left: 2em; padding-top: 10px"
-        width="1200" height="800">
+        height="800" width="1200">
       <p>A saved “thumbnail” image looks like this, the disk-shaped prey with
         camouflage texture in the center, and a bit of the background behind it:</p>
       <img src="images/20210325_clover_thumbnail_1988_b.png" alt="20210325_clover_thumbnail_1988_b"
-        title="20210325_clover_thumbnail_1988_b" style="padding-left: 2em;" width="402"
-        height="402">
+        title="20210325_clover_thumbnail_1988_b" style="padding-left: 2em;" height="402"
+        width="402">
       <p>The command allows you to set a lot of parameters on the command line,
         which you can ignore at first, but fyi they are listed if you run the
         command with no augments:</p>
