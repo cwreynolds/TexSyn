@@ -1808,13 +1808,22 @@ public:
 //      : texture0_(texture0),
 //        texture1_(texture1) {}
     
-    PhasorNoisePrototype(int kernels,
-                        float min_radius, float max_radius,
-                        float min_wavelength, float max_wavelength,
-                        float min_angle, float max_angle,
-                        const Texture& texture0,
-                        const Texture& texture1)
-      : kernels_(kernels),
+    PhasorNoisePrototype(//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+                         // TODO temporarily add arg for A/B testing
+                         int test_case,
+                         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+                         int kernels,
+                         float min_radius, float max_radius,
+                         float min_wavelength, float max_wavelength,
+                         float min_angle, float max_angle,
+                         const Texture& texture0,
+                         const Texture& texture1)
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//      : kernels_(kernels),
+      : test_case_(test_case),
+        kernels_(kernels),
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         min_radius_(min_radius),
         max_radius_(max_radius),
         min_wavelength_(min_wavelength),
@@ -1857,9 +1866,18 @@ public:
     // TODO do "o" and "phi" need to be separate?
     Vec2 phasor(Vec2 x, float f, float b, float o, float phi) const
     {
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
         // TODO 20210414 I suspect "a" corresponds to Equation 6 in the paper:  ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         //      “a centered Gaussian of bandwidth b”
-        float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
+        
+//        float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
+  
+        float a = (test_case_ == 0 ?
+                   exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y()))) :
+                   exp(-pi * sq(b) * x.dot(x)));
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
         float c = cos (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
         return Vec2(a * c, a * s);
@@ -1976,6 +1994,10 @@ private:
     //    const float _o = 1.0;
     const float _kr = sqrt(-log(0.05) / pi) / _b;
     const int _impPerKernel = 16;
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    int test_case_ = 0;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     
     // TODO 20210414 copied directly from GaborNoisePrototype
     const int kernels_;

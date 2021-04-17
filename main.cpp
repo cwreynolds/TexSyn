@@ -5044,30 +5044,43 @@ int main(int argc, const char * argv[])
 //    std::cout << "April 13, 2021" << std::endl;
 //    Camouflage(CommandLine(argc, argv)).run();
     
-    [&](const Texture& texture0, const Texture& texture1)
-    {
-        Timer timer("PhasorNoiseWrapper");
-        Texture::setDefaultRenderAsDisk(false);
-//        Texture::displayAndFile(PhasorNoisePrototype(texture0, texture1)
-//                                );  // , path + "first_light");
-        
-        Texture::displayAndFile(PhasorNoisePrototype(1000,
-                                                     0.2, 0.8,
-                                                     0.01, 0.03,
-                                                     pi * 0.33, pi * 0.66,
-                                                     texture0, texture1));
-    }
-    (Uniform(0), Uniform(1));
-    
-    Texture::waitKey();
-
-
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+    
     // 20210407 testing phasor noise.
-    std::cout << "April 11, 2021" << std::endl;
+    std::cout << "April 17, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210411_";
+    std::string path = temp_dir + "20210417_";
+
+//    [&](const Texture& texture0, const Texture& texture1)
+//    {
+//        Timer timer("PhasorNoiseWrapper");
+//        Texture::setDefaultRenderAsDisk(false);
+//        Texture::displayAndFile(PhasorNoisePrototype(0, // test_case
+//                                                     1000,
+//                                                     0.2, 0.8,
+//                                                     0.01, 0.03,
+//                                                     pi * 0.33, pi * 0.66,
+//                                                     texture0, texture1));
+//    }
+//    (Uniform(0), Uniform(1));
+    
+//    Texture::diff(<#const Texture &t0#>, <#const Texture &t1#>, <#std::string pathname#>, <#int size#>, <#bool binary#>)
+    
+    Uniform black(0);
+    Uniform white(1);
+    Texture::diff(PhasorNoisePrototype(0, // test_case
+                                       1000,
+                                       0.2, 0.8,
+                                       0.01, 0.03,
+                                       pi * 0.33, pi * 0.66,
+                                       black, white),
+                  PhasorNoisePrototype(1, // test_case
+                                       1000,
+                                       0.2, 0.8,
+                                       0.01, 0.03,
+                                       pi * 0.33, pi * 0.66,
+                                       black, white));
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
