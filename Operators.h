@@ -1873,9 +1873,17 @@ public:
         
 //        float a = exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
   
-        float a = (test_case_ == 0 ?
-                   exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y()))) :
-                   exp(-pi * sq(b) * x.dot(x)));
+//        float a = (test_case_ == 0 ?
+//                   exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y()))) :
+//                   exp(-pi * sq(b) * x.dot(x)));
+        
+        float a = 0;
+        
+        if (test_case_ == 0)
+            a =exp(-pi * (b * b) * ((x.x() * x.x()) + (x.y() * x.y())));
+        if (test_case_ == 1)
+            a = exp(-pi * sq(b) * x.dot(x));
+
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         float s = sin (2.0* pi * f  * (x.x()*cos(o) + x.y()*sin(o))+phi);
@@ -1921,8 +1929,18 @@ public:
             Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
             // TODO look up "curl noise" in global space.
             float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             // Add (complex?) phasor value from this kernel into accumulator.
-            noise += phasor(d, f, b, o, rp);
+
+//            noise += phasor(d, f, b, o, rp);
+
+            if (test_case_ == 0) noise += phasor(d, f, b, o, rp);
+//            if (test_case_ == 1) noise += phasor(d, f, b, o + rp, 0);
+//            if (test_case_ == 1) noise += phasor(d, f, b, o - rp, 0);
+            if (test_case_ == 1) noise += phasor(d, f, b, 0, o + rp);
+
+            
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             impulse++;
         }
         return noise;

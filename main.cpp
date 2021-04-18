@@ -5066,20 +5066,22 @@ int main(int argc, const char * argv[])
     
 //    Texture::diff(<#const Texture &t0#>, <#const Texture &t1#>, <#std::string pathname#>, <#int size#>, <#bool binary#>)
     
-    Uniform black(0);
-    Uniform white(1);
-    Texture::diff(PhasorNoisePrototype(0, // test_case
-                                       1000,
-                                       0.2, 0.8,
-                                       0.01, 0.03,
-                                       pi * 0.33, pi * 0.66,
-                                       black, white),
-                  PhasorNoisePrototype(1, // test_case
-                                       1000,
-                                       0.2, 0.8,
-                                       0.01, 0.03,
-                                       pi * 0.33, pi * 0.66,
-                                       black, white));
+    {
+        Uniform black(0);
+        Uniform white(1);
+        Texture::diff(PhasorNoisePrototype(0, // test_case
+                                           1000,
+                                           0.2, 0.8,
+                                           0.01, 0.03,
+                                           pi * 0.33, pi * 0.66,
+                                           black, white),
+                      PhasorNoisePrototype(1, // test_case
+                                           1000,
+                                           0.2, 0.8,
+                                           0.01, 0.03,
+                                           pi * 0.33, pi * 0.66,
+                                           black, white));
+    }
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
