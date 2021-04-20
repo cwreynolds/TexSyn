@@ -1728,7 +1728,14 @@ public:
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
         // TODO XXX TEMP experiment 20210328 start to space them out a little
         disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        reset_meters();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
     }
+
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     Color getColor(Vec2 position) const override
     {
@@ -1736,7 +1743,48 @@ public:
                                           position, position,
                                           texture0_, texture1_);
     }
+    
+    // TODO just for reference, GaborNoisePrototype::getColor()
+    
+//    Color getColor(Vec2 position) const override
+//    {
+//        // Sum up the contribition, on [-0.5, +0.5], from each kernel
+//        float sum = 0;
+//        // Adjust "position" to be in center tile of grid.
+//        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//        // Find all disks that touch "tiled_pos".
+//        std::set<Disk*> nearby_disks;
+//        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//        // Evaluate one kernel at "tiled_pos".
+//        auto kernel_sample = [&](const Disk& d)
+//        {
+//            Vec2 dp = disk_occupancy_grid_->wrapToCenterTile(d.position);
+//            // Both grat and spot range on [0, 1]
+//            float grat = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
+//            float spot = spot_utility(tiled_pos, dp, 0, d.radius);
+//            // Bias gradient from [0, 1] to [-0.5, +0.5], scale by spot falloff.
+//            float kernel_value = spot * (grat - 0.5);
+//            sum += kernel_value;
+//        };
+//        // Sum up contributions for all nearby kernels.
+//        for (auto& disk : nearby_disks) { kernel_sample(*disk); }
+//        // Bias back to [0, 1] from [-0.5, +0.5]. Clip to [0, 1]. Interpolate.
+//        return interpolatePointOnTextures(clip01(sum + 0.5),
+//                                          position, position,
+//                                          texture0_, texture1_);
+//    }
 
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    static inline float max_pos_mag_ = 0;
+    void reset_meters()
+    {
+        max_pos_mag_ = 0;
+    }
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
     // Returns a complex phasor value.
     // (Samples the phasor field for given kernel parameters?)
     // TODO should it use type Complex?
@@ -1746,7 +1794,15 @@ public:
                 float direction_field,
                 float kernel_angle) const
     {
-        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        {
+            grabPrintLock();
+            max_pos_mag_ = std::max(sample_position.length(), max_pos_mag_);
+            std::cout << "max_pos_mag = " << max_pos_mag_;
+            std::cout << std::endl;
+        }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
         // From Equation 6 in the paper: "centered Gaussian of bandwidth b" (?)
         float a = std::exp(-pi *
                            sq(kernel_bandwidth) *
@@ -1768,6 +1824,44 @@ public:
         // return PerlinNoise::unitNoise2d(v * 100);
     }
 
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
+//    // TODO
+//    // something about creating 16 random kernel locations (deterministically so
+//    // they can be re-created each pixel/fragment) and summing up the kernel
+//    // contributions to the sample at "uv"(?).
+//    Vec2 cell(int i, int j, Vec2 uv, float f, float b) const
+//    {
+//        // Initialize local RandomSequence by hashing grid cell coordinates.
+//        RandomSequence rs(Vec2(i, j).hash());
+//
+//        int impulse = 0;
+//        int nImpulse = _impPerKernel;
+//        float cellsz = 2.0 * _kr;
+//        Vec2 noise;
+//
+//        // TODO 20210414 this loop SHOULD get nearby Disks from disk_occupancy_grid_ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//
+//        while (impulse <= nImpulse)
+//        {
+//            Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
+//            Vec2 d = (uv - impulse_centre) * cellsz;
+//
+//            // TODO don't know what "rp" (random phi?) means but this is the
+//            // first random rotation for the kernel
+//            float rp = rs.frandom2(0, 2 * pi);
+//
+//            // TODO global texture coordinates?
+//            Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
+//            // TODO look up "curl noise" in global space.
+//            float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+//            // Add (complex?) phasor value from this kernel into accumulator.
+//            noise += phasor(d, f, b, o, rp);
+//            impulse++;
+//        }
+//        return noise;
+//    }
+    
     // TODO
     // something about creating 16 random kernel locations (deterministically so
     // they can be re-created each pixel/fragment) and summing up the kernel
@@ -1776,55 +1870,104 @@ public:
     {
         // Initialize local RandomSequence by hashing grid cell coordinates.
         RandomSequence rs(Vec2(i, j).hash());
-
+        
         int impulse = 0;
         int nImpulse = _impPerKernel;
         float cellsz = 2.0 * _kr;
         Vec2 noise;
-
-        // TODO 20210414 this loop SHOULD get nearby Disks from disk_occupancy_grid_ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-        while (impulse <= nImpulse)
+        
+        if (test_case_ == 0)
         {
-            Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
-            Vec2 d = (uv - impulse_centre) * cellsz;
-            
-            // TODO don't know what "rp" (random phi?) means but this is the
-            // first random rotation for the kernel
-            float rp = rs.frandom2(0, 2 * pi);
+            // TODO 20210414 this loop SHOULD get nearby Disks from disk_occupancy_grid_ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            while (impulse <= nImpulse)
+            {
+                Vec2 impulse_centre = Vec2(rs.frandom01(), rs.frandom01());
+                Vec2 d = (uv - impulse_centre) * cellsz;
 
-            // TODO global texture coordinates?
-            Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
-            // TODO look up "curl noise" in global space.
-            float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
-            // Add (complex?) phasor value from this kernel into accumulator.
-            noise += phasor(d, f, b, o, rp);
-            impulse++;
+                // TODO don't know what "rp" (random phi?) means but this is the
+                // first random rotation for the kernel
+                float rp = rs.frandom2(0, 2 * pi);
+
+                // TODO global texture coordinates?
+                Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
+                // TODO look up "curl noise" in global space.
+                float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+                // Add (complex?) phasor value from this kernel into accumulator.
+                noise += phasor(d, f, b, o, rp);
+                impulse++;
+            }
         }
+        else
+        {
+            // TODO 20210420 temp connector
+            Vec2 position = uv;
+            
+            // TODO 20210420 copy in from GaborNoisePrototype::getColor()
+            // Adjust "position" to be in center tile of grid.
+            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+            // Find all disks that touch "tiled_pos".
+            std::set<Disk*> nearby_disks;
+            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+            
+            // TODO 20210420 copy loop wapper from GaborNoisePrototype::getColor()
+            // Sum up contributions for all nearby kernels.
+            for (auto& disk : nearby_disks)
+            {
+    //            noise += phasor(d, f, b, o, rp);
+    //            phasor(<#Vec2 sample_position#>,
+    //                   <#float kernel_frequency#>,
+    //                   <#float kernel_bandwidth#>,
+    //                   <#float direction_field#>,
+    //                   <#float kernel_angle#>)
+                noise += phasor(position - disk->position,
+                                1 / disk->wavelength,
+                                disk->radius, // TODO probably need adjustment
+                                0, // LocallyCoherentRandomDirectionField(trueUv),
+                                disk->angle);
+            }
+
+        }
+        
         return noise;
     }
+
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     // TODO Evaluates the noise at a given location based on "f" and "b" ?
     // TODO seems to be evaluating 5x5 neighborhood. Why is that needed? Is it
     //      just part of finding overlapping kernels in nearby cells?
     Vec2 eval_noise(Vec2 uv, float f, float b) const
     {
-        float cellsz = 2.0 *_kr;
-        
-        Vec2 _ij = uv / cellsz;
-        
-        int i = _ij.x();
-        int j = _ij.y();
-        Vec2  fij = _ij - Vec2(i, j);
-
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         Vec2 noise;
-        for (int jj = -2; jj <= 2; jj++)
+
+        if (test_case_ == 0)
         {
-            for (int ii = -2; ii <= 2; ii++)
-            {
-                noise += cell(i + ii, j + jj , fij - Vec2(ii, jj), f, b);
-            }
+            float cellsz = 2.0 *_kr;
+            Vec2 _ij = uv / cellsz;
+            int i = _ij.x();
+            int j = _ij.y();
+            Vec2  fij = _ij - Vec2(i, j);
+            
+//            for (int jj = -2; jj <= 2; jj++)
+//            {
+//                for (int ii = -2; ii <= 2; ii++)
+//                {
+//                    noise += cell(i + ii, j + jj , fij - Vec2(ii, jj), f, b);
+//                }
+//            }
+
+            int ii = 0;
+            int jj = 0;
+            noise += cell(i + ii, j + jj , fij - Vec2(ii, jj), f, b);
         }
+        else
+        {
+            
+    //        cell(<#int i#>, <#int j#>, <#Vec2 uv#>, <#float f#>, <#float b#>)
+            noise += cell(0, 0, uv, f, b);
+        }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return noise;
     }
 
