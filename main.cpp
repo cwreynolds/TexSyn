@@ -5089,17 +5089,44 @@ int main(int argc, const char * argv[])
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
     std::string path = temp_dir + "20210420_";
 
+//        [&](const Texture& texture0, const Texture& texture1)
+//        {
+//            Timer timer("PhasorNoisePrototype");
+//            Texture::setDefaultRenderAsDisk(false);
+//            Texture::displayAndFile(PhasorNoisePrototype(0, // TODO test_case
+//    //        Texture::displayAndFile(PhasorNoisePrototype(1, // TODO test_case
+//                                                         1000,
+//    //                                                     0.2, 0.8,
+//                                                         0.5, 1.0,
+//    //                                                     0.01, 0.03,
+//                                                         0.02, 0.06,
+//                                                         pi * 0.33, pi * 0.66,
+//                                                         texture0, texture1));
+//        }
+//        (Uniform(0), Uniform(1));
+
     [&](const Texture& texture0, const Texture& texture1)
     {
-        Timer timer("PhasorNoisePrototype");
         Texture::setDefaultRenderAsDisk(false);
-        Texture::displayAndFile(PhasorNoisePrototype(0, // TODO test_case
-                                                     1000,
-//                                                     0.2, 0.8,
-                                                     0.5, 1.0,
-                                                     0.01, 0.03,
-                                                     pi * 0.33, pi * 0.66,
-                                                     texture0, texture1));
+        
+        auto run_test = [&](int test_case)
+        {
+            return PhasorNoisePrototype(test_case,
+                                        1000,
+                                        0.5, 1.0,
+                                        0.02, 0.06,
+//                                        pi * 0.33, pi * 0.66,
+                                        0, pi * 2,
+                                        texture0, texture1);
+        };
+        {
+            Timer timer("PhasorNoisePrototype test_case 0");
+            Texture::displayAndFile(run_test(0));
+        }
+        {
+            Timer timer("PhasorNoisePrototype test_case 1");
+            Texture::displayAndFile(run_test(1));
+        }
     }
     (Uniform(0), Uniform(1));
 

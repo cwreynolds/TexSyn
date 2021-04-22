@@ -1795,12 +1795,16 @@ public:
                 float kernel_angle) const
     {
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        {
-            grabPrintLock();
-            max_pos_mag_ = std::max(sample_position.length(), max_pos_mag_);
-            std::cout << "max_pos_mag = " << max_pos_mag_;
-            std::cout << std::endl;
-        }
+//        {
+//            grabPrintLock();
+//            max_pos_mag_ = std::max(sample_position.length(), max_pos_mag_);
+//            std::cout << "max_pos_mag = " << max_pos_mag_;
+//            std::cout << std::endl;
+//        }
+        
+//        debugPrint(kernel_angle);
+        
+        if (frandom01() < 0.001) debugPrint(kernel_angle);
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
         // From Equation 6 in the paper: "centered Gaussian of bandwidth b" (?)
@@ -1893,7 +1897,8 @@ public:
                 // TODO look up "curl noise" in global space.
                 float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
                 // Add (complex?) phasor value from this kernel into accumulator.
-                noise += phasor(d, f, b, o, rp);
+//                noise += phasor(d, f, b, o, rp);
+                noise += phasor(d, f, b, 0, rp);
                 impulse++;
             }
         }
@@ -1919,10 +1924,17 @@ public:
     //                   <#float kernel_bandwidth#>,
     //                   <#float direction_field#>,
     //                   <#float kernel_angle#>)
-                noise += phasor(position - disk->position,
+//                noise += phasor(position - disk->position,
+                noise += phasor(position,
                                 1 / disk->wavelength,
-                                disk->radius, // TODO probably need adjustment
-                                0, // LocallyCoherentRandomDirectionField(trueUv),
+                                
+//                                disk->radius, // TODO probably need adjustment
+//                                disk->radius / 2, // TODO probably need adjustment
+                                disk->radius / 4, // TODO probably need adjustment
+
+//                                0,
+                                LocallyCoherentRandomDirectionField(position),
+
                                 disk->angle);
             }
 
