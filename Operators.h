@@ -1785,37 +1785,51 @@ public:
     }
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     
+//    // Returns a complex phasor value.
+//    // (Samples the phasor field for given kernel parameters?)
+//    // TODO should it use type Complex?
+//    Vec2 phasor(Vec2 sample_position,
+//                float kernel_frequency,
+//                float kernel_bandwidth,
+//                float direction_field,
+//                float kernel_angle) const
+//    {
+//        // From Equation 6 in the paper: "centered Gaussian of bandwidth b" (?)
+//        float a = std::exp(-pi *
+//                           sq(kernel_bandwidth) *
+//                           sample_position.dot(sample_position));
+//        // Equation 7 in the paper?
+//        float q = (2 * pi * kernel_frequency *
+//                   (sample_position.x() * std::cos(direction_field) +
+//                    sample_position.y() * std::sin(direction_field)) +
+//                   kernel_angle);
+//        return Vec2(a * std::cos(q), a * std::sin(q));
+//    }
+
     // Returns a complex phasor value.
     // (Samples the phasor field for given kernel parameters?)
     // TODO should it use type Complex?
     Vec2 phasor(Vec2 sample_position,
                 float kernel_frequency,
                 float kernel_bandwidth,
-                float direction_field,
-                float kernel_angle) const
+//                float direction_field,
+//                float kernel_angle) const
+                float kernel_angle,
+                float kernel_phase) const
     {
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        {
-//            grabPrintLock();
-//            max_pos_mag_ = std::max(sample_position.length(), max_pos_mag_);
-//            std::cout << "max_pos_mag = " << max_pos_mag_;
-//            std::cout << std::endl;
-//        }
-        
-//        debugPrint(kernel_angle);
-        
-        if (frandom01() < 0.001) debugPrint(kernel_angle);
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
         // From Equation 6 in the paper: "centered Gaussian of bandwidth b" (?)
-        float a = std::exp(-pi *
-                           sq(kernel_bandwidth) *
-                           sample_position.dot(sample_position));
+//        float a = std::exp(-pi *
+//                           sq(kernel_bandwidth) *
+//                           sample_position.dot(sample_position));
+        // TODO replace gaussian with cosine
+        float a = spot_utility(sample_position, Vec2(), 0, kernel_bandwidth);
+
+        
         // Equation 7 in the paper?
         float q = (2 * pi * kernel_frequency *
-                   (sample_position.x() * std::cos(direction_field) +
-                    sample_position.y() * std::sin(direction_field)) +
-                   kernel_angle);
+                   (sample_position.x() * std::cos(kernel_angle) +
+                    sample_position.y() * std::sin(kernel_angle)) +
+                   kernel_phase);
         return Vec2(a * std::cos(q), a * std::sin(q));
     }
 
@@ -1896,9 +1910,9 @@ public:
                 Vec2 trueUv = (Vec2(i, j) + impulse_centre) * cellsz;
                 // TODO look up "curl noise" in global space.
                 float o = LocallyCoherentRandomDirectionField(trueUv) * 2 * pi;
+//                float o = rp;
                 // Add (complex?) phasor value from this kernel into accumulator.
-//                noise += phasor(d, f, b, o, rp);
-                noise += phasor(d, f, b, 0, rp);
+                noise += phasor(d, f, b, o, rp);
                 impulse++;
             }
         }
@@ -1930,12 +1944,15 @@ public:
                                 
 //                                disk->radius, // TODO probably need adjustment
 //                                disk->radius / 2, // TODO probably need adjustment
-                                disk->radius / 4, // TODO probably need adjustment
-
+//                                disk->radius / 4, // TODO probably need adjustment
+                                disk->radius,
+                                
 //                                0,
-                                LocallyCoherentRandomDirectionField(position),
+//                                LocallyCoherentRandomDirectionField(position),
+                                disk->angle,
 
-                                disk->angle);
+//                                disk->angle);
+                                0);
             }
 
         }
