@@ -1739,9 +1739,23 @@ public:
 
     Color getColor(Vec2 position) const override
     {
-        return interpolatePointOnTextures(mainImage(position),
-                                          position, position,
-                                          texture0_, texture1_);
+        if (test_case_ == 0)  // TODO old "shader" style
+        {
+            return interpolatePointOnTextures(mainImage(position),
+                                              position, position,
+                                              texture0_, texture1_);
+        }
+        else  // TODO new style
+        {
+            // TODO note Complex value
+            Vec2 phasor_noise = combinedPhasorOfNearbyKernels(position);
+//            float phi = std::atan2(phasor_noise.y(), phasor_noise.x());
+//            float phase = phi / (2 * pi);
+            float phase = phasor_noise.atan2() / (2 * pi);
+            return interpolatePointOnTextures(soft_square_wave(phase, 1, 0.5),
+                                              position, position,
+                                              texture0_, texture1_);
+        }
     }
     
     // TODO just for reference, GaborNoisePrototype::getColor()
@@ -1806,6 +1820,8 @@ public:
 //        return Vec2(a * std::cos(q), a * std::sin(q));
 //    }
 
+    // TODO consider this obsolete (test_case_=0)
+    //      replaced by samplePhasorFieldOfKernel
     // Returns a complex phasor value.
     // (Samples the phasor field for given kernel parameters?)
     // TODO should it use type Complex?
@@ -1817,12 +1833,14 @@ public:
                 float kernel_angle,
                 float kernel_phase) const
     {
+//        return Vec2();
+        
         // From Equation 6 in the paper: "centered Gaussian of bandwidth b" (?)
-//        float a = std::exp(-pi *
-//                           sq(kernel_bandwidth) *
-//                           sample_position.dot(sample_position));
-        // TODO replace gaussian with cosine
-        float a = spot_utility(sample_position, Vec2(), 0, kernel_bandwidth);
+        float a = std::exp(-pi *
+                           sq(kernel_bandwidth) *
+                           sample_position.dot(sample_position));
+//        // TODO replace gaussian with cosine
+//        float a = spot_utility(sample_position, Vec2(), 0, kernel_bandwidth);
 
         
         // Equation 7 in the paper?
@@ -1832,6 +1850,23 @@ public:
                    kernel_phase);
         return Vec2(a * std::cos(q), a * std::sin(q));
     }
+    
+    // Returns a complex phasor value.
+    // TODO should it use type Complex?
+    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+    {
+        // TODO replace gaussian with cosine
+        float a = spot_utility(sample_position, Vec2(), 0, kernel.radius);
+
+        // Equation 7 in the paper?
+        // TODO ignoring "kernel_phase".
+        float q = (2 * pi *
+                   (1 / kernel.wavelength) *
+                   ((sample_position.x() * std::cos(kernel.angle)) +
+                    (sample_position.y() * std::sin(kernel.angle))));
+        return Vec2(a * std::cos(q), a * std::sin(q));
+    }
+
 
     // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
     float LocallyCoherentRandomDirectionField(Vec2 v) const
@@ -1938,8 +1973,8 @@ public:
     //                   <#float kernel_bandwidth#>,
     //                   <#float direction_field#>,
     //                   <#float kernel_angle#>)
-//                noise += phasor(position - disk->position,
-                noise += phasor(position,
+                noise += phasor(position - disk->position,
+//                noise += phasor(position,
                                 1 / disk->wavelength,
                                 
 //                                disk->radius, // TODO probably need adjustment
@@ -1958,6 +1993,28 @@ public:
         }
         
         return noise;
+    }
+    
+    
+    // TODO new 20210423
+    Vec2 combinedPhasorOfNearbyKernels(Vec2 position) const
+    {
+        // TODO 20210420 copy in from GaborNoisePrototype::getColor()
+        // Adjust "position" to be in center tile of grid.
+        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+
+        // Find all disks that touch "tiled_pos".
+        std::set<Disk*> nearby_disks;
+        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+        
+        // Sum up contributions for all nearby kernels.
+        Vec2 sum_of_nearby_kernels;
+        for (auto& disk : nearby_disks)
+        {
+//            sum_of_nearby_kernels += samplePhasorFieldOfKernel(position, *disk);
+            sum_of_nearby_kernels += samplePhasorFieldOfKernel(tiled_pos, *disk);
+        }
+        return sum_of_nearby_kernels;
     }
 
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
