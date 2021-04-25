@@ -128,20 +128,21 @@ class="comment">// On right, with sinusoid profile.</span></pre>
       <img src="images/20210424_phasor_2.png" alt="20210424_phasor_2" title="20210424_phasor_2"
         style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
       <p>To help illustrate what is going on here, this example has its min and
-        max radius set so low that (restricted by a limit on the total number of
-        kernels within a 10x10-unit tile) they do not fill the texture plane.
-        Unlike actual Gabor kernels—which are a Gaussian spot times a sinusoidal
-        grating, and have infinite support—these are a cosine-spot times the
-        sinusoidal grating, so have finite support, going to zero by a certain
-        radius. Where these kernels overlap, you can see the phasor addition
-        forming intermediate “high contrast” waveforms, so avoiding interference
-        and loss of contrast. I have not decided what to do in this case.
-        Certainly one option is to do nothing special and “let evolution decide”
-        — presumably that an ill formed texture like this has low fitness and
-        should be selected against. Another option is to notice this case and
-        return a texture result identical to one of the input textures (likely
-        black in this case).</p>
-      <pre>PhasorNoisePrototype(0.07, 0.15,   0.02, 0.08,   0, 2 * pi,   black, white)</pre>
+        max radius set so low that (restricted by a global limit on the total
+        number of kernels within a 10x10-unit tile) they do not fill the texture
+        plane. Unlike actual Gabor kernels—which are a Gaussian spot times a
+        sinusoidal grating (and have infinite support)—these are a cosine-spot
+        times the sinusoidal grating (so have finite support, going to zero by a
+        certain radius). Where these kernels overlap, you can see the phasor
+        addition forming intermediate “high contrast” waveforms, so avoiding
+        interference and loss of contrast. I have not decided what to do in this
+        case. Certainly one option is to do nothing special and “let evolution
+        decide” — presumably that an ill formed texture like this has low
+        fitness and should be selected against. Another option is to notice this
+        case and return a texture result identical to one of the input textures
+        (likely black in this case).</p>
+      <pre>PhasorNoisePrototype(0.07, 0.15,   0.02, 0.08,   0, 2 * pi,   black, white)  <span
+class="comment">// Min/max radius too small to cover texture plane.</span></pre>
       <img src="images/20210424_phasor_3.png" alt="20210424_phasor_3" title="20210424_phasor_3"
         style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
     </div>
