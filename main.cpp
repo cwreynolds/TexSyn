@@ -5084,49 +5084,105 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // 20210407 testing phasor noise.
-    std::cout << "April 20, 2021" << std::endl;
+    // Testing phasor noise.
+    std::cout << "April 24, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210420_";
+    std::string path = temp_dir + "20210424_";
 
-//        [&](const Texture& texture0, const Texture& texture1)
-//        {
-//            Timer timer("PhasorNoisePrototype");
-//            Texture::setDefaultRenderAsDisk(false);
-//            Texture::displayAndFile(PhasorNoisePrototype(0, // TODO test_case
-//    //        Texture::displayAndFile(PhasorNoisePrototype(1, // TODO test_case
-//                                                         1000,
-//    //                                                     0.2, 0.8,
-//                                                         0.5, 1.0,
-//    //                                                     0.01, 0.03,
-//                                                         0.02, 0.06,
-//                                                         pi * 0.33, pi * 0.66,
-//                                                         texture0, texture1));
-//        }
-//        (Uniform(0), Uniform(1));
+    int index = 0;
+    RandomSequence rs(20210424);
 
     [&](const Texture& texture0, const Texture& texture1)
     {
         Texture::setDefaultRenderAsDisk(false);
-        
         auto run_test = [&](int test_case)
         {
+            index++;
             return PhasorNoisePrototype(test_case,
-                                        1000,
-                                        0.5, 1.0,
-                                        0.02, 0.06,
-//                                        pi * 0.33, pi * 0.66,
-                                        0, pi * 2,
+                                        250,
+                                        0.7, 1.5,
+                                        0.06, 0.12,
+                                        pi * 0.3, pi * 0.8,
                                         texture0, texture1);
         };
+        
+        auto random_test = [&]()
         {
-            Timer timer("PhasorNoisePrototype test_case 0");
-            Texture::displayAndFile(run_test(0));
-        }
+            debugPrint(index);
+            index++;
+            float rmin = rs.frandom01() * 2;
+            float rmax = rs.frandom01() * 2;
+            float wmin = rs.frandom01();
+            float wmax = rs.frandom01();
+            float amin = rs.frandom01();
+            float amax = rs.frandom01();
+
+            if (rmin > rmax) std::swap(rmin, rmax);
+            if (wmin > wmax) std::swap(wmin, wmax);
+            if (amin > amax) std::swap(amin, amax);
+
+            debugPrint(rmin);
+            debugPrint(rmax);
+            debugPrint(wmin);
+            debugPrint(wmax);
+            debugPrint(amin);
+            debugPrint(amax);
+            return PhasorNoisePrototype(2,
+                                        250,
+                                        rmin, rmax,
+                                        wmin, wmax,
+                                        amin, amax,
+                                        texture0, texture1);
+        };
+
+        
+//        {
+//            Timer timer("PhasorNoisePrototype test_case 0");
+//            Texture::displayAndFile(run_test(0));
+//        }
+        
         {
             Timer timer("PhasorNoisePrototype test_case 1");
             Texture::displayAndFile(run_test(1));
         }
+        {
+            Timer timer("PhasorNoisePrototype test_case 2");
+            Texture::displayAndFile(run_test(2)
+                                    );  // , path + "phasor_1");
+        }
+
+        /*
+        
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        Texture::displayAndFile(random_test());
+        
+        
+        Texture::displayAndFile(PhasorNoisePrototype(2,
+                                                     250,
+                                                     1.46943, 1.92321,
+                                                     0.193846, 0.373665,
+                                                     0.244409, 0.96973,
+                                                     texture0, texture1));
+         */
+        Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                     250,
+                                                     2, 2,
+                                                     0.05, 0.2,
+                                                     0, 2 * pi,
+                                                     texture0, texture1)
+                                );  // , path + "phasor_2");
+        Texture::displayAndFile(PhasorNoisePrototype(2,
+                                                     250,
+                                                     2, 2,
+                                                     0.05, 0.2,
+                                                     0, 2 * pi,
+                                                     texture0, texture1));
     }
     (Uniform(0), Uniform(1));
 

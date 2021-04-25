@@ -1727,8 +1727,9 @@ public:
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
         // TODO XXX TEMP experiment 20210328 start to space them out a little
-        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
-        
+//        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
+        disk_occupancy_grid_->reduceDiskOverlap(50, disks_);
+
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         reset_meters();
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
@@ -1752,7 +1753,11 @@ public:
 //            float phi = std::atan2(phasor_noise.y(), phasor_noise.x());
 //            float phase = phi / (2 * pi);
             float phase = phasor_noise.atan2() / (2 * pi);
-            return interpolatePointOnTextures(soft_square_wave(phase, 1, 0.5),
+//            return interpolatePointOnTextures(soft_square_wave(phase, 1, 0.5),
+            float softness = (test_case_ == 2) ? 0.5 : 1.0;
+            return interpolatePointOnTextures(soft_square_wave(phase,
+                                                               softness,
+                                                               0.5),
                                               position, position,
                                               texture0_, texture1_);
         }
@@ -1851,20 +1856,49 @@ public:
         return Vec2(a * std::cos(q), a * std::sin(q));
     }
     
+//        // Returns a complex phasor value.
+//        // TODO should it use type Complex?
+//        Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+//        {
+//            // TODO replace gaussian with cosine
+//    //        float a = spot_utility(sample_position, Vec2(), 0, kernel.radius);
+//            float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
+//
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            // TODO how often does this happen? warrent a special case?
+//    //        if (a == 0) debugPrint(a);
+//            if (a == 0) return Vec2();
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//
+//            // Equation 7 in the paper?
+//            // TODO ignoring "kernel_phase".
+//            float q = (2 * pi *
+//                       (1 / kernel.wavelength) *
+//                       ((sample_position.x() * std::cos(kernel.angle)) +
+//                        (sample_position.y() * std::sin(kernel.angle))));
+//            return Vec2(a * std::cos(q), a * std::sin(q));
+//        }
+
     // Returns a complex phasor value.
     // TODO should it use type Complex?
     Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
     {
+        Vec2 phasor;
+        
         // TODO replace gaussian with cosine
-        float a = spot_utility(sample_position, Vec2(), 0, kernel.radius);
-
-        // Equation 7 in the paper?
-        // TODO ignoring "kernel_phase".
-        float q = (2 * pi *
-                   (1 / kernel.wavelength) *
-                   ((sample_position.x() * std::cos(kernel.angle)) +
-                    (sample_position.y() * std::sin(kernel.angle))));
-        return Vec2(a * std::cos(q), a * std::sin(q));
+        float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
+        
+        if (a > 0)
+        {
+            // Equation 7 in the paper?
+            // TODO ignoring "kernel_phase".
+            float q = (2 * pi *
+                       (1 / kernel.wavelength) *
+                       ((sample_position.x() * std::cos(kernel.angle)) +
+                        (sample_position.y() * std::sin(kernel.angle))));
+            phasor = Vec2(a * std::cos(q), a * std::sin(q));
+        }
+        return phasor;
     }
 
 
@@ -2006,7 +2040,10 @@ public:
         // Find all disks that touch "tiled_pos".
         std::set<Disk*> nearby_disks;
         disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
-        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        if (frandom01() < 0.005) debugPrint(nearby_disks.size());
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
         // Sum up contributions for all nearby kernels.
         Vec2 sum_of_nearby_kernels;
         for (auto& disk : nearby_disks)

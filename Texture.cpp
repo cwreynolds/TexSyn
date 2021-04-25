@@ -230,6 +230,9 @@ void Texture::displayAndFile(const Texture& texture,
                              int size)
 {
     texture.displayInWindow(size, false);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    waitKey(1);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (pathname != "") texture.writeToFile(size, pathname);
 }
 

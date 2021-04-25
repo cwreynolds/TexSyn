@@ -93,6 +93,41 @@
         based on TexSyn and LazyPredator.</li>
     </ul>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210424"> <a href="#20210424" class="date">April 24,
+        2021</a>
+      <h1>Phasor noise progress</h1>
+      <p>I posted my first phasor noise texture on <a href="#20210411">April 11</a>,
+        using a c++ rewrite of a (GLSL?) <a href="https://www.shadertoy.com/view/wlsXWf">shader</a>
+        provided by the authors of <a href="https://doi.org/10.1145/3306346.3322990">Procedural
+          phasor noise</a> (SIGGRAPH 2019, Tricard, Efremov,&nbsp; <em>et al.</em>).
+        Special thanks to <a href="http://thibaulttricard.fr/">Thibault Tricard</a>
+        who has patiently answered my questions about their code. I have been
+        refactoring the code to better integrate with the rest of TexSyn. I am
+        getting closer, but this is still prototype code. Phasor noise is an
+        improvement on the earlier <a href="https://doi.org/10.1145/1531326.1531360">Gabor
+          noise</a> approach (SIGGRAPH 2009, Lagae, et al.).</p>
+      <p>My current plan is to define two TexSyn texture operators based on
+        phasor noise. One will generate phasor noise using Gabor kernel
+        parameters taken from a uniform random distribution between numeric
+        bounds. As such the kernels will be independent of each other. The other
+        operator will provide locally coherent Gabor kernel parameters by
+        reading them from TexSyn textures provided to the operator. The example
+        shown on <a href="#20210411">April 11</a> had constant values for
+        kernel radius and frequency, and used a Perlin noise pattern to supply
+        the orientation of the kernel. Shown below are examples of the “uniform
+        random distribution between bounds” version. Shown below are the scalar
+        noise field, used in TexSyn operators to blend (<em>SoftMatte</em>)
+        between two other given textures.</p>
+      <pre><span class="comment">// Parameters are min and max for: radius, wavelength, and angle, then the two input textures.</span>
+PhasorNoisePrototype(0.7, 1.5,   0.06, 0.12,   pi * 0.3, pi * 0.8,   black, white)  <span
+class="comment">// On left, with "soft square wave" profile.</span>
+PhasorNoisePrototype(2.0, 2.0,   0.05, 0.20,          0, pi * 2.0,   black, white)  <span
+class="comment">// On right, with sinusoid profile.</span></pre>
+      <img src="images/20210424_phasor_1.png" alt="20210424_phasor_1" title="20210424_phasor_1"
+        style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
+      <img src="images/20210424_phasor_2.png" alt="20210424_phasor_2" title="20210424_phasor_2"
+        style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
+    </div>
     <div class="post" id="20210414"> <a href="#20210414" class="date">April 14,
         2021</a>
       <h1>Camouflage on redwood leaf litter</h1>
