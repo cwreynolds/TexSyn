@@ -5135,7 +5135,8 @@ int main(int argc, const char * argv[])
                                         texture0, texture1);
         };
 
-        
+        /*
+
 //        {
 //            Timer timer("PhasorNoisePrototype test_case 0");
 //            Texture::displayAndFile(run_test(0));
@@ -5151,7 +5152,6 @@ int main(int argc, const char * argv[])
                                     );  // , path + "phasor_1");
         }
 
-        /*
         
         Texture::displayAndFile(random_test());
         Texture::displayAndFile(random_test());
@@ -5169,7 +5169,6 @@ int main(int argc, const char * argv[])
                                                      0.193846, 0.373665,
                                                      0.244409, 0.96973,
                                                      texture0, texture1));
-         */
         Texture::displayAndFile(PhasorNoisePrototype(1,
                                                      250,
                                                      2, 2,
@@ -5183,6 +5182,104 @@ int main(int argc, const char * argv[])
                                                      0.05, 0.2,
                                                      0, 2 * pi,
                                                      texture0, texture1));
+         */
+        
+//            // A version to illustrate the "random scattered kernels"
+//    //        Texture::displayAndFile(PhasorNoisePrototype(2,
+//    //                                                     250,
+//    //                                                     2, 2,
+//    //                                                     0.05, 0.2,
+//            Texture::displayAndFile(PhasorNoisePrototype(1,
+//                                                         500,
+//                                                         0.2, 0.3,
+//                                                         0.03, 0.06,
+//                                                         0, 2 * pi,
+//                                                         texture0, texture1));
+        
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         0,
+                                                         1, 1,
+                                                         0.03, 0.06,
+                                                         0, 2 * pi,
+                                                         texture0, texture1)
+                                    , "", 201);
+        }
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         1000,
+                                                         0.2, 0.3,
+                                                         0.03, 0.06,
+                                                         0, 2 * pi,
+                                                         texture0, texture1));
+        }
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         1000,
+//                                                         0.2, 0.3,
+//                                                         0.3, 0.8,
+//                                                         0.5, 1.0,
+                                                         0.2, 1.0,
+                                                         0.03, 0.06,
+                                                         0, 2 * pi,
+                                                         texture0, texture1));
+        }
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         0,
+                                                         1, 1,
+                                                         0.03, 0.06,
+                                                         0, 2 * pi,
+                                                         texture0, texture1));
+        }
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         0,
+//                                                         0.05, 0.1,
+//                                                         0.1, 0.2,
+                                                         0.07, 0.15,
+                                                         0.02, 0.08,
+                                                         0, 2 * pi,
+                                                         texture0, texture1)
+                                    );  // , path + "phasor_3");
+        }
+        
+        //~~~~~~~~~~~~
+        
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(2,
+                                                         0,
+                                                         0.7, 1.5,
+                                                         0.06, 0.12,
+                                                         pi * 0.3, pi * 0.8,
+                                                         texture0, texture1)
+                                    );  // , path + "phasor_1");
+        }
+        {
+            // Testing construct vs. render time
+            Timer t("PhasorNoisePrototype render");
+            Texture::displayAndFile(PhasorNoisePrototype(1,
+                                                         250,
+                                                         2, 2,
+                                                         0.05, 0.2,
+                                                         0, 2 * pi,
+                                                         texture0, texture1)
+                                    );  // , path + "phasor_2");
+        }
+
+
     }
     (Uniform(0), Uniform(1));
 

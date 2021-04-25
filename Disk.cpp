@@ -134,7 +134,11 @@ void DiskOccupancyGrid::oneThreadAdjustingSpots(int first_disk_index,
                     no_move = false;
                     Vec2 basis = offset / distance;
                     float fade = interpolate(retry_fraction, 1.0, 0.5);
-                    float adjust = (radius_sum - distance) * fade;
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    // TODO 20210425 temp test
+//                    float adjust = (radius_sum - distance) * fade;
+                    float adjust = (radius_sum - distance) * fade * 0.1;
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     a.future_position += basis * adjust;
                 }
             }

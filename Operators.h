@@ -1711,28 +1711,58 @@ public:
         disk_occupancy_grid_
             (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
     {
-        // TODO 20210414 copied directly from GaborNoisePrototype
+        Timer t("PhasorNoisePrototype constructor");
         
         // Randomize Disks (kernels) with uniform distributions of r, x, and y.
         // TODO maybe should init a const vector, to emphasize it can't change.
         RandomSequence rs(seedForRandomSequence());
-        for (int i = 0; i < kernels_; i++)
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        for (int i = 0; i < kernels_; i++)
+//        {
+//            float radius = rs.frandom2(min_radius, max_radius);
+//            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+//            float angle = rs.frandom2(min_angle, max_angle);
+//            float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+//            disks_.push_back(Disk(radius, center, angle, wavelength));
+//        }
+        
+        // TODO 20210425 add kernels until we get to 2x coverage of 10x10 tile.
+//        float coverage_depth = 2;
+        float coverage_depth = 4;
+        float total_tile_area = 10 * 10;
+        float total_disk_area = 0;
+//        while (total_disk_area < (total_tile_area * coverage_depth))
+        int min_disks = 500;
+        int max_disks = 2000;
+        while ((disks_.size() < min_disks) ||
+               ((disks_.size() < max_disks) &&
+                (total_disk_area < (total_tile_area * coverage_depth))))
         {
             float radius = rs.frandom2(min_radius, max_radius);
             Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
             float angle = rs.frandom2(min_angle, max_angle);
             float wavelength = rs.frandom2(min_wavelength, max_wavelength);
-            disks_.push_back(Disk(radius, center, angle, wavelength));
+            Disk disk(radius, center, angle, wavelength);
+            total_disk_area += disk.area();
+            disks_.push_back(disk);
         }
+        debugPrint(disks_.size());
+        debugPrint(total_tile_area * coverage_depth);
+        debugPrint(total_disk_area);
+
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
         // TODO XXX TEMP experiment 20210328 start to space them out a little
 //        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
-        disk_occupancy_grid_->reduceDiskOverlap(50, disks_);
+//        disk_occupancy_grid_->reduceDiskOverlap(50, disks_);
+//        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
+//        disk_occupancy_grid_->reduceDiskOverlap(10, disks_);
+        disk_occupancy_grid_->reduceDiskOverlap(5, disks_);
 
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         reset_meters();
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     }
 
@@ -1887,6 +1917,14 @@ public:
         
         // TODO replace gaussian with cosine
         float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
+        
+        
+//        a = std::exp(-pi *
+//                     sq(kernel.radius / 10) *
+//                     sample_position.dot(sample_position));
+
+        
+        
         
         if (a > 0)
         {
