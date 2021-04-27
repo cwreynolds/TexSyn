@@ -105,7 +105,8 @@
         refactoring the code to better integrate with the rest of TexSyn. I am
         getting closer, but this is still prototype code. Phasor noise is an
         improvement on the earlier <a href="https://doi.org/10.1145/1531326.1531360">Gabor
-          noise</a> approach (SIGGRAPH 2009, Lagae, et al.).</p>
+          noise</a> approach (SIGGRAPH 2009, Lagae, et al.) as prototyped here
+        on <a href="#20210328">March 28</a>.</p>
       <p>My current plan is to define two TexSyn texture operators based on
         phasor noise. One will generate phasor noise using Gabor kernel
         parameters taken from a uniform random distribution between numeric
@@ -127,20 +128,28 @@ class="comment">// On right, with sinusoid profile.</span></pre>
         style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
       <img src="images/20210424_phasor_2.png" alt="20210424_phasor_2" title="20210424_phasor_2"
         style="padding-right: 1em; padding-bottom: 1em;" height="511" width="511">
-      <p>To help illustrate what is going on here, this example has its min and
-        max radius set so low that (restricted by a global limit on the total
-        number of kernels within a 10x10-unit tile) they do not fill the texture
-        plane. Unlike actual Gabor kernels—which are a Gaussian spot times a
-        sinusoidal grating (and have infinite support)—these are a cosine-spot
-        times the sinusoidal grating (so have finite support, going to zero by a
-        certain radius). Where these kernels overlap, you can see the phasor
-        addition forming intermediate “high contrast” waveforms, so avoiding
-        interference and loss of contrast. I have not decided what to do in this
-        case. Certainly one option is to do nothing special and “let evolution
-        decide” — presumably that an ill formed texture like this has low
-        fitness and should be selected against. Another option is to notice this
-        case and return a texture result identical to one of the input textures
-        (likely black in this case).</p>
+      <p>To help illustrate what is going on here, the example below has its min
+        and max radius set so low that (restricted by a performance-related
+        limit on the total number of kernels within a 10x10-unit tile) they do
+        not fill the texture plane. Unlike actual Gabor kernels—which are a
+        Gaussian spot times a sinusoidal grating (and so have infinite
+        support)—these are a cosine-spot times the sinusoidal grating (so have
+        finite support, going to zero by a given radius). Where these kernels
+        overlap, you can see the phasor addition forming intermediate “high
+        contrast” waveforms, so avoiding interference and loss of contrast. I
+        have not decided what to do in this case. Certainly one option is to do
+        nothing special and “let evolution decide” — presumably that an ill
+        formed texture like this has low fitness and should be selected against.
+        Another option is to notice this case and return a texture result
+        identical to one of the input textures (likely black in this case).</p>
+      <p><strong>Update on April 26</strong>: I decided to go with the latter
+        option. This was easy to do, since the kernels are added to the
+        Texture's definition one at a time until there are sufficiently many to
+        cover the field to sufficient depth (currently 4 kernels on average per
+        pixel). If it reaches the max kernel count before satisfying this depth
+        requirement, a flag is set to indicate failure. Rendering the texture
+        below now produces a flat black color field—<code>Uniform(0)</code>—equivalent
+        to its next-to-last parameter.</p>
       <pre>PhasorNoisePrototype(0.07, 0.15,   0.02, 0.08,   0, 2 * pi,   black, white)  <span
 class="comment">// Min/max radius too small to cover texture plane.</span></pre>
       <img src="images/20210424_phasor_3.png" alt="20210424_phasor_3" title="20210424_phasor_3"
