@@ -2392,7 +2392,24 @@ public:
                 Vec2 phasor_noise = combinedPhasorOfNearbyKernels(position);
     //            float phi = std::atan2(phasor_noise.y(), phasor_noise.x());
     //            float phase = phi / (2 * pi);
-                float phase = phasor_noise.atan2() / (2 * pi);
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//                float phase = phasor_noise.atan2() / (2 * pi);
+                
+                float angle = phasor_noise.atan2();
+                float phase = (angle + pi) / (2 * pi);
+
+//                assert(between(phase, 0, 1));
+                
+                
+                if (!between(phase, 0, 1))
+                {
+                    debugPrint(phase);
+                    debugPrint(std::fmod(phase + 1, 1.0f));
+                }
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                
     //            return interpolatePointOnTextures(soft_square_wave(phase, 1, 0.5),
 //                float softness = (test_case_ == 2) ? 0.5 : 1.0;
 //                // TODO fix this with new texture-operator-level softness

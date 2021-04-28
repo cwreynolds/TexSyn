@@ -46,13 +46,14 @@
       .designnote { color: rgb(25%,25%,25%) }
       .novak_pad { margin-right: 105px; margin-left: 105px; }
       .smaller { font-size: 75%; }
+      .img_flow { padding-right: 1em; padding-bottom: 1em; }
     <!-- --------------------------------------------------------------------------- -->
     <div class="post" id="yyyymmdd">
       <a href="#yyyymmdd" class="date">Month 0, 0000</a>
       <h1>Title</h1>
       <p>...</p>
       <pre>x</pre>
-      <img src="images/xxx" alt="" title="" height="511" width="511">
+      <img src="images/xxx" alt="" title="" height="511" width="511" class="img_flow">
     </div>
     <!-- --------------------------------------------------------------------------- -->
     </style>
@@ -93,6 +94,56 @@
         based on TexSyn and LazyPredator.</li>
     </ul>
     <br style="--------------------------------------------------------------------------">
+    <div class="post" id="20210428"> <a href="#20210428" class="date">April 28,
+        2021</a>
+      <h1>Random “mixed kernel” phasor noise</h1>
+      <p>The texture operator for “mixed kernel” phasor noise seems to be
+        working now. The operator takes eight float parameters: min and max
+        bounds for each of three properties of kernels (radius, wavelength, and
+        orientation), two parameters for an asymmetrical “soft square wave” used
+        as the “profile” reconstruction function, plus two input textures (here
+        just uniform black and white). These “quasi-Gabor kernels” have a finite
+        radius because they are based on cosinusoidal spots rather than
+        Gaussians. This finite support allows them to be used with TexSyn's <code>DiskOccupancyGrid</code>
+        spatial data structure for efficiently determining which kernels
+        contribute to a given texture sample (pixel). The frequencies for each
+        kernel are given as wavelengths (1/f) to make them linear in distances,
+        to better fit in with the optimization framework (LazyPredator's genetic
+        programming evolutionary computation). To construct a single kernel for
+        this phasor noise, a uniform random selection is made for each kernel
+        parameter from the given min/max bounds. The 12 random variations on
+        phasor noise below are each created from executing code like this:</p>
+      <pre>PhasorNoisePrototype(rs.frandom01(),           <span class="comment">// min kernel radius on [0, 1]</span>
+                     rs.frandom01(),           <span class="comment">// max kernel radius on [0, 1]</span>
+                     rs.frandom01(),           <span class="comment">// min kernel wavelength on [0, 1]</span>
+                     rs.frandom01(),           <span class="comment">// max kernel wavelength on [0, 1]</span>
+                     rs.frandom01() * 2 * pi,  <span class="comment">// min kernel orientation on [0, 2π]</span>
+                     rs.frandom01() * 2 * pi,  <span class="comment">// max kernel orientation on [0, 2π]</span>
+                     rs.frandom01(),           <span class="comment">// profile softness on [0, 1]</span>
+                     rs.frandom01(),           <span class="comment">// profile duty_cycle on [0, 1]</span>
+                     black,                    <span class="comment">// input texture 0</span>
+                     white)                    <span class="comment">// input texture 1</span></pre>
+      <img src="images/20210428_phasor_r_0.png" alt="20210428_phasor_r_0" title="20210428_phasor_r_0"
+        class="img_flow" height="400" width="400"> <img src="images/20210428_phasor_r_1.png"
+        alt="20210428_phasor_r_1" title="20210428_phasor_r_1" class="img_flow" height="400"
+        width="400"> <img src="images/20210428_phasor_r_2.png" alt="20210428_phasor_r_2"
+        title="20210428_phasor_r_2" class="img_flow" height="400" width="400"> <img
+        src="images/20210428_phasor_r_3.png" alt="20210428_phasor_r_3" title="20210428_phasor_r_3"
+        class="img_flow" height="400" width="400"> <img src="images/20210428_phasor_r_4.png"
+        alt="20210428_phasor_r_4" title="20210428_phasor_r_4" class="img_flow" height="400"
+        width="400"> <img src="images/20210428_phasor_r_5.png" alt="20210428_phasor_r_5"
+        title="20210428_phasor_r_5" class="img_flow" height="400" width="400"> <img
+        src="images/20210428_phasor_r_6.png" alt="20210428_phasor_r_6" title="20210428_phasor_r_6"
+        class="img_flow" height="400" width="400"> <img src="images/20210428_phasor_r_7.png"
+        alt="20210428_phasor_r_7" title="20210428_phasor_r_7" class="img_flow" height="400"
+        width="400"> <img src="images/20210428_phasor_r_8.png" alt="20210428_phasor_r_8"
+        title="20210428_phasor_r_8" class="img_flow" height="400" width="400"> <img
+        src="images/20210428_phasor_r_9.png" alt="20210428_phasor_r_9" title="20210428_phasor_r_9"
+        class="img_flow" height="400" width="400"> <img src="images/20210428_phasor_r_10.png"
+        alt="20210428_phasor_r_10" title="20210428_phasor_r_10" class="img_flow"
+        height="400" width="400"> <img src="images/20210428_phasor_r_11.png" alt="20210428_phasor_r_11"
+        title="20210428_phasor_r_11" class="img_flow" height="400" width="400">
+    </div>
     <div class="post" id="20210424"> <a href="#20210424" class="date">April 24,
         2021</a>
       <h1>Phasor noise progress</h1>

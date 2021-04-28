@@ -5091,7 +5091,9 @@ int main(int argc, const char * argv[])
 
     int index = 0;
 //    RandomSequence rs(20210424);
-    RandomSequence rs(20210426);
+//    RandomSequence rs(20210426);
+//    RandomSequence rs(20210428);
+    RandomSequence rs(20210428 * 3);
 
     [&](const Texture& texture0, const Texture& texture1)
     {
@@ -5320,18 +5322,18 @@ int main(int argc, const char * argv[])
                                      softness,
                                      duty_cycle,
                                      texture0, texture1);
-//            Texture::displayAndFile(pnp, filename);
-            Texture::displayAndFile(pnp);
+            Texture::displayAndFile(pnp, filename);
+//            Texture::displayAndFile(pnp);
         };
         
-        for (int i = 0; i < 10; i++) { random_test(); }
+        for (int i = 0; i < 12; i++) { random_test(); }
 
-        Texture::displayAndFile(Grating(Vec2(), texture0,
-                                        Vec2(0.2, 0), texture1,
-                                        0.932655, 0.154804));
-        Texture::displayAndFile(Grating(Vec2(), texture0,
-                                        Vec2(0.2, 0), texture1,
-                                        0.561288, 0.127027));
+        //    Texture::displayAndFile(Grating(Vec2(), texture0,
+        //                                    Vec2(0.2, 0), texture1,
+        //                                    0.932655, 0.154804));
+        //    Texture::displayAndFile(Grating(Vec2(), texture0,
+        //                                    Vec2(0.2, 0), texture1,
+        //                                    0.561288, 0.127027));
     }
     (Uniform(0), Uniform(1));
     
