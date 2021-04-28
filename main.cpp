@@ -5326,19 +5326,12 @@ int main(int argc, const char * argv[])
         
         for (int i = 0; i < 10; i++) { random_test(); }
 
-
-        
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-//        Texture::displayAndFile(random_test());
-
+        Texture::displayAndFile(Grating(Vec2(), texture0,
+                                        Vec2(0.2, 0), texture1,
+                                        0.932655, 0.154804));
+        Texture::displayAndFile(Grating(Vec2(), texture0,
+                                        Vec2(0.2, 0), texture1,
+                                        0.561288, 0.127027));
     }
     (Uniform(0), Uniform(1));
     
