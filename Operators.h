@@ -2340,7 +2340,10 @@ public:
 //        disk_occupancy_grid_->reduceDiskOverlap(5, disks_);
         if (sufficient_kernel_coverage_)
         {
-            disk_occupancy_grid_->reduceDiskOverlap(5, disks_);
+//            disk_occupancy_grid_->reduceDiskOverlap(5, disks_);
+//            disk_occupancy_grid_->reduceDiskOverlap(5, 0.1, disks_);
+            float move_scale = 0.1;  // Move 0.1 of default adjustment distance.
+            disk_occupancy_grid_->reduceDiskOverlap(5, move_scale, disks_);
         }
 
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~

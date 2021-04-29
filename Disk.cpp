@@ -19,7 +19,9 @@
 // results, the work is broken into two sequential steps, each of which runs
 // in parallel. Step one: find overlaps and compute Disk's future position.
 // Step two: move Disk and update occupancy grid.
-void DiskOccupancyGrid::reduceDiskOverlap(int retries, std::vector<Disk>& disks)
+void DiskOccupancyGrid::reduceDiskOverlap(int retries,
+                                          float move_scale,
+                                          std::vector<Disk>& disks)
 {
     // Repeat relaxation process "retries" times, or until no overlaps remain.
     for (int i = 0; i < retries; i++)
@@ -35,6 +37,7 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries, std::vector<Disk>& disks)
                                                 first_disk_index,
                                                 disk_count,
                                                 float(i) / retries,
+                                                move_scale,
                                                 std::ref(no_move),
                                                 std::ref(disks)); });
 
@@ -110,6 +113,7 @@ void DiskOccupancyGrid::oneThreadMovingSpots(int first_disk_index,
 void DiskOccupancyGrid::oneThreadAdjustingSpots(int first_disk_index,
                                                 int disk_count,
                                                 float retry_fraction,
+                                                float move_scale,
                                                 bool& no_move,
                                                 std::vector<Disk>& disks)
 {
@@ -134,11 +138,7 @@ void DiskOccupancyGrid::oneThreadAdjustingSpots(int first_disk_index,
                     no_move = false;
                     Vec2 basis = offset / distance;
                     float fade = interpolate(retry_fraction, 1.0, 0.5);
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // TODO 20210425 temp test
-//                    float adjust = (radius_sum - distance) * fade;
-                    float adjust = (radius_sum - distance) * fade * 0.1;
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    float adjust = (radius_sum - distance) * fade * move_scale;
                     a.future_position += basis * adjust;
                 }
             }

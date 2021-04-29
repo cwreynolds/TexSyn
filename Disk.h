@@ -208,7 +208,17 @@ public:
     // results, the work is broken into two sequential steps, each of which runs
     // in parallel. Step one: find overlaps and compute Disk's future position.
     // Step two: move Disk and update occupancy grid.
-    void reduceDiskOverlap(int retries, std::vector<Disk>& disks);
+    //
+    // 20210429 added optional "move_scale" arg, defaulting to 1, to reduce the
+    //          movement used to remove overlap. For phasor noise kernels which
+    //          NEED to overlap, but we want to "spread out" just a little bit.
+    void reduceDiskOverlap(int retries, std::vector<Disk>& disks)
+    {
+        reduceDiskOverlap(retries, 1, disks);
+    }
+    void reduceDiskOverlap(int retries,
+                           float move_scale,
+                           std::vector<Disk>& disks);
     // Runs parallel update of all Disks. Parameter is function to generate one
     // thread, given "first_disk_index" and "disk_count" in vector "disks". Each
     // thread updates this given block of disks, in parallel with other threads.
@@ -217,11 +227,12 @@ public:
     // Top level for each worker thread adjusting spot overlap. For "disk_count"
     // Disks beginning at "first_disk_index": look up nearest neighbor, if
     // overlap compute new position.
-        void oneThreadAdjustingSpots(int first_disk_index,
-                                     int disk_count,
-                                     float retry_fraction,
-                                     bool& no_move,
-                                     std::vector<Disk>& disks);
+    void oneThreadAdjustingSpots(int first_disk_index,
+                                 int disk_count,
+                                 float retry_fraction,
+                                 float move_scale,
+                                 bool& no_move,
+                                 std::vector<Disk>& disks);
     // Top level for each worker thread moving spots. For "disk_count" Disks
     // beginning at "first_disk_index": if the Disk's "future_position" has
     // changed, erase it from the grid, update its position, then re-insert it

@@ -5322,25 +5322,23 @@ int main(int argc, const char * argv[])
                                      softness,
                                      duty_cycle,
                                      texture0, texture1);
-            Texture::displayAndFile(pnp, filename);
-//            Texture::displayAndFile(pnp);
+            {
+                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(pnp, filename);
+                Texture::displayAndFile(pnp);
+            }
         };
         
-        for (int i = 0; i < 12; i++) { random_test(); }
-
-        //    Texture::displayAndFile(Grating(Vec2(), texture0,
-        //                                    Vec2(0.2, 0), texture1,
-        //                                    0.932655, 0.154804));
-        //    Texture::displayAndFile(Grating(Vec2(), texture0,
-        //                                    Vec2(0.2, 0), texture1,
-        //                                    0.561288, 0.127027));
+//        for (int i = 0; i < 12; i++) { random_test(); }
+        Texture::displayAndFile(LotsOfSpots(0.95,
+                                            0.1, 0.4,
+                                            0.02,
+                                            0.05,
+                                            Uniform(0, 1, 0),
+                                            Uniform(0.3)));
     }
     (Uniform(0), Uniform(1));
     
-    
-//    RandomSequence rs2(12345);
-//    for (int i = 0; i < 500; i++) { debugPrint(rs2.frandom2(0.6, 0.3)); }
-
     Texture::waitKey();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
