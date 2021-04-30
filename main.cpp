@@ -5329,13 +5329,20 @@ int main(int argc, const char * argv[])
             }
         };
         
-//        for (int i = 0; i < 12; i++) { random_test(); }
-        Texture::displayAndFile(LotsOfSpots(0.95,
-                                            0.1, 0.4,
-                                            0.02,
-                                            0.05,
-                                            Uniform(0, 1, 0),
-                                            Uniform(0.3)));
+        for (int i = 0; i < 12; i++) { random_test(); }
+//        Texture::displayAndFile(LotsOfSpots(0.95,
+//                                            0.1, 0.4,
+//                                            0.02,
+//                                            0.05,
+//                                            Uniform(0, 1, 0),
+//                                            Uniform(0.3)));
+        
+//        Texture::displayAndFile(PhasorNoisePrototype(0.01, 0.02,
+//                                                     0.2, 0.2,
+//                                                     0, 0,
+//                                                     0.5,
+//                                                     0.5,
+//                                                     texture0, texture1));
     }
     (Uniform(0), Uniform(1));
     

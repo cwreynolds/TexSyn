@@ -188,6 +188,12 @@ public:
                         grid_side_count_ - 1));
     };
     
+    float area() const
+    {
+        Vec2 diagonal = maxXY_ - minXY_;
+        return diagonal.x() * diagonal.y();
+    }
+
     // Remove all Disks from this grid, reset based on grid_side_count.
     void clear()
     {
