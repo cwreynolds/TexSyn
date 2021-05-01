@@ -5322,6 +5322,12 @@ int main(int argc, const char * argv[])
                                      softness,
                                      duty_cycle,
                                      texture0, texture1);
+//            PhasorNoiseRanges pnp(rmin, rmax,
+//                                  wmin, wmax,
+//                                  amin, amax,
+//                                  softness,
+//                                  duty_cycle,
+//                                  texture0, texture1);
             {
                 Timer t("PhasorNoisePrototype render");
 //                Texture::displayAndFile(pnp, filename);
