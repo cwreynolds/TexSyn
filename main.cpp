@@ -5316,26 +5316,30 @@ int main(int argc, const char * argv[])
             debugPrint(amax);
             debugPrint(softness);
             debugPrint(duty_cycle);
-            PhasorNoisePrototype pnp(rmin, rmax,
-                                     wmin, wmax,
-                                     amin, amax,
-                                     softness,
-                                     duty_cycle,
-                                     texture0, texture1);
-//            PhasorNoiseRanges pnp(rmin, rmax,
-//                                  wmin, wmax,
-//                                  amin, amax,
-//                                  softness,
-//                                  duty_cycle,
-//                                  texture0, texture1);
+//            PhasorNoisePrototype noise(rmin, rmax,
+//                                     wmin, wmax,
+//                                     amin, amax,
+//                                     softness,
+//                                     duty_cycle,
+//                                     texture0, texture1);
+            PhasorNoiseRanges noise(rmin, rmax,
+                                    wmin, wmax,
+                                    amin, amax,
+                                    softness,
+                                    duty_cycle,
+                                    texture0, texture1);
             {
                 Timer t("PhasorNoisePrototype render");
-//                Texture::displayAndFile(pnp, filename);
-                Texture::displayAndFile(pnp);
+//                Texture::displayAndFile(noise, filename);
+                Texture::displayAndFile(noise);
             }
         };
         
-        for (int i = 0; i < 12; i++) { random_test(); }
+//        for (int i = 0; i < 12; i++) { random_test(); }
+        
+        rs.frandom01();
+        for (int i = 0; i < 24; i++) { random_test(); }
+
 //        Texture::displayAndFile(LotsOfSpots(0.95,
 //                                            0.1, 0.4,
 //                                            0.02,
