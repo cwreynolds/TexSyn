@@ -5316,30 +5316,39 @@ int main(int argc, const char * argv[])
             debugPrint(amax);
             debugPrint(softness);
             debugPrint(duty_cycle);
-//            PhasorNoisePrototype noise(rmin, rmax,
-//                                     wmin, wmax,
-//                                     amin, amax,
-//                                     softness,
-//                                     duty_cycle,
-//                                     texture0, texture1);
-            PhasorNoiseRanges noise(rmin, rmax,
-                                    wmin, wmax,
-                                    amin, amax,
-                                    softness,
-                                    duty_cycle,
-                                    texture0, texture1);
+//            PhasorNoisePrototype noise0(rmin, rmax,
+//                                        wmin, wmax,
+//                                        amin, amax,
+//                                        softness,
+//                                        duty_cycle,
+//                                        texture0, texture1);
+            
+            PhasorNoiseRanges noise1(rmin, rmax,
+                                     wmin, wmax,
+                                     amin, amax,
+                                     softness,
+                                     duty_cycle,
+                                     texture0, texture1);
+//                {
+//                    Timer t("PhasorNoisePrototype render");
+//    //                Texture::displayAndFile(noise, filename);
+//                    Texture::displayAndFile(noise);
+//                }
+//            {
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(noise0);
+//            }
             {
-                Timer t("PhasorNoisePrototype render");
-//                Texture::displayAndFile(noise, filename);
-                Texture::displayAndFile(noise);
+                Timer t("PhasorNoiseRanges render");
+                Texture::displayAndFile(noise1);
             }
         };
         
-//        for (int i = 0; i < 12; i++) { random_test(); }
+        for (int i = 0; i < 12; i++) { random_test(); }
+//        rs.frandom01();
+//        for (int i = 0; i < 24; i++) { random_test(); }
+//        random_test();
         
-        rs.frandom01();
-        for (int i = 0; i < 24; i++) { random_test(); }
-
 //        Texture::displayAndFile(LotsOfSpots(0.95,
 //                                            0.1, 0.4,
 //                                            0.02,

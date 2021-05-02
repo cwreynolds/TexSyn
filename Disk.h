@@ -25,7 +25,13 @@ public:
     Disk(float r, Vec2 p, float a, float w)
       : radius(r), position(p), future_position(p), angle(a), wavelength(w) {}
     float area() const { return pi * sq(radius); }
-    Disk translate(Vec2 t) const { return Disk(radius, t + position); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Disk translate(Vec2 t) const { return Disk(radius, t + position); }
+//    Disk translate(Vec2 t) const
+//        { return Disk(radius, t + position, angle, wavelength); }
+    Disk translate(Vec2 t) const { return Disk(radius, t + position,
+                                               angle, wavelength); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     float radius = 0;
     Vec2 position;
     Vec2 future_position;
@@ -394,4 +400,15 @@ inline std::vector<Disk>
         std::cout << "unable to position without overlap" << std::endl;
     }
     return disks;
+}
+
+// Serialize Disk object to stream.
+inline std::ostream& operator<<(std::ostream& os, const Disk& d)
+{
+    os << "Disk(radius=" << d.radius;
+    os << ", position=" << d.position;
+    os << ", future_position=" << d.future_position;
+    os << ", angle=" << d.angle;
+    os << ", wavelength=" << d.wavelength << ")";
+    return os;
 }

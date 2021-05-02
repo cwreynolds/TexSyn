@@ -1716,7 +1716,7 @@ public:
         int min_disk_count = 500;
         int max_disk_count = 2000;
         while ((disks_.size() < min_disk_count) ||   // Too few or
-               ((disks_.size() < max_disk_count) &&  // ...need more.
+               ((disks_.size() < max_disk_count) &&  // ...need more coverage.
                 (total_disk_area < (total_tile_area * coverage_depth))))
         {
             float radius = rs.frandom2(min_radius, max_radius);
@@ -1839,7 +1839,7 @@ public:
                     float duty_cycle,
                     const Texture& texture0,
                     const Texture& texture1)
-     : softness_(softness),
+      : softness_(softness),
         duty_cycle_(duty_cycle),
         texture0_(texture0),
         texture1_(texture1),
@@ -1848,7 +1848,7 @@ public:
     // TODO 20210501 define kernel initialization utility in base class, to be
     //      invoked from constructor of derived classes. Pass in lambda closure
     //      (of type KernelGenerator) to generate new kernels.
-    typedef std::function<Disk(Vec2, RandomSequence&)> KernelGenerator;
+    typedef std::function<Disk(RandomSequence&)> KernelGenerator;
     void initializeKernels(RandomSequence& rs, KernelGenerator kernel_generator)
     {
         // Add kernels one by one, with randomized parameters, until the sum of
@@ -1862,11 +1862,10 @@ public:
         int min_disk_count = 500;
         int max_disk_count = 2000;
         while ((disks_.size() < min_disk_count) ||   // Too few or
-               ((disks_.size() < max_disk_count) &&  // ...need more.
+               ((disks_.size() < max_disk_count) &&  // ...need more coverage.
                 (total_disk_area < (total_tile_area * coverage_depth))))
         {
-            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
-            Disk disk = kernel_generator(center, rs);
+            Disk disk = kernel_generator(rs);
             total_disk_area += disk.area();
             disks_.push_back(disk);
         }
@@ -1980,9 +1979,11 @@ public:
         // TODO maybe should init a const vector, to emphasize it can't change.
         RandomSequence rs(seedForRandomSequence());
         // A function to generate a new random kernel given position and rs.
-        KernelGenerator kg = [&](Vec2 position, RandomSequence& rs)
+        KernelGenerator kg = [&](RandomSequence& rs)
         {
             float radius = rs.frandom2(min_radius, max_radius);
+            // TODO raw inline 5s need to be handled better:
+            Vec2 position(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
             float angle = rs.frandom2(min_angle, max_angle);
             float wavelength = rs.frandom2(min_wavelength, max_wavelength);
             return Disk(radius, position, angle, wavelength);
