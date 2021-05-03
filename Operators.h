@@ -1880,6 +1880,10 @@ public:
             float move_scale = 0.1;  // Move 0.1 of default adjustment distance.
             disk_occupancy_grid_->reduceDiskOverlap(5, move_scale, disks_);
         }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        else
+        { std::cout << "not sufficient_kernel_coverage_" << std::endl; }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     // Sample texture color at given location.
     Color getColor(Vec2 position) const override
@@ -1897,12 +1901,49 @@ public:
                                           position, position,
                                           texture0_, texture1_);
     }
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+//    // Returns a complex phasor value.
+//    // TODO mention these are quasi-Gabor kernels with cosine spot
+//    // TODO should it use type Complex?
+//    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+//    {
+//        Vec2 phasor;
+//        // TODO replace gaussian with cosine
+//        float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
+//        if (a > 0)
+//        {
+//            // Equation 7 in the paper?
+//            // TODO ignoring "kernel_phase".
+//            float q = (2 * pi *
+//                       (1 / kernel.wavelength) *
+//                       ((sample_position.x() * std::cos(kernel.angle)) +
+//                        (sample_position.y() * std::sin(kernel.angle))));
+//            phasor = Vec2(a * std::cos(q), a * std::sin(q));
+//        }
+//        return phasor;
+//    }
+//    // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
+//    float LocallyCoherentRandomDirectionField(Vec2 v) const
+//    {
+//        // return PerlinNoise::unitNoise2d(uv);
+//        return PerlinNoise::unitNoise2d(v * 3);
+//        // return PerlinNoise::unitNoise2d(v * 10);
+//        // return PerlinNoise::unitNoise2d(v * 100);
+//    }
+    
     // Returns a complex phasor value.
     // TODO mention these are quasi-Gabor kernels with cosine spot
     // TODO should it use type Complex?
-    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+    //  Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, Disk kernel) const
     {
         Vec2 phasor;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO option hook to adjust kernal parameters for PhasorNoiseTextures
+//        kernel = adjustKernel(kernel);
+        kernel = adjustKernel(sample_position, kernel);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO replace gaussian with cosine
         float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
         if (a > 0)
@@ -1917,14 +1958,16 @@ public:
         }
         return phasor;
     }
-    // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
-    float LocallyCoherentRandomDirectionField(Vec2 v) const
+    
+    
+//    virtual Disk adjustKernel(const Disk& disk) const { return disk; }
+    virtual Disk adjustKernel(Vec2 sample_position, Disk kernel) const
     {
-        // return PerlinNoise::unitNoise2d(uv);
-        return PerlinNoise::unitNoise2d(v * 3);
-        // return PerlinNoise::unitNoise2d(v * 10);
-        // return PerlinNoise::unitNoise2d(v * 100);
+        return kernel;
     }
+
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
     // TODO new 20210423 -- add doc
     Vec2 combinedPhasorOfNearbyKernels(Vec2 position) const
     {
@@ -2010,6 +2053,63 @@ private:
     const float max_wavelength_;
     const float min_angle_;
     const float max_angle_;
+};
+
+class PhasorNoiseTextures : public PhasorNoiseBase
+{
+public:
+    PhasorNoiseTextures(float softness,
+                        float duty_cycle,
+                        const Texture& radius_texture,
+                        const Texture& wavelength_texture,
+                        const Texture& angle_texture,
+                        const Texture& texture0,
+                        const Texture& texture1)
+      : PhasorNoiseBase(softness, duty_cycle, texture0, texture1),
+        radius_texture_(radius_texture),
+        wavelength_texture_(wavelength_texture),
+        angle_texture_(angle_texture)
+    {
+        Timer t("PhasorNoiseTextures constructor");
+        // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+        // TODO maybe should init a const vector, to emphasize it can't change.
+        RandomSequence rs(seedForRandomSequence());
+        // A function to generate a new random kernel given position and rs.
+        KernelGenerator kg = [&](RandomSequence& rs)
+        {
+            // TODO raw inline 5s need to be handled better:
+            Vec2 position(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            // Init radius to luminance of radius_texture_ at that position.
+            float radius = radius_texture_.getColor(position).luminance();
+            // Angle and wavelength default to 0, will be overwritten later.
+            return Disk(radius, position);
+        };
+        // Run the utility (in base class) to construct a collection of kernels.
+        initializeKernels(rs, kg);
+    }
+    // Overwrite the kernel (Disk) stored in DiskOccupancyGrid with angle and
+    // wavelength obtained from angle_texture_ and wavelength_texture_ for the
+    // given position.
+    Disk adjustKernel(Vec2 sample_position, Disk kernel) const override
+    {
+        return Disk(kernel.radius,
+                    kernel.position,
+                    angle_texture_.getColor(sample_position).luminance(),
+                    wavelength_texture_.getColor(sample_position).luminance());
+//                    angle_texture_.getColor(kernel.position).luminance(),
+//                    wavelength_texture_.getColor(kernel.position).luminance());
+    }
+    // Seed the random number sequence from some operator parameters.
+    size_t seedForRandomSequence()
+    {
+        // TODO do I want to make this depend on r/w/a textures?
+        return (hash_float(getSoftness()) ^
+                hash_float(getDutyCycle()));
+    }
+private:
+    const Texture& radius_texture_;
+    const Texture& wavelength_texture_;
+    const Texture& angle_texture_;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
