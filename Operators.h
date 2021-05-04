@@ -1678,155 +1678,155 @@ private:
 
 // 20210430 previous prototype
 
-class PhasorNoisePrototype : public Texture
-{
-public:
-    PhasorNoisePrototype(float min_radius, float max_radius,
-                         float min_wavelength, float max_wavelength,
-                         float min_angle, float max_angle,
-                         float softness,
-                         float duty_cycle,
-                         const Texture& texture0,
-                         const Texture& texture1)
-      : min_radius_(min_radius),
-        max_radius_(max_radius),
-        min_wavelength_(min_wavelength),
-        max_wavelength_(max_wavelength),
-        min_angle_(min_angle),
-        max_angle_(max_angle),
-        softness_(softness),
-        duty_cycle_(duty_cycle),
-        texture0_(texture0),
-        texture1_(texture1),
-        disk_occupancy_grid_
-            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
-    {
-        Timer t("PhasorNoisePrototype constructor");
-        // Randomize Disks (kernels) with uniform distributions of r, x, and y.
-        // TODO maybe should init a const vector, to emphasize it can't change.
-        RandomSequence rs(seedForRandomSequence());
-        // Add kernels one by one, with randomized parameters, until the sum of
-        // all kernel areas ("total_disk_area") is greater than the area of the
-        // DiskOccupancyGrid tile ("total_tile_area") is covered to an average
-        // depth of "coverage_depth". The number of kernels must be between
-        // "min_disk_count" and "max_disk_count"
-        float coverage_depth = 4;
-        float total_tile_area = disk_occupancy_grid_->area();
-        float total_disk_area = 0;
-        int min_disk_count = 500;
-        int max_disk_count = 2000;
-        while ((disks_.size() < min_disk_count) ||   // Too few or
-               ((disks_.size() < max_disk_count) &&  // ...need more coverage.
-                (total_disk_area < (total_tile_area * coverage_depth))))
-        {
-            float radius = rs.frandom2(min_radius, max_radius);
-            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
-            float angle = rs.frandom2(min_angle, max_angle);
-            float wavelength = rs.frandom2(min_wavelength, max_wavelength);
-            Disk disk(radius, center, angle, wavelength);
-            total_disk_area += disk.area();
-            disks_.push_back(disk);
-        }
-        // If insufficient kernel coverage, return value is texture0_
-        sufficient_kernel_coverage_ = (total_disk_area >
-                                       (total_tile_area * coverage_depth));
-        // Insert randomized Disks into DiskOccupancyGrid.
-        for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
-        // "Spread out" the kernels slightly (5 iterations) to improve coverage.
-        if (sufficient_kernel_coverage_)
-        {
-            float move_scale = 0.1;  // Move 0.1 of default adjustment distance.
-            disk_occupancy_grid_->reduceDiskOverlap(5, move_scale, disks_);
-        }
-    }
-    // Sample texture color at given location.
-    Color getColor(Vec2 position) const override
-    {
-        float profile = 0;
-        if (sufficient_kernel_coverage_)
-        {
-            // TODO note Complex value
-            Vec2 phasor_noise = combinedPhasorOfNearbyKernels(position);
-            float angle = phasor_noise.atan2();
-            float phase = (angle + pi) / (2 * pi);
-            profile = soft_square_wave(phase, softness_, duty_cycle_);
-        }
-        return interpolatePointOnTextures(profile,
-                                          position, position,
-                                          texture0_, texture1_);
-    }
-    // Returns a complex phasor value.
-    // TODO mention these are quasi-Gabor kernels with cosine spot
-    // TODO should it use type Complex?
-    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
-    {
-        Vec2 phasor;
-        // TODO replace gaussian with cosine
-        float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
-        if (a > 0)
-        {
-            // Equation 7 in the paper?
-            // TODO ignoring "kernel_phase".
-            float q = (2 * pi *
-                       (1 / kernel.wavelength) *
-                       ((sample_position.x() * std::cos(kernel.angle)) +
-                        (sample_position.y() * std::sin(kernel.angle))));
-            phasor = Vec2(a * std::cos(q), a * std::sin(q));
-        }
-        return phasor;
-    }
-    // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
-    float LocallyCoherentRandomDirectionField(Vec2 v) const
-    {
-        // return PerlinNoise::unitNoise2d(uv);
-        return PerlinNoise::unitNoise2d(v * 3);
-        // return PerlinNoise::unitNoise2d(v * 10);
-        // return PerlinNoise::unitNoise2d(v * 100);
-    }
-    // TODO new 20210423 -- add doc
-    Vec2 combinedPhasorOfNearbyKernels(Vec2 position) const
-    {
-        // TODO 20210420 copy in from GaborNoisePrototype::getColor()
-        // Adjust "position" to be in center tile of grid.
-        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
-        // Find all disks that touch "tiled_pos".
-        std::set<Disk*> nearby_disks;
-        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
-        // Sum up contributions for all nearby kernels.
-        Vec2 sum_of_nearby_kernels;
-        for (auto& disk : nearby_disks)
-        {
-            sum_of_nearby_kernels += samplePhasorFieldOfKernel(tiled_pos, *disk);
-        }
-        return sum_of_nearby_kernels;
-    }
-    // Seed the random number sequence from some operator parameters.
-    size_t seedForRandomSequence()
-    {
-        return (hash_float(min_radius_) ^
-                hash_float(max_radius_) ^
-                hash_float(min_wavelength_) ^
-                hash_float(max_wavelength_) ^
-                hash_float(min_angle_) ^
-                hash_float(max_angle_) ^
-                hash_float(softness_) ^
-                hash_float(duty_cycle_));
-    }
-private:
-    const float min_radius_;
-    const float max_radius_;
-    const float min_wavelength_;
-    const float max_wavelength_;
-    const float min_angle_;
-    const float max_angle_;
-    const float softness_;
-    const float duty_cycle_;
-    const Texture& texture0_;
-    const Texture& texture1_;
-    std::vector<Disk> disks_;  // TODO should this be const?
-    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
-    bool sufficient_kernel_coverage_ = false;
-};
+//    class PhasorNoisePrototype : public Texture
+//    {
+//    public:
+//        PhasorNoisePrototype(float min_radius, float max_radius,
+//                             float min_wavelength, float max_wavelength,
+//                             float min_angle, float max_angle,
+//                             float softness,
+//                             float duty_cycle,
+//                             const Texture& texture0,
+//                             const Texture& texture1)
+//          : min_radius_(min_radius),
+//            max_radius_(max_radius),
+//            min_wavelength_(min_wavelength),
+//            max_wavelength_(max_wavelength),
+//            min_angle_(min_angle),
+//            max_angle_(max_angle),
+//            softness_(softness),
+//            duty_cycle_(duty_cycle),
+//            texture0_(texture0),
+//            texture1_(texture1),
+//            disk_occupancy_grid_
+//                (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+//        {
+//            Timer t("PhasorNoisePrototype constructor");
+//            // Randomize Disks (kernels) with uniform distributions of r, x, and y.
+//            // TODO maybe should init a const vector, to emphasize it can't change.
+//            RandomSequence rs(seedForRandomSequence());
+//            // Add kernels one by one, with randomized parameters, until the sum of
+//            // all kernel areas ("total_disk_area") is greater than the area of the
+//            // DiskOccupancyGrid tile ("total_tile_area") is covered to an average
+//            // depth of "coverage_depth". The number of kernels must be between
+//            // "min_disk_count" and "max_disk_count"
+//            float coverage_depth = 4;
+//            float total_tile_area = disk_occupancy_grid_->area();
+//            float total_disk_area = 0;
+//            int min_disk_count = 500;
+//            int max_disk_count = 2000;
+//            while ((disks_.size() < min_disk_count) ||   // Too few or
+//                   ((disks_.size() < max_disk_count) &&  // ...need more coverage.
+//                    (total_disk_area < (total_tile_area * coverage_depth))))
+//            {
+//                float radius = rs.frandom2(min_radius, max_radius);
+//                Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+//                float angle = rs.frandom2(min_angle, max_angle);
+//                float wavelength = rs.frandom2(min_wavelength, max_wavelength);
+//                Disk disk(radius, center, angle, wavelength);
+//                total_disk_area += disk.area();
+//                disks_.push_back(disk);
+//            }
+//            // If insufficient kernel coverage, return value is texture0_
+//            sufficient_kernel_coverage_ = (total_disk_area >
+//                                           (total_tile_area * coverage_depth));
+//            // Insert randomized Disks into DiskOccupancyGrid.
+//            for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
+//            // "Spread out" the kernels slightly (5 iterations) to improve coverage.
+//            if (sufficient_kernel_coverage_)
+//            {
+//                float move_scale = 0.1;  // Move 0.1 of default adjustment distance.
+//                disk_occupancy_grid_->reduceDiskOverlap(5, move_scale, disks_);
+//            }
+//        }
+//        // Sample texture color at given location.
+//        Color getColor(Vec2 position) const override
+//        {
+//            float profile = 0;
+//            if (sufficient_kernel_coverage_)
+//            {
+//                // TODO note Complex value
+//                Vec2 phasor_noise = combinedPhasorOfNearbyKernels(position);
+//                float angle = phasor_noise.atan2();
+//                float phase = (angle + pi) / (2 * pi);
+//                profile = soft_square_wave(phase, softness_, duty_cycle_);
+//            }
+//            return interpolatePointOnTextures(profile,
+//                                              position, position,
+//                                              texture0_, texture1_);
+//        }
+//        // Returns a complex phasor value.
+//        // TODO mention these are quasi-Gabor kernels with cosine spot
+//        // TODO should it use type Complex?
+//        Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
+//        {
+//            Vec2 phasor;
+//            // TODO replace gaussian with cosine
+//            float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
+//            if (a > 0)
+//            {
+//                // Equation 7 in the paper?
+//                // TODO ignoring "kernel_phase".
+//                float q = (2 * pi *
+//                           (1 / kernel.wavelength) *
+//                           ((sample_position.x() * std::cos(kernel.angle)) +
+//                            (sample_position.y() * std::sin(kernel.angle))));
+//                phasor = Vec2(a * std::cos(q), a * std::sin(q));
+//            }
+//            return phasor;
+//        }
+//        // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
+//        float LocallyCoherentRandomDirectionField(Vec2 v) const
+//        {
+//            // return PerlinNoise::unitNoise2d(uv);
+//            return PerlinNoise::unitNoise2d(v * 3);
+//            // return PerlinNoise::unitNoise2d(v * 10);
+//            // return PerlinNoise::unitNoise2d(v * 100);
+//        }
+//        // TODO new 20210423 -- add doc
+//        Vec2 combinedPhasorOfNearbyKernels(Vec2 position) const
+//        {
+//            // TODO 20210420 copy in from GaborNoisePrototype::getColor()
+//            // Adjust "position" to be in center tile of grid.
+//            Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
+//            // Find all disks that touch "tiled_pos".
+//            std::set<Disk*> nearby_disks;
+//            disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+//            // Sum up contributions for all nearby kernels.
+//            Vec2 sum_of_nearby_kernels;
+//            for (auto& disk : nearby_disks)
+//            {
+//                sum_of_nearby_kernels += samplePhasorFieldOfKernel(tiled_pos, *disk);
+//            }
+//            return sum_of_nearby_kernels;
+//        }
+//        // Seed the random number sequence from some operator parameters.
+//        size_t seedForRandomSequence()
+//        {
+//            return (hash_float(min_radius_) ^
+//                    hash_float(max_radius_) ^
+//                    hash_float(min_wavelength_) ^
+//                    hash_float(max_wavelength_) ^
+//                    hash_float(min_angle_) ^
+//                    hash_float(max_angle_) ^
+//                    hash_float(softness_) ^
+//                    hash_float(duty_cycle_));
+//        }
+//    private:
+//        const float min_radius_;
+//        const float max_radius_;
+//        const float min_wavelength_;
+//        const float max_wavelength_;
+//        const float min_angle_;
+//        const float max_angle_;
+//        const float softness_;
+//        const float duty_cycle_;
+//        const Texture& texture0_;
+//        const Texture& texture1_;
+//        std::vector<Disk> disks_;  // TODO should this be const?
+//        std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
+//        bool sufficient_kernel_coverage_ = false;
+//    };
 
 
  
@@ -1860,7 +1860,12 @@ public:
         float total_tile_area = disk_occupancy_grid_->area();
         float total_disk_area = 0;
         int min_disk_count = 500;
-        int max_disk_count = 2000;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        int max_disk_count = 2000;
+//        int max_disk_count = 5000;
+        int max_disk_count = 20000;
+        debugPrint(max_disk_count);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         while ((disks_.size() < min_disk_count) ||   // Too few or
                ((disks_.size() < max_disk_count) &&  // ...need more coverage.
                 (total_disk_area < (total_tile_area * coverage_depth))))
@@ -1901,49 +1906,15 @@ public:
                                           position, position,
                                           texture0_, texture1_);
     }
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-//    // Returns a complex phasor value.
-//    // TODO mention these are quasi-Gabor kernels with cosine spot
-//    // TODO should it use type Complex?
-//    Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
-//    {
-//        Vec2 phasor;
-//        // TODO replace gaussian with cosine
-//        float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
-//        if (a > 0)
-//        {
-//            // Equation 7 in the paper?
-//            // TODO ignoring "kernel_phase".
-//            float q = (2 * pi *
-//                       (1 / kernel.wavelength) *
-//                       ((sample_position.x() * std::cos(kernel.angle)) +
-//                        (sample_position.y() * std::sin(kernel.angle))));
-//            phasor = Vec2(a * std::cos(q), a * std::sin(q));
-//        }
-//        return phasor;
-//    }
-//    // TODO mock 20210406 to substitute for "Fig 12 middle" in paper.
-//    float LocallyCoherentRandomDirectionField(Vec2 v) const
-//    {
-//        // return PerlinNoise::unitNoise2d(uv);
-//        return PerlinNoise::unitNoise2d(v * 3);
-//        // return PerlinNoise::unitNoise2d(v * 10);
-//        // return PerlinNoise::unitNoise2d(v * 100);
-//    }
     
     // Returns a complex phasor value.
     // TODO mention these are quasi-Gabor kernels with cosine spot
     // TODO should it use type Complex?
-    //  Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, const Disk& kernel) const
     Vec2 samplePhasorFieldOfKernel(Vec2 sample_position, Disk kernel) const
     {
         Vec2 phasor;
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO option hook to adjust kernal parameters for PhasorNoiseTextures
-//        kernel = adjustKernel(kernel);
+        // Option hook to adjust kernal parameters: for PhasorNoiseTextures.
         kernel = adjustKernel(sample_position, kernel);
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // TODO replace gaussian with cosine
         float a = spot_utility(sample_position, kernel.position, 0, kernel.radius);
         if (a > 0)
@@ -1959,14 +1930,11 @@ public:
         return phasor;
     }
     
-    
-//    virtual Disk adjustKernel(const Disk& disk) const { return disk; }
+    // By default, and identity function to leave the kernel "unadjusted".
     virtual Disk adjustKernel(Vec2 sample_position, Disk kernel) const
     {
         return kernel;
     }
-
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     // TODO new 20210423 -- add doc
     Vec2 combinedPhasorOfNearbyKernels(Vec2 position) const
@@ -1977,6 +1945,9 @@ public:
         // Find all disks that touch "tiled_pos".
         std::set<Disk*> nearby_disks;
         disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        if (frandom01() < 0.001) { debugPrint(nearby_disks.size()); }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // Sum up contributions for all nearby kernels.
         Vec2 sum_of_nearby_kernels;
         for (auto& disk : nearby_disks)
@@ -2092,13 +2063,30 @@ public:
     // given position.
     Disk adjustKernel(Vec2 sample_position, Disk kernel) const override
     {
-        return Disk(kernel.radius,
-                    kernel.position,
-                    angle_texture_.getColor(sample_position).luminance(),
-                    wavelength_texture_.getColor(sample_position).luminance());
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        return Disk(kernel.radius,
+//                    kernel.position,
+//                    angle_texture_.getColor(sample_position).luminance(),
+//                    wavelength_texture_.getColor(sample_position).luminance());
+        
 //                    angle_texture_.getColor(kernel.position).luminance(),
 //                    wavelength_texture_.getColor(kernel.position).luminance());
+        
+        Disk temp(kernel.radius,
+                  kernel.position,
+                  angle_texture_.getColor(sample_position).luminance(),
+                  wavelength_texture_.getColor(sample_position).luminance());
+//                  angle_texture_.getColor(kernel.position).luminance(),
+//                  wavelength_texture_.getColor(kernel.position).luminance());
+        if (print_in_adjust_kernel && (frandom01() < 0.01)) {debugPrint(temp);}
+        return temp;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
+    
+    // TODO TEMP
+    static inline bool print_in_adjust_kernel = false;
+    
+    
     // Seed the random number sequence from some operator parameters.
     size_t seedForRandomSequence()
     {
