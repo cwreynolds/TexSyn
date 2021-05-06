@@ -5374,10 +5374,11 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Testing phasor noise.
-    std::cout << "May 3, 2021" << std::endl;
+    std::cout << "May 5, 2021" << std::endl;
 //    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
 //    std::string path = temp_dir + "20210503_";
-    path = temp_dir + "20210503_";
+//    path = temp_dir + "20210503_";
+    path = temp_dir + "20210505_";
 
     {
         Uniform black(0);
@@ -5458,7 +5459,8 @@ int main(int argc, const char * argv[])
 //                             AdjustBrightness(2 * pi, noise),
                              AdjustBrightness(2 * pi,
                                               Scale(2, noise)),
-                             black, white));
+                             black, white)
+         );  // , path + "contour_map_symptom");
 
         //PhasorNoiseTextures(float softness,
         //                    float duty_cycle,

@@ -1874,6 +1874,9 @@ public:
             total_disk_area += disk.area();
             disks_.push_back(disk);
         }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        debugPrint(disks_.size());
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // If insufficient kernel coverage, return value is texture0_
         sufficient_kernel_coverage_ = (total_disk_area >
                                        (total_tile_area * coverage_depth));
@@ -1946,7 +1949,7 @@ public:
         std::set<Disk*> nearby_disks;
         disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        if (frandom01() < 0.001) { debugPrint(nearby_disks.size()); }
+//        if (frandom01() < 0.001) { debugPrint(nearby_disks.size()); }
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // Sum up contributions for all nearby kernels.
         Vec2 sum_of_nearby_kernels;
@@ -2072,12 +2075,21 @@ public:
 //                    angle_texture_.getColor(kernel.position).luminance(),
 //                    wavelength_texture_.getColor(kernel.position).luminance());
         
+//            Disk temp(kernel.radius,
+//                      kernel.position,
+//    //                  angle_texture_.getColor(sample_position).luminance(),
+//    //                  wavelength_texture_.getColor(sample_position).luminance());
+//                      angle_texture_.getColor(kernel.position).luminance(),
+//                      wavelength_texture_.getColor(kernel.position).luminance());
+        
+        // TODO experiment just inject values here, ignoring input textures.
+        // TODO angle is from old LocallyCoherentRandomDirectionField()
         Disk temp(kernel.radius,
                   kernel.position,
-                  angle_texture_.getColor(sample_position).luminance(),
-                  wavelength_texture_.getColor(sample_position).luminance());
-//                  angle_texture_.getColor(kernel.position).luminance(),
-//                  wavelength_texture_.getColor(kernel.position).luminance());
+                  PerlinNoise::unitNoise2d(sample_position * 3),  // angle
+                  0.05);                                          // wavelength
+
+        
         if (print_in_adjust_kernel && (frandom01() < 0.01)) {debugPrint(temp);}
         return temp;
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
