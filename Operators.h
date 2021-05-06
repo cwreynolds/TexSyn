@@ -2082,14 +2082,26 @@ public:
 //                      angle_texture_.getColor(kernel.position).luminance(),
 //                      wavelength_texture_.getColor(kernel.position).luminance());
         
-        // TODO experiment just inject values here, ignoring input textures.
-        // TODO angle is from old LocallyCoherentRandomDirectionField()
+//        // TODO experiment just inject values here, ignoring input textures.
+//        // TODO angle is from old LocallyCoherentRandomDirectionField()
+//        Disk temp(kernel.radius,
+//                  kernel.position,
+//                  PerlinNoise::unitNoise2d(sample_position * 3),  // angle
+//                  0.05);                                          // wavelength
+
+//        // TODO same but inject angle field as a spot texture
+//        Disk temp(kernel.radius,
+//                  kernel.position,
+//                  spot_utility(sample_position, Vec2(), 0, 1),  // angle
+//                  0.05);                                        // wavelength
+
         Disk temp(kernel.radius,
                   kernel.position,
-                  PerlinNoise::unitNoise2d(sample_position * 3),  // angle
-                  0.05);                                          // wavelength
+//                  angle_texture_.getColor(sample_position).luminance(),
+//                  wavelength_texture_.getColor(sample_position).luminance());
+                  angle_texture_.getColor(kernel.position).luminance(),
+                  wavelength_texture_.getColor(kernel.position).luminance());
 
-        
         if (print_in_adjust_kernel && (frandom01() < 0.01)) {debugPrint(temp);}
         return temp;
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~

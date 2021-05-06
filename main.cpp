@@ -5084,7 +5084,7 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#define PHASOR_NOISE_RANGES
+// #define PHASOR_NOISE_RANGES
 #ifdef PHASOR_NOISE_RANGES
 
         // Testing phasor noise.
@@ -5375,10 +5375,9 @@ int main(int argc, const char * argv[])
     
     // Testing phasor noise.
     std::cout << "May 5, 2021" << std::endl;
-//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-//    std::string path = temp_dir + "20210503_";
-//    path = temp_dir + "20210503_";
-    path = temp_dir + "20210505_";
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    path = temp_dir + "20210505_";
+    std::string path = temp_dir + "20210505_";
 
     {
         Uniform black(0);
@@ -5392,75 +5391,95 @@ int main(int argc, const char * argv[])
         Texture::displayAndFile(spot);
         Texture::displayAndFile(grad);
 
-//        Texture::displayAndFile
-//            (PhasorNoiseTextures(1, 0.5, grad, spot, noise, black, white));
-//        Texture::displayAndFile
-//            (PhasorNoiseTextures(1, 0.5, spot, grad, noise, black, white));
+//    //        Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1, 0.5, grad, spot, noise, black, white));
+//    //        Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1, 0.5, spot, grad, noise, black, white));
+//
+//            Texture::displayAndFile
+//    //        (PhasorNoiseTextures(0.2,
+//    //                             0.1,
+//            (PhasorNoiseTextures(1,
+//                                 0.5,
+//                                 Gradation(Vec2(0, 1), Uniform(0.3),
+//                                           Vec2(0, -1), Uniform(0.7)),
+//                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
+//                                 noise,
+//                                 black, white));
+//            Texture::displayAndFile
+//            (PhasorNoiseTextures(1,
+//                                 0.5,
+//                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
+//                                 Gradation(Vec2(0, +1), Uniform(0.3),
+//                                           Vec2(0, -1), Uniform(0.7)),
+//                                 noise,
+//    //                             AdjustBrightness(2 * pi, noise),
+//                                 black, white));
+//            Texture::displayAndFile
+//            (PhasorNoiseTextures(1,
+//                                 0.5,
+//                                 // radius
+//                                 Gradation(Vec2(0, +1), Uniform(0.2),
+//                                           Vec2(0, -1), Uniform(0.5)),
+//                                 // wavelength
+//    //                             Spot(Vec2(), 0, Uniform(0.01), 0.8, Uniform(0.1)),
+//    //                             Spot(Vec2(), 0, Uniform(0.05), 0.8, Uniform(0.2)),
+//                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
+//                                 // angle
+//                                 AdjustBrightness(2 * pi, noise),
+//                                 black, white));
+//            Texture::displayAndFile
+//            (PhasorNoiseTextures(1,
+//                                 0.5,
+//                                 // radius
+//                                 Gradation(Vec2(0, +1), Uniform(0.2),
+//                                           Vec2(0, -1), Uniform(0.5)),
+//                                 // wavelength
+//                                 noise,
+//                                 // angle
+//                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
+//                                 black, white));
+//
+//    //        PhasorNoiseTextures::print_in_adjust_kernel = true;
+        
+//            Texture::displayAndFile
+//            (PhasorNoiseTextures(1,
+//                                 0.5,
+//                                 // radius
+//    //                             Uniform(0.2),
+//    //                             Uniform(0.4),
+//    //                             Uniform(0.2),
+//                                 Uniform(0.1),
+//                                 // wavelength
+//                                 Uniform(0.05),
+//                                 // angle
+//    //                             noise,
+//    //                             AdjustBrightness(2 * pi, noise),
+//    //                             AdjustBrightness(2 * pi, noise),
+//                                 AdjustBrightness(2 * pi,
+//                                                  Scale(2, noise)),
+//                                 black, white)
+//    //         , path + "contour_map_symptom");
+//             ) // , path + "spot_for_angle");
 
-        Texture::displayAndFile
-//        (PhasorNoiseTextures(0.2,
-//                             0.1,
-        (PhasorNoiseTextures(1,
-                             0.5,
-                             Gradation(Vec2(0, 1), Uniform(0.3),
-                                       Vec2(0, -1), Uniform(0.7)),
-                             Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
-                             noise,
-                             black, white));
-        Texture::displayAndFile
-        (PhasorNoiseTextures(1,
-                             0.5,
-                             Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
-                             Gradation(Vec2(0, +1), Uniform(0.3),
-                                       Vec2(0, -1), Uniform(0.7)),
-                             noise,
-//                             AdjustBrightness(2 * pi, noise),
-                             black, white));
-        Texture::displayAndFile
-        (PhasorNoiseTextures(1,
-                             0.5,
-                             // radius
-                             Gradation(Vec2(0, +1), Uniform(0.2),
-                                       Vec2(0, -1), Uniform(0.5)),
-                             // wavelength
-//                             Spot(Vec2(), 0, Uniform(0.01), 0.8, Uniform(0.1)),
-//                             Spot(Vec2(), 0, Uniform(0.05), 0.8, Uniform(0.2)),
-                             Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
-                             // angle
-                             AdjustBrightness(2 * pi, noise),
-                             black, white));
-        Texture::displayAndFile
-        (PhasorNoiseTextures(1,
-                             0.5,
-                             // radius
-                             Gradation(Vec2(0, +1), Uniform(0.2),
-                                       Vec2(0, -1), Uniform(0.5)),
-                             // wavelength
-                             noise,
-                             // angle
-                             Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
-                             black, white));
-        
-//        PhasorNoiseTextures::print_in_adjust_kernel = true;
-        
-        Texture::displayAndFile
-        (PhasorNoiseTextures(1,
-                             0.5,
-                             // radius
-//                             Uniform(0.2),
-//                             Uniform(0.4),
-//                             Uniform(0.2),
-                             Uniform(0.1),
-                             // wavelength
-                             Uniform(0.05),
-                             // angle
-//                             noise,
-//                             AdjustBrightness(2 * pi, noise),
-//                             AdjustBrightness(2 * pi, noise),
-                             AdjustBrightness(2 * pi,
-                                              Scale(2, noise)),
-                             black, white)
-         );  // , path + "contour_map_symptom");
+        {
+            Timer t("PhasorNoiseTextures render");
+            Texture::setDefaultRenderAsDisk(false);
+            Texture::displayAndFile
+            (PhasorNoiseTextures(1,
+                                 0.5,
+                                 // radius
+                                 Uniform(0.1),
+//                                 Uniform(0.2),
+                                 // wavelength
+                                 Uniform(0.05),
+                                 // angle
+                                 AdjustBrightness(2 * pi, Scale(2, noise)),
+                                 black, white)
+             );
+//             , path + "angle_per_kernel_r01");
+//             , path + "angle_per_kernel_r02");
+        }
 
         //PhasorNoiseTextures(float softness,
         //                    float duty_cycle,
