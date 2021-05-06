@@ -5084,13 +5084,13 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// #define PHASOR_NOISE_RANGES
+#define PHASOR_NOISE_RANGES
 #ifdef PHASOR_NOISE_RANGES
 
         // Testing phasor noise.
-        std::cout << "April 24, 2021" << std::endl;
-        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-        std::string path = temp_dir + "20210424_";
+//        std::cout << "April 24, 2021" << std::endl;
+//        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//        std::string path = temp_dir + "20210424_";
 
         int index = 0;
     //    RandomSequence rs(20210424);
@@ -5300,6 +5300,7 @@ int main(int argc, const char * argv[])
             {
                 std::cout << std::endl;
                 debugPrint(index);
+                std::string path; // TODO dummy temp
                 std::string filename = path + "phasor_r_" + std::to_string(index);
                 index++;
                 float rmin = rs.frandom01();
@@ -5476,10 +5477,55 @@ int main(int argc, const char * argv[])
                                  // angle
                                  AdjustBrightness(2 * pi, Scale(2, noise)),
                                  black, white)
+//             , path + "angle_per_kernel_r01"
+//             , path + "angle_per_kernel_r02"
+//             , path + "perlin_angle"
              );
-//             , path + "angle_per_kernel_r01");
-//             , path + "angle_per_kernel_r02");
         }
+
+        {
+            Timer t("PhasorNoiseTextures render");
+            Texture::setDefaultRenderAsDisk(false);
+            Texture::displayAndFile
+            (PhasorNoiseTextures(1,
+                                 0.5,
+                                 // radius
+                                 Uniform(0.1),
+//                                 Uniform(0.2),
+                                 // wavelength
+                                 Uniform(0.05),
+                                 // angle
+                                 AdjustBrightness(2 * pi,
+                                                  Spot(Vec2(), 0, black, 1, white)),
+                                 black, white)
+//             , path + "spot_angle"
+             );
+        }
+        
+        {
+            Timer t("PhasorNoiseTextures render");
+            Texture::setDefaultRenderAsDisk(false);
+            Texture::displayAndFile
+            (PhasorNoiseTextures(1,
+                                 0.5,
+                                 // radius
+                                 Uniform(0.1),
+                                 // wavelength
+//                                 noise
+//                                 AdjustBrightness(0.2, noise),
+//                                 AdjustBrightness(0.2, Subtract(white, noise)),
+//                                 AdjustBrightness(0.1, Subtract(white, noise)),
+//                                 AdjustBrightness(0.05, Subtract(white, noise)),
+//                                 Add(Uniform(0.02), AdjustBrightness(0.04, noise)),
+                                 Add(Uniform(0.01), AdjustBrightness(0.08, noise)),
+                                 // angle
+//                                 AdjustBrightness(2 * pi, grad),
+                                 AdjustBrightness(pi, spot),
+                                 black, white)
+//             , path + "spot_angle"
+             );
+        }
+
 
         //PhasorNoiseTextures(float softness,
         //                    float duty_cycle,

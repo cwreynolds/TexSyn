@@ -1924,10 +1924,19 @@ public:
         {
             // Equation 7 in the paper?
             // TODO ignoring "kernel_phase".
+            //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//            float q = (2 * pi *
+//                       (1 / kernel.wavelength) *
+//                       ((sample_position.x() * std::cos(kernel.angle)) +
+//                        (sample_position.y() * std::sin(kernel.angle))));
+            
+            Vec2 offset = sample_position - kernel.position;
+            
             float q = (2 * pi *
                        (1 / kernel.wavelength) *
-                       ((sample_position.x() * std::cos(kernel.angle)) +
-                        (sample_position.y() * std::sin(kernel.angle))));
+                       ((offset.x() * std::cos(kernel.angle)) +
+                        (offset.y() * std::sin(kernel.angle))));
+            //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
             phasor = Vec2(a * std::cos(q), a * std::sin(q));
         }
         return phasor;
@@ -2095,12 +2104,31 @@ public:
 //                  spot_utility(sample_position, Vec2(), 0, 1),  // angle
 //                  0.05);                                        // wavelength
 
+//            Disk temp(kernel.radius,
+//                      kernel.position,
+//    //                  angle_texture_.getColor(sample_position).luminance(),
+//    //                  wavelength_texture_.getColor(sample_position).luminance());
+//                      angle_texture_.getColor(kernel.position).luminance(),
+//                      wavelength_texture_.getColor(kernel.position).luminance());
+
+//            Disk temp(kernel.radius,
+//                      kernel.position,
+//                      // reverse:
+//    //                  angle_texture_.getColor(sample_position).luminance(),
+//    //                  wavelength_texture_.getColor(sample_position).luminance()
+//    //                  wavelength_texture_.getColor(sample_position).luminance(),
+//    //                  angle_texture_.getColor(sample_position).luminance()
+//    //                  wavelength_texture_.getColor(kernel.position).luminance(),
+//    //                  angle_texture_.getColor(kernel.position).luminance()
+//                      angle_texture_.getColor(sample_position).luminance(),
+//                      wavelength_texture_.getColor(sample_position).luminance()
+//                      );
+
         Disk temp(kernel.radius,
                   kernel.position,
-//                  angle_texture_.getColor(sample_position).luminance(),
-//                  wavelength_texture_.getColor(sample_position).luminance());
-                  angle_texture_.getColor(kernel.position).luminance(),
-                  wavelength_texture_.getColor(kernel.position).luminance());
+                  angle_texture_.getColor(sample_position).luminance(),
+                  wavelength_texture_.getColor(sample_position).luminance());
+
 
         if (print_in_adjust_kernel && (frandom01() < 0.01)) {debugPrint(temp);}
         return temp;
