@@ -194,6 +194,13 @@ public:
         Vec2 diagonal = maxXY_ - minXY_;
         return diagonal.x() * diagonal.y();
     }
+    
+    // Random position uniformly distributed between "minXY_" and "maxXY_".
+    Vec2 randomPointOnGrid(RandomSequence& rs) const
+    {
+        return Vec2(rs.frandom2(minXY_.x(), maxXY_.x()),
+                    rs.frandom2(minXY_.y(), maxXY_.y()));
+    }
 
     // Remove all Disks from this grid, reset based on grid_side_count.
     void clear()

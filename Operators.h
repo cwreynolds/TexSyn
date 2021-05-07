@@ -1977,6 +1977,11 @@ public:
         }
         return sum_of_nearby_kernels;
     }
+    // Random position inside "disk_occupancy_grid_".
+    Vec2 randomPointOnDiskOccupancyGrid(RandomSequence& rs)
+    {
+        return disk_occupancy_grid_->randomPointOnGrid(rs);
+    }
     // Accessors to use in e.g. seedForRandomSequence() in derived classes.
     float getSoftness() const { return softness_; }
     float getDutyCycle() const { return duty_cycle_; }
@@ -2017,8 +2022,7 @@ public:
         KernelGenerator kg = [&](RandomSequence& rs)
         {
             float radius = rs.frandom2(min_radius, max_radius);
-            // TODO raw inline 5s need to be handled better:
-            Vec2 position(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            Vec2 position = randomPointOnDiskOccupancyGrid(rs);
             float angle = rs.frandom2(min_angle, max_angle);
             float wavelength = rs.frandom2(min_wavelength, max_wavelength);
             return Disk(radius, position, angle, wavelength);
@@ -2075,8 +2079,7 @@ public:
         // A function to generate a new random kernel given position and rs.
         KernelGenerator kg = [&](RandomSequence& rs)
         {
-            // TODO raw inline 5s need to be handled better:
-            Vec2 position(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
+            Vec2 position = randomPointOnDiskOccupancyGrid(rs);
             // Init radius to luminance of radius_texture_ at that position.
             float radius = radius_texture_.getColor(position).luminance();
             // Angle and wavelength default to 0, will be overwritten later.
