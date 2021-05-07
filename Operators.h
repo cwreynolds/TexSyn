@@ -1932,10 +1932,19 @@ public:
             
             Vec2 offset = sample_position - kernel.position;
             
+//            float q = (2 * pi *
+//                       (1 / kernel.wavelength) *
+//                       ((offset.x() * std::cos(kernel.angle)) +
+//                        (offset.y() * std::sin(kernel.angle))));
+            
+            // 20210507 change phasor noise angle units: radians to revolutions
+
             float q = (2 * pi *
                        (1 / kernel.wavelength) *
-                       ((offset.x() * std::cos(kernel.angle)) +
-                        (offset.y() * std::sin(kernel.angle))));
+                       ((offset.x() * std::cos(kernel.angle * 2 * pi)) +
+                        (offset.y() * std::sin(kernel.angle * 2 * pi))));
+
+            
             //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
             phasor = Vec2(a * std::cos(q), a * std::sin(q));
         }
@@ -2024,8 +2033,14 @@ public:
                 hash_float(max_radius_) ^
                 hash_float(min_wavelength_) ^
                 hash_float(max_wavelength_) ^
+                
+                // 20210507 change phasor noise angle units: radians to revolutions
+                // todo temporaily hash the old radian values to check for consistancy
                 hash_float(min_angle_) ^
                 hash_float(max_angle_) ^
+//                hash_float(min_angle_ * 2 * pi) ^
+//                hash_float(max_angle_ * 2 * pi) ^
+
                 hash_float(getSoftness()) ^
                 hash_float(getDutyCycle()));
     }

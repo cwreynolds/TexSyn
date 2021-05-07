@@ -5307,8 +5307,11 @@ int main(int argc, const char * argv[])
                 float rmax = rs.frandom01();
                 float wmin = rs.frandom01();
                 float wmax = rs.frandom01();
-                float amin = rs.frandom01() * 2 * pi;
-                float amax = rs.frandom01() * 2 * pi;
+                // 20210507 change phasor noise angle units: radians to revolutions
+//                float amin = rs.frandom01() * 2 * pi;
+//                float amax = rs.frandom01() * 2 * pi;
+                float amin = rs.frandom01();
+                float amax = rs.frandom01();
 
                 float softness = rs.frandom01();
                 float duty_cycle = rs.frandom01();
@@ -5369,11 +5372,14 @@ int main(int argc, const char * argv[])
         }
         (Uniform(0), Uniform(1));
 
-        // Texture::waitKey();
+    Texture::waitKey();
     
 #endif  // PHASOR_NOISE_RANGES
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+ #define PHASOR_NOISE_TEXTURES
+#ifdef PHASOR_NOISE_TEXTURES
+
     // Testing phasor noise.
     std::cout << "May 5, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
@@ -5475,7 +5481,10 @@ int main(int argc, const char * argv[])
                                  // wavelength
                                  Uniform(0.05),
                                  // angle
-                                 AdjustBrightness(2 * pi, Scale(2, noise)),
+                                 // 20210507 change phasor noise angle units:
+                                 //          radians to revolutions
+//                                 AdjustBrightness(2 * pi, Scale(2, noise)),
+                                 Scale(2, noise),
                                  black, white)
 //             , path + "angle_per_kernel_r01"
 //             , path + "angle_per_kernel_r02"
@@ -5495,8 +5504,11 @@ int main(int argc, const char * argv[])
                                  // wavelength
                                  Uniform(0.05),
                                  // angle
-                                 AdjustBrightness(2 * pi,
-                                                  Spot(Vec2(), 0, black, 1, white)),
+                                 // 20210507 change phasor noise angle units:
+                                 //          radians to revolutions
+//                                 AdjustBrightness(2 * pi,
+//                                                  Spot(Vec2(), 0, black, 1, white)),
+                                 Spot(Vec2(), 0, black, 1, white),
                                  black, white)
 //             , path + "spot_angle"
              );
@@ -5513,9 +5525,12 @@ int main(int argc, const char * argv[])
                                  // wavelength
                                  Add(Uniform(0.01), AdjustBrightness(0.08, noise)),
                                  // angle
-                                 AdjustBrightness(pi, spot),
+                                 // 20210507 change phasor noise angle units:
+                                 //          radians to revolutions
+//                                 AdjustBrightness(pi, spot),
+                                 AdjustBrightness(0.5, spot),
                                  black, white)
-             , path + "spot_angle_noise_wl"
+//             , path + "spot_angle_noise_wl"
              );
         }
         
@@ -5551,7 +5566,8 @@ int main(int argc, const char * argv[])
 
         Texture::waitKey();
     }
-    
+#endif  // PHASOR_NOISE_TEXTURES
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
