@@ -5511,20 +5511,34 @@ int main(int argc, const char * argv[])
                                  // radius
                                  Uniform(0.1),
                                  // wavelength
-//                                 noise
-//                                 AdjustBrightness(0.2, noise),
-//                                 AdjustBrightness(0.2, Subtract(white, noise)),
-//                                 AdjustBrightness(0.1, Subtract(white, noise)),
-//                                 AdjustBrightness(0.05, Subtract(white, noise)),
-//                                 Add(Uniform(0.02), AdjustBrightness(0.04, noise)),
                                  Add(Uniform(0.01), AdjustBrightness(0.08, noise)),
                                  // angle
-//                                 AdjustBrightness(2 * pi, grad),
                                  AdjustBrightness(pi, spot),
                                  black, white)
-//             , path + "spot_angle"
+             , path + "spot_angle_noise_wl"
              );
         }
+        
+//            {
+//                Timer t("PhasorNoiseTextures render");
+//                Texture::setDefaultRenderAsDisk(false);
+//                Texture::displayAndFile
+//                (PhasorNoiseTextures(1,
+//                                     0.5,
+//                                     // radius
+//    //                                 Uniform(0.1),
+//                                     Gradation(Vec2(0, +1), Uniform(0.1),
+//                                               Vec2(0, -1), Uniform(0.2)),
+//                                     // wavelength
+//                                     Add(Uniform(0.01),
+//                                         AdjustBrightness(0.08, noise)),
+//                                     // angle
+//                                     AdjustBrightness(pi, spot),
+//                                     black, white)
+//    //             , path + "spot_angle"
+//                 );
+//            }
+
 
 
         //PhasorNoiseTextures(float softness,
