@@ -1999,11 +1999,11 @@ private:
 class PhasorNoiseRanges : public PhasorNoiseBase
 {
 public:
-    PhasorNoiseRanges(float min_radius, float max_radius,
+    PhasorNoiseRanges(float softness,
+                      float duty_cycle,
+                      float min_radius, float max_radius,
                       float min_wavelength, float max_wavelength,
                       float min_angle, float max_angle,
-                      float softness,
-                      float duty_cycle,
                       const Texture& texture0,
                       const Texture& texture1)
       : PhasorNoiseBase(softness, duty_cycle, texture0, texture1),

@@ -5088,9 +5088,10 @@ int main(int argc, const char * argv[])
 #ifdef PHASOR_NOISE_RANGES
 
         // Testing phasor noise.
-//        std::cout << "April 24, 2021" << std::endl;
-//        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-//        std::string path = temp_dir + "20210424_";
+        std::cout << "April 24, 2021" << std::endl;
+        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+        std::string path = temp_dir + "20210424_";
+        path = temp_dir + "20210508_";
 
         int index = 0;
     //    RandomSequence rs(20210424);
@@ -5300,7 +5301,7 @@ int main(int argc, const char * argv[])
             {
                 std::cout << std::endl;
                 debugPrint(index);
-                std::string path; // TODO dummy temp
+                // std::string path; // TODO dummy temp
                 std::string filename = path + "phasor_r_" + std::to_string(index);
                 index++;
                 float rmin = rs.frandom01();
@@ -5308,8 +5309,8 @@ int main(int argc, const char * argv[])
                 float wmin = rs.frandom01();
                 float wmax = rs.frandom01();
                 // 20210507 change phasor noise angle units: radians to revolutions
-//                float amin = rs.frandom01() * 2 * pi;
-//                float amax = rs.frandom01() * 2 * pi;
+                // float amin = rs.frandom01() * 2 * pi;
+                // float amax = rs.frandom01() * 2 * pi;
                 float amin = rs.frandom01();
                 float amax = rs.frandom01();
 
@@ -5323,31 +5324,16 @@ int main(int argc, const char * argv[])
                 debugPrint(amax);
                 debugPrint(softness);
                 debugPrint(duty_cycle);
-    //            PhasorNoisePrototype noise0(rmin, rmax,
-    //                                        wmin, wmax,
-    //                                        amin, amax,
-    //                                        softness,
-    //                                        duty_cycle,
-    //                                        texture0, texture1);
-
-                PhasorNoiseRanges noise1(rmin, rmax,
-                                         wmin, wmax,
-                                         amin, amax,
-                                         softness,
-                                         duty_cycle,
-                                         texture0, texture1);
-    //                {
-    //                    Timer t("PhasorNoisePrototype render");
-    //    //                Texture::displayAndFile(noise, filename);
-    //                    Texture::displayAndFile(noise);
-    //                }
-    //            {
-    //                Timer t("PhasorNoisePrototype render");
-    //                Texture::displayAndFile(noise0);
-    //            }
+                PhasorNoiseRanges noise(softness,
+                                        duty_cycle,
+                                        rmin, rmax,
+                                        wmin, wmax,
+                                        amin, amax,
+                                        texture0, texture1);
                 {
                     Timer t("PhasorNoiseRanges render");
-                    Texture::displayAndFile(noise1);
+                    Texture::displayAndFile(noise);
+                    // Texture::displayAndFile(noise, filename);
                 }
             };
 
@@ -5356,19 +5342,6 @@ int main(int argc, const char * argv[])
     //        for (int i = 0; i < 24; i++) { random_test(); }
     //        random_test();
 
-    //        Texture::displayAndFile(LotsOfSpots(0.95,
-    //                                            0.1, 0.4,
-    //                                            0.02,
-    //                                            0.05,
-    //                                            Uniform(0, 1, 0),
-    //                                            Uniform(0.3)));
-
-    //        Texture::displayAndFile(PhasorNoisePrototype(0.01, 0.02,
-    //                                                     0.2, 0.2,
-    //                                                     0, 0,
-    //                                                     0.5,
-    //                                                     0.5,
-    //                                                     texture0, texture1));
         }
         (Uniform(0), Uniform(1));
 
@@ -5377,7 +5350,7 @@ int main(int argc, const char * argv[])
 #endif  // PHASOR_NOISE_RANGES
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
- #define PHASOR_NOISE_TEXTURES
+// #define PHASOR_NOISE_TEXTURES
 #ifdef PHASOR_NOISE_TEXTURES
 
     // Testing phasor noise.
