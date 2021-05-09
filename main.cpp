@@ -5084,429 +5084,365 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#define PHASOR_NOISE_RANGES
-#ifdef PHASOR_NOISE_RANGES
+//#define PHASOR_NOISE_RANGES
+//#ifdef PHASOR_NOISE_RANGES
+//
+//        // Testing phasor noise.
+//        std::cout << "April 24, 2021" << std::endl;
+//        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//        std::string path = temp_dir + "20210424_";
+//        path = temp_dir + "20210508_";
+//
+//        int index = 0;
+//    //    RandomSequence rs(20210424);
+//    //    RandomSequence rs(20210426);
+//    //    RandomSequence rs(20210428);
+//        RandomSequence rs(20210428 * 3);
+//
+//        [&](const Texture& texture0, const Texture& texture1)
+//        {
+//            Texture::setDefaultRenderAsDisk(false);
+//
+//    //        auto run_test = [&](int test_case)
+//    //        {
+//    //            index++;
+//    //            return PhasorNoisePrototype(// test_case,
+//    //                                        // 250,
+//    //                                        0.7, 1.5,
+//    //                                        0.06, 0.12,
+//    //                                        pi * 0.3, pi * 0.8,
+//    //                                        texture0, texture1);
+//    //        };
+//
+//    //            auto random_test = [&]()
+//    //            {
+//    //                std::cout << std::endl;
+//    //                debugPrint(index);
+//    //                index++;
+//    //    //            float rmin = rs.frandom01() * 2;
+//    //    //            float rmax = rs.frandom01() * 2;
+//    //                float rmin = rs.frandom01();
+//    //                float rmax = rs.frandom01();
+//    //                float wmin = rs.frandom01();
+//    //                float wmax = rs.frandom01();
+//    //                float amin = rs.frandom01() * 2 * pi;
+//    //                float amax = rs.frandom01() * 2 * pi;
+//    //
+//    //                float softness = rs.frandom01();
+//    //                float duty_cycle = rs.frandom01();
+//    //
+//    //
+//    //    //            if (rmin > rmax) std::swap(rmin, rmax);
+//    //    //            if (wmin > wmax) std::swap(wmin, wmax);
+//    //    //            if (amin > amax) std::swap(amin, amax);
+//    //
+//    //                debugPrint(rmin);
+//    //                debugPrint(rmax);
+//    //                debugPrint(wmin);
+//    //                debugPrint(wmax);
+//    //                debugPrint(amin);
+//    //                debugPrint(amax);
+//    //                debugPrint(softness);
+//    //                debugPrint(duty_cycle);
+//    //                return PhasorNoisePrototype(// 2,
+//    //                                            // 250,
+//    //                                            rmin, rmax,
+//    //                                            wmin, wmax,
+//    //                                            amin, amax,
+//    //                                            softness,
+//    //                                            duty_cycle,
+//    //                                            texture0, texture1);
+//    //            };
+//
+//            /*
+//
+//    //        {
+//    //            Timer timer("PhasorNoisePrototype test_case 0");
+//    //            Texture::displayAndFile(run_test(0));
+//    //        }
+//
+//            {
+//                Timer timer("PhasorNoisePrototype test_case 1");
+//                Texture::displayAndFile(run_test(1));
+//            }
+//            {
+//                Timer timer("PhasorNoisePrototype test_case 2");
+//                Texture::displayAndFile(run_test(2)
+//                                        );  // , path + "phasor_1");
+//            }
+//
+//
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//            Texture::displayAndFile(random_test());
+//
+//
+//            Texture::displayAndFile(PhasorNoisePrototype(2,
+//                                                         250,
+//                                                         1.46943, 1.92321,
+//                                                         0.193846, 0.373665,
+//                                                         0.244409, 0.96973,
+//                                                         texture0, texture1));
+//            Texture::displayAndFile(PhasorNoisePrototype(1,
+//                                                         250,
+//                                                         2, 2,
+//                                                         0.05, 0.2,
+//                                                         0, 2 * pi,
+//                                                         texture0, texture1)
+//                                    );  // , path + "phasor_2");
+//            Texture::displayAndFile(PhasorNoisePrototype(2,
+//                                                         250,
+//                                                         2, 2,
+//                                                         0.05, 0.2,
+//                                                         0, 2 * pi,
+//                                                         texture0, texture1));
+//
+//    //            // A version to illustrate the "random scattered kernels"
+//    //    //        Texture::displayAndFile(PhasorNoisePrototype(2,
+//    //    //                                                     250,
+//    //    //                                                     2, 2,
+//    //    //                                                     0.05, 0.2,
+//    //            Texture::displayAndFile(PhasorNoisePrototype(1,
+//    //                                                         500,
+//    //                                                         0.2, 0.3,
+//    //                                                         0.03, 0.06,
+//    //                                                         0, 2 * pi,
+//    //                                                         texture0, texture1));
+//
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 0,
+//                                                             1, 1,
+//                                                             0.03, 0.06,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1)
+//                                        , "", 201);
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 1000,
+//                                                             0.2, 0.3,
+//                                                             0.03, 0.06,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1));
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 1000,
+//    //                                                         0.2, 0.3,
+//    //                                                         0.3, 0.8,
+//    //                                                         0.5, 1.0,
+//                                                             0.2, 1.0,
+//                                                             0.03, 0.06,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1));
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 0,
+//                                                             1, 1,
+//                                                             0.03, 0.06,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1));
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 0,
+//    //                                                         0.05, 0.1,
+//    //                                                         0.1, 0.2,
+//                                                             0.07, 0.15,
+//                                                             0.02, 0.08,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1)
+//                                        );  // , path + "phasor_3");
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 2,
+//                                                             // 0,
+//                                                             0.7, 1.5,
+//                                                             0.06, 0.12,
+//                                                             pi * 0.3, pi * 0.8,
+//                                                             texture0, texture1)
+//                                        );  // , path + "phasor_1");
+//            }
+//            {
+//                // Testing construct vs. render time
+//                Timer t("PhasorNoisePrototype render");
+//                Texture::displayAndFile(PhasorNoisePrototype(// 1,
+//                                                             // 250,
+//                                                             2, 2,
+//                                                             0.05, 0.2,
+//                                                             0, 2 * pi,
+//                                                             texture0, texture1)
+//                                        );  // , path + "phasor_2");
+//            }
+//             */
+//
+//
+//
+//            auto random_test = [&]()
+//            {
+//                std::cout << std::endl;
+//                debugPrint(index);
+//                // std::string path; // TODO dummy temp
+//                std::string filename = path + "phasor_r_" + std::to_string(index);
+//                index++;
+//                float rmin = rs.frandom01();
+//                float rmax = rs.frandom01();
+//                float wmin = rs.frandom01();
+//                float wmax = rs.frandom01();
+//                // 20210507 change phasor noise angle units: radians to revolutions
+//                // float amin = rs.frandom01() * 2 * pi;
+//                // float amax = rs.frandom01() * 2 * pi;
+//                float amin = rs.frandom01();
+//                float amax = rs.frandom01();
+//
+//                float softness = rs.frandom01();
+//                float duty_cycle = rs.frandom01();
+//                debugPrint(rmin);
+//                debugPrint(rmax);
+//                debugPrint(wmin);
+//                debugPrint(wmax);
+//                debugPrint(amin);
+//                debugPrint(amax);
+//                debugPrint(softness);
+//                debugPrint(duty_cycle);
+//                PhasorNoiseRanges noise(softness,
+//                                        duty_cycle,
+//                                        rmin, rmax,
+//                                        wmin, wmax,
+//                                        amin, amax,
+//                                        texture0, texture1);
+//                {
+//                    Timer t("PhasorNoiseRanges render");
+//                    Texture::displayAndFile(noise);
+//                    // Texture::displayAndFile(noise, filename);
+//                }
+//            };
+//
+//            for (int i = 0; i < 12; i++) { random_test(); }
+//    //        rs.frandom01();
+//    //        for (int i = 0; i < 24; i++) { random_test(); }
+//    //        random_test();
+//
+//        }
+//        (Uniform(0), Uniform(1));
+//
+//    Texture::waitKey();
+//
+//#endif  // PHASOR_NOISE_RANGES
 
-        // Testing phasor noise.
-        std::cout << "April 24, 2021" << std::endl;
-        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-        std::string path = temp_dir + "20210424_";
-        path = temp_dir + "20210508_";
-
-        int index = 0;
-    //    RandomSequence rs(20210424);
-    //    RandomSequence rs(20210426);
-    //    RandomSequence rs(20210428);
-        RandomSequence rs(20210428 * 3);
-
-        [&](const Texture& texture0, const Texture& texture1)
-        {
-            Texture::setDefaultRenderAsDisk(false);
-
-    //        auto run_test = [&](int test_case)
-    //        {
-    //            index++;
-    //            return PhasorNoisePrototype(// test_case,
-    //                                        // 250,
-    //                                        0.7, 1.5,
-    //                                        0.06, 0.12,
-    //                                        pi * 0.3, pi * 0.8,
-    //                                        texture0, texture1);
-    //        };
-
-    //            auto random_test = [&]()
-    //            {
-    //                std::cout << std::endl;
-    //                debugPrint(index);
-    //                index++;
-    //    //            float rmin = rs.frandom01() * 2;
-    //    //            float rmax = rs.frandom01() * 2;
-    //                float rmin = rs.frandom01();
-    //                float rmax = rs.frandom01();
-    //                float wmin = rs.frandom01();
-    //                float wmax = rs.frandom01();
-    //                float amin = rs.frandom01() * 2 * pi;
-    //                float amax = rs.frandom01() * 2 * pi;
-    //
-    //                float softness = rs.frandom01();
-    //                float duty_cycle = rs.frandom01();
-    //
-    //
-    //    //            if (rmin > rmax) std::swap(rmin, rmax);
-    //    //            if (wmin > wmax) std::swap(wmin, wmax);
-    //    //            if (amin > amax) std::swap(amin, amax);
-    //
-    //                debugPrint(rmin);
-    //                debugPrint(rmax);
-    //                debugPrint(wmin);
-    //                debugPrint(wmax);
-    //                debugPrint(amin);
-    //                debugPrint(amax);
-    //                debugPrint(softness);
-    //                debugPrint(duty_cycle);
-    //                return PhasorNoisePrototype(// 2,
-    //                                            // 250,
-    //                                            rmin, rmax,
-    //                                            wmin, wmax,
-    //                                            amin, amax,
-    //                                            softness,
-    //                                            duty_cycle,
-    //                                            texture0, texture1);
-    //            };
-
-            /*
-
-    //        {
-    //            Timer timer("PhasorNoisePrototype test_case 0");
-    //            Texture::displayAndFile(run_test(0));
-    //        }
-
-            {
-                Timer timer("PhasorNoisePrototype test_case 1");
-                Texture::displayAndFile(run_test(1));
-            }
-            {
-                Timer timer("PhasorNoisePrototype test_case 2");
-                Texture::displayAndFile(run_test(2)
-                                        );  // , path + "phasor_1");
-            }
-
-
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-            Texture::displayAndFile(random_test());
-
-
-            Texture::displayAndFile(PhasorNoisePrototype(2,
-                                                         250,
-                                                         1.46943, 1.92321,
-                                                         0.193846, 0.373665,
-                                                         0.244409, 0.96973,
-                                                         texture0, texture1));
-            Texture::displayAndFile(PhasorNoisePrototype(1,
-                                                         250,
-                                                         2, 2,
-                                                         0.05, 0.2,
-                                                         0, 2 * pi,
-                                                         texture0, texture1)
-                                    );  // , path + "phasor_2");
-            Texture::displayAndFile(PhasorNoisePrototype(2,
-                                                         250,
-                                                         2, 2,
-                                                         0.05, 0.2,
-                                                         0, 2 * pi,
-                                                         texture0, texture1));
-
-    //            // A version to illustrate the "random scattered kernels"
-    //    //        Texture::displayAndFile(PhasorNoisePrototype(2,
-    //    //                                                     250,
-    //    //                                                     2, 2,
-    //    //                                                     0.05, 0.2,
-    //            Texture::displayAndFile(PhasorNoisePrototype(1,
-    //                                                         500,
-    //                                                         0.2, 0.3,
-    //                                                         0.03, 0.06,
-    //                                                         0, 2 * pi,
-    //                                                         texture0, texture1));
-
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 0,
-                                                             1, 1,
-                                                             0.03, 0.06,
-                                                             0, 2 * pi,
-                                                             texture0, texture1)
-                                        , "", 201);
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 1000,
-                                                             0.2, 0.3,
-                                                             0.03, 0.06,
-                                                             0, 2 * pi,
-                                                             texture0, texture1));
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 1000,
-    //                                                         0.2, 0.3,
-    //                                                         0.3, 0.8,
-    //                                                         0.5, 1.0,
-                                                             0.2, 1.0,
-                                                             0.03, 0.06,
-                                                             0, 2 * pi,
-                                                             texture0, texture1));
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 0,
-                                                             1, 1,
-                                                             0.03, 0.06,
-                                                             0, 2 * pi,
-                                                             texture0, texture1));
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 0,
-    //                                                         0.05, 0.1,
-    //                                                         0.1, 0.2,
-                                                             0.07, 0.15,
-                                                             0.02, 0.08,
-                                                             0, 2 * pi,
-                                                             texture0, texture1)
-                                        );  // , path + "phasor_3");
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 2,
-                                                             // 0,
-                                                             0.7, 1.5,
-                                                             0.06, 0.12,
-                                                             pi * 0.3, pi * 0.8,
-                                                             texture0, texture1)
-                                        );  // , path + "phasor_1");
-            }
-            {
-                // Testing construct vs. render time
-                Timer t("PhasorNoisePrototype render");
-                Texture::displayAndFile(PhasorNoisePrototype(// 1,
-                                                             // 250,
-                                                             2, 2,
-                                                             0.05, 0.2,
-                                                             0, 2 * pi,
-                                                             texture0, texture1)
-                                        );  // , path + "phasor_2");
-            }
-             */
-
-
-
-            auto random_test = [&]()
-            {
-                std::cout << std::endl;
-                debugPrint(index);
-                // std::string path; // TODO dummy temp
-                std::string filename = path + "phasor_r_" + std::to_string(index);
-                index++;
-                float rmin = rs.frandom01();
-                float rmax = rs.frandom01();
-                float wmin = rs.frandom01();
-                float wmax = rs.frandom01();
-                // 20210507 change phasor noise angle units: radians to revolutions
-                // float amin = rs.frandom01() * 2 * pi;
-                // float amax = rs.frandom01() * 2 * pi;
-                float amin = rs.frandom01();
-                float amax = rs.frandom01();
-
-                float softness = rs.frandom01();
-                float duty_cycle = rs.frandom01();
-                debugPrint(rmin);
-                debugPrint(rmax);
-                debugPrint(wmin);
-                debugPrint(wmax);
-                debugPrint(amin);
-                debugPrint(amax);
-                debugPrint(softness);
-                debugPrint(duty_cycle);
-                PhasorNoiseRanges noise(softness,
-                                        duty_cycle,
-                                        rmin, rmax,
-                                        wmin, wmax,
-                                        amin, amax,
-                                        texture0, texture1);
-                {
-                    Timer t("PhasorNoiseRanges render");
-                    Texture::displayAndFile(noise);
-                    // Texture::displayAndFile(noise, filename);
-                }
-            };
-
-            for (int i = 0; i < 12; i++) { random_test(); }
-    //        rs.frandom01();
-    //        for (int i = 0; i < 24; i++) { random_test(); }
-    //        random_test();
-
-        }
-        (Uniform(0), Uniform(1));
-
-    Texture::waitKey();
-    
-#endif  // PHASOR_NOISE_RANGES
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-// #define PHASOR_NOISE_TEXTURES
-#ifdef PHASOR_NOISE_TEXTURES
-
-    // Testing phasor noise.
-    std::cout << "May 5, 2021" << std::endl;
-    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-//    path = temp_dir + "20210505_";
-    std::string path = temp_dir + "20210505_";
-
-    {
-        Uniform black(0);
-        Uniform white(1);
-        
-        Noise noise(Vec2(-0.1, 0.1), Vec2(0.1, -0.1), black, white);
-        Spot spot(Vec2(), 0, black, 0.8, white);
-        Gradation grad(Vec2(0, 1), black, Vec2(0, -1), white);
-        
-        Texture::displayAndFile(noise);
-        Texture::displayAndFile(spot);
-        Texture::displayAndFile(grad);
-
-//    //        Texture::displayAndFile
-//    //            (PhasorNoiseTextures(1, 0.5, grad, spot, noise, black, white));
-//    //        Texture::displayAndFile
-//    //            (PhasorNoiseTextures(1, 0.5, spot, grad, noise, black, white));
+//    #define PHASOR_NOISE_TEXTURES
+//    #ifdef PHASOR_NOISE_TEXTURES
 //
-//            Texture::displayAndFile
-//    //        (PhasorNoiseTextures(0.2,
-//    //                             0.1,
-//            (PhasorNoiseTextures(1,
-//                                 0.5,
-//                                 Gradation(Vec2(0, 1), Uniform(0.3),
-//                                           Vec2(0, -1), Uniform(0.7)),
-//                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
-//                                 noise,
-//                                 black, white));
-//            Texture::displayAndFile
-//            (PhasorNoiseTextures(1,
-//                                 0.5,
-//                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
-//                                 Gradation(Vec2(0, +1), Uniform(0.3),
-//                                           Vec2(0, -1), Uniform(0.7)),
-//                                 noise,
-//    //                             AdjustBrightness(2 * pi, noise),
-//                                 black, white));
-//            Texture::displayAndFile
-//            (PhasorNoiseTextures(1,
-//                                 0.5,
-//                                 // radius
-//                                 Gradation(Vec2(0, +1), Uniform(0.2),
-//                                           Vec2(0, -1), Uniform(0.5)),
-//                                 // wavelength
-//    //                             Spot(Vec2(), 0, Uniform(0.01), 0.8, Uniform(0.1)),
-//    //                             Spot(Vec2(), 0, Uniform(0.05), 0.8, Uniform(0.2)),
-//                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
-//                                 // angle
-//                                 AdjustBrightness(2 * pi, noise),
-//                                 black, white));
-//            Texture::displayAndFile
-//            (PhasorNoiseTextures(1,
-//                                 0.5,
-//                                 // radius
-//                                 Gradation(Vec2(0, +1), Uniform(0.2),
-//                                           Vec2(0, -1), Uniform(0.5)),
-//                                 // wavelength
-//                                 noise,
-//                                 // angle
-//                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
-//                                 black, white));
+//        // Testing phasor noise.
+//        std::cout << "May 5, 2021" << std::endl;
+//        std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    //    path = temp_dir + "20210505_";
+//        std::string path = temp_dir + "20210505_";
 //
-//    //        PhasorNoiseTextures::print_in_adjust_kernel = true;
-        
-//            Texture::displayAndFile
-//            (PhasorNoiseTextures(1,
-//                                 0.5,
-//                                 // radius
-//    //                             Uniform(0.2),
-//    //                             Uniform(0.4),
-//    //                             Uniform(0.2),
-//                                 Uniform(0.1),
-//                                 // wavelength
-//                                 Uniform(0.05),
-//                                 // angle
-//    //                             noise,
-//    //                             AdjustBrightness(2 * pi, noise),
-//    //                             AdjustBrightness(2 * pi, noise),
-//                                 AdjustBrightness(2 * pi,
-//                                                  Scale(2, noise)),
-//                                 black, white)
-//    //         , path + "contour_map_symptom");
-//             ) // , path + "spot_for_angle");
-
-        {
-            Timer t("PhasorNoiseTextures render");
-            Texture::setDefaultRenderAsDisk(false);
-            Texture::displayAndFile
-            (PhasorNoiseTextures(1,
-                                 0.5,
-                                 // radius
-                                 Uniform(0.1),
-//                                 Uniform(0.2),
-                                 // wavelength
-                                 Uniform(0.05),
-                                 // angle
-                                 // 20210507 change phasor noise angle units:
-                                 //          radians to revolutions
-//                                 AdjustBrightness(2 * pi, Scale(2, noise)),
-                                 Scale(2, noise),
-                                 black, white)
-//             , path + "angle_per_kernel_r01"
-//             , path + "angle_per_kernel_r02"
-//             , path + "perlin_angle"
-             );
-        }
-
-        {
-            Timer t("PhasorNoiseTextures render");
-            Texture::setDefaultRenderAsDisk(false);
-            Texture::displayAndFile
-            (PhasorNoiseTextures(1,
-                                 0.5,
-                                 // radius
-                                 Uniform(0.1),
-//                                 Uniform(0.2),
-                                 // wavelength
-                                 Uniform(0.05),
-                                 // angle
-                                 // 20210507 change phasor noise angle units:
-                                 //          radians to revolutions
-//                                 AdjustBrightness(2 * pi,
-//                                                  Spot(Vec2(), 0, black, 1, white)),
-                                 Spot(Vec2(), 0, black, 1, white),
-                                 black, white)
-//             , path + "spot_angle"
-             );
-        }
-        
-        {
-            Timer t("PhasorNoiseTextures render");
-            Texture::setDefaultRenderAsDisk(false);
-            Texture::displayAndFile
-            (PhasorNoiseTextures(1,
-                                 0.5,
-                                 // radius
-                                 Uniform(0.1),
-                                 // wavelength
-                                 Add(Uniform(0.01), AdjustBrightness(0.08, noise)),
-                                 // angle
-                                 // 20210507 change phasor noise angle units:
-                                 //          radians to revolutions
-//                                 AdjustBrightness(pi, spot),
-                                 AdjustBrightness(0.5, spot),
-                                 black, white)
-//             , path + "spot_angle_noise_wl"
-             );
-        }
-        
+//        {
+//            Uniform black(0);
+//            Uniform white(1);
+//
+//            Noise noise(Vec2(-0.1, 0.1), Vec2(0.1, -0.1), black, white);
+//            Spot spot(Vec2(), 0, black, 0.8, white);
+//            Gradation grad(Vec2(0, 1), black, Vec2(0, -1), white);
+//
+//            Texture::displayAndFile(noise);
+//            Texture::displayAndFile(spot);
+//            Texture::displayAndFile(grad);
+//
+//    //    //        Texture::displayAndFile
+//    //    //            (PhasorNoiseTextures(1, 0.5, grad, spot, noise, black, white));
+//    //    //        Texture::displayAndFile
+//    //    //            (PhasorNoiseTextures(1, 0.5, spot, grad, noise, black, white));
+//    //
+//    //            Texture::displayAndFile
+//    //    //        (PhasorNoiseTextures(0.2,
+//    //    //                             0.1,
+//    //            (PhasorNoiseTextures(1,
+//    //                                 0.5,
+//    //                                 Gradation(Vec2(0, 1), Uniform(0.3),
+//    //                                           Vec2(0, -1), Uniform(0.7)),
+//    //                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
+//    //                                 noise,
+//    //                                 black, white));
+//    //            Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1,
+//    //                                 0.5,
+//    //                                 Spot(Vec2(), 0, Uniform(0.3), 0.8, Uniform(0.7)),
+//    //                                 Gradation(Vec2(0, +1), Uniform(0.3),
+//    //                                           Vec2(0, -1), Uniform(0.7)),
+//    //                                 noise,
+//    //    //                             AdjustBrightness(2 * pi, noise),
+//    //                                 black, white));
+//    //            Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1,
+//    //                                 0.5,
+//    //                                 // radius
+//    //                                 Gradation(Vec2(0, +1), Uniform(0.2),
+//    //                                           Vec2(0, -1), Uniform(0.5)),
+//    //                                 // wavelength
+//    //    //                             Spot(Vec2(), 0, Uniform(0.01), 0.8, Uniform(0.1)),
+//    //    //                             Spot(Vec2(), 0, Uniform(0.05), 0.8, Uniform(0.2)),
+//    //                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
+//    //                                 // angle
+//    //                                 AdjustBrightness(2 * pi, noise),
+//    //                                 black, white));
+//    //            Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1,
+//    //                                 0.5,
+//    //                                 // radius
+//    //                                 Gradation(Vec2(0, +1), Uniform(0.2),
+//    //                                           Vec2(0, -1), Uniform(0.5)),
+//    //                                 // wavelength
+//    //                                 noise,
+//    //                                 // angle
+//    //                                 Spot(Vec2(), 0, Uniform(0.02), 0.8, Uniform(0.5)),
+//    //                                 black, white));
+//    //
+//    //    //        PhasorNoiseTextures::print_in_adjust_kernel = true;
+//
+//    //            Texture::displayAndFile
+//    //            (PhasorNoiseTextures(1,
+//    //                                 0.5,
+//    //                                 // radius
+//    //    //                             Uniform(0.2),
+//    //    //                             Uniform(0.4),
+//    //    //                             Uniform(0.2),
+//    //                                 Uniform(0.1),
+//    //                                 // wavelength
+//    //                                 Uniform(0.05),
+//    //                                 // angle
+//    //    //                             noise,
+//    //    //                             AdjustBrightness(2 * pi, noise),
+//    //    //                             AdjustBrightness(2 * pi, noise),
+//    //                                 AdjustBrightness(2 * pi,
+//    //                                                  Scale(2, noise)),
+//    //                                 black, white)
+//    //    //         , path + "contour_map_symptom");
+//    //             ) // , path + "spot_for_angle");
+//
 //            {
 //                Timer t("PhasorNoiseTextures render");
 //                Texture::setDefaultRenderAsDisk(false);
@@ -5514,32 +5450,146 @@ int main(int argc, const char * argv[])
 //                (PhasorNoiseTextures(1,
 //                                     0.5,
 //                                     // radius
-//    //                                 Uniform(0.1),
-//                                     Gradation(Vec2(0, +1), Uniform(0.1),
-//                                               Vec2(0, -1), Uniform(0.2)),
+//                                     Uniform(0.1),
+//    //                                 Uniform(0.2),
 //                                     // wavelength
-//                                     Add(Uniform(0.01),
-//                                         AdjustBrightness(0.08, noise)),
+//                                     Uniform(0.05),
 //                                     // angle
-//                                     AdjustBrightness(pi, spot),
+//                                     // 20210507 change phasor noise angle units:
+//                                     //          radians to revolutions
+//    //                                 AdjustBrightness(2 * pi, Scale(2, noise)),
+//                                     Scale(2, noise),
+//                                     black, white)
+//    //             , path + "angle_per_kernel_r01"
+//    //             , path + "angle_per_kernel_r02"
+//    //             , path + "perlin_angle"
+//                 );
+//            }
+//
+//            {
+//                Timer t("PhasorNoiseTextures render");
+//                Texture::setDefaultRenderAsDisk(false);
+//                Texture::displayAndFile
+//                (PhasorNoiseTextures(1,
+//                                     0.5,
+//                                     // radius
+//                                     Uniform(0.1),
+//    //                                 Uniform(0.2),
+//                                     // wavelength
+//                                     Uniform(0.05),
+//                                     // angle
+//                                     // 20210507 change phasor noise angle units:
+//                                     //          radians to revolutions
+//    //                                 AdjustBrightness(2 * pi,
+//    //                                                  Spot(Vec2(), 0, black, 1, white)),
+//                                     Spot(Vec2(), 0, black, 1, white),
 //                                     black, white)
 //    //             , path + "spot_angle"
 //                 );
 //            }
+//
+//            {
+//                Timer t("PhasorNoiseTextures render");
+//                Texture::setDefaultRenderAsDisk(false);
+//                Texture::displayAndFile
+//                (PhasorNoiseTextures(1,
+//                                     0.5,
+//                                     // radius
+//                                     Uniform(0.1),
+//                                     // wavelength
+//                                     Add(Uniform(0.01), AdjustBrightness(0.08, noise)),
+//                                     // angle
+//                                     // 20210507 change phasor noise angle units:
+//                                     //          radians to revolutions
+//    //                                 AdjustBrightness(pi, spot),
+//                                     AdjustBrightness(0.5, spot),
+//                                     black, white)
+//    //             , path + "spot_angle_noise_wl"
+//                 );
+//            }
+//
+//    //            {
+//    //                Timer t("PhasorNoiseTextures render");
+//    //                Texture::setDefaultRenderAsDisk(false);
+//    //                Texture::displayAndFile
+//    //                (PhasorNoiseTextures(1,
+//    //                                     0.5,
+//    //                                     // radius
+//    //    //                                 Uniform(0.1),
+//    //                                     Gradation(Vec2(0, +1), Uniform(0.1),
+//    //                                               Vec2(0, -1), Uniform(0.2)),
+//    //                                     // wavelength
+//    //                                     Add(Uniform(0.01),
+//    //                                         AdjustBrightness(0.08, noise)),
+//    //                                     // angle
+//    //                                     AdjustBrightness(pi, spot),
+//    //                                     black, white)
+//    //    //             , path + "spot_angle"
+//    //                 );
+//    //            }
+//
+//
+//
+//            //PhasorNoiseTextures(float softness,
+//            //                    float duty_cycle,
+//            //                    const Texture& radius_texture,
+//            //                    const Texture& wavelength_texture,
+//            //                    const Texture& angle_texture,
+//            //                    const Texture& texture0,
+//            //                    const Texture& texture1)
+//
+//            Texture::waitKey();
+//        }
+//    #endif  // PHASOR_NOISE_TEXTURES
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Random examples of PhasorNoiseTextures.
+    std::cout << "May 8, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210508_";
 
+    int index = 0;
+    int max_init_tree_size = 100;
+    const FunctionSet& function_set = GP::fs();
+    auto random_texture = [&]()
+    {
+        index++;
+        GpTree tree;
+        int ignore_size_output;
+        const GpFunction* gp_func =
+            function_set.lookupGpFunctionByName("PhasorNoiseTextures");
+        function_set.makeRandomTreeRoot(max_init_tree_size,
+                                        *function_set.getRootType(),
+                                        *gp_func,
+                                        ignore_size_output,
+                                        tree);
+        Individual individual(tree);
+        std::string filename = path + "phasor_noise_" + std::to_string(index);
+        Texture::displayAndFile(*GP::textureFromIndividual(&individual),
+                                filename);
+        
+        
+        // Open stream to file.
+        std::ofstream output_file_stream(filename + ".txt");
+        // Generate indented functional notation for given Individual's GpTree.
+        output_file_stream << individual.tree().to_string(true);
+        output_file_stream.close();
 
-        //PhasorNoiseTextures(float softness,
-        //                    float duty_cycle,
-        //                    const Texture& radius_texture,
-        //                    const Texture& wavelength_texture,
-        //                    const Texture& angle_texture,
-        //                    const Texture& texture0,
-        //                    const Texture& texture1)
-
-        Texture::waitKey();
-    }
-#endif  // PHASOR_NOISE_TEXTURES
+//        std::cout << tree.to_string(true) << std::endl;
+    };
+    LPRS().setSeed(20210508);
+//    while (index < 100) { random_texture(); }
+    
+    Texture::displayAndFile
+    (PhasorNoiseTextures(0.595613,
+                         0.0889437,
+                         Uniform(0.174884, 0.365976, 0.10978),
+                         Uniform(0.912784, 0.611449, 0.870163),
+                         Uniform(0.444307, 0.799821, 0.897265),
+                         Uniform(0.696277, 0.989898, 0.628882),
+                         Uniform(0.537117, 0.611029, 0.653296)));
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

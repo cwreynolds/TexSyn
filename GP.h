@@ -352,7 +352,35 @@ public:
             {
                 "HueOnly", "Texture", {"Float_01", "Float_01", "Texture"},
                 evalTexture(HueOnly(argFloat(), argFloat(), argTexture()))
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            }
+                
+            },
+            {
+                "PhasorNoiseRanges", "Texture",
+                {
+                    "Float_01", "Float_01", "Float_01", "Float_01",
+                    "Float_01", "Float_01", "Float_01", "Float_01",
+                    "Texture", "Texture"
+                },
+                evalTexture(PhasorNoiseRanges(argFloat(), argFloat(),
+                                              argFloat(), argFloat(),
+                                              argFloat(), argFloat(),
+                                              argFloat(), argFloat(),
+                                              argTexture(), argTexture()))
+            },
+            {
+                "PhasorNoiseTextures",  "Texture",
+                {
+                    "Float_01", "Float_01",
+                    "Texture", "Texture", "Texture", "Texture", "Texture"
+                },
+                evalTexture(PhasorNoiseTextures(argFloat(), argFloat(),
+                                                argTexture(), argTexture(),
+                                                argTexture(), argTexture(),
+                                                argTexture()))
             }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         },
         // Crossover min_size, must be larger than: Uniform(r, g, b)
         5
