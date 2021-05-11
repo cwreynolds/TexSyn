@@ -5550,6 +5550,7 @@ int main(int argc, const char * argv[])
     std::string path = temp_dir + "20210508_";
 
     int index = 0;
+    bool write_files = false;
     int max_init_tree_size = 100;
     const FunctionSet& function_set = GP::fs();
     auto random_texture = [&]()
@@ -5565,30 +5566,30 @@ int main(int argc, const char * argv[])
                                         ignore_size_output,
                                         tree);
         Individual individual(tree);
-        std::string filename = path + "phasor_noise_" + std::to_string(index);
-        Texture::displayAndFile(*GP::textureFromIndividual(&individual),
-                                filename);
-        
-        
-        // Open stream to file.
-        std::ofstream output_file_stream(filename + ".txt");
-        // Generate indented functional notation for given Individual's GpTree.
-        output_file_stream << individual.tree().to_string(true);
-        output_file_stream.close();
-
-//        std::cout << tree.to_string(true) << std::endl;
+        std::string filename = (write_files ?
+                                path + "phasor_noise_" + std::to_string(index) :
+                                "");
+        {
+            Timer t("PhasorNoiseTextures render");
+            Texture::displayAndFile(*GP::textureFromIndividual(&individual),
+                                    filename);
+        }
+        if (write_files)
+        {
+            // Open stream to file.
+            std::ofstream output_file_stream(filename + ".txt");
+            // Generate indented c-styler notation for Individual's GpTree.
+            output_file_stream << individual.tree().to_string(true);
+            output_file_stream.close();
+            // std::cout << tree.to_string(true) << std::endl;
+        }
     };
     LPRS().setSeed(20210508);
 //    while (index < 100) { random_texture(); }
-    
-    Texture::displayAndFile
-    (PhasorNoiseTextures(0.595613,
-                         0.0889437,
-                         Uniform(0.174884, 0.365976, 0.10978),
-                         Uniform(0.912784, 0.611449, 0.870163),
-                         Uniform(0.444307, 0.799821, 0.897265),
-                         Uniform(0.696277, 0.989898, 0.628882),
-                         Uniform(0.537117, 0.611029, 0.653296)));
+    {
+        Timer t("Ten PhasorNoiseTextures");
+        while (index < 10) { random_texture(); }
+    }
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
