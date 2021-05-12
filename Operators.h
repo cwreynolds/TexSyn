@@ -1861,10 +1861,31 @@ public:
         float total_disk_area = 0;
         int min_disk_count = 500;
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//    //        int max_disk_count = 2000;
+//    //        int max_disk_count = 5000;
+//            int max_disk_count = 20000;
+//            debugPrint(max_disk_count);
+        
+        //    TODO 20210511
+        //
+        //    Odd that this order-of-magnitude change made so little difference
+        //    in this test suite (~6% faster). But then the slowest two had
+        //    modest disk/kernel counts of 500. Check again after optimizing out
+        //    duplicate call getColor() calls.
+        //    
+        //    max_disk_count = 20000
+        //    Ten PhasorNoiseTextures elapsed time: 70.7151 seconds
+        //    Ten PhasorNoiseTextures elapsed time: 72.4309 seconds
+        //    Ten PhasorNoiseTextures elapsed time: 72.4608 seconds
+        //    
+        //    max_disk_count = 2000
+        //    Ten PhasorNoiseTextures elapsed time: 69.9778 seconds
+        //    Ten PhasorNoiseTextures elapsed time: 64.0135 seconds
+        //    Ten PhasorNoiseTextures elapsed time: 64.4539 seconds
+
+        
 //        int max_disk_count = 2000;
-//        int max_disk_count = 5000;
         int max_disk_count = 20000;
-        debugPrint(max_disk_count);
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         while ((disks_.size() < min_disk_count) ||   // Too few or
                ((disks_.size() < max_disk_count) &&  // ...need more coverage.
