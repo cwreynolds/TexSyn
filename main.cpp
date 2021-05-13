@@ -5556,6 +5556,7 @@ int main(int argc, const char * argv[])
     auto random_texture = [&]()
     {
         index++;
+        debugPrint(index);
         GpTree tree;
         int ignore_size_output;
         const GpFunction* gp_func =
