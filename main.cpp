@@ -5543,7 +5543,10 @@ int main(int argc, const char * argv[])
 //    #endif  // PHASOR_NOISE_TEXTURES
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    
+
+#define RANDOM_PHASOR_NOISE_TEXTURES
+#ifdef RANDOM_PHASOR_NOISE_TEXTURES
+
     // Random examples of PhasorNoiseTextures.
     std::cout << "May 8, 2021" << std::endl;
     std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
@@ -5592,6 +5595,8 @@ int main(int argc, const char * argv[])
         while (index < 10) { random_texture(); }
     }
     Texture::waitKey();
+
+#endif // RANDOM_PHASOR_NOISE_TEXTURES
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
