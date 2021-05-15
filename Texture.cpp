@@ -60,6 +60,7 @@ void Texture::windowPlacementTool(cv::Mat& mat)
     window_x += tm;
     window_y += tm;
     cv::imshow(window_name, mat);  // Show our image inside it.
+    waitKey(1);  // TODO Trying to force window to display if not "on top."
     // TODO pure hack, assumes 511x511, screen size of my MacBook Pro (Mid 2014)
     if ((window_counter % 15) == 0) window_y =0 ;
 }
@@ -142,19 +143,13 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                color.r() * 255);
         // Write OpenCV color to corresponding pixel on row image:
         row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+        // Near midpoint of rendering this Texture row, yield to other threads,
+        // to avoid locking up the whole machine during a lengthy render run.
+        if (i == 0) { std::this_thread::yield(); }
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
     // Wait to grab lock for access to image. (Lock released at end of block)
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    {
-        // TODO EXPERIMENT 20210409 tried this today to stop TexSyn render from
-        // locking up the whole machine. Did not work very well. Is there a more
-        // direct way to let other threads run?
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(1ms);
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const std::lock_guard<std::mutex> lock(ocv_image_mutex);
     // Copy line_image into the j-th row of opencv_image.
     row_image.copyTo(row_in_full_image);
@@ -230,9 +225,6 @@ void Texture::displayAndFile(const Texture& texture,
                              int size)
 {
     texture.displayInWindow(size, false);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    waitKey(1);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (pathname != "") texture.writeToFile(size, pathname);
 }
 
