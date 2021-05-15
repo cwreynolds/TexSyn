@@ -1577,101 +1577,6 @@ private:
     const Texture& texture;
 };
 
-// TODO WIP prototype, perhaps to be replaced with "Procedural phasor noise"?
-class GaborNoisePrototype : public Texture
-{
-public:
-    GaborNoisePrototype(int kernels,
-                        float min_radius, float max_radius,
-                        float min_wavelength, float max_wavelength,
-                        float min_angle, float max_angle,
-                        const Texture& texture0,
-                        const Texture& texture1)
-      : kernels_(kernels),
-        min_radius_(min_radius),
-        max_radius_(max_radius),
-        min_wavelength_(min_wavelength),
-        max_wavelength_(max_wavelength),
-        min_angle_(min_angle),
-        max_angle_(max_angle),
-        texture0_(texture0),
-        texture1_(texture1),
-        disk_occupancy_grid_
-            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
-    {
-        // Randomize Disks (kernels) with uniform distributions of r, x, and y.
-        // TODO maybe should init a const vector, to emphasize it can't change.
-        RandomSequence rs(seedForRandomSequence());
-        for (int i = 0; i < kernels_; i++)
-        {
-            float radius = rs.frandom2(min_radius, max_radius);
-            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));
-            float angle = rs.frandom2(min_angle, max_angle);
-            float wavelength = rs.frandom2(min_wavelength, max_wavelength);
-            disks_.push_back(Disk(radius, center, angle, wavelength));
-        }
-        // Insert randomized Disks into DiskOccupancyGrid.
-        for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
-        // TODO XXX TEMP experiment 20210328 start to space them out a little
-        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);
-    }
-
-    // TODO this prototype is returning only the "matte" signal, not blending
-    // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]
-    Color getColor(Vec2 position) const override
-    {
-        // Sum up the contribition, on [-0.5, +0.5], from each kernel
-        float sum = 0;
-        // Adjust "position" to be in center tile of grid.
-        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);
-        // Find all disks that touch "tiled_pos".
-        std::set<Disk*> nearby_disks;
-        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);
-        // Evaluate one kernel at "tiled_pos".
-        auto kernel_sample = [&](const Disk& d)
-        {
-            Vec2 dp = disk_occupancy_grid_->wrapToCenterTile(d.position);
-            // Both grat and spot range on [0, 1]
-            float grat = grating_utility(tiled_pos, dp, d.angle, d.wavelength);
-            float spot = spot_utility(tiled_pos, dp, 0, d.radius);
-            // Bias gradient from [0, 1] to [-0.5, +0.5], scale by spot falloff.
-            float kernel_value = spot * (grat - 0.5);
-            sum += kernel_value;
-        };
-        // Sum up contributions for all nearby kernels.
-        for (auto& disk : nearby_disks) { kernel_sample(*disk); }
-        // Bias back to [0, 1] from [-0.5, +0.5]. Clip to [0, 1]. Interpolate.
-        return interpolatePointOnTextures(clip01(sum + 0.5),
-                                          position, position,
-                                          texture0_, texture1_);
-    }
-
-    // Seed the random number sequence from some operator parameters.
-    size_t seedForRandomSequence()
-    {
-        return (hash_float(kernels_) ^
-                hash_float(min_radius_) ^
-                hash_float(max_radius_) ^
-                hash_float(min_wavelength_) ^
-                hash_float(max_wavelength_) ^
-                hash_float(min_angle_) ^
-                hash_float(max_angle_));
-    }
-
-private:
-    const int kernels_;
-    const float min_radius_;
-    const float max_radius_;
-    const float min_wavelength_;
-    const float max_wavelength_;
-    const float min_angle_;
-    const float max_angle_;
-    const Texture& texture0_;
-    const Texture& texture1_;
-    std::vector<Disk> disks_;  // TODO should this be const?
-    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;
-};
-
 // Base class for two TexSyn operators using "phasor noise". This class contains
 // the parts common derived classes PhasorNoiseRanges and PhasorNoiseTextures.
 // see https://www.shadertoy.com/view/wlsXWf for the reference implementation.
@@ -1832,7 +1737,6 @@ public:
         min_angle_(min_angle),
         max_angle_(max_angle)
     {
-        Timer t("PhasorNoiseRanges constructor");
         // Randomize Disks (kernels) with uniform distributions of r, x, and y.
         // TODO maybe should init a const vector, to emphasize it can't change.
         RandomSequence rs(seedForRandomSequence());
@@ -1892,7 +1796,6 @@ public:
         wavelength_texture_(wavelength_texture),
         angle_texture_(angle_texture)
     {
-        Timer t("PhasorNoiseTextures constructor");
         // Randomize Disks (kernels) with uniform distributions of r, x, and y.
         // TODO maybe should init a const vector, to emphasize it can't change.
         RandomSequence rs(seedForRandomSequence());
