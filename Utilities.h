@@ -556,6 +556,13 @@ public:
                              default_value,
                              [](std::string s){ return std::stof(s); });
     }
+    // Command name (as string), same as 0th positional argument.
+    std::string commandName() const { return positionalArgument(0); }
+    // Command name with any pathname part removed.
+    std::string commandNameWithoutPath() const
+    {
+        return std::filesystem::path(commandName()).filename();
+    }
 private:
     // Given traditional main() parameters argc/argv, return BY VALUE an
     // std::vector of std::strings representing the tokens of a unix-style

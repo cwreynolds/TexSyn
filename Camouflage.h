@@ -43,7 +43,7 @@ public:
         if (background_image_directory_.empty())
         {
             // Exit with failure after listing command arguments.
-            std::cout << cmd.positionalArgument(0);
+            std::cout << cmd.commandNameWithoutPath();
             std::cout << " requires at least one pathname parameter,";
             std::cout << " others may be omitted from the end:" << std::endl;
             std::cout << "    background_image_directory (required)"<<std::endl;
