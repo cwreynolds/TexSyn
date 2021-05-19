@@ -556,19 +556,28 @@ bool two_point_transform()
 }
 
 // Used only in UnitTests::allTestsOK()
-#define logAndTally(e)                       \
-{                                            \
-    bool _e_ok = e();                        \
-    std::cout << "\t";                       \
-    std::cout << (_e_ok ? "pass" : "FAIL");  \
-    std::cout << " " << #e;                  \
-    std::cout << std::endl << std::flush;    \
-    if (!_e_ok) all_tests_passed = false;    \
+#define logAndTally(e)                           \
+{                                                \
+    bool _e_ok = e();                            \
+    if (!_e_ok || (verbosity == 2))              \
+    {                                            \
+        std::cout << "\t";                       \
+        std::cout << (_e_ok ? "pass" : "FAIL");  \
+        std::cout << " " << #e;                  \
+        std::cout << std::endl << std::flush;    \
+    }                                            \
+    if (!_e_ok) all_tests_passed = false;        \
 }
 
-bool UnitTests::allTestsOK()
+bool UnitTests::allTestsOK() { return allTestsOK(1); }
+
+// Verbosity 0: no printing unless error occurs.
+//           1: print one line, unless error occurs.
+//           2: print report for each test like previous behavior.
+bool UnitTests::allTestsOK(int verbosity)
 {
     Timer timer("Run time for unit test suite: ", "");
+    assert(between(verbosity, 0, 2));
     bool all_tests_passed = true;
     logAndTally(utilities);
     logAndTally(color_constructors);
@@ -592,9 +601,15 @@ bool UnitTests::allTestsOK()
     logAndTally(noise_ranges);
     logAndTally(interpolate_float_rounding);
     logAndTally(two_point_transform);
-    std::cout << std::endl;
-    std::cout << (all_tests_passed ? "All tests PASS." : "Some tests FAIL.");
-    std::cout << std::endl << std::endl;
+    if (verbosity == 2) { std::cout << std::endl; }
+    if (!all_tests_passed || (verbosity > 0))
+    {
+        std::cout << (all_tests_passed ?
+                      "All unit tests PASS." :
+                      "Some unit tests FAIL.") << " ";
+    }
+    if (verbosity == 2) { std::cout << std::endl << std::endl; }
+    timer.setPrintEnable(!all_tests_passed || (verbosity > 0));
     return all_tests_passed;
 }
 

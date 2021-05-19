@@ -547,12 +547,12 @@ PhasorNoiseTextures(1, 0.5, Uniform(0.1), <b>noise</b>,         <b>spot</b>,  bl
         alt="20210505_contour_map_symptom"
         title="20210505_contour_map_symptom" class="img_flow"
         height="511" width="511">
-      <p>And here is the result if the angle field is given as a Spot
-        texture. I <i>think</i> this should have an angle of zero on
-        the outer edge (as it does) then with that angle increasing
-        radially toward the center (origin) of the texture, eventually
-        getting back to 2π. That is, I expected to see a radially
-        symmetric pattern, but instead see this:</p>
+      <p>And here is the result if the angle field is given as a <i>Spot</i>
+        texture. I think this should have an angle of zero on the outer
+        edge (as it does) then with that angle increasing radially
+        toward the center (origin) of the texture, eventually getting
+        back to 2π. That is, I expected to see a radially symmetric
+        pattern, but instead see this:</p>
       <img src="images/20210505_spot_for_angle.png"
         alt="20210505_spot_for_angle" title="20210505_spot_for_angle"
         class="img_flow" height="511" width="511"> </div>
@@ -1059,10 +1059,10 @@ PhasorNoisePrototype(2.0, 2.0,   0.05, 0.20,          0, pi * 2.0,   black, whit
         other recent runs, except for one. I was curious if I had been
         forcing the individual prey to limit the complexity of their
         texture specification. I had been using the default of the
-        parameter which limits the max GpTree size during crossover. (It
-        does not enforce a hard limit, but once parent trees exceed this
-        size threshold, crossover fragments are chosen to reduce the
-        size of offspring trees.) Parameter <code>max_init_tree_size</code>
+        parameter which limits the max <code>GpTree</code> size during
+        crossover. (It does not enforce a hard limit, but once parent
+        trees exceed this size threshold, crossover fragments are chosen
+        to reduce the size of offspring trees.) Parameter <code>max_init_tree_size</code>
         defaults to 100, and <code>max_crossover_tree_size</code>
         defaults to 1.5 times that: 150. Instead I specified a value of
         200. But that seemed to make no difference in tree sizes

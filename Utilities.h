@@ -278,15 +278,20 @@ public:
         start_time_(std::chrono::high_resolution_clock::now()) {}
     ~Timer()
     {
-        auto finish_time = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed = finish_time - start_time_;
-        std::cout << description_ << elasped_time_ << elapsed.count();
-        std::cout << " seconds" << std::endl;
+        if (print_enable_)
+        {
+            auto finish_time = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = finish_time - start_time_;
+            std::cout << description_ << elasped_time_ << elapsed.count();
+            std::cout << " seconds" << std::endl;
+        }
     }
+    void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
     const std::string description_;
     const std::string elasped_time_;
     const std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+    bool print_enable_ = true;
 };
 
 // Hash a float to a 32 bit value.
