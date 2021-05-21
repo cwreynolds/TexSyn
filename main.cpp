@@ -5600,10 +5600,26 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // 20210514 tag the evo_camo_game 0.9.6 "release" (and gravel_20210513_1743)
-    std::cout << "May 14, 2021" << std::endl;
-    Camouflage(CommandLine(argc, argv)).run();
+//    // 20210514 tag the evo_camo_game 0.9.6 "release" (and gravel_20210513_1743)
+//    std::cout << "May 14, 2021" << std::endl;
+//    Camouflage(CommandLine(argc, argv)).run();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Experiments with domain warping / noise based warping / NoiseWarp.
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210520_";
+    std::cout << "May 20, 2021" << std::endl;
+    {
+//        Vec2 p0(0.4, 0.7);
+//        Vec2 p1(-0.3, 0.5);
+        Uniform c0(0.10, 0.10, 1.00);
+        Uniform c1(0.95, 0.95, 0.90);
+//        Texture::displayAndFile(Brownian(p0, p1, c0, c1));
+        Texture::displayAndFile(NoiseWarp(c0, c1));
+        Texture::waitKey();
+    }
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

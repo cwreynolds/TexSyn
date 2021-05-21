@@ -1849,3 +1849,33 @@ private:
     const Texture& wavelength_texture_;
     const Texture& angle_texture_;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Experiments with domain warping / noise based warping / NoiseWarp.
+// see https://www.iquilezles.org/www/articles/warp/warp.htm
+// See https://observablehq.com/@mbostock/domain-warping
+
+// TODO 20210520 very experimental
+
+class NoiseWarp : public Texture
+{
+public:
+    NoiseWarp(const Texture& texture0, const Texture& texture1)
+      : texture0_(texture0), texture1_(texture1) {}
+
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 p0(0.4, 0.7);
+        Vec2 p1(-0.3, 0.5);
+        TwoPointTransform tpt(p0, p1);
+        float fbm =  PerlinNoise::brownian2d(tpt.localize(position));
+        return interpolatePointOnTextures(fbm,
+                                          position, position,
+                                          texture0_, texture1_);
+    }
+private:
+    const Texture& texture0_;
+    const Texture& texture1_;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
