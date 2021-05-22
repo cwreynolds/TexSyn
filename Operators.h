@@ -1857,23 +1857,70 @@ private:
 
 // TODO 20210520 very experimental
 
-class NoiseWarp : public Texture
+//class NoiseWarp : public Texture
+//{
+//public:
+//    NoiseWarp(const Texture& texture0, const Texture& texture1)
+//      : texture0_(texture0), texture1_(texture1) {}
+//
+//    Color getColor(Vec2 position) const override
+//    {
+//        Vec2 p0(0.4, 0.7);
+//        Vec2 p1(-0.3, 0.5);
+//        TwoPointTransform tpt(p0, p1);
+//        float fbm =  PerlinNoise::brownian2d(tpt.localize(position));
+//        return interpolatePointOnTextures(fbm,
+//                                          position, position,
+//                                          texture0_, texture1_);
+//    }
+//private:
+//    const Texture& texture0_;
+//    const Texture& texture1_;
+//};
+
+class NoiseWarpPrototype : public Texture
 {
 public:
-    NoiseWarp(const Texture& texture0, const Texture& texture1)
-      : texture0_(texture0), texture1_(texture1) {}
-
+    NoiseWarpPrototype(int test_case,
+                       const Texture& texture0,
+                       const Texture& texture1)
+      : test_case_(test_case),
+        texture0_(texture0),
+        texture1_(texture1) {}
+    
     Color getColor(Vec2 position) const override
     {
         Vec2 p0(0.4, 0.7);
         Vec2 p1(-0.3, 0.5);
-        TwoPointTransform tpt(p0, p1);
-        float fbm =  PerlinNoise::brownian2d(tpt.localize(position));
-        return interpolatePointOnTextures(fbm,
-                                          position, position,
-                                          texture0_, texture1_);
+        TwoPointTransform t(p0, p1);
+        auto fbm = [&](Vec2 p){ return PerlinNoise::brownian2d(t.localize(p)); };
+        if (test_case_ == 0)
+        {
+            return interpolatePointOnTextures(fbm(position),
+                                              position, position,
+                                              texture0_, texture1_);
+        }
+        else if (test_case_ == 1)
+        {
+            Vec2 q = Vec2(fbm(position + Vec2(0.0, 0.0)),
+                          fbm(position + Vec2(5.2, 1.3)));
+            return interpolatePointOnTextures(fbm(position + (q * 4)),
+                                              position, position,
+                                              texture0_, texture1_);
+        }
+        else
+        {
+            Vec2 q = Vec2(fbm(position + Vec2(0.0,0.0)),
+                          fbm(position + Vec2(5.2,1.3)));
+            Vec2 r = Vec2(fbm(position + (q * 4) + Vec2(1.7, 9.2)),
+                          fbm(position + (q * 4) + Vec2(8.3, 2.8)));
+            return interpolatePointOnTextures(fbm(position + (r * 4.0)),
+                                              position, position,
+                                              texture0_, texture1_);
+        }
     }
 private:
+    int test_case_ = 0;  // TODO temp -- remove before flight
     const Texture& texture0_;
     const Texture& texture1_;
 };
