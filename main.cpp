@@ -5613,16 +5613,42 @@ int main(int argc, const char * argv[])
     {
 //        Vec2 p0(0.4, 0.7);
 //        Vec2 p1(-0.3, 0.5);
-//        Uniform c0(0, 0, 0.9);
-//        Uniform c1(1);
-        ColorNoise c0(Vec2(1, 1), Vec2(1.2, 0.9), 0);
-        Uniform c1(0);
+        Uniform c0(0, 0, 0.9);
+        Uniform c1(1);
+//        ColorNoise c0(Vec2(1, 1), Vec2(1.2, 0.9), 0);
+//        Uniform c1(0);
         for (int i = 0; i < 3; i++)
         {
             std::string filename = path + "NoiseWarp_test_" + std::to_string(i);
             Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1));
 //            Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1), filename);
         }
+        
+        
+        // TODO can't we put this in a utility function somewhere?
+        float f = 1;
+        float d = 0.1;
+        Uniform full_green(Color(f, 0, 0));
+        Uniform dark_green(Color(d, 0, 0));
+        Uniform full_red(Color(0, f, 0));
+        Uniform dark_red(Color(0, d, 0));
+        Grating red_stripes(Vec2(0, 0), full_red,
+                            Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+        Grating green_stripes(Vec2(0, 0), full_green,
+                              Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+        Add plaid(red_stripes, green_stripes);
+
+        
+        
+        
+        Uniform c2(1, 0, 0);
+        Uniform c3(1, 1, 0);
+//        LotsOfSpots los(0.9, 0.1, 0.2, 0.02, 0.05, c2, c3);
+        LotsOfSpots los(0.9, 0.08, 0.16, 0.02, 0.05, c2, c3);
+        Texture::displayAndFile(los);
+        Texture::displayAndFile(NoiseWarpPrototype2(los));
+        Texture::displayAndFile(NoiseWarpPrototype2(plaid));
+
         Texture::waitKey();
     }
     

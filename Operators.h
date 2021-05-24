@@ -1929,61 +1929,75 @@ private:
 class NoiseWarpPrototype2 : public Texture
 {
 public:
-    NoiseWarpPrototype2(int test_case,
-                        const Texture& texture0,
-                        const Texture& texture1)
-      : test_case_(test_case),
-        texture0_(texture0),
-        texture1_(texture1) {}
+    NoiseWarpPrototype2(const Texture& texture) : texture_(texture) {}
     
     Color getColor(Vec2 position) const override
     {
-        Vec2 p0(0.4, 0.7);
-        Vec2 p1(-0.3, 0.5);
-        TwoPointTransform t(p0, p1);
-        auto fbm = [&](Vec2 p){ return PerlinNoise::brownian2d(t.localize(p)); };
-        if (test_case_ == 0)
-        {
-            return interpolatePointOnTextures(fbm(position),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
-        else if (test_case_ == 1)
-        {
-            Vec2 q = Vec2(fbm(position + Vec2(0.0, 0.0)),
-                          fbm(position + Vec2(5.2, 1.3)));
-            return interpolatePointOnTextures(fbm(position + (q * 4)),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
-        else
-        {
-            Vec2 q = Vec2(fbm(position + Vec2(0.0,0.0)),
-                          fbm(position + Vec2(5.2,1.3)));
-            Vec2 r = Vec2(fbm(position + (q * 4) + Vec2(1.7, 9.2)),
-                          fbm(position + (q * 4) + Vec2(8.3, 2.8)));
-            return interpolatePointOnTextures(fbm(position + (r * 4.0)),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
+        
+//        Vec2 q = Vec2(fbm(position + Vec2(0.0, 0.0)),
+//                      fbm(position + Vec2(5.2, 1.3)));
+//        return interpolatePointOnTextures(fbm(position + (q * 4)),
+//                                          position, position,
+//                                          texture0_, texture1_);
+
+//        Vec2 np = positionNoise(0.5, 2, position);
+        Vec2 np = positionNoise(0.2, 2, position);
+//        Vec2 np = positionNoise(2, 0.5, position);
+        return texture_.getColor(np);
     }
     
     // TODO vague, untested, concept, probably several things wrong with it
     // TODO need better names for a and b
-    Vec2 positionNoise(float a, float b, Vec2 position)
+    Vec2 positionNoise(float a, float b, Vec2 position) const
     {
         Vec2 o0(0.5, 0);
         Vec2 o1(0, 0.5);
         float n0 = PerlinNoise::multiNoise2d(o0 + (position * a), which_);
         float n1 = PerlinNoise::multiNoise2d(o1 + (position * a), which_);
-        return Vec2(n0, n1) * b;
+//        return Vec2(n0, n1) * b;
+        return position + Vec2(n0, n1) * b;
     }
     
 private:
-    int test_case_ = 0;  // TODO temp -- remove before flight
     float which_ = 0.3;
-    const Texture& texture0_;
-    const Texture& texture1_;
+    const Texture& texture_;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO I keep redefining this for tests, put it here once and for all.
+
+//class Plaid : public Texture
+//
+//{
+//public:
+//    
+//    Plaid(){}
+//    
+//    Color getColor(Vec2 position) const override
+//    {
+//        return plaid.getColor(position);
+//    }
+//
+//        
+//private:
+//    float f = 1;
+//    float d = 0.1;
+//    const Uniform full_green(f, 0, 0);
+//    Uniform dark_green(Color(d, 0, 0));
+//    Uniform full_red(Color(0, f, 0));
+//    Uniform dark_red(Color(0, d, 0));
+//    Grating red_stripes(Vec2(0, 0), full_red,
+//                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
+//    Grating green_stripes(Vec2(0, 0), full_green,
+//                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
+//    Add plaid(red_stripes, green_stripes);
+//
+//
+//};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
