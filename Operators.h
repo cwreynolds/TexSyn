@@ -1933,16 +1933,8 @@ public:
     
     Color getColor(Vec2 position) const override
     {
-        
-//        Vec2 q = Vec2(fbm(position + Vec2(0.0, 0.0)),
-//                      fbm(position + Vec2(5.2, 1.3)));
-//        return interpolatePointOnTextures(fbm(position + (q * 4)),
-//                                          position, position,
-//                                          texture0_, texture1_);
-
-//        Vec2 np = positionNoise(0.5, 2, position);
-        Vec2 np = positionNoise(0.2, 2, position);
-//        Vec2 np = positionNoise(2, 0.5, position);
+//        Vec2 np = positionNoise(0.2, 2, position);
+        Vec2 np = positionNoise(0.1, 2, position);
         return texture_.getColor(np);
     }
     
@@ -1954,12 +1946,63 @@ public:
         Vec2 o1(0, 0.5);
         float n0 = PerlinNoise::multiNoise2d(o0 + (position * a), which_);
         float n1 = PerlinNoise::multiNoise2d(o1 + (position * a), which_);
-//        return Vec2(n0, n1) * b;
         return position + Vec2(n0, n1) * b;
     }
-    
 private:
     float which_ = 0.3;
+    const Texture& texture_;
+};
+
+class NoiseWarpPrototype3 : public Texture
+{
+public:
+    NoiseWarpPrototype3(float noise_scale,
+                        float noise_amplitude,
+                        float which,
+                        const Texture& texture)
+      : rs_(hash_float(noise_scale) ^
+            hash_float(noise_amplitude) ^
+            hash_float(which)),
+        center_(rs_.randomUnitVector() * 5),
+        basis0_(rs_.randomUnitVector()),
+        basis1_(basis0_.rotate90degCCW()),
+        noise_scale_(noise_scale),
+        noise_amplitude_(noise_amplitude),
+        which_(which),
+        texture_(texture) {}
+    Color getColor(Vec2 position) const override
+    {
+//        Vec2 np = positionNoise(0.2, 2, position);
+        Vec2 np = positionNoise(noise_amplitude_, noise_scale_, position);
+        return texture_.getColor(np);
+    }
+    // TODO vague, untested, concept, probably several things wrong with it
+    // TODO need better names for a and b
+    Vec2 positionNoise(float a, float b, Vec2 position) const
+    {
+//        Vec2 o0(0.5, 0);
+//        Vec2 o1(0, 0.5);
+//        float n0 = PerlinNoise::multiNoise2d(o0 + (position * a), which_);
+//        float n1 = PerlinNoise::multiNoise2d(o1 + (position * a), which_);
+        
+//        float n0 = PerlinNoise::multiNoise2d(basis0_ + (position * a), which_);
+//        float n1 = PerlinNoise::multiNoise2d(basis1_ + (position * a), which_);
+        
+        float n0 = PerlinNoise::multiNoise2d(basis0_ + center_ + (position * a),
+                                             which_);
+        float n1 = PerlinNoise::multiNoise2d(basis1_ + center_ + (position * a),
+                                             which_);
+
+        return position + Vec2(n0, n1) * b;
+    }
+private:
+    RandomSequence rs_;
+    const Vec2 center_;
+    const Vec2 basis0_;  // TODO should be more like a TwoPointTransform?
+    const Vec2 basis1_;
+    const float noise_scale_;
+    const float noise_amplitude_;
+    const float which_;
     const Texture& texture_;
 };
 
@@ -1969,34 +2012,33 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO I keep redefining this for tests, put it here once and for all.
 
-//class Plaid : public Texture
-//
-//{
-//public:
-//    
-//    Plaid(){}
-//    
-//    Color getColor(Vec2 position) const override
-//    {
-//        return plaid.getColor(position);
-//    }
-//
-//        
-//private:
-//    float f = 1;
-//    float d = 0.1;
-//    const Uniform full_green(f, 0, 0);
-//    Uniform dark_green(Color(d, 0, 0));
-//    Uniform full_red(Color(0, f, 0));
-//    Uniform dark_red(Color(0, d, 0));
-//    Grating red_stripes(Vec2(0, 0), full_red,
-//                        Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
-//    Grating green_stripes(Vec2(0, 0), full_green,
-//                          Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
-//    Add plaid(red_stripes, green_stripes);
-//
-//
-//};
+
+class Plaid : public Texture
+{
+public:
+    Plaid()
+      : full_green(f, 0, 0),
+        dark_green(d, 0, 0),
+        full_red(0, f, 0),
+        dark_red(0, d, 0),
+        red_stripes(Vec2(), full_red, Vec2(0.1, 0.1), dark_red, 0.3, 0.5),
+        green_stripes(Vec2(), full_green, Vec2(-0.1, 0.1), dark_green, 0.3, 0.5),
+        plaid(red_stripes, green_stripes) {}
+    Color getColor(Vec2 position) const override
+    {
+        return plaid.getColor(position);
+    }
+private:
+    float f = 1;
+    float d = 0.1;
+    const Uniform full_green;
+    Uniform dark_green;
+    Uniform full_red;
+    Uniform dark_red;
+    Grating red_stripes;
+    Grating green_stripes;
+    Add plaid;
+};
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

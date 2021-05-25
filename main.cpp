@@ -5611,43 +5611,55 @@ int main(int argc, const char * argv[])
     std::string path = temp_dir + "20210521_";
     std::cout << "May 21, 2021" << std::endl;
     {
-//        Vec2 p0(0.4, 0.7);
-//        Vec2 p1(-0.3, 0.5);
-        Uniform c0(0, 0, 0.9);
-        Uniform c1(1);
-//        ColorNoise c0(Vec2(1, 1), Vec2(1.2, 0.9), 0);
-//        Uniform c1(0);
-        for (int i = 0; i < 3; i++)
-        {
-            std::string filename = path + "NoiseWarp_test_" + std::to_string(i);
-            Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1));
-//            Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1), filename);
-        }
+        
+//        Uniform c0(0, 0, 0.9);
+//        Uniform c1(1);
+//        for (int i = 0; i < 3; i++)
+//        {
+//            std::string filename = path + "NoiseWarp_test_" + std::to_string(i);
+//            Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1));
+//            //Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1), filename);
+//        }
         
         
-        // TODO can't we put this in a utility function somewhere?
-        float f = 1;
-        float d = 0.1;
-        Uniform full_green(Color(f, 0, 0));
-        Uniform dark_green(Color(d, 0, 0));
-        Uniform full_red(Color(0, f, 0));
-        Uniform dark_red(Color(0, d, 0));
-        Grating red_stripes(Vec2(0, 0), full_red,
-                            Vec2(0.1, 0.1), dark_red, 0.3, 0.5);
-        Grating green_stripes(Vec2(0, 0), full_green,
-                              Vec2(-0.1, 0.1), dark_green, 0.3, 0.5);
-        Add plaid(red_stripes, green_stripes);
+        path = temp_dir + "20210524_";
 
         
+//        Plaid test;
         
+        Uniform c0(0, 0, 0.9);
+        Uniform c1(1);
+        Vec2 o0(0.5, 0);
+        Vec2 o1(0, 0.5);
+
+        Brownian test(o0, o1, c0, c1);
+
         
-        Uniform c2(1, 0, 0);
-        Uniform c3(1, 1, 0);
-//        LotsOfSpots los(0.9, 0.1, 0.2, 0.02, 0.05, c2, c3);
-        LotsOfSpots los(0.9, 0.08, 0.16, 0.02, 0.05, c2, c3);
-        Texture::displayAndFile(los);
-        Texture::displayAndFile(NoiseWarpPrototype2(los));
-        Texture::displayAndFile(NoiseWarpPrototype2(plaid));
+        Texture::displayAndFile(Plaid()
+                                ); // , path + "Plaid");
+        
+//        Texture::displayAndFile(NoiseWarpPrototype3(0.1, test));
+//        Texture::displayAndFile(NoiseWarpPrototype3(0.3, test));
+//        Texture::displayAndFile(NoiseWarpPrototype3(0.5, test));
+//        Texture::displayAndFile(NoiseWarpPrototype3(0.7, test));
+//        Texture::displayAndFile(NoiseWarpPrototype3(0.9, test));
+        
+        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.1, 0.3, test)
+                                ); // , path + "NoiseWarp_2_0.1");
+        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
+                                ); // , path + "NoiseWarp_2_0.2");
+        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.3, 0.3, test)
+                                ); // , path + "NoiseWarp_2_0.3");
+
+        Texture::displayAndFile(NoiseWarpPrototype3(1, 0.2, 0.3, test)
+                                ); // , path + "NoiseWarp_1_0.2");
+        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
+                                ); // , path + "NoiseWarp_2_0.2");
+        Texture::displayAndFile(NoiseWarpPrototype3(4, 0.2, 0.3, test)
+                                ); // , path + "NoiseWarp_4_0.2");
+
+        Texture::displayAndFile(NoiseWarpPrototype3(10, 0.5, 0.3, test)
+                                ); // , path + "NoiseWarp_10_0.5");
 
         Texture::waitKey();
     }
