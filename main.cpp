@@ -5625,25 +5625,17 @@ int main(int argc, const char * argv[])
         path = temp_dir + "20210524_";
 
         
-//        Plaid test;
+        Plaid test;
         
-        Uniform c0(0, 0, 0.9);
-        Uniform c1(1);
-        Vec2 o0(0.5, 0);
-        Vec2 o1(0, 0.5);
-
-        Brownian test(o0, o1, c0, c1);
-
+//        Uniform c0(0, 0, 0.9);
+//        Uniform c1(1);
+//        Vec2 o0(0.5, 0);
+//        Vec2 o1(0, 0.5);
+//        Brownian test(o0, o1, c0, c1);
         
-        Texture::displayAndFile(Plaid()
+        Texture::displayAndFile(test
                                 ); // , path + "Plaid");
-        
-//        Texture::displayAndFile(NoiseWarpPrototype3(0.1, test));
-//        Texture::displayAndFile(NoiseWarpPrototype3(0.3, test));
-//        Texture::displayAndFile(NoiseWarpPrototype3(0.5, test));
-//        Texture::displayAndFile(NoiseWarpPrototype3(0.7, test));
-//        Texture::displayAndFile(NoiseWarpPrototype3(0.9, test));
-        
+                
         Texture::displayAndFile(NoiseWarpPrototype3(2, 0.1, 0.3, test)
                                 ); // , path + "NoiseWarp_2_0.1");
         Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
@@ -5658,8 +5650,32 @@ int main(int argc, const char * argv[])
         Texture::displayAndFile(NoiseWarpPrototype3(4, 0.2, 0.3, test)
                                 ); // , path + "NoiseWarp_4_0.2");
 
-        Texture::displayAndFile(NoiseWarpPrototype3(10, 0.5, 0.3, test)
-                                ); // , path + "NoiseWarp_10_0.5");
+//        Texture::displayAndFile(NoiseWarpPrototype3(10, 0.5, 0.3, test)
+//                                ); // , path + "NoiseWarp_10_0.5");
+
+        {
+//            float s = 0.3;
+//            float a = 0.1;
+//            float s = 0.1;
+//            float a = 0.3;
+//            float s = 1;
+//            float a = 0.3;
+//            float s = 1;
+//            float a = 0.1;
+//            float s = 2;
+//            float a = 0.1;
+//            float s = 5;
+//            float a = 0.1;
+//            float s = 5;
+//            float a = 0.05;
+            float s = 3;
+            float a = 0.1;
+            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.1, test));
+            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.3, test));
+            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.5, test));
+            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.7, test));
+            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.9, test));
+        }
 
         Texture::waitKey();
     }

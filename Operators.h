@@ -1855,103 +1855,6 @@ private:
 // see https://www.iquilezles.org/www/articles/warp/warp.htm
 // See https://observablehq.com/@mbostock/domain-warping
 
-// TODO 20210520 very experimental
-
-//class NoiseWarp : public Texture
-//{
-//public:
-//    NoiseWarp(const Texture& texture0, const Texture& texture1)
-//      : texture0_(texture0), texture1_(texture1) {}
-//
-//    Color getColor(Vec2 position) const override
-//    {
-//        Vec2 p0(0.4, 0.7);
-//        Vec2 p1(-0.3, 0.5);
-//        TwoPointTransform tpt(p0, p1);
-//        float fbm =  PerlinNoise::brownian2d(tpt.localize(position));
-//        return interpolatePointOnTextures(fbm,
-//                                          position, position,
-//                                          texture0_, texture1_);
-//    }
-//private:
-//    const Texture& texture0_;
-//    const Texture& texture1_;
-//};
-
-class NoiseWarpPrototype : public Texture
-{
-public:
-    NoiseWarpPrototype(int test_case,
-                       const Texture& texture0,
-                       const Texture& texture1)
-      : test_case_(test_case),
-        texture0_(texture0),
-        texture1_(texture1) {}
-    
-    Color getColor(Vec2 position) const override
-    {
-        Vec2 p0(0.4, 0.7);
-        Vec2 p1(-0.3, 0.5);
-        TwoPointTransform t(p0, p1);
-        auto fbm = [&](Vec2 p){ return PerlinNoise::brownian2d(t.localize(p)); };
-        if (test_case_ == 0)
-        {
-            return interpolatePointOnTextures(fbm(position),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
-        else if (test_case_ == 1)
-        {
-            Vec2 q = Vec2(fbm(position + Vec2(0.0, 0.0)),
-                          fbm(position + Vec2(5.2, 1.3)));
-            return interpolatePointOnTextures(fbm(position + (q * 4)),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
-        else
-        {
-            Vec2 q = Vec2(fbm(position + Vec2(0.0,0.0)),
-                          fbm(position + Vec2(5.2,1.3)));
-            Vec2 r = Vec2(fbm(position + (q * 4) + Vec2(1.7, 9.2)),
-                          fbm(position + (q * 4) + Vec2(8.3, 2.8)));
-            return interpolatePointOnTextures(fbm(position + (r * 4.0)),
-                                              position, position,
-                                              texture0_, texture1_);
-        }
-    }
-private:
-    int test_case_ = 0;  // TODO temp -- remove before flight
-    const Texture& texture0_;
-    const Texture& texture1_;
-};
-
-
-class NoiseWarpPrototype2 : public Texture
-{
-public:
-    NoiseWarpPrototype2(const Texture& texture) : texture_(texture) {}
-    
-    Color getColor(Vec2 position) const override
-    {
-//        Vec2 np = positionNoise(0.2, 2, position);
-        Vec2 np = positionNoise(0.1, 2, position);
-        return texture_.getColor(np);
-    }
-    
-    // TODO vague, untested, concept, probably several things wrong with it
-    // TODO need better names for a and b
-    Vec2 positionNoise(float a, float b, Vec2 position) const
-    {
-        Vec2 o0(0.5, 0);
-        Vec2 o1(0, 0.5);
-        float n0 = PerlinNoise::multiNoise2d(o0 + (position * a), which_);
-        float n1 = PerlinNoise::multiNoise2d(o1 + (position * a), which_);
-        return position + Vec2(n0, n1) * b;
-    }
-private:
-    float which_ = 0.3;
-    const Texture& texture_;
-};
 
 class NoiseWarpPrototype3 : public Texture
 {
@@ -1963,7 +1866,7 @@ public:
       : rs_(hash_float(noise_scale) ^
             hash_float(noise_amplitude) ^
             hash_float(which)),
-        center_(rs_.randomUnitVector() * 5),
+        center_(rs_.randomPointInUnitDiameterCircle()),
         basis0_(rs_.randomUnitVector()),
         basis1_(basis0_.rotate90degCCW()),
         noise_scale_(noise_scale),
@@ -1972,33 +1875,19 @@ public:
         texture_(texture) {}
     Color getColor(Vec2 position) const override
     {
-//        Vec2 np = positionNoise(0.2, 2, position);
-        Vec2 np = positionNoise(noise_amplitude_, noise_scale_, position);
-        return texture_.getColor(np);
+        return texture_.getColor(positionNoise(position));
     }
-    // TODO vague, untested, concept, probably several things wrong with it
-    // TODO need better names for a and b
-    Vec2 positionNoise(float a, float b, Vec2 position) const
+    Vec2 positionNoise(Vec2 position) const
     {
-//        Vec2 o0(0.5, 0);
-//        Vec2 o1(0, 0.5);
-//        float n0 = PerlinNoise::multiNoise2d(o0 + (position * a), which_);
-//        float n1 = PerlinNoise::multiNoise2d(o1 + (position * a), which_);
-        
-//        float n0 = PerlinNoise::multiNoise2d(basis0_ + (position * a), which_);
-//        float n1 = PerlinNoise::multiNoise2d(basis1_ + (position * a), which_);
-        
-        float n0 = PerlinNoise::multiNoise2d(basis0_ + center_ + (position * a),
-                                             which_);
-        float n1 = PerlinNoise::multiNoise2d(basis1_ + center_ + (position * a),
-                                             which_);
-
-        return position + Vec2(n0, n1) * b;
+        Vec2 p = center_ + (position * noise_amplitude_);
+        Vec2 offset_noise(PerlinNoise::multiNoise2d(basis0_ + p, which_),
+                          PerlinNoise::multiNoise2d(basis1_ + p, which_));
+        return position + (offset_noise * noise_scale_);
     }
 private:
     RandomSequence rs_;
     const Vec2 center_;
-    const Vec2 basis0_;  // TODO should be more like a TwoPointTransform?
+    const Vec2 basis0_;
     const Vec2 basis1_;
     const float noise_scale_;
     const float noise_amplitude_;

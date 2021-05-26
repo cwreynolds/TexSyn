@@ -162,12 +162,13 @@ href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.220.2248&amp;rep=
         on Inigo's page: an output pixel color is read from input
         texture at a point “slightly offset” from the output pixel
         position. The noise offset's coordinates are from calls to a
-        scalar noise function (Brownian in these examples) at positions
-        offset by two perpendicular basis vectors. Two parameters <code>noise_scale</code>
-        and <code>noise_amplitude</code> adjust this mapping:<br>
+        scalar noise function (2d Brownian in these examples) at
+        positions offset by two perpendicular basis vectors. Two
+        parameters <code>noise_scale</code> and <code>noise_amplitude</code>
+        adjust this mapping:<br>
       </p>
-      <pre>noise_offset = Vec2(basis0 + (output_position * noise_scale),
-                    basis1 + (output_position * noise_scale))
+      <pre>noise_offset = Vec2(noise2d(basis0 + (output_position * noise_scale)),
+                    noise2d(basis1 + (output_position * noise_scale)))
 input_position = output_position + (noise_offset * noise_amplitude)
 output_color = input_texture.getColor(input_position)</pre>
       <p>Also, since I have re-cut-and-pasted this code several times, I
