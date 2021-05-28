@@ -1856,13 +1856,18 @@ private:
 // See https://observablehq.com/@mbostock/domain-warping
 
 
-class NoiseWarpPrototype3 : public Texture
+//class NoiseWarpPrototype3 : public Texture
+class NoiseWarp : public Texture
 {
 public:
-    NoiseWarpPrototype3(float noise_scale,
-                        float noise_amplitude,
-                        float which,
-                        const Texture& texture)
+//    NoiseWarpPrototype3(float noise_scale,
+//                        float noise_amplitude,
+//                        float which,
+//                        const Texture& texture)
+    NoiseWarp(float noise_scale,
+              float noise_amplitude,
+              float which,
+              const Texture& texture)
       : rs_(hash_float(noise_scale) ^
             hash_float(noise_amplitude) ^
             hash_float(which)),

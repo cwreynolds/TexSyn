@@ -5606,72 +5606,107 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Experiments with domain warping / noise based warping / NoiseWarp.
-    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
-    std::string path = temp_dir + "20210521_";
-    std::cout << "May 21, 2021" << std::endl;
-    {
-        
+//    // Experiments with domain warping / noise based warping / NoiseWarp.
+//    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+//    std::string path = temp_dir + "20210521_";
+//    std::cout << "May 21, 2021" << std::endl;
+//    {
+//        path = temp_dir + "20210524_";
+//
+////        Plaid test;
 //        Uniform c0(0, 0, 0.9);
 //        Uniform c1(1);
-//        for (int i = 0; i < 3; i++)
+//        Vec2 o0(0.5, 0);
+//        Vec2 o1(0, 0.5);
+//        Brownian test(o0, o1, c0, c1);
+//
+//        Texture::displayAndFile(test
+//                                ); // , path + "Plaid");
+//
+//        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.1, 0.3, test)
+//                                ); // , path + "NoiseWarp_2_0.1");
+//        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
+//                                ); // , path + "NoiseWarp_2_0.2");
+//        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.3, 0.3, test)
+//                                ); // , path + "NoiseWarp_2_0.3");
+//
+//        Texture::displayAndFile(NoiseWarpPrototype3(1, 0.2, 0.3, test)
+//                                ); // , path + "NoiseWarp_1_0.2");
+//        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
+//                                ); // , path + "NoiseWarp_2_0.2");
+//        Texture::displayAndFile(NoiseWarpPrototype3(4, 0.2, 0.3, test)
+//                                ); // , path + "NoiseWarp_4_0.2");
+//
+//    //        Texture::displayAndFile(NoiseWarpPrototype3(10, 0.5, 0.3, test)
+//    //                                ); // , path + "NoiseWarp_10_0.5");
+//
 //        {
-//            std::string filename = path + "NoiseWarp_test_" + std::to_string(i);
-//            Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1));
-//            //Texture::displayAndFile(NoiseWarpPrototype(i, c0, c1), filename);
+//            path = temp_dir + "20210526_";
+//            float s = 3;
+//            float a = 0.5;
+//            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.1, test)
+//                                    ); // , path + "NoiseWarp_0.1");
+//            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.3, test)
+//                                    ); // , path + "NoiseWarp_0.3");
+//            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.5, test)
+//                                    ); // , path + "NoiseWarp_0.5");
+//            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.7, test)
+//                                    ); // , path + "NoiseWarp_0.7");
+//            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.9, test)
+//                                    ); // , path + "NoiseWarp_0.9");
 //        }
-        
-        
-        path = temp_dir + "20210524_";
-
-        
-//        Plaid test;
-        
-        Uniform c0(0, 0, 0.9);
-        Uniform c1(1);
-        Vec2 o0(0.5, 0);
-        Vec2 o1(0, 0.5);
-        Brownian test(o0, o1, c0, c1);
-        
-        Texture::displayAndFile(test
-                                ); // , path + "Plaid");
-                
-        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.1, 0.3, test)
-                                ); // , path + "NoiseWarp_2_0.1");
-        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
-                                ); // , path + "NoiseWarp_2_0.2");
-        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.3, 0.3, test)
-                                ); // , path + "NoiseWarp_2_0.3");
-
-        Texture::displayAndFile(NoiseWarpPrototype3(1, 0.2, 0.3, test)
-                                ); // , path + "NoiseWarp_1_0.2");
-        Texture::displayAndFile(NoiseWarpPrototype3(2, 0.2, 0.3, test)
-                                ); // , path + "NoiseWarp_2_0.2");
-        Texture::displayAndFile(NoiseWarpPrototype3(4, 0.2, 0.3, test)
-                                ); // , path + "NoiseWarp_4_0.2");
-
-//        Texture::displayAndFile(NoiseWarpPrototype3(10, 0.5, 0.3, test)
-//                                ); // , path + "NoiseWarp_10_0.5");
-
-        {
-            path = temp_dir + "20210526_";
-            float s = 3;
-            float a = 0.5;
-            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.1, test)
-                                    ); // , path + "NoiseWarp_0.1");
-            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.3, test)
-                                    ); // , path + "NoiseWarp_0.3");
-            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.5, test)
-                                    ); // , path + "NoiseWarp_0.5");
-            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.7, test)
-                                    ); // , path + "NoiseWarp_0.7");
-            Texture::displayAndFile(NoiseWarpPrototype3(s, a, 0.9, test)
-                                    ); // , path + "NoiseWarp_0.9");
-        }
-
-        Texture::waitKey();
-    }
+//
+//        Texture::waitKey();
+//    }
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Random examples of NoiseWarp.
+    std::cout << "May 27, 2021" << std::endl;
+    std::string temp_dir = "/Users/cwr/Desktop/TexSyn_temp/";
+    std::string path = temp_dir + "20210527_";
+
+    int index = 0;
+    bool write_files = false;
+    int max_init_tree_size = 40;
+    const FunctionSet& function_set = GP::fs();
+    auto random_texture = [&]()
+    {
+        index++;
+        debugPrint(index);
+        GpTree tree;
+        int ignore_size_output;
+        const GpFunction* gp_func =
+            function_set.lookupGpFunctionByName("NoiseWarp");
+        function_set.makeRandomTreeRoot(max_init_tree_size,
+                                        *function_set.getRootType(),
+                                        *gp_func,
+                                        ignore_size_output,
+                                        tree);
+        Individual individual(tree);
+        std::string filename = (write_files ?
+                                path + "NoiseWarp_" + std::to_string(index) :
+                                "");
+        {
+            Timer t("PhasorNoiseTextures render");
+            Texture::displayAndFile(*GP::textureFromIndividual(&individual),
+                                    filename);
+        }
+        if (write_files)
+        {
+            // Open stream to file.
+            std::ofstream output_file_stream(filename + ".txt");
+            // Generate indented c-styler notation for Individual's GpTree.
+            output_file_stream << individual.tree().to_string(true);
+            output_file_stream.close();
+            // std::cout << tree.to_string(true) << std::endl;
+        }
+    };
+//    LPRS().setSeed(20210527);
+    LPRS().setSeed(202105274);
+    while (index < 40) { random_texture(); }
+    Texture::waitKey();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

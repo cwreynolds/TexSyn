@@ -376,6 +376,14 @@ public:
                                                 argTexture(), argTexture(),
                                                 argTexture(), argTexture(),
                                                 argTexture()))
+            },
+            {
+                "NoiseWarp", "Texture",
+                { "Float_0_10", "Float_01", "Float_01", "Texture" },
+                evalTexture(NoiseWarp(argFloat(),
+                                      argFloat(),
+                                      argFloat(),
+                                      argTexture()))
             }
         },
         // Crossover min_size, must be larger than: Uniform(r, g, b)
