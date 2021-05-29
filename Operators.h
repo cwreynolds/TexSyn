@@ -1850,20 +1850,15 @@ private:
     const Texture& angle_texture_;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Experiments with domain warping / noise based warping / NoiseWarp.
-// see https://www.iquilezles.org/www/articles/warp/warp.htm
-// See https://observablehq.com/@mbostock/domain-warping
-
-
-//class NoiseWarpPrototype3 : public Texture
+// Output is a warped version of a given input texture. Defines a "warp field"
+// based on multi-noise. Each output sample is an input sample displaced by the
+// warp field. This is a slight variation on "domain warping" as described by
+// Inigo Quilez (https://www.iquilezles.org/www/articles/warp/warp.htm) and
+// Mike Bostock (https://observablehq.com/@mbostock/domain-warping).
+//
 class NoiseWarp : public Texture
 {
 public:
-//    NoiseWarpPrototype3(float noise_scale,
-//                        float noise_amplitude,
-//                        float which,
-//                        const Texture& texture)
     NoiseWarp(float noise_scale,
               float noise_amplitude,
               float which,
@@ -1900,13 +1895,9 @@ private:
     const Texture& texture_;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO I keep redefining this for tests, put it here once and for all.
-
-
+// An oft-used test pattern for (“domain”) warping operators. Define it here
+// once and for all rather tha re-cut-and-pasting it each time. NOT included
+// with the GP function set for evolution runs.
 class Plaid : public Texture
 {
 public:
@@ -1933,7 +1924,3 @@ private:
     Grating green_stripes;
     Add plaid;
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-

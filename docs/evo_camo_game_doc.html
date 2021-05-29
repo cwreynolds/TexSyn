@@ -9,11 +9,10 @@
     <h2>Interactive Evolution of Camouflage</h2>
     <h3>Instructions for installation and use.</h3>
     <div class="moz-text-html" lang="x-unicode">
-      <p><strong>May 14, 2021</strong><br>
-        Based on: <strong>TexSyn version 0.9.6 (alpha macOS-x86_64)</strong><br>
+      <p><strong>May 28, 2021</strong><br>
+        Based on: <strong>TexSyn version 0.9.7 (alpha macOS-x86_64)</strong><br>
         For any problems or questions, contact Craig Reynolds: <a
           href="mailto:cwr@red3d.com">cwr@red3d.com</a></p>
-      <p><a href="mailto:cwr@red3d.com"></a></p>
       <p>&nbsp;</p>
       <p>This is an alpha test version of software for “interactive
         evolution of camouflage” as described in my 2011 paper: <a
@@ -35,6 +34,8 @@
         predator hunting its prey with vision. This can be seen as a
         sort of minimalist “game” or a <a
           href="https://en.wikipedia.org/wiki/Human-based_computation">human
+
+
 
           based computation</a>. The app displays a window with a random
         portion taken from a given set of photographs. Over that
@@ -69,8 +70,8 @@
         </ul>
       </ul>
       <h3>Installation</h3>
-      <p>Download <code>evo_camo_game_0_9_6.zip</code> from <a
-href="https://drive.google.com/file/d/1tJVEU6ly3MzzsHn4heiv3N0q41zPBEqb/view?usp=sharing"
+      <p>Download <code>evo_camo_game_0_9_7.zip</code> from <a
+href="https://drive.google.com/file/d/1qSx_nSxXMIExxgMSWAhih77i3ZSu-ZGI/view?usp=sharing"
           moz-do-not-send="true">this Google drive page</a>. Click the
         download button in the upper right. It should download and
         unzip, putting the <code>evo_camo_game</code> executable file
@@ -103,37 +104,12 @@ src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhkAAAEnCAYAAAAEglHLAAAgAElEQ
         </li>
         <li>click <strong>Open</strong></li>
       </ul>
-      <p>At this point, if you are lucky, it should print ~40 lines and
+      <p>At this point, if you are lucky, it should print ~14 lines and
         exit:</p>
       <pre>    &gt; evo_camo_game
-        pass utilities
-        pass color_constructors
-        pass color_equality
-        pass color_assignment
-        pass color_basic_operators
-        pass color_luminance
-        pass color_hsv
-        pass color_clip
-        pass vec2_constructors
-        pass vec2_equality
-        pass vec2_assignment
-        pass vec2_vector_operations
-        pass vec2_basic_operators
-        pass vec2_random_point
-        pass vec2_rotate
-        pass gradation_test
-        pass spot_test
-        pass grating_test
-        pass operators_minimal_test
-        pass noise_ranges
-        pass interpolate_float_rounding
-        pass two_point_transform
-
-    All tests PASS.
-
-    Run time for unit test suite: 0.0515489 seconds
+    All unit tests PASS. Run time for unit test suite: 0.0482377 seconds
     March 16, 2021
-    evo_camo_game parameters:
+    evo_camo_game  requires at least one pathname parameter, others may be omitted from the end:
         background_image_directory (required)
         output_directory (defaults to .)
         background_scale (defaults to 0.5)
@@ -203,8 +179,8 @@ src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhkAAAEnCAYAAAAEglHLAAAgAElEQ
         title="clover (step 0)" height="934" width="1312">
       <p>The app supports a few GUI actions:</p>
       <div>
-        <table style="padding-left: 2em;" cellspacing="2"
-          cellpadding="2" border="0" width="100%">
+        <table style="padding-left: 2em;" width="100%" cellspacing="2"
+          cellpadding="2" border="0">
           <tbody>
             <tr>
               <td valign="top"><b>mouse</b> (left) click</td>
