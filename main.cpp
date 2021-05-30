@@ -5712,6 +5712,15 @@ int main(int argc, const char * argv[])
     // 20210528 tag the evo_camo_game 0.9.7 "release" (and gravel_20210513_1743)
     std::cout << "May 28, 2021" << std::endl;
     Camouflage(CommandLine(argc, argv)).run();
+    
+//    CommandLine cl
+//    ({
+//       "evo_camo_game_0_9_7",
+//        "~/Pictures/camouflage_backgrounds/yellow_flower_on_green",
+//        "0.5",
+//        "20210529"
+//    });
+//    Camouflage(cl).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
