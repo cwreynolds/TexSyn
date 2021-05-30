@@ -40,6 +40,14 @@ public:
         min_crossover_tree_size_(max_init_tree_size_ * 0.5),
         max_crossover_tree_size_(max_init_tree_size_ * 1.5)
     {
+        if ((backgroundScale() > 10000) || (backgroundScale() <  0.0001))
+        {
+            // Better warning for confusing case: the output_directory arg was
+            // accidentally omitted, scale read a value (20210529) which was WAY
+            // too large and caused a confusing assert fail deep inside OpenCV.
+            debugPrint(backgroundScale());
+            assert(!"backgroundScale() seems out of range");
+        }
         if (background_image_directory_.empty())
         {
             // Exit with failure after listing command arguments.
@@ -97,9 +105,8 @@ public:
             std::string pathname = backgroundImageDirectory() + "/" + filename;
             // Read the image file into an OpenCV image.
             cv::Mat bg = cv::imread(pathname);
-            // When valid image file. (TODO less hackish way to do? cv::imread
-            // returns empty cv::Mat for random file like foo.txt or .DS_Store)
-            if ((bg.cols > 0) && (bg.rows > 0))
+            // When valid image file. (To ignore README.txt, .DS_Store, etc.)
+            if (cv::haveImageReader(pathname))
             {
                 std::cout << "    " << pathname << std::endl;
                 // Keep track of smallest image dimensions.

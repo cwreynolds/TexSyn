@@ -5716,7 +5716,16 @@ int main(int argc, const char * argv[])
 //    CommandLine cl
 //    ({
 //       "evo_camo_game_0_9_7",
-//        "~/Pictures/camouflage_backgrounds/yellow_flower_on_green",
+//        "/Users/cwr/Pictures/camouflage_backgrounds/yellow_flower_on_green",
+//        // missing output directory here
+//        "0.5",
+//        "20210529"
+//    });
+//    CommandLine cl
+//    ({
+//       "evo_camo_game_0_9_7",
+//        "/Users/cwr/Pictures/camouflage_backgrounds/yellow_flower_on_green",
+//        "/Users/cwr/Desktop/TexSyn_temp",
 //        "0.5",
 //        "20210529"
 //    });
