@@ -194,11 +194,71 @@ public:
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO maybe a constructor for CFU that takes a Population?
+//            CountFunctionUsage cfu;
+//            int step = getPopulation()->getStepCount();
+//            if ((step % 10) == 1)
+//            {
+//                cfu.count(*getPopulation());
+//                if (step == 1)
+//                {
+//                    std::string names;
+//                    auto func = [&](std::string s, int c) { names += s + ","; };
+//                    cfu.applyToAllCounts(func);
+//                    std::cout << names << std::endl;
+//                }
+//                std::string counts;
+//                auto func = [&](std::string s, int c)
+//                    { counts += std::to_string(c) + ","; };
+//                cfu.applyToAllCounts(func);
+//                std::cout << counts << std::endl;
+//            }
+            logFunctionUsageCounts(out);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    void logFunctionUsageCounts(const std::filesystem::path& out) const
+    {
+        int step = getPopulation()->getStepCount();
+        if ((step % 10) == 1)
+        {
+            // TODO maybe a constructor for CFU that takes a Population?
+            CountFunctionUsage cfu;
+            cfu.count(*getPopulation());
+            
+            
+//            std::ofstream outfile;
+//            outfile.open(out / "function_counts.txt", std::ios_base::app); // append instead of overwrite
+//            outfile << "Data";
+
+            // Open output stream to file in append mode.
+            std::ofstream outfile;
+            outfile.open(out / "function_counts.txt", std::ios::app);
+
+            
+            if (step == 1)
+            {
+                std::string names;
+                auto func = [&](std::string s, int c) { names += s + ","; };
+                cfu.applyToAllCounts(func);
+                std::cout << names << std::endl;
+                outfile << names << std::endl;
+            }
+            std::string counts;
+            auto func = [&](std::string s, int c)
+            { counts += std::to_string(c) + ","; };
+            cfu.applyToAllCounts(func);
+            std::cout << counts << std::endl;
+            outfile << counts << std::endl;
+        }
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // TODO temporary utility for debugging random non-overlapping placement
     // TODO to be removed eventually
     void testdraw(const TournamentGroup& tg,

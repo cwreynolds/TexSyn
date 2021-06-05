@@ -5709,10 +5709,10 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // 20210528 tag the evo_camo_game 0.9.7 "release" (and gravel_20210513_1743)
-    std::cout << "May 28, 2021" << std::endl;
-    Camouflage(CommandLine(argc, argv)).run();
-    
+//    // 20210528 tag the evo_camo_game 0.9.7 "release" (and gravel_20210513_1743)
+//    std::cout << "May 28, 2021" << std::endl;
+//    Camouflage(CommandLine(argc, argv)).run();
+//
 //    CommandLine cl
 //    ({
 //       "evo_camo_game_0_9_7",
@@ -5731,6 +5731,12 @@ int main(int argc, const char * argv[])
 //    });
 //    Camouflage(cl).run();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing CountFunctionUsage inside Camouflage
+    std::cout << "June 5, 2021" << std::endl;
+    Camouflage(CommandLine(argc, argv)).run();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
