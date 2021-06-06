@@ -222,19 +222,24 @@ public:
     }
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    void logFunctionUsageCounts(const std::filesystem::path& out) const
+//    void logFunctionUsageCounts(const std::filesystem::path& out) const
+    void logFunctionUsageCounts(const std::filesystem::path& out)
     {
         int step = getPopulation()->getStepCount();
         if ((step % 10) == 1)
         {
+            // TODO set each counter back to zero.
+            
+            // Preserve each named counter, but set its count to zero.
+            cfu_.zeroEachCounter();
+
+            
             // TODO maybe a constructor for CFU that takes a Population?
-            CountFunctionUsage cfu;
-            cfu.count(*getPopulation());
+//            CountFunctionUsage cfu;
+//            cfu.count(*getPopulation());
             
-            
-//            std::ofstream outfile;
-//            outfile.open(out / "function_counts.txt", std::ios_base::app); // append instead of overwrite
-//            outfile << "Data";
+            // Count total GpFunction usage over entire Population of GpTrees.
+            cfu_.count(*getPopulation());
 
             // Open output stream to file in append mode.
             std::ofstream outfile;
@@ -245,14 +250,16 @@ public:
             {
                 std::string names;
                 auto func = [&](std::string s, int c) { names += s + ","; };
-                cfu.applyToAllCounts(func);
+//                cfu.applyToAllCounts(func);
+                cfu_.applyToAllCounts(func);
                 std::cout << names << std::endl;
                 outfile << names << std::endl;
             }
             std::string counts;
             auto func = [&](std::string s, int c)
             { counts += std::to_string(c) + ","; };
-            cfu.applyToAllCounts(func);
+//            cfu.applyToAllCounts(func);
+            cfu_.applyToAllCounts(func);
             std::cout << counts << std::endl;
             outfile << counts << std::endl;
         }
@@ -578,6 +585,9 @@ private:
     int max_init_tree_size_ = 100;
     int min_crossover_tree_size_ = 50;
     int max_crossover_tree_size_ = 150;
+    
+    // For logging GpFunction usage over evolutionary time.
+    CountFunctionUsage cfu_;
     
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     // Note: the six variables below communicate "global" state with the mouse
