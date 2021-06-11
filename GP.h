@@ -364,7 +364,8 @@ public:
                                               argFloat(), argFloat(),
                                               argFloat(), argFloat(),
                                               argFloat(), argFloat(),
-                                              argTexture(), argTexture()))
+                                              argTexture(), argTexture())),
+                0.5 // make phasor noise operators half as likely to be selected
             },
             {
                 "PhasorNoiseTextures",  "Texture",
@@ -375,7 +376,8 @@ public:
                 evalTexture(PhasorNoiseTextures(argFloat(), argFloat(),
                                                 argTexture(), argTexture(),
                                                 argTexture(), argTexture(),
-                                                argTexture()))
+                                                argTexture())),
+                0.5 // make phasor noise operators half as likely to be selected
             },
             {
                 "NoiseWarp", "Texture",
