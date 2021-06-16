@@ -9,6 +9,12 @@
 #pragma once
 #include "Utilities.h"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO expermental
+// Helper class to represent a color in hue-saturation-value space.
+class HSV;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // TODO move elsewhere
 // Simple class to represent color as RGB float values on [0, 1]
 class Color
@@ -22,6 +28,10 @@ public:
       : red_(paper_over_abnormal_values(r)),
         green_(paper_over_abnormal_values(g)),
         blue_(paper_over_abnormal_values(b)) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Convert from HSV to RGB (defined below, after HSV class).
+    Color(HSV hsv);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // assignment, set RGB components
     Color operator=(const Color& c)
     {
@@ -41,7 +51,15 @@ public:
     // Set this color to the one described by the given HSV values.
     void setHSV(float h, float s, float v);
     // Get the HSV values for this color. Returned by setting non-const refs.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO obsolete?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     void getHSV(float& h, float& s, float& v) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Get the HSV values for a Color. Returned as 3-tuple of floats.
+    // TODO needed? Wrote first version of this before the HSV helper class.
+    std::tuple<float, float, float> getHSV() const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Return a Color made from the given HSV values
     static Color makeHSV(float h, float s, float v);
     // Get H, S, or V components of this Color.
@@ -93,3 +111,40 @@ bool withinEpsilon(Color a, Color b, float epsilon);
 
 // Serialize Color object to stream.
 std::ostream& operator<<(std::ostream& os, const Color& v);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO expermental
+
+// Helper class to represent a color in hue-saturation-value space.
+class HSV
+{
+public:
+    HSV(float h, float s, float v) : h_(h), s_(s), v_(v) {}  // TODO needed?
+    HSV(Color c) { Color::convertRGBtoHSV(c.r(), c.g(), c.b(), h_, s_, v_); }
+    float getH() const { return h_; }
+    float getS() const { return s_; }
+    float getV() const { return v_; }
+    std::tuple<float, float, float> getHSV() const { return {h_, s_, v_}; }
+private:
+    float h_ = 0;
+    float s_ = 0;
+    float v_ = 0;
+};
+
+
+// Construct an RGB Color from an HSV instance.
+inline Color::Color(HSV hsv)
+{
+    Color::convertHSVtoRGB(hsv.getH(), hsv.getS(), hsv.getV(),
+                           red_, green_, blue_);
+}
+
+// Get the HSV values for a Color. Returned as 3-tuple of floats.
+// TODO needed? Wrote first version of this before the HSV helper class.
+inline std::tuple<float, float, float> Color::getHSV() const
+{
+    return HSV(*this).getHSV();
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

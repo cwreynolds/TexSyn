@@ -159,13 +159,22 @@ bool color_hsv()
     float e = 0.000001;
     auto from_rgb_to_hsv_to_rgb = [&](float r, float g, float b)
     {
-        float h1, s1, v1;
-        float r1, g1, b1;
-        Color::convertRGBtoHSV(r, g, b, h1, s1, v1);
-        Color::convertHSVtoRGB(h1, s1, v1, r1, g1, b1);
-        return (withinEpsilon(r, r1, e) &&
-                withinEpsilon(g, g1, e) &&
-                withinEpsilon(b, b1, e));
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        float h1, s1, v1;
+//        float r1, g1, b1;
+//        Color::convertRGBtoHSV(r, g, b, h1, s1, v1);
+//        Color::convertHSVtoRGB(h1, s1, v1, r1, g1, b1);
+//        return (withinEpsilon(r, r1, e) &&
+//                withinEpsilon(g, g1, e) &&
+//                withinEpsilon(b, b1, e));
+        
+        Color c0(r, g, b);
+        HSV hsv(c0);
+        Color c1(hsv);
+        return (withinEpsilon(r, c1.r(), e) &&
+                withinEpsilon(g, c1.g(), e) &&
+                withinEpsilon(b, c1.b(), e));
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     Color c0(1.0, 0.5, 0.0);
     Color c1 = Color::makeHSV(c0.getH(), c0.getS(), c0.getV());
