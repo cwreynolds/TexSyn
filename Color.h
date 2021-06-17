@@ -120,24 +120,28 @@ std::ostream& operator<<(std::ostream& os, const Color& v);
 class HSV
 {
 public:
-    HSV(float h, float s, float v) : h_(h), s_(s), v_(v) {}  // TODO needed?
+    // Construct from H, S, and V.  (TODO needed?)
+    HSV(float h, float s, float v) : h_(h), s_(s), v_(v) {}
+    // Construct from (RGB) Color object
     HSV(Color c) { Color::convertRGBtoHSV(c.r(), c.g(), c.b(), h_, s_, v_); }
+    // Accessors for H, S, and V.
     float getH() const { return h_; }
     float getS() const { return s_; }
     float getV() const { return v_; }
+    // Return H, S, and V as 3-tuple of floats.
     std::tuple<float, float, float> getHSV() const { return {h_, s_, v_}; }
+//    // Return (RGB) Color version of this HSV color
+//    Color getColor() const { return Color(*this); }
 private:
     float h_ = 0;
     float s_ = 0;
     float v_ = 0;
 };
 
-
 // Construct an RGB Color from an HSV instance.
-inline Color::Color(HSV hsv)
+inline Color::Color(HSV h)
 {
-    Color::convertHSVtoRGB(hsv.getH(), hsv.getS(), hsv.getV(),
-                           red_, green_, blue_);
+    Color::convertHSVtoRGB(h.getH(), h.getS(), h.getV(), red_, green_, blue_);
 }
 
 // Get the HSV values for a Color. Returned as 3-tuple of floats.
