@@ -464,12 +464,16 @@ private:
     const Vec2 offset3;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO "_old" version just for diff-testing to verify no change.
+
 // Maps the brightness of a sample of the given Texture to a pure hue (full
 // brightness, full saturation). The hue transform is offset by a given phase.
-class BrightnessToHue : public Texture
+class BrightnessToHue_old : public Texture
 {
 public:
-    BrightnessToHue (float _huePhase, const Texture& _texture)
+    BrightnessToHue_old (float _huePhase, const Texture& _texture)
         : huePhase (_huePhase), texture (_texture) {}
     Color getColor(Vec2 position) const override
     {
@@ -483,6 +487,32 @@ private:
     const float huePhase;
     const Texture& texture;
 };
+
+// Maps the brightness of a sample of the given Texture to a pure hue (full
+// brightness, full saturation). The hue transform is offset by a given phase.
+class BrightnessToHue : public Texture
+{
+public:
+    BrightnessToHue (float _huePhase, const Texture& _texture)
+        : huePhase (_huePhase), texture (_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        float luminance = texture.getColor(position).luminance();
+        
+//        float red, green, blue;
+//        Color::convertHSVtoRGB(luminance + huePhase, 1.0f, 1.0f,
+//                               red, green, blue);
+//        return Color(red, green, blue);
+
+        return HSV(luminance + huePhase, 1, 1);
+    }
+private:
+    const float huePhase;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Wrap a given portion of a half-plane radially around a given center point,
 // keeping the texture along a given ray unchanged. Related to a rectangular-
@@ -1554,13 +1584,17 @@ private:
     const Texture& texture;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// TODO "_old" version just for diff-testing to verify no change.
+
 // For each point in the input texture, HueOnly keeps only the hue information
 // from its input texture. It replaces the other two HSV components, saturation
 // and value, with constant values given as parameters to HueOnly.
-class HueOnly : public Texture
+class HueOnly_old : public Texture
 {
 public:
-    HueOnly(float _saturation, float _value, const Texture& _texture)
+    HueOnly_old(float _saturation, float _value, const Texture& _texture)
       : saturation(_saturation), value(_value), texture(_texture) {}
     Color getColor(Vec2 position) const override
     {
@@ -1576,6 +1610,35 @@ private:
     const float value;
     const Texture& texture;
 };
+
+// For each point in the input texture, HueOnly keeps only the hue information
+// from its input texture. It replaces the other two HSV components, saturation
+// and value, with constant values given as parameters to HueOnly.
+class HueOnly : public Texture
+{
+public:
+    HueOnly(float _saturation, float _value, const Texture& _texture)
+      : saturation(_saturation), value(_value), texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color input = texture.getColor(position);
+
+//        Color clipped = input.clipToUnitRGB();
+//        float h, s, v;
+//        Color::convertRGBtoHSV(clipped.r(), clipped.g(), clipped.b(), h, s, v);
+//        return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
+
+        auto [h, s, v] = HSV(input.clipToUnitRGB()).getHSV();
+        return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
+    }
+private:
+    const float min_sat = 0.000001;
+    const float saturation;
+    const float value;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Base class for two TexSyn operators using "phasor noise". This class contains
 // the parts common derived classes PhasorNoiseRanges and PhasorNoiseTextures.

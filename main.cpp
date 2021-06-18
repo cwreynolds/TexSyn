@@ -5733,9 +5733,28 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing CountFunctionUsage inside Camouflage
-    std::cout << "June 5, 2021" << std::endl;
-    Camouflage(CommandLine(argc, argv)).run();
+//    // Testing CountFunctionUsage inside Camouflage
+//    std::cout << "June 5, 2021" << std::endl;
+//    Camouflage(CommandLine(argc, argv)).run();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing Color refactor with HSV helper class
+    std::cout << "June 17, 2021" << std::endl;
+    
+    {
+        ColorNoise cn(Vec2(0.8, -0.4), Vec2(0, 0.3), 0.6);
+
+        Texture::diff(HueOnly_old(0.95, 0.6, cn),
+                      HueOnly    (0.95, 0.6, cn),
+                      "", Texture::getDiffSize(), true);
+        
+        Texture::diff(BrightnessToHue_old(0.33, cn),
+                      BrightnessToHue    (0.33, cn),
+                      "", Texture::getDiffSize(), true);
+                
+        Texture::waitKey();
+    }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
