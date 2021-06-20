@@ -5752,7 +5752,19 @@ int main(int argc, const char * argv[])
         Texture::diff(BrightnessToHue_old(0.33, cn),
                       BrightnessToHue    (0.33, cn),
                       "", Texture::getDiffSize(), true);
-                
+        
+        Texture::diff(SoftThreshold_old(0.45, 0.55, cn),
+                      SoftThreshold    (0.45, 0.55, cn),
+                      "", Texture::getDiffSize(), true);
+        
+        Texture::diff(AdjustHue_old(0.33, cn),
+                      AdjustHue    (0.33, cn),
+                      "", Texture::getDiffSize(), true);
+        
+        Texture::diff(AdjustSaturation_old(1.5, cn),
+                      AdjustSaturation    (1.5, cn),
+                      "", Texture::getDiffSize(), true);
+        
         Texture::waitKey();
     }
     

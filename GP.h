@@ -556,8 +556,12 @@ public:
         for (auto& color : samples)
         {
             // Transform into HSV metrics.
-            float hue, saturation, value;
-            color.getHSV(hue, saturation, value);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO June 19, 2021 -- use updated api, not actually tested.
+            // float hue, saturation, value;
+            // color.getHSV(hue, saturation, value);
+            auto [hue, saturation, value] = color.getHSV();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Increment hue bucket (unless dark or desaturated colors).
             if ((saturation > min_saturation) && (value > min_brightness))
             {

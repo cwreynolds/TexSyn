@@ -128,6 +128,21 @@ public:
     float getH() const { return h_; }
     float getS() const { return s_; }
     float getV() const { return v_; }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    
+    // TODO experimental
+    
+    float h() const { return h_; }
+    float s() const { return s_; }
+    float v() const { return v_; }
+
+    
+    // Return a copy of this HSV with one of its components overwritten.
+    HSV newH(float h) const { return {h, s_, v_}; }
+    HSV newS(float s) const { return {h_, s, v_}; }
+    HSV newV(float v) const { return {h_, s_, v}; }
+
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Return H, S, and V as 3-tuple of floats.
     std::tuple<float, float, float> getHSV() const { return {h_, s_, v_}; }
 //    // Return (RGB) Color version of this HSV color
