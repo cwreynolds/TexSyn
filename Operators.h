@@ -1154,6 +1154,9 @@ private:
     const Texture& texture;
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO "_old" version just for diff-testing to verify no change.
+
 // BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
 // and an input texture. The brightness of the input texture is “wrapped around”
 // in the sense of modulus (fmod) the brightness interval between the two
@@ -1163,10 +1166,10 @@ private:
 // need to think about it some more.) These operations on brightness happen in
 // hue-saturation-value color space, so only brightness (value) is changed. The
 // hue and saturation remain unchanged.
-class BrightnessWrap : public Texture
+class BrightnessWrap_old : public Texture
 {
 public:
-    BrightnessWrap (float _intensity0, float _intensity1, const Texture& _texture)
+    BrightnessWrap_old(float _intensity0, float _intensity1, const Texture& _texture)
       : intensity0(std::min(_intensity0, _intensity1)),
         intensity1(std::max(_intensity0, _intensity1)),
         texture(_texture) {}
@@ -1192,6 +1195,55 @@ private:
     const float intensity1;
     const Texture& texture;
 };
+
+// BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
+// and an input texture. The brightness of the input texture is “wrapped around”
+// in the sense of modulus (fmod) the brightness interval between the two
+// thresholds. Then that brightness interval is adjusted to cover the interval
+// between black and white. (That adjustment to full range had not been done in
+// the previous version of this library. I now think it makes more sense. But I
+// need to think about it some more.) These operations on brightness happen in
+// hue-saturation-value color space, so only brightness (value) is changed. The
+// hue and saturation remain unchanged.
+class BrightnessWrap : public Texture
+{
+public:
+    BrightnessWrap(float _intensity0, float _intensity1, const Texture& _texture)
+      : intensity0(std::min(_intensity0, _intensity1)),
+        intensity1(std::max(_intensity0, _intensity1)),
+        texture(_texture) {}
+    Color getColor(Vec2 position) const override
+    {
+        Color color = texture.getColor(position);
+        
+//        float hue, saturation, value;
+//        color.getHSV(hue, saturation, value);
+        HSV hsv(color);
+        
+//        float new_v = value;
+        float new_v = hsv.v();
+
+        float interval = intensity1 - intensity0;
+        if (interval > 0)
+        {
+//            float between = fmod_floor(value - intensity0, interval);
+            float between = fmod_floor(hsv.v() - intensity0, interval);
+            
+            new_v = remapIntervalClip(between + intensity0,
+                                      intensity0, intensity1,
+                                      0, 1);
+        }
+//        color.setHSV(hue, saturation, new_v);
+//        return color;
+        return hsv.newV(new_v);
+    }
+private:
+    const float intensity0;
+    const float intensity1;
+    const Texture& texture;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Mirror across a line in texture space, defined by a tangent and center point.
 class Mirror : public Texture

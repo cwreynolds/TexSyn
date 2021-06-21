@@ -5765,6 +5765,10 @@ int main(int argc, const char * argv[])
                       AdjustSaturation    (1.5, cn),
                       "", Texture::getDiffSize(), true);
         
+        Texture::diff(BrightnessWrap_old(0.4, 0.6, cn),
+                      BrightnessWrap    (0.4, 0.6, cn),
+                      "", Texture::getDiffSize(), true);
+
         Texture::waitKey();
     }
     

@@ -177,11 +177,19 @@ bool color_hsv()
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     Color c0(1.0, 0.5, 0.0);
-    Color c1 = Color::makeHSV(c0.getH(), c0.getS(), c0.getV());
-    float h0, s0, v0;
-    float r0, g0, b0;
-    Color::convertHSVtoRGB(0, 0, 0, r0, g0, b0);
-    Color::convertRGBtoHSV(r0, g0, b0, h0, s0, v0);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    Color c1 = Color::makeHSV(c0.getH(), c0.getS(), c0.getV());
+    Color c1(HSV(c0.getH(), c0.getS(), c0.getV()));
+
+//    float h0, s0, v0;
+//    float r0, g0, b0;
+//    Color::convertHSVtoRGB(0, 0, 0, r0, g0, b0);
+//    Color::convertRGBtoHSV(r0, g0, b0, h0, s0, v0);
+    
+    HSV hsv0(0, 0, 0);
+    Color rgb0(hsv0);
+//    auto [h0, s0, v0] = rgb0.getHSV();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     bool randoms_ok = true;
     RandomSequence rs(38284732);
     for (int i = 0; i < 10000; i++)
@@ -196,9 +204,14 @@ bool color_hsv()
             st(withinEpsilon(c0.r(), c1.r(), e)) &&
             st(withinEpsilon(c0.g(), c1.g(), e)) &&
             st(withinEpsilon(c0.b(), c1.b(), e)) &&
-            st(withinEpsilon(h0, 0, e)) &&
-            st(withinEpsilon(v0, 0, e)) &&
-            st(withinEpsilon(s0, 0, e)) &&
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            st(withinEpsilon(h0, 0, e)) &&
+//            st(withinEpsilon(s0, 0, e)) &&
+//            st(withinEpsilon(v0, 0, e)) &&
+            st(withinEpsilon(rgb0.getH(), 0, e)) &&
+            st(withinEpsilon(rgb0.getS(), 0, e)) &&
+            st(withinEpsilon(rgb0.getV(), 0, e)) &&
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             st(randoms_ok));
 }
 
