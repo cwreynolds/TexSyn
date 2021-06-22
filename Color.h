@@ -23,17 +23,17 @@ public:
         green_(paper_over_abnormal_values(g)),
         blue_(paper_over_abnormal_values(b)) {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Convert from HSV to RGB (defined below, after HSV class).
-    class HSV;
-    Color(HSV hsv);
+//    // Convert from HSV to RGB (defined below, after HSV class).
+//    class HSV;
+//    Color(HSV hsv);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // assignment, set RGB components
-    Color operator=(const Color& c)
-    {
-        setRGB(c.r(), c.g(), c.b());
-        return *this;
-    }
-    void setRGB(float r, float g, float b) { red_ = r; green_ = g; blue_ = b; }
+//    // assignment, set RGB components
+//    Color operator=(const Color& c)
+//    {
+//        setRGB(c.r(), c.g(), c.b());
+//        return *this;
+//    }
+//    void setRGB(float r, float g, float b) { red_ = r; green_ = g; blue_ = b; }
     // Equality, inequality:
     bool operator==(const Color& c) const
     {
@@ -43,30 +43,37 @@ public:
     // Luma (relative luminance?) see https://en.wikipedia.org/wiki/Luma_(video)
     float luminance() const {return 0.2126 * r() + 0.7152 * g() + 0.0722 * b();}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO still thinking about this API and these names:
-    // TODO obsolete? -- should be once _old operators removed.
-    // Set this color to the one described by the given HSV values.
-    void setHSV(float h, float s, float v);
-    // TODO obsolete? -- should be once _old operators removed.
-    // Get the HSV values for this color. Returned by setting non-const refs.
-    void getHSV(float& h, float& s, float& v) const;
+//    // TODO still thinking about this API and these names:
+//    // TODO obsolete? -- should be once _old operators removed.
+//    // Set this color to the one described by the given HSV values.
+//    void setHSV(float h, float s, float v);
+//    // TODO obsolete? -- should be once _old operators removed.
+//    // Get the HSV values for this color. Returned by setting non-const refs.
+//    void getHSV(float& h, float& s, float& v) const;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Get the HSV values for a Color. Returned as 3-tuple of floats.
-    // TODO needed? Wrote first version of this before the HSV helper class.
-    std::tuple<float, float, float> getHSV() const;
+//    // Get the HSV values for a Color. Returned as 3-tuple of floats.
+//    // TODO needed? Wrote first version of this before the HSV helper class.
+//    std::tuple<float, float, float> getHSV() const;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO obsolete? -- should be once _old operators removed.
-    // Return a Color made from the given HSV values
-    static Color makeHSV(float h, float s, float v);
+//    // TODO obsolete? -- should be once _old operators removed.
+//    // Return a Color made from the given HSV values
+//    static Color makeHSV(float h, float s, float v);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Get H, S, or V components of this Color.
-    float getH() const;
-    float getS() const;
-    float getV() const;
+//    // Get H, S, or V components of this Color. With long and short names.
+//    float getH() const;
+//    float getS() const;
+//    float getV() const;
+//    float getH() const { return HSV(*this).h(); };
+//    float getS() const { return HSV(*this).s(); };
+//    float getV() const { return HSV(*this).v(); };
     
-    
+    // Get hue, saturation, or value component of this Color.
+    float h() const { return HSV(*this).h(); };
+    float s() const { return HSV(*this).s(); };
+    float v() const { return HSV(*this).v(); };
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
     // Inline operators: + - *
     Color operator+(Color v) const
@@ -95,10 +102,8 @@ public:
     // Length and normalize in linear RGB space.
     float length() const { return std::sqrt(sq(r()) + sq(g()) + sq(b())); }
     Color normalize() const { return *this / length(); }
-    // Get corresponding color value clipped to unit RGB cube.
-    Color clipToUnitRGB() const;
-    // Exponentiate the RGB components by given gamma value ("exponent")
-    Color gamma(float g) const;
+//    // Exponentiate the RGB components by given gamma value ("exponent")
+//    Color gamma(float g) const;
     // Test that the RGB components are "normal" (neither infinite nor NaN).
     bool isNormal() const
         { return (is_normal(r()) && is_normal(g()) && is_normal(b())); }
@@ -112,6 +117,41 @@ public:
     float r() const { return red_; }
     float g() const { return green_; }
     float b() const { return blue_; }
+    
+//    // Get corresponding color value clipped to unit RGB cube.
+//    Color clipToUnitRGB() const;
+
+    // Get corresponding color value clipped to unit RGB cube.
+    Color clipToUnitRGB() const
+    {
+        Color result = *this;
+        if (length() > 0)
+        {
+            // Individually clip each component to be greater than zero.
+            auto nn = [](float x){ return std::max(0.0f, x); };
+            result = Color(nn(r()), nn(g()), nn(b()));
+            // Clip to red=1 plane, then green and blue.
+            if (result.r() > 1) result = result / result.r();
+            if (result.g() > 1) result = result / result.g();
+            if (result.b() > 1) result = result / result.b();
+        }
+        return result;
+    }
+    
+    // Exponentiate the RGB components by given gamma value ("exponent").
+    // Also clips RGB components to be non-negative before exponentiation.
+    // If any RGB values are so large that they "overflow", returns black.
+    Color gamma(float exponent) const
+    {
+        float er = pow(std::max(r(), 0.0f), exponent);
+        float eg = pow(std::max(g(), 0.0f), exponent);
+        float eb = pow(std::max(b(), 0.0f), exponent);
+        return Color(paper_over_abnormal_values(er),
+                     paper_over_abnormal_values(eg),
+                     paper_over_abnormal_values(eb));
+    }
+
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Helper class to represent a color in hue-saturation-value space.
     class HSV
@@ -122,9 +162,9 @@ public:
         // Construct from (RGB) Color object
         HSV(Color c) { Color::convertRGBtoHSV(c.r(), c.g(), c.b(), h_, s_, v_); }
         // Accessors for H, S, and V.
-        float getH() const { return h_; }
-        float getS() const { return s_; }
-        float getV() const { return v_; }
+//        float getH() const { return h_; }
+//        float getS() const { return s_; }
+//        float getV() const { return v_; }
         float h() const { return h_; }
         float s() const { return s_; }
         float v() const { return v_; }
@@ -139,6 +179,21 @@ public:
         float s_ = 0;
         float v_ = 0;
     };
+    
+    // Construct an RGB Color from an HSV instance.
+    inline Color(HSV hsv)
+    {
+//        Color::convertHSVtoRGB(h.getH(), h.getS(), h.getV(), red_, green_, blue_);
+        Color::convertHSVtoRGB(hsv.h(), hsv.s(), hsv.v(), red_, green_, blue_);
+    }
+    
+//    // Get the HSV values for a Color. Returned as 3-tuple of floats.
+//    // TODO needed? Wrote first version of this before the HSV helper class.
+//    std::tuple<float, float, float> getHSV() const
+//    {
+//        return HSV(*this).getHSV();
+//    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     float red_;
@@ -276,27 +331,52 @@ public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//    // Is distance between RGB vectors no more than epsilon?
+//    bool withinEpsilon(Color a, Color b, float epsilon);
+
 // Is distance between RGB vectors no more than epsilon?
-bool withinEpsilon(Color a, Color b, float epsilon);
+inline bool withinEpsilon(Color a, Color b, float epsilon)
+{
+    return (a - b).length() <= epsilon;
+}
+
+
+//    // Serialize Color object to stream.
+//    std::ostream& operator<<(std::ostream& os, const Color& v);
 
 // Serialize Color object to stream.
-std::ostream& operator<<(std::ostream& os, const Color& v);
+inline std::ostream& operator<<(std::ostream& os, const Color& c)
+{
+    os << "(" << c.r() << ", " << c.g() << ", " << c.b() << ")";
+    return os;
+}
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+// RandomSequence: random color, uniformly distributed across the unit RGB cube.
+inline Color RandomSequence::randomUnitRGB()
+{
+    return Color(frandom01(), frandom01(), frandom01());
+}
+
+
+
 // Hoist the internal helper class to global scope.
 typedef Color::HSV HSV;
 
-// Construct an RGB Color from an HSV instance.
-inline Color::Color(HSV h)
-{
-    Color::convertHSVtoRGB(h.getH(), h.getS(), h.getV(), red_, green_, blue_);
-}
-
-// Get the HSV values for a Color. Returned as 3-tuple of floats.
-// TODO needed? Wrote first version of this before the HSV helper class.
-inline std::tuple<float, float, float> Color::getHSV() const
-{
-    return HSV(*this).getHSV();
-}
+//    // Construct an RGB Color from an HSV instance.
+//    inline Color::Color(HSV h)
+//    {
+//        Color::convertHSVtoRGB(h.getH(), h.getS(), h.getV(), red_, green_, blue_);
+//    }
+//
+//    // Get the HSV values for a Color. Returned as 3-tuple of floats.
+//    // TODO needed? Wrote first version of this before the HSV helper class.
+//    inline std::tuple<float, float, float> Color::getHSV() const
+//    {
+//        return HSV(*this).getHSV();
+//    }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

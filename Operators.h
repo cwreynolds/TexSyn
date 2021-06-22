@@ -467,25 +467,25 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// Maps the brightness of a sample of the given Texture to a pure hue (full
-// brightness, full saturation). The hue transform is offset by a given phase.
-class BrightnessToHue_old : public Texture
-{
-public:
-    BrightnessToHue_old (float _huePhase, const Texture& _texture)
-        : huePhase (_huePhase), texture (_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        float luminance = texture.getColor(position).luminance();
-        float red, green, blue;
-        Color::convertHSVtoRGB(luminance + huePhase, 1.0f, 1.0f,
-                               red, green, blue);
-        return Color(red, green, blue);
-    }
-private:
-    const float huePhase;
-    const Texture& texture;
-};
+//    // Maps the brightness of a sample of the given Texture to a pure hue (full
+//    // brightness, full saturation). The hue transform is offset by a given phase.
+//    class BrightnessToHue_old : public Texture
+//    {
+//    public:
+//        BrightnessToHue_old (float _huePhase, const Texture& _texture)
+//            : huePhase (_huePhase), texture (_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            float luminance = texture.getColor(position).luminance();
+//            float red, green, blue;
+//            Color::convertHSVtoRGB(luminance + huePhase, 1.0f, 1.0f,
+//                                   red, green, blue);
+//            return Color(red, green, blue);
+//        }
+//    private:
+//        const float huePhase;
+//        const Texture& texture;
+//    };
 
 // Maps the brightness of a sample of the given Texture to a pure hue (full
 // brightness, full saturation). The hue transform is offset by a given phase.
@@ -876,33 +876,33 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// Given two intensity thresholds and an input texture, remap the texture colors
-// between those thresholds to "full intensity range". Converts the texture to
-// hue-saturation-value color space. Areas darker than the lower threshold get
-// value=0, areas brighter than the upper threshold get value=1, areas between
-// the two thresholds are mapped to values on [0, 1]. The hue and saturation
-// components remain unchanged.
-class SoftThreshold_old : public Texture
-{
-public:
-    SoftThreshold_old (float _intensity0, float _intensity1, const Texture& _texture)
-      : intensity0(std::min(_intensity0, _intensity1)),
-        intensity1(std::max(_intensity0, _intensity1)),
-        texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color color = texture.getColor(position);
-        float hue, saturation, value;
-        color.getHSV(hue, saturation, value);
-        float new_v = remapIntervalClip(value, intensity0, intensity1, 0, 1);
-        color.setHSV(hue, saturation, new_v);
-        return color;
-    }
-private:
-    const float intensity0;
-    const float intensity1;
-    const Texture& texture;
-};
+//    // Given two intensity thresholds and an input texture, remap the texture colors
+//    // between those thresholds to "full intensity range". Converts the texture to
+//    // hue-saturation-value color space. Areas darker than the lower threshold get
+//    // value=0, areas brighter than the upper threshold get value=1, areas between
+//    // the two thresholds are mapped to values on [0, 1]. The hue and saturation
+//    // components remain unchanged.
+//    class SoftThreshold_old : public Texture
+//    {
+//    public:
+//        SoftThreshold_old (float _intensity0, float _intensity1, const Texture& _texture)
+//          : intensity0(std::min(_intensity0, _intensity1)),
+//            intensity1(std::max(_intensity0, _intensity1)),
+//            texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color = texture.getColor(position);
+//            float hue, saturation, value;
+//            color.getHSV(hue, saturation, value);
+//            float new_v = remapIntervalClip(value, intensity0, intensity1, 0, 1);
+//            color.setHSV(hue, saturation, new_v);
+//            return color;
+//        }
+//    private:
+//        const float intensity0;
+//        const float intensity1;
+//        const Texture& texture;
+//    };
 
 // Given two intensity thresholds and an input texture, remap the texture colors
 // between those thresholds to "full intensity range". Converts the texture to
@@ -997,27 +997,27 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
-// H+offset is taken "f-modulo 1.0". Only the fractional part of offset is
-// meaningful.
-class AdjustHue_old : public Texture
-{
-public:
-    AdjustHue_old(float _offset, const Texture& _texture)
-      : offset(_offset),
-        texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color color = texture.getColor(position);
-        float hue, saturation, value;
-        color.getHSV(hue, saturation, value);
-        color.setHSV(std::fmod(hue + offset, 1), saturation, value);
-        return color;
-    }
-private:
-    const float offset;
-    const Texture& texture;
-};
+//    // In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
+//    // H+offset is taken "f-modulo 1.0". Only the fractional part of offset is
+//    // meaningful.
+//    class AdjustHue_old : public Texture
+//    {
+//    public:
+//        AdjustHue_old(float _offset, const Texture& _texture)
+//          : offset(_offset),
+//            texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color = texture.getColor(position);
+//            float hue, saturation, value;
+//            color.getHSV(hue, saturation, value);
+//            color.setHSV(std::fmod(hue + offset, 1), saturation, value);
+//            return color;
+//        }
+//    private:
+//        const float offset;
+//        const Texture& texture;
+//    };
 
 // In HSV space, rotates the hue by the given "offset". "H" is on [0, 1] so
 // H+offset is taken "f-modulo 1.0". Only the fractional part of offset is
@@ -1054,25 +1054,25 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// Adjust saturation: in HSV space, scale (and clip) saturation.
-class AdjustSaturation_old : public Texture
-{
-public:
-    AdjustSaturation_old (float _factor, const Texture& _texture)
-      : factor(_factor),
-        texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color color = texture.getColor(position);
-        float hue, saturation, value;
-        color.getHSV(hue, saturation, value);
-        color.setHSV(hue, clip(saturation * factor, 0, 1), value);
-        return color;
-    }
-private:
-    const float factor;
-    const Texture& texture;
-};
+//    // Adjust saturation: in HSV space, scale (and clip) saturation.
+//    class AdjustSaturation_old : public Texture
+//    {
+//    public:
+//        AdjustSaturation_old (float _factor, const Texture& _texture)
+//          : factor(_factor),
+//            texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color = texture.getColor(position);
+//            float hue, saturation, value;
+//            color.getHSV(hue, saturation, value);
+//            color.setHSV(hue, clip(saturation * factor, 0, 1), value);
+//            return color;
+//        }
+//    private:
+//        const float factor;
+//        const Texture& texture;
+//    };
 
 // Adjust saturation: in HSV space, scale (and clip) saturation.
 class AdjustSaturation : public Texture
@@ -1157,44 +1157,44 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
-// and an input texture. The brightness of the input texture is “wrapped around”
-// in the sense of modulus (fmod) the brightness interval between the two
-// thresholds. Then that brightness interval is adjusted to cover the interval
-// between black and white. (That adjustment to full range had not been done in
-// the previous version of this library. I now think it makes more sense. But I
-// need to think about it some more.) These operations on brightness happen in
-// hue-saturation-value color space, so only brightness (value) is changed. The
-// hue and saturation remain unchanged.
-class BrightnessWrap_old : public Texture
-{
-public:
-    BrightnessWrap_old(float _intensity0, float _intensity1, const Texture& _texture)
-      : intensity0(std::min(_intensity0, _intensity1)),
-        intensity1(std::max(_intensity0, _intensity1)),
-        texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color color = texture.getColor(position);
-        float hue, saturation, value;
-        color.getHSV(hue, saturation, value);
-        float new_v = value;
-        float interval = intensity1 - intensity0;
-        if (interval > 0)
-        {
-            float between = fmod_floor(value - intensity0, interval);
-            new_v = remapIntervalClip(between + intensity0,
-                                      intensity0, intensity1,
-                                      0, 1);
-        }
-        color.setHSV(hue, saturation, new_v);
-        return color;
-    }
-private:
-    const float intensity0;
-    const float intensity1;
-    const Texture& texture;
-};
+//    // BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
+//    // and an input texture. The brightness of the input texture is “wrapped around”
+//    // in the sense of modulus (fmod) the brightness interval between the two
+//    // thresholds. Then that brightness interval is adjusted to cover the interval
+//    // between black and white. (That adjustment to full range had not been done in
+//    // the previous version of this library. I now think it makes more sense. But I
+//    // need to think about it some more.) These operations on brightness happen in
+//    // hue-saturation-value color space, so only brightness (value) is changed. The
+//    // hue and saturation remain unchanged.
+//    class BrightnessWrap_old : public Texture
+//    {
+//    public:
+//        BrightnessWrap_old(float _intensity0, float _intensity1, const Texture& _texture)
+//          : intensity0(std::min(_intensity0, _intensity1)),
+//            intensity1(std::max(_intensity0, _intensity1)),
+//            texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color color = texture.getColor(position);
+//            float hue, saturation, value;
+//            color.getHSV(hue, saturation, value);
+//            float new_v = value;
+//            float interval = intensity1 - intensity0;
+//            if (interval > 0)
+//            {
+//                float between = fmod_floor(value - intensity0, interval);
+//                new_v = remapIntervalClip(between + intensity0,
+//                                          intensity0, intensity1,
+//                                          0, 1);
+//            }
+//            color.setHSV(hue, saturation, new_v);
+//            return color;
+//        }
+//    private:
+//        const float intensity0;
+//        const float intensity1;
+//        const Texture& texture;
+//    };
 
 // BrightnessWrap, analogous to SoftThreshold, takes two brightness thresholds
 // and an input texture. The brightness of the input texture is “wrapped around”
@@ -1750,28 +1750,28 @@ private:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO "_old" version just for diff-testing to verify no change.
 
-// For each point in the input texture, HueOnly keeps only the hue information
-// from its input texture. It replaces the other two HSV components, saturation
-// and value, with constant values given as parameters to HueOnly.
-class HueOnly_old : public Texture
-{
-public:
-    HueOnly_old(float _saturation, float _value, const Texture& _texture)
-      : saturation(_saturation), value(_value), texture(_texture) {}
-    Color getColor(Vec2 position) const override
-    {
-        Color input = texture.getColor(position);
-        Color clipped = input.clipToUnitRGB();
-        float h, s, v;
-        Color::convertRGBtoHSV(clipped.r(), clipped.g(), clipped.b(), h, s, v);
-        return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
-    }
-private:
-    const float min_sat = 0.000001;
-    const float saturation;
-    const float value;
-    const Texture& texture;
-};
+//    // For each point in the input texture, HueOnly keeps only the hue information
+//    // from its input texture. It replaces the other two HSV components, saturation
+//    // and value, with constant values given as parameters to HueOnly.
+//    class HueOnly_old : public Texture
+//    {
+//    public:
+//        HueOnly_old(float _saturation, float _value, const Texture& _texture)
+//          : saturation(_saturation), value(_value), texture(_texture) {}
+//        Color getColor(Vec2 position) const override
+//        {
+//            Color input = texture.getColor(position);
+//            Color clipped = input.clipToUnitRGB();
+//            float h, s, v;
+//            Color::convertRGBtoHSV(clipped.r(), clipped.g(), clipped.b(), h, s, v);
+//            return (s < min_sat ? input : Color::makeHSV(h, saturation, value));
+//        }
+//    private:
+//        const float min_sat = 0.000001;
+//        const float saturation;
+//        const float value;
+//        const Texture& texture;
+//    };
 
 // For each point in the input texture, HueOnly keeps only the hue information
 // from its input texture. It replaces the other two HSV components, saturation

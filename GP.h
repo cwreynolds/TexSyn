@@ -507,7 +507,10 @@ public:
         float relative_distance_from_midrange = std::abs((brightness - 0.5) * 2);
         float closeness_to_midrange = remapIntervalClip(relative_distance_from_midrange,
                                                         0.8, 1, 1, 0);
-        float average_saturation = average.getS();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        float average_saturation = average.getS();
+        float average_saturation = HSV(average).s();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         float enough_saturation = remapIntervalClip(average_saturation,
                                                     0, 0.4, 0.5, 1);
         std::cout << std::endl;
@@ -560,7 +563,8 @@ public:
             // TODO June 19, 2021 -- use updated api, not actually tested.
             // float hue, saturation, value;
             // color.getHSV(hue, saturation, value);
-            auto [hue, saturation, value] = color.getHSV();
+//            auto [hue, saturation, value] = color.getHSV();
+            auto [hue, saturation, value] = HSV(color).getHSV();
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Increment hue bucket (unless dark or desaturated colors).
             if ((saturation > min_saturation) && (value > min_brightness))
