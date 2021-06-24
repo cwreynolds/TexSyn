@@ -20,24 +20,19 @@ void Texture::diff(const Texture& t0,
                    int size,
                    bool binary)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     AbsDiff abs_diff(t0, t1);
     int pixel_count = 0;
-//    Color total_color(0, 0, 0);
     Color total_color_diff(0, 0, 0);
     int mismatch_count = 0;
     Texture::rasterizeDisk(size,
                            [&](int i, int j, Vec2 position)
                            {
                                Color diff = abs_diff.getColor(position);
-//                               total_color += diff;
                                total_color_diff += diff;
                                pixel_count++;
                                if (diff != Color()) mismatch_count++;
                            });
     debugPrint(pixel_count);
-//    debugPrint(total_color);
-//    debugPrint(total_color / pixel_count);
     debugPrint(total_color_diff);
     debugPrint(total_color_diff / pixel_count);
     debugPrint(mismatch_count);
@@ -46,7 +41,6 @@ void Texture::diff(const Texture& t0,
                               (Texture*)(&not_equal) :
                               (Texture*)(&abs_diff));
     Texture::displayAndFile3(t0, t1, *compare, pathname, size);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This

@@ -159,53 +159,23 @@ bool color_hsv()
     float e = 0.000001;
     auto from_rgb_to_hsv_to_rgb = [&](float r, float g, float b)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        float h1, s1, v1;
-//        float r1, g1, b1;
-//        Color::convertRGBtoHSV(r, g, b, h1, s1, v1);
-//        Color::convertHSVtoRGB(h1, s1, v1, r1, g1, b1);
-//        return (withinEpsilon(r, r1, e) &&
-//                withinEpsilon(g, g1, e) &&
-//                withinEpsilon(b, b1, e));
-        
         Color c0(r, g, b);
         HSV hsv(c0);
         Color c1(hsv);
         return (withinEpsilon(r, c1.r(), e) &&
                 withinEpsilon(g, c1.g(), e) &&
                 withinEpsilon(b, c1.b(), e));
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     Color c0(1.0, 0.5, 0.0);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    Color c1 = Color::makeHSV(c0.getH(), c0.getS(), c0.getV());
-//    Color c1(HSV(c0.getH(), c0.getS(), c0.getV()));
     Color c1(HSV(c0.h(), c0.s(), c0.v()));
-
-//    float h0, s0, v0;
-//    float r0, g0, b0;
-//    Color::convertHSVtoRGB(0, 0, 0, r0, g0, b0);
-//    Color::convertRGBtoHSV(r0, g0, b0, h0, s0, v0);
-    
     HSV hsv0(0, 0, 0);
     Color rgb0(hsv0);
-//    auto [h0, s0, v0] = rgb0.getHSV();
-    
     // To verify HSV→RGB stays constant despite any future code refactoring.
     HSV hsv357(0.3, 0.5, 0.7);
     Color rgb357(hsv357);
     float r357 = 0.42;
     float g357 = 0.70;
     float b357 = 0.35;
-
-
-//    debugPrint(rgb05.r());
-//    debugPrint(rgb05.g());
-//    debugPrint(rgb05.b());
-//    debugPrint(rgb05.h());
-//    debugPrint(rgb05.s());
-//    debugPrint(rgb05.v());
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     bool randoms_ok = true;
     RandomSequence rs(38284732);
     for (int i = 0; i < 10000; i++)
@@ -220,26 +190,12 @@ bool color_hsv()
             st(withinEpsilon(c0.r(), c1.r(), e)) &&
             st(withinEpsilon(c0.g(), c1.g(), e)) &&
             st(withinEpsilon(c0.b(), c1.b(), e)) &&
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            st(withinEpsilon(h0, 0, e)) &&
-//            st(withinEpsilon(s0, 0, e)) &&
-//            st(withinEpsilon(v0, 0, e)) &&
-//            st(withinEpsilon(rgb0.getH(), 0, e)) &&
-//            st(withinEpsilon(rgb0.getS(), 0, e)) &&
-//            st(withinEpsilon(rgb0.getV(), 0, e)) &&
             st(withinEpsilon(rgb0.h(), 0, e)) &&
             st(withinEpsilon(rgb0.s(), 0, e)) &&
             st(withinEpsilon(rgb0.v(), 0, e)) &&
-            
-//            st(withinEpsilon(rgb357.r(), 0.42, e)) &&
-//            st(withinEpsilon(rgb357.g(), 0.70, e)) &&
-//            st(withinEpsilon(rgb357.b(), 0.35, e)) &&
-
             st(withinEpsilon(rgb357.r(), r357, e)) &&
             st(withinEpsilon(rgb357.g(), g357, e)) &&
             st(withinEpsilon(rgb357.b(), b357, e)) &&
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             st(randoms_ok));
 }
 
