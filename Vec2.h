@@ -44,33 +44,50 @@ public:
     // 90° (π/2) rotation
     Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
     Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
-    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-    // TODO--these "Old" versions are deprecated. Use TwoPointTransform instead.
-    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-    // "Localize" this Vec2 into a local space defined by x and y basis vectors.
-    Vec2 localizeOld(Vec2 bx, Vec2 by) const {return Vec2(dot(bx), dot(by));}
-    // "Globalize" this Vec2 from local space defined by x and y basis vectors.
-    Vec2 globalizeOld(Vec2 bx, Vec2 by) const {return (bx * x()) + (by * y());}
-    //-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
     // Compute a 32 bit hash value for a Vec2.
     size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
     // Angle of this vector with +Y axis.
     float atan2() const { return std::atan2(x(), y()); }
-    // Generate a random point inside a unit diameter disk centered on origin.
-    static Vec2 randomPointInUnitDiameterCircle();
-    // Generate a random unit vector.
-    static Vec2 randomUnitVector();
 private:
     float x_ = 0;
     float y_ = 0;
 };
 
+// Generate a random point inside a unit diameter disk centered on origin.
+inline Vec2 RandomSequence::randomPointInUnitDiameterCircle()
+{
+    Vec2 v;
+    float h = 0.5;
+    do { v = {frandom01() - h, frandom01() - h}; } while (v.length() > h);
+    return v;
+}
+
+// Generate a random unit vector.
+inline Vec2 RandomSequence::randomUnitVector()
+{
+    Vec2 v;
+    do { v = randomPointInUnitDiameterCircle(); } while (v.length() == 0);
+    return v.normalize();
+}
+
+inline Vec2 RandomSequence::randomPointInAxisAlignedRectangle(Vec2 a, Vec2 b)
+{
+    return Vec2(random2(std::min(a.x(), b.x()), std::max(a.x(), b.x())),
+                random2(std::min(a.y(), b.y()), std::max(a.y(), b.y())));
+}
+
 // Is distance between vectors no more than epsilon?
-bool withinEpsilon(Vec2 a, Vec2 b, float epsilon);
+inline bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
+{
+    return (a - b).length() <= epsilon;
+}
 
 // Serialize Vec2 object to stream.
-std::ostream& operator<<(std::ostream& os, const Vec2& v);
-
+inline std::ostream& operator<<(std::ostream& os, const Vec2& v)
+{
+    os << "(" << v.x() << ", " << v.y() << ")";
+    return os;
+}
 
 // TODO should this be in this header file?
 // TODO should it even exist?
@@ -102,19 +119,6 @@ public:
     bool operator==(const Vec3 v) const
         { return x() == v.x() && y() == v.y() && z() == v.z(); }
     bool operator<(const Vec3 v) const {return length() < v.length();}
-//    // Rotation about origin by angle in radians (or by precomputed sin/cos).
-//    Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
-//    inline Vec2 rotate(float sin, float cos) const
-//        { return Vec2(x() * cos + y() * sin, y() * cos - x() * sin); }
-//    // 90° (π/2) rotation
-//    Vec2 rotate90degCW() const { return Vec2(y(), -x()); }
-//    Vec2 rotate90degCCW() const { return Vec2(-y(), x()); }
-//    // Compute a 32 bit hash value for a Vec2.
-//    size_t hash() { return hash_mashup(hash_float(x_), hash_float(y_)); }
-//    // Generate a random point inside a unit diameter disk centered on origin.
-//    static Vec2 randomPointInUnitDiameterCircle();
-//    // Generate a random unit vector.
-//    static Vec2 randomUnitVector();
     // Cross product of this Vec3 and another given Vec3.
     Vec3 cross(Vec3 o) const { return {y() * o.z() - z() * o.y(),
                                        z() * o.x() - x() * o.z(),
@@ -126,7 +130,14 @@ private:
 };
 
 // Is distance between vectors no more than epsilon?
-bool withinEpsilon(Vec3 a, Vec3 b, float epsilon);
+inline bool withinEpsilon(Vec3 a, Vec3 b, float epsilon)
+{
+    return (a - b).length() <= epsilon;
+}
 
-// Serialize Vec2 object to stream.
-std::ostream& operator<<(std::ostream& os, const Vec3& v);
+// Serialize Vec3 object to stream.
+inline std::ostream& operator<<(std::ostream& os, const Vec3& v)
+{
+    os << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+    return os;
+}
