@@ -190,11 +190,11 @@ public:
             // Display step count in GUI title bar.
             std::string step_string = " (step " + getStepAsString() + ")";
             gui().setWindowTitle(run_name_ + step_string);
+            logFunctionUsageCounts(out);
             // Evolution step with wrapped Camouflage::tournamentFunction().
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
-            logFunctionUsageCounts(out);
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -203,7 +203,7 @@ public:
     void logFunctionUsageCounts(const std::filesystem::path& out)
     {
         int step = getPopulation()->getStepCount();
-        if ((step % 10) == 1)
+        if ((step % 10) == 0)
         {
             // Preserve each named counter, but set its count to zero.
             cfu_.zeroEachCounter();
@@ -212,18 +212,20 @@ public:
             // Open output stream to file in append mode.
             std::ofstream outfile;
             outfile.open(out / "function_counts.txt", std::ios::app);
-            if (step == 1)
+            if (step == 0)
             {
-                std::string names;
+                std::string names = "steps,ave_tree_size,ave_fitness,";
                 auto func = [&](std::string s, int c) { names += s + ","; };
                 cfu_.applyToAllCounts(func);
                 std::cout << names << std::endl;
                 outfile << names << std::endl;
             }
             std::string counts;
-            auto func = [&](std::string s, int c)
-            { counts += std::to_string(c) + ","; };
-            cfu_.applyToAllCounts(func);
+            auto add_count = [&](int c){ counts += std::to_string(c) + ","; };
+            add_count(step);
+            add_count(getPopulation()->averageTreeSize());
+            add_count(getPopulation()->averageFitness());
+            cfu_.applyToAllCounts([&](std::string s, int c){ add_count(c); });
             std::cout << counts << std::endl;
             outfile << counts << std::endl;
         }

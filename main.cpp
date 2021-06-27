@@ -5773,6 +5773,12 @@ int main(int argc, const char * argv[])
 //    }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing revised CountFunctionUsage inside Camouflage
+    std::cout << "June 27, 2021" << std::endl;
+    Camouflage(CommandLine(argc, argv)).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
     Texture::leakCheck();
