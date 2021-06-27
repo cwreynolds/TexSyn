@@ -261,7 +261,6 @@ public:
                 "Row", "Texture", {"Vec2", "Vec2", "Texture"},
                 evalTexture(Row(argVec2(), argVec2(), argTexture()))
             },
-            //{"Shader", "Texture", {}},
             {
                 "LotsOfSpots",
                 "Texture",

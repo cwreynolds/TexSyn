@@ -694,7 +694,7 @@ void UnitTests::instantiateAllTextureTypes()
     do_thumbnail(Mirror(p3, p2, t1));
     do_thumbnail(Ring(9, p3, p1, t1));
     do_thumbnail(Row(Vec2(0.1, 0.1), p1, t1));
-    do_thumbnail(Shader(Vec3(1, 1, 1), 0.2, t1, t3));
+    //do_thumbnail(Shader(Vec3(1, 1, 1), 0.2, t1, t3)); removed June 26, 2021
     do_thumbnail(LotsOfSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
     do_thumbnail(ColoredSpots(0.8, 0.1, 0.4, 0.05, 0.01, t1, t2));
     do_thumbnail(LotsOfButtons(0.8, 0.1, 0.4, 0.05, 0.01, p1, t1, 1, t2));
