@@ -9,8 +9,8 @@
 #include "TexSyn.h"
 #include "GP.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20210120 add Camouflage.h module
-#include "Camouflage.h"
+// TODO 20210120 add EvoCamoGame.h module
+#include "EvoCamoGame.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
@@ -5774,9 +5774,9 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing revised CountFunctionUsage inside Camouflage
+    // Testing revised CountFunctionUsage inside EvoCamoGame
     std::cout << "June 27, 2021" << std::endl;
-    Camouflage(CommandLine(argc, argv)).run();
+    EvoCamoGame(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -145,7 +145,7 @@
         should admit that I lean toward “header only” c++ libraries.
         Many c++ designers would disagree, but I think the modest
         increase in compilation time is worth the <i>much</i> easier
-        distribution and usage of header-only libraries.</p>
+        distribution, installation, and usage of header-only libraries.</p>
       <p>One of the not-unused files was <code>Color.cpp</code>. I have
         been refactoring and making lots of little edits to clean up the
         <code>Color</code> class and to move its entire definition to <code>Color.h</code>.
@@ -158,12 +158,12 @@
           SIGGRAPH paper</a>. HSV is a simple color model, but is
         sufficient for TexSyn since convenient parameterization is not
         needed for evolutionary optimization.</p>
-      <p>I left many notes in the code about awkward color API and
-        especially the RGB⇄HSV conversion functions. I made a new class
-        inside <code>Color</code> called <code>HSV</code> to contain
-        and modularize the datatype and conversions. The <code>HSV</code>
+      <p>I had left many “to do” notes in the code about awkward color
+        API and especially the RGB⇄HSV conversion functions. I made a
+        new class inside <code>Color</code> called <code>HSV</code> to
+        contain and modularize the datatype and conversions. The <code>HSV</code>
         class is also exported to global scope so it can be used in
-        other code, especially the texture operators. One of the key
+        other code, particularly the texture operators. One of the key
         improvement is that both <code>Color</code> and <code>HSV</code>
         have constructors that take the other type as a parameter: <code>Color(hsv)</code>
         and <code>HSV(color)</code>. This allowed a fair amount of
@@ -172,7 +172,7 @@
       <p>I added more <code>UnitTests</code> to ensure the conversions
         returned identical results against explicit constants written in
         the tests. (This is in addition to previous “round trip”
-        conversion tests: RGB→HSV→RGB) I verified that the texture
+        conversion tests: RGB→HSV→RGB.) I verified that the texture
         operators returned the exact same result down to floating point
         accuracy. I do this by duplicating the old operator and renaming
         it, making changes to the other version, then comparing them

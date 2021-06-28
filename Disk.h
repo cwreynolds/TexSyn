@@ -32,7 +32,7 @@ public:
     Vec2 future_position;
     float angle = 0;
     float wavelength = 0; // TODO experimental for Gabor noise kernels. Needed?
-    // Lightweight utility used by Camouflage.
+    // Lightweight utility used by EvoCamoGame.
     // TODO viz_func used only for debugging, can be removed eventually.
     static std::vector<Disk>
         randomNonOverlappingDisksInRectangle(int count,
@@ -309,7 +309,7 @@ private:
 // Lightweight utility to randomly place "count" non-overlapping Disks, with
 // radii in the given range, inside an axis-aligned rectangle defined by two
 // diagonally opposite corners. Result returned by value (copied) in an
-// std::vector<Disk>. This is used by the Camouflage module for placing three
+// std::vector<Disk>. This is used by the EvoCamoGame module for placing three
 // Textures on a background. I initially tried using DiskOccupancyGrid, but it
 // (currently) requires a square (versus rectangular) grid, and appeared to not
 // adjust such a small number of Disks in its "industrial strength" multi-

@@ -1,5 +1,5 @@
 //
-//  Camouflage.h
+//  EvoCamoGame.h
 //  TexSyn
 //
 //  Created by Craig Reynolds on 1/20/21.
@@ -7,11 +7,14 @@
 //
 //------------------------------------------------------------------------------
 //
-// Early protoyping of an "Interactive Evolution of Camouflage" implementation
-// on top of TexSyn and LazyPredator. Slightly updated version of the approach
-// used in:
-//         Craig Reynolds. 2011. Interactive Evolution of Camouflage.
-//         Artificial Life 17(2). https://doi.org/10.1162/artl_a_00023
+// "Interactive Evolution of Camouflage" implemented on top of TexSyn and
+// LazyPredator. Slightly updated version of the approach used in:
+//
+//     Craig Reynolds. 2011. Interactive Evolution of Camouflage.
+//     Artificial Life 17(2). https://doi.org/10.1162/artl_a_00023
+//
+// This class is the top level "main()" for unix-style command evo_camo_game.
+// See doc: https://cwreynolds.github.io/TexSyn/evo_camo_game_doc.html
 //
 // Prototyping inside TexSyn, maybe should be its own library/git repository.
 //
@@ -20,11 +23,11 @@
 #pragma once
 #include "GP.h"
 
-class Camouflage
+class EvoCamoGame
 {
 public:
     // Constructor to get parameters from pre-parsed "unix style" command line.
-    Camouflage(const CommandLine& cmd)
+    EvoCamoGame(const CommandLine& cmd)
       : run_name_(runNameDefault(cmd)),
         background_image_directory_(cmd.positionalArgument(1)),
         output_directory_(cmd.positionalArgument(2, ".")),
@@ -191,7 +194,7 @@ public:
             std::string step_string = " (step " + getStepAsString() + ")";
             gui().setWindowTitle(run_name_ + step_string);
             logFunctionUsageCounts(out);
-            // Evolution step with wrapped Camouflage::tournamentFunction().
+            // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
@@ -360,8 +363,8 @@ public:
         auto mouse_callback =
         [](int event, int x, int y, int flags, void* userdata)
         {
-            // Cast void* to Camouflage*
-            auto c = static_cast<Camouflage*>(userdata);
+            // Cast void* to EvoCamoGame*
+            auto c = static_cast<EvoCamoGame*>(userdata);
             if (event == cv::EVENT_LBUTTONDOWN)  // Left button down.
             {
                 c->mouse_left_button_down_ = true;
