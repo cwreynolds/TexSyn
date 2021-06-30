@@ -512,6 +512,11 @@ public:
     // A subdirectory under output_directory_ for results from this run.
     std::string runOutputDirectory()
     {
+        if (!std::filesystem::exists(output_directory_))
+        {
+            debugPrint(output_directory_);
+            assert(!"output_directory_ does not exist.");
+        }
         std::filesystem::path run_output_dir = output_directory_;
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
