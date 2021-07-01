@@ -561,6 +561,130 @@ bool two_point_transform()
             true);
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// UnitTests::historical_repeatability()
+
+bool historical_repeatability()
+{
+    // Compares examples of texture synthesis against results as recorded in the
+    // past. Both the texture parameters and the expected results are defined as
+    // explicit constants written in the text of this function. These "random"
+    // parameters were generated when this code was written (June 30, 2021) then
+    // "frozen" here in the source code.
+
+    
+    std::cout << std::setprecision(10);
+
+//    RandomSequence rs(20210630);
+//    for (int i = 0; i < 100; i++) { debugPrint(rs.frandom2(-1, 1)); }
+  
+    // Define several Textures with explicit "random" parameters generated when this code was first written (June 30, 2021).
+    Uniform u0(0.8686343431, 0.2239086926, 0.7377831936);
+    Uniform u1(0.5449340343, 0.005908608437, 0.2543686628);
+    Spot spot(Vec2(-0.4416549206, 0.1260408163),
+              0.0797257662, u0,
+              0.911247015, u1);
+//    debugPrint(spot.getColor(Vec2(0.2395892143, 0.1171535254)));
+//    debugPrint(spot.getColor(Vec2(-0.6330274343, 0.2614986897)));
+//    debugPrint(Color(0.6022657752, 0.04451937601, 0.3399879336) ==
+//               spot.getColor(Vec2(0.2395892143, 0.1171535254)));
+//    debugPrint(Color(0.841755271, 0.2058066577, 0.6976419687) ==
+//               spot.getColor(Vec2(-0.6330274343, 0.2614986897)));
+
+    return ((Color(0.6022657752, 0.04451937601, 0.3399879336) ==
+             spot.getColor(Vec2(0.2395892143, 0.1171535254))) &&
+            (Color(0.841755271, 0.2058066577, 0.6976419687) ==
+             spot.getColor(Vec2(-0.6330274343, 0.2614986897))) &&
+            
+            true);
+}
+
+// TODO delete the line when a value is used
+//    rs.frandom2(-1, 1) =
+//    rs.frandom2(-1, 1) = 0.7678107023
+//    rs.frandom2(-1, 1) = -0.2746477127
+//    rs.frandom2(-1, 1) = 0.2924243212
+//    rs.frandom2(-1, 1) = 0.05435335636
+//    rs.frandom2(-1, 1) = -0.5724586248
+//    rs.frandom2(-1, 1) = -0.3242354095
+//    rs.frandom2(-1, 1) = 0.6619846821
+//    rs.frandom2(-1, 1) = 0.2949028015
+//    rs.frandom2(-1, 1) = -0.1719167233
+//    rs.frandom2(-1, 1) = -0.1265464127
+//    rs.frandom2(-1, 1) = 0.9245779514
+//    rs.frandom2(-1, 1) = -0.8357018232
+//    rs.frandom2(-1, 1) = -0.5602289438
+//    rs.frandom2(-1, 1) = 0.2860560417
+//    rs.frandom2(-1, 1) = 0.1054600477
+//    rs.frandom2(-1, 1) = -0.2161291838
+//    rs.frandom2(-1, 1) = 0.7117806673
+//    rs.frandom2(-1, 1) = 0.4140429497
+//    rs.frandom2(-1, 1) = 0.2454477549
+//    rs.frandom2(-1, 1) = -0.04747274518
+//    rs.frandom2(-1, 1) = 0.346986413
+//    rs.frandom2(-1, 1) = 0.8262480497
+//    rs.frandom2(-1, 1) = 0.2121658325
+//    rs.frandom2(-1, 1) = -0.504404664
+//    rs.frandom2(-1, 1) = 0.3300013542
+//    rs.frandom2(-1, 1) = -0.6426059008
+//    rs.frandom2(-1, 1) = 0.5607165098
+//    rs.frandom2(-1, 1) = -0.5224040747
+//    rs.frandom2(-1, 1) = -0.5747214556
+//    rs.frandom2(-1, 1) = -0.2104547024
+//    rs.frandom2(-1, 1) = -0.9817326069
+//    rs.frandom2(-1, 1) = 0.302899003
+//    rs.frandom2(-1, 1) = 0.9230870008
+//    rs.frandom2(-1, 1) = 0.7614964247
+//    rs.frandom2(-1, 1) = 0.8259993792
+//    rs.frandom2(-1, 1) = 0.6284635067
+//    rs.frandom2(-1, 1) = 0.6388305426
+//    rs.frandom2(-1, 1) = -0.173497647
+//    rs.frandom2(-1, 1) = -0.4712820053
+//    rs.frandom2(-1, 1) = 0.923666358
+//    rs.frandom2(-1, 1) = -0.9921836853
+//    rs.frandom2(-1, 1) = -0.4396476746
+//    rs.frandom2(-1, 1) = 0.7051044703
+//    rs.frandom2(-1, 1) = 0.6093792915
+//    rs.frandom2(-1, 1) = 0.9182937145
+//    rs.frandom2(-1, 1) = -0.4984157085
+//    rs.frandom2(-1, 1) = 0.4057685137
+//    rs.frandom2(-1, 1) = -0.2006633282
+//    rs.frandom2(-1, 1) = 0.2991274595
+//    rs.frandom2(-1, 1) = 0.9421851635
+//    rs.frandom2(-1, 1) = -0.4614847898
+//    rs.frandom2(-1, 1) = 0.5657014847
+//    rs.frandom2(-1, 1) = 0.3124452829
+//    rs.frandom2(-1, 1) = -0.8535425663
+//    rs.frandom2(-1, 1) = -0.4167144001
+//    rs.frandom2(-1, 1) = 0.1624032259
+//    rs.frandom2(-1, 1) = -0.1113289595
+//    rs.frandom2(-1, 1) = 0.1847355366
+//    rs.frandom2(-1, 1) = 0.7931426764
+//    rs.frandom2(-1, 1) = -0.5422990322
+//    rs.frandom2(-1, 1) = 0.8335375786
+//    rs.frandom2(-1, 1) = 0.2869693041
+//    rs.frandom2(-1, 1) = 0.8449108601
+//    rs.frandom2(-1, 1) = 0.255713582
+//    rs.frandom2(-1, 1) = 0.3897166252
+//    rs.frandom2(-1, 1) = 0.7431169748
+//    rs.frandom2(-1, 1) = 0.3668079376
+//    rs.frandom2(-1, 1) = -0.8123552799
+//    rs.frandom2(-1, 1) = -0.8991818428
+//    rs.frandom2(-1, 1) = 0.8706834316
+//    rs.frandom2(-1, 1) = 0.3005578518
+//    rs.frandom2(-1, 1) = 0.8164204359
+//    rs.frandom2(-1, 1) = -0.01536440849
+//    rs.frandom2(-1, 1) = -0.3587433994
+//    rs.frandom2(-1, 1) = 0.5657746792
+//    rs.frandom2(-1, 1) = -0.6507018805
+//    rs.frandom2(-1, 1) = -0.6697191
+//    rs.frandom2(-1, 1) = 0.5572718382
+//    rs.frandom2(-1, 1) = -0.2410043478
+//    rs.frandom2(-1, 1) = 0.8931615353
+//    rs.frandom2(-1, 1) = -0.200280875
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // Used only in UnitTests::allTestsOK()
 #define logAndTally(e)                           \
 {                                                \
@@ -606,7 +730,9 @@ bool UnitTests::allTestsOK(int verbosity)
     logAndTally(operators_minimal_test);
     logAndTally(noise_ranges);
     logAndTally(interpolate_float_rounding);
-    logAndTally(two_point_transform);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    logAndTally(historical_repeatability);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (verbosity == 2) { std::cout << std::endl; }
     if (!all_tests_passed || (verbosity > 0))
     {
