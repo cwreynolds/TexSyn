@@ -119,8 +119,8 @@
       <p>Yesterday an idea popped into my head. I have been a fan of
         “test driven development” since I first encountered it in a job
         about six years ago. Developing a test suite in parallel with
-        your application code allows you to: verify it works correctly
-        initially and to verify it is still operating correctly after
+        your application code allows you to verify it works correctly
+        initially, and to verify it is still operating correctly after
         subsequent changes. It also helps to procedurally generate large
         numbers of test cases, more than you would try by hand. When
         bugs are found, they often become new test cases, to make sure
@@ -142,17 +142,18 @@
         but better now than later. Certainly there have been intentional
         changes, such as a major rework (on <a href="#20200506">May 6,
           2020</a>) having to do with gamma correction and linear color
-        space.<br>
+        space, which would have required remeasuring and updating the
+        test.<br>
       </p>
       <p>The new tests are in the function <code>UnitTests::historical_repeatability()</code>.
         I defined four TexSyn textures (Spot , Turbulence, NoiseWarp,
         AdjustHue) with “random” parameters (I printed out a list of
-        random floats on [-1, +1] then copied them as needed into the
-        source code). Then I sampled the textures at two random
-        positions within the unit radius disk, those positions and
-        resulting color samples are all similarly “frozen” into the
-        source code. The test passes as long as the frozen values
-        continue to match newly computed results.<br>
+        random floats on [-1, +1] then copied them into the source code
+        as needed). Then I sampled the textures at two random positions
+        within the unit radius disk, those positions and resulting color
+        samples are all similarly “frozen” into the source code. The
+        test passes as long as the frozen values continue to match newly
+        computed results.<br>
       </p>
     </div>
     <!-- --------------------------------------------------------------------------- -->

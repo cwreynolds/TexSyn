@@ -9,8 +9,8 @@
 #include "TexSyn.h"
 #include "GP.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20210120 add EvoCamoGame.h module
 #include "EvoCamoGame.h"
+#include "SimpleImageMatch.h"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
@@ -5774,9 +5774,22 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing revised CountFunctionUsage inside EvoCamoGame
-    std::cout << "June 27, 2021" << std::endl;
-    EvoCamoGame(CommandLine(argc, argv)).run();
+//    // Testing revised CountFunctionUsage inside EvoCamoGame
+//    std::cout << "June 27, 2021" << std::endl;
+//    EvoCamoGame(CommandLine(argc, argv)).run();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototyping SimpleTextureMatch
+    std::cout << "June 30, 2021" << std::endl;
+//    SimpleImageMatch(CommandLine(argc, argv)).run();
+    
+    CommandLine cmd
+    ({
+        "simple_image_match",
+        "/Users/cwr/Desktop/test_target_image.png"
+    });
+    SimpleImageMatch(cmd).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

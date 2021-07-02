@@ -34,6 +34,7 @@
 		84172B4323BBA26E00B866B6 /* Operators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Operators.cpp; sourceTree = "<group>"; };
 		84172B4423BBA26E00B866B6 /* Operators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operators.h; sourceTree = "<group>"; };
 		8422C74924980277006D4A50 /* COTS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COTS.h; sourceTree = "<group>"; };
+		843C02FE268CE72E00ABCB4A /* SimpleImageMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleImageMatch.h; sourceTree = "<group>"; };
 		843D95BF2452653A00741263 /* Disk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Disk.cpp; sourceTree = "<group>"; };
 		843D95C02452653A00741263 /* Disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
 		8458EED22518152C0079DF1D /* GP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GP.h; sourceTree = "<group>"; };
@@ -76,6 +77,7 @@
 				849FF57623A70EC2008B4326 /* main.cpp */,
 				84172B4423BBA26E00B866B6 /* Operators.h */,
 				84172B4323BBA26E00B866B6 /* Operators.cpp */,
+				843C02FE268CE72E00ABCB4A /* SimpleImageMatch.h */,
 				84DE15B224D9CA5F005DCCE4 /* TexSyn.h */,
 				849FF57E23A70F93008B4326 /* Texture.h */,
 				849FF57D23A70F93008B4326 /* Texture.cpp */,

@@ -171,6 +171,16 @@ public:
     
     // Get current size (in pixels of the cv::Mat underlying the GUI).
     Vec2 getSize() const { return Vec2(image_.cols, image_.rows); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Reset size (in pixels of the cv::Mat underlying the GUI).
+    void setSize(Vec2 size_in_pixels)
+    {
+        image_ = cv::Mat(size_in_pixels.y(),
+                         size_in_pixels.x(),
+                         CV_8UC3,
+                         backgroundGray());
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     static cv::Scalar backgroundGray() { return cv::Scalar::all(127); }
     static cv::Scalar colorToCvScalar(const Color& c)
