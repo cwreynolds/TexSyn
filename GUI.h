@@ -29,6 +29,9 @@
 class GUI
 {
 public:
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GUI() : GUI(Vec2(), Vec2(), "") {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Note that OpenCV's coordinate system has zero in upper left
     GUI(Vec2 size_in_pixels,
         Vec2 upper_left_init_position,

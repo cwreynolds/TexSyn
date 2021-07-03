@@ -5787,7 +5787,9 @@ int main(int argc, const char * argv[])
     CommandLine cmd
     ({
         "simple_image_match",
-        "/Users/cwr/Desktop/test_target_image.png"
+        "/Users/cwr/Desktop/test_target_image.png",
+        "/Users/cwr/Desktop/TexSyn_temp/",
+        "20210703"
     });
     SimpleImageMatch(cmd).run();
 
