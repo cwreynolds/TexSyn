@@ -34,7 +34,7 @@ public:
 
     SimpleImageMatch(const CommandLine& cmd)
       : target_image_pathname_(cmd.positionalArgument(1)),
-        run_name_(generateRunName()),
+        run_name_(std::filesystem::path(target_image_pathname_).stem()),
         output_directory_(cmd.positionalArgument(2, ".")),
         output_directory_this_run_(runOutputDirectory()),
         random_seed_(cmd.positionalArgument(3, int(LPRS().defaultSeed()))),
@@ -42,9 +42,9 @@ public:
         subpops_(cmd.positionalArgument(5, 6)),
         max_init_tree_size_(cmd.positionalArgument(6, 100)),
         min_crossover_tree_size_(max_init_tree_size_ * 0.5),
-        max_crossover_tree_size_(max_init_tree_size_ * 1.5)
+        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
+        target_image_(cv::imread(target_image_pathname_))
     {
-        readTargetImage();
         gui_.setSize(getTargetImageSize());
         
         // log parameters for this run
@@ -60,6 +60,17 @@ public:
         std::cout << "    "; debugPrint(max_init_tree_size_);
         std::cout << "    "; debugPrint(min_crossover_tree_size_);
         std::cout << "    "; debugPrint(max_crossover_tree_size_);
+        
+        // TODO do this here, or in the initializers above, or in run()?
+        std::cout << "Create initial population..." << std::endl;
+        LPRS().setSeed(random_seed_);
+        population_ = std::make_shared<Population>(individuals_,
+                                                   subpops_,
+                                                   max_init_tree_size_,
+                                                   min_crossover_tree_size_,
+                                                   max_crossover_tree_size_,
+                                                   GP::fs());
+        std::cout << "...done." << std::endl;
     }
 
     // Run the evolution simulation.
@@ -69,20 +80,63 @@ public:
         gui().setWindowName("SimpleImageMatch: " + run_name_);
         gui().drawMat(target_image_, Vec2());
         gui().refresh();
-
-        Texture::waitKey();
+        
+        while (true)
+        {
+//            // Display step count in GUI title bar.
+//            std::string step_string = " (step " + getStepAsString() + ")";
+//            gui().setWindowTitle(run_name_ + step_string);
+//            logFunctionUsageCounts(out);
+            // Evolution step with wrapped EvoCamoGame::tournamentFunction().
+            population_->evolutionStep([&]
+                                       (Individual* i)
+                                       { return fitnessFunction(i); });
+        }
+        // Delete Population instance.
+        population_ = nullptr;
     }
     
-    // TODO should this be an initializer on the constructor?
-    std::string generateRunName()
+    float fitnessFunction(Individual* individual) // const
     {
-        return std::filesystem::path(target_image_pathname_).stem();
+        Texture& texture = *GP::textureFromIndividual(individual);
+        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+        cv::Mat mat = texture.getCvMat();
+        float similarity = imageSimilarity(mat, target_image_);
+        gui().drawMat(mat, Vec2());
+        gui().refresh();
+        return similarity;
     }
-
-    // TODO should this be an initializer on the constructor?
-    void readTargetImage()
+    
+    float imageSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        target_image_ = cv::imread(target_image_pathname_);
+        int m0w = m0.cols;
+        int m0h = m0.rows;
+        int m1w = m1.cols;
+        int m1h = m1.rows;
+        assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+        
+        auto getPixelColor = [&](int x, int y, const cv::Mat& mat)
+        {
+            cv::Vec3b bgrPixel = mat.at<cv::Vec3b>(x, y);
+            return Color(bgrPixel[2] / 255, bgrPixel[1] / 255, bgrPixel[0] / 255);
+        };
+        
+        float similarlity = 1;
+        for (int x = 0; x < m0w; x++)
+        {
+            for (int y = 0; y < m0h; y++)
+            {
+                Color diff = getPixelColor(x, y, m0) - getPixelColor(x, y, m1);
+                float distance = diff.length();
+                float normalized = distance / std::sqrt(3.0);
+                float similar = 1 - normalized;
+                assert (between(normalized, 0, 1));
+                assert (between(similar, 0, 1));
+                similarlity *= remapInterval(similar, 0, 1, 0.99, 1);
+            }
+        }
+        debugPrint(similarlity);
+        return similarlity;
     }
     
     Vec2 getTargetImageSize()
@@ -128,4 +182,10 @@ private:
     int max_init_tree_size_ = 100;
     int min_crossover_tree_size_ = 50;
     int max_crossover_tree_size_ = 150;
+
+    // TODO copied from EvoCamoGame,
+    // TODO should this just be a member inside SimpleImageMatch instance?
+    // Points to heap-allocated Population instance during run() function.
+    std::shared_ptr<Population> population_ = nullptr;
+
 };
