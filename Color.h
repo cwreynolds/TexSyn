@@ -90,6 +90,15 @@ public:
                      paper_over_abnormal_values(eg),
                      paper_over_abnormal_values(eb));
     }
+    // Computes a measure of similarity. For unit RGB values this is on [0, 1].
+    // Similarity of identical colors is 1, colors in opposite corners of the
+    // unit RGB cube (eg black and white, or blue and yellow) have similarity 0.
+    // Colors outside unit RGB cube can have similarity less than 0.
+    static float similarity(Color a, Color b)
+    {
+        // Length of difference, divided by unit cube diagonal, subtract from 1.
+        return 1 - ((a - b).length() / std::sqrt(3.0));
+    }
     // Helper class to represent a color in hue-saturation-value space.
     class HSV
     {

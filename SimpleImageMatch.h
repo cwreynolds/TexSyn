@@ -61,6 +61,10 @@ public:
         std::cout << "    "; debugPrint(min_crossover_tree_size_);
         std::cout << "    "; debugPrint(max_crossover_tree_size_);
         
+        assert((target_image_.cols > 0) &&
+               (target_image_.rows > 0) &&
+               "target image missing or empty");
+        
         // TODO do this here, or in the initializers above, or in run()?
         std::cout << "Create initial population..." << std::endl;
         LPRS().setSeed(random_seed_);
@@ -102,11 +106,18 @@ public:
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
         float similarity = imageSimilarity(mat, target_image_);
+        float nonuniformity = 1 - imageUniformity(mat);
         gui().drawMat(mat, Vec2());
         gui().refresh();
-        return similarity;
+        std::cout << "    fitness=" << similarity * nonuniformity;
+        std::cout << " (similarity=" << similarity;
+        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+        return similarity * nonuniformity;
     }
     
+    // Returns a number on [0, 1] measuring how similar two images are.
+    // TODO could be more efficient, but only only takes 0.0341692 for 511x511
+    //      images so is just a tiny fraction of the time for a texture render.
     float imageSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
         int m0w = m0.cols;
@@ -114,31 +125,63 @@ public:
         int m1w = m1.cols;
         int m1h = m1.rows;
         assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
-        
-        auto getPixelColor = [&](int x, int y, const cv::Mat& mat)
-        {
-            cv::Vec3b bgrPixel = mat.at<cv::Vec3b>(x, y);
-            return Color(bgrPixel[2] / 255, bgrPixel[1] / 255, bgrPixel[0] / 255);
-        };
-        
-        float similarlity = 1;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        bool similarity_squared = false;
+        bool multiplicative = true;
+//        bool similarity_squared = true;
+//        bool multiplicative = false;
+        bool averaging = !multiplicative;
+        float similarlity = 0;
+        if (multiplicative) similarlity = 1;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         for (int x = 0; x < m0w; x++)
         {
             for (int y = 0; y < m0h; y++)
             {
-                Color diff = getPixelColor(x, y, m0) - getPixelColor(x, y, m1);
-                float distance = diff.length();
-                float normalized = distance / std::sqrt(3.0);
-                float similar = 1 - normalized;
-                assert (between(normalized, 0, 1));
+                float similar = Color::similarity(getCvMatPixel(x, y, m0),
+                                                  getCvMatPixel(x, y, m1));
                 assert (between(similar, 0, 1));
-                similarlity *= remapInterval(similar, 0, 1, 0.99, 1);
+                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+                if (averaging) similarlity += similar;
+                if (multiplicative) similarlity *= remapInterval(similar,
+                                                                 0, 1, 0.99, 1);
+                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             }
         }
-        debugPrint(similarlity);
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        if (averaging) similarlity /= m0w * m0h;
+        if (similarity_squared) similarlity *= similarlity;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return similarlity;
     }
     
+    // Returns a number on [0, 1] measuring how uniform a CV Mat is.
+    // TODO Is 10 tests good? Use some other RS?
+    float imageUniformity(const cv::Mat& mat) const
+    {
+        float uniformity = 1;
+        int tests = 10;
+        for (int i = 0; i < tests; i++)
+        {
+            Color a = getCvMatPixel(LPRS().random2(0, mat.cols),
+                                    LPRS().random2(0, mat.rows),
+                                    mat);
+            Color b = getCvMatPixel(LPRS().random2(0, mat.cols),
+                                    LPRS().random2(0, mat.rows),
+                                    mat);
+            if (Color::similarity(a, b) < 0.95) uniformity /= 2;
+        }
+        return uniformity;
+    }
+    
+    // Read a pixel as a Color value at given (x, y) in OpenCV Mat.
+    Color getCvMatPixel(int x, int y, const cv::Mat& mat) const
+    {
+        cv::Vec3b bgrPixel = mat.at<cv::Vec3b>(x, y);
+        float m = 255;
+        return Color(bgrPixel[2] / m, bgrPixel[1] / m, bgrPixel[0] / m);
+    };
+
     Vec2 getTargetImageSize()
     {
         return Vec2(target_image_.cols, target_image_.rows);

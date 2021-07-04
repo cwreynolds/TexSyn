@@ -5782,17 +5782,17 @@ int main(int argc, const char * argv[])
     
     // Prototyping SimpleTextureMatch
     std::cout << "June 30, 2021" << std::endl;
-//    SimpleImageMatch(CommandLine(argc, argv)).run();
+    SimpleImageMatch(CommandLine(argc, argv)).run();
     
-    CommandLine cmd
-    ({
-        "simple_image_match",
-//        "/Users/cwr/Desktop/test_target_image.png",
-        "/Users/cwr/Desktop/test_target_image_511_square.png",
-        "/Users/cwr/Desktop/TexSyn_temp/",
-        "20210703"
-    });
-    SimpleImageMatch(cmd).run();
+//        CommandLine cmd
+//        ({
+//            "simple_image_match",
+//    //        "/Users/cwr/Desktop/test_target_image.png",
+//            "/Users/cwr/Desktop/test_target_image_511_square.png",
+//            "/Users/cwr/Desktop/TexSyn_temp/",
+//            "20210703"
+//        });
+//        SimpleImageMatch(cmd).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

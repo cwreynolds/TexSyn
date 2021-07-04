@@ -141,7 +141,9 @@ bool color_basic_operators()
             st(gray50.length() == (std::sqrt(3 * sq(0.5)))) &&
             st(gray50.normalize() == white.normalize()) &&
             st(Color(0.3, 0, 0).normalize() == Color(1, 0, 0)) &&
-            st(gray50.gamma(2.2) == (white * std::pow(0.5f, 2.2f))));
+            st(gray50.gamma(2.2) == (white * std::pow(0.5f, 2.2f))) &&
+            st(withinEpsilon(Color::similarity(black, black), 1, e)) &&
+            st(withinEpsilon(Color::similarity(black, white), 0, e)));
 }
 
 bool color_luminance()
