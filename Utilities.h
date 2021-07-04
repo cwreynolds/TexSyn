@@ -19,6 +19,9 @@
 #include <any>
 #include <set>
 #include <filesystem>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#include <thread>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Vec2;
 class Color;
 
@@ -554,3 +557,7 @@ float spot_utility(Vec2 position,
 // TODO to be used by Gabor noise. Something like the Grating texture operator,
 // but transform is via an angle and center point, assumes sinosoid (softness=1)
 float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength);
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inline void yield() { std::this_thread::yield(); }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

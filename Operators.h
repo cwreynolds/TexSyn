@@ -812,6 +812,9 @@ public:
     }
     static Color single(Vec2 position, float width, const Texture& texture)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        yield();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         float radius = width / 2;
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());

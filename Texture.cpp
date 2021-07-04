@@ -7,7 +7,9 @@
 //
 
 #include "Texture.h"
-#include <thread>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//#include <thread>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
@@ -145,7 +147,10 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
-        if (i == 0) { std::this_thread::yield(); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        if (i == 0) { std::this_thread::yield(); }
+        if (i == 0) { yield(); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
