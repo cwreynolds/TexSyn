@@ -45,7 +45,7 @@ public:
         max_crossover_tree_size_(max_init_tree_size_ * 1.5),
         target_image_(cv::imread(target_image_pathname_))
     {
-        gui_.setSize(getTargetImageSize());
+        setGuiSize();
         
         // log parameters for this run
         std::cout << "SimpleImageMatch parameters:" << std::endl;
@@ -80,16 +80,8 @@ public:
     // Run the evolution simulation.
     void run()
     {
-        // Init GUI window.
-        gui().setWindowName("SimpleImageMatch: " + run_name_);
-        gui().drawMat(target_image_, Vec2());
-        gui().refresh();
-        
         while (true)
         {
-//            // Display step count in GUI title bar.
-//            std::string step_string = " (step " + getStepAsString() + ")";
-//            gui().setWindowTitle(run_name_ + step_string);
 //            logFunctionUsageCounts(out);
             // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             population_->evolutionStep([&]
@@ -107,8 +99,7 @@ public:
         cv::Mat mat = texture.getCvMat();
         float similarity = imageSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
-        gui().drawMat(mat, Vec2());
-        gui().refresh();
+        drawGuiForFitnessFunction(mat, target_image_);
         std::cout << "    fitness=" << similarity * nonuniformity;
         std::cout << " (similarity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
@@ -203,6 +194,68 @@ public:
 
     // Reference to GUI.
     GUI& gui() { return gui_; }
+    
+    void setGuiSize()
+    {
+        Vec2 my_screen(2880, 1800);  // TODO Craig's screen: very unportable.
+        int target_x = getTargetImageSize().x();
+        int target_y = getTargetImageSize().y();
+        gui_grid_cols_ = my_screen.x() / (target_x + margin());
+        gui_grid_rows_ = my_screen.y() / (target_y + margin());
+        gui_.setSize(Vec2((gui_grid_cols_ * (target_x + margin())) + margin(),
+                          (gui_grid_rows_ * (target_y + margin())) + margin()));
+    }
+    
+    // TODO move/rethink
+    int gui_grid_cols_ = 0;
+    int gui_grid_rows_ = 0;
+
+    
+    int margin() const { return 10; }
+    
+    void drawGuiForFitnessFunction(const cv::Mat& newest, const cv::Mat& target)
+    {
+        // Push the two args onto the beginning of a collection of cv::Mat*.
+        std::vector<const cv::Mat*> mats;
+        mats.push_back(&newest);
+        mats.push_back(&target);
+        // Now walk down the fitness sorted Population, pushing the redered mats
+        // of high fitness individuals onto the collection.
+        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
+        for (int i = 0; i < mat_max; i++)
+        {
+            Individual* individual = population_->nthBestFitness(i);
+            if (individual->getFitness() > 0)
+            {
+                Texture& texture = *GP::textureFromIndividual(individual);
+                texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+                const cv::Mat& mat = texture.getCvMat();
+                mats.push_back(&mat);
+            }
+        }
+        // Draw collection of Mats as a grid on the GUI.
+        int count = 0;
+        Vec2 draw_point(margin(), margin());
+        Vec2 stride_x(target.cols + margin(), 0);
+        Vec2 stride_y(0, target.rows + margin());
+        for (auto mat : mats)
+        {
+            // TODO cf drawTextureOnGui() function in GP.h
+            gui().drawMat(*mat, draw_point);
+            count++;
+            draw_point += stride_x;
+            if (0 == (count % gui_grid_cols_))
+            {
+                draw_point += stride_y;
+                draw_point = Vec2(margin(), draw_point.y());
+            }
+        }
+        gui().setWindowTitle("SimpleImageMatch -- " +
+                             run_name_ +
+                             " -- step " +
+                             std::to_string(population_->getStepCount()));
+        gui().refresh();
+    }
 
 private:
     // Pathname of target image file.
