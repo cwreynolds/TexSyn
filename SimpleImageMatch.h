@@ -92,18 +92,61 @@ public:
         population_ = nullptr;
     }
     
+//    // TODO product-of-all-pixel-similarities
+//    float fitnessFunction(Individual* individual) // const
+//    {
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//        cv::Mat mat = texture.getCvMat();
+//        float similarity = imageSimilarity(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
+//        drawGuiForFitnessFunction(mat, target_image_);
+//        std::cout << "    fitness=" << similarity * nonuniformity;
+//        std::cout << " (similarity=" << similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return similarity * nonuniformity;
+//    }
+    
+    // TODO minimum-of-all-pixel-similarities
+    // TODO does this work? what about without nonuniformity?
     float fitnessFunction(Individual* individual) // const
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
-        float similarity = imageSimilarity(mat, target_image_);
+        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         drawGuiForFitnessFunction(mat, target_image_);
-        std::cout << "    fitness=" << similarity * nonuniformity;
-        std::cout << " (similarity=" << similarity;
+        std::cout << "    fitness=" << min_similarity * nonuniformity;
+        std::cout << " (min_similarity=" << min_similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-        return similarity * nonuniformity;
+        return min_similarity * nonuniformity;
+    }
+
+    
+    // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
+    float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        int m0w = m0.cols;
+        int m0h = m0.rows;
+        int m1w = m1.cols;
+        int m1h = m1.rows;
+        assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+        float min_pixel_similarity = std::numeric_limits<float>::max();
+        for (int x = 0; x < m0w; x++)
+        {
+            for (int y = 0; y < m0h; y++)
+            {
+                float similar = Color::similarity(getCvMatPixel(x, y, m0),
+                                                  getCvMatPixel(x, y, m1));
+                assert (between(similar, 0, 1));
+                if (min_pixel_similarity > similar)
+                {
+                    min_pixel_similarity = similar;
+                }
+            }
+        }
+        return min_pixel_similarity;
     }
     
     // Returns a number on [0, 1] measuring how similar two images are.
@@ -145,7 +188,7 @@ public:
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         return similarlity;
     }
-    
+
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
     float imageUniformity(const cv::Mat& mat) const
