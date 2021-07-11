@@ -107,20 +107,45 @@ public:
 //        return similarity * nonuniformity;
 //    }
     
-    // TODO minimum-of-all-pixel-similarities
-    // TODO does this work? what about without nonuniformity?
+//    // TODO minimum-of-all-pixel-similarities
+//    // TODO does this work? what about without nonuniformity?
+//    float fitnessFunction(Individual* individual) // const
+//    {
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//        cv::Mat mat = texture.getCvMat();
+//        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
+//        drawGuiForFitnessFunction(mat, target_image_);
+//        std::cout << "    fitness=" << min_similarity * nonuniformity;
+//        std::cout << " (min_similarity=" << min_similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return min_similarity * nonuniformity;
+//    }
+
+    // TODO just trying combining last two approaches July 10
     float fitnessFunction(Individual* individual) // const
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
+        
+        float similarity = imageSimilarity(mat, target_image_);
+
         float min_similarity = imageMinPixelSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         drawGuiForFitnessFunction(mat, target_image_);
-        std::cout << "    fitness=" << min_similarity * nonuniformity;
-        std::cout << " (min_similarity=" << min_similarity;
+//        std::cout << "    fitness=" << min_similarity * nonuniformity;
+//        std::cout << " (min_similarity=" << min_similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return min_similarity * nonuniformity;
+        
+        std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
+        std::cout << " (similarity=" << similarity;
+        std::cout << " min_similarity=" << min_similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-        return min_similarity * nonuniformity;
+
+        return similarity * min_similarity * nonuniformity;
     }
 
     
