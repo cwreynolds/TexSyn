@@ -123,32 +123,167 @@ public:
 //        return min_similarity * nonuniformity;
 //    }
 
-    // TODO just trying combining last two approaches July 10
+//        // TODO just trying combining last two approaches July 10
+//        float fitnessFunction(Individual* individual) // const
+//        {
+//            Texture& texture = *GP::textureFromIndividual(individual);
+//            texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//            cv::Mat mat = texture.getCvMat();
+//
+//            float similarity = imageSimilarity(mat, target_image_);
+//
+//            float min_similarity = imageMinPixelSimilarity(mat, target_image_);
+//            float nonuniformity = 1 - imageUniformity(mat);
+//            drawGuiForFitnessFunction(mat, target_image_);
+//    //        std::cout << "    fitness=" << min_similarity * nonuniformity;
+//    //        std::cout << " (min_similarity=" << min_similarity;
+//    //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//    //        return min_similarity * nonuniformity;
+//
+//            std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
+//            std::cout << " (similarity=" << similarity;
+//            std::cout << " min_similarity=" << min_similarity;
+//            std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//
+//            return similarity * min_similarity * nonuniformity;
+//        }
+
+    // TODO trying 1 - (average per pixel error squared) July 11
     float fitnessFunction(Individual* individual) // const
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
-        
-        float similarity = imageSimilarity(mat, target_image_);
-
-        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
-        float nonuniformity = 1 - imageUniformity(mat);
+//        float similarity = imageSimilarity(mat, target_image_);
+//        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
         drawGuiForFitnessFunction(mat, target_image_);
 //        std::cout << "    fitness=" << min_similarity * nonuniformity;
 //        std::cout << " (min_similarity=" << min_similarity;
 //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
 //        return min_similarity * nonuniformity;
         
-        std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
-        std::cout << " (similarity=" << similarity;
-        std::cout << " min_similarity=" << min_similarity;
-        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
+//        std::cout << " (similarity=" << similarity;
+//        std::cout << " min_similarity=" << min_similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return similarity * min_similarity * nonuniformity;
 
-        return similarity * min_similarity * nonuniformity;
+//        float fitness = imageAvePixelDiffSquared(mat, target_image_);
+//        std::cout << "    fitness=" << fitness << std::endl;
+//        return fitness;
+        
+//        float ave_pixel_diff = imageAvePixelDiffSquared(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
+//        std::cout << "    fitness=" << ave_pixel_diff * nonuniformity;
+//        std::cout << " (ave_pixel_diff=" << ave_pixel_diff;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return ave_pixel_diff * nonuniformity;
+        
+        float ave_pixel_similarity = imageAvePixelSimilarity(mat, target_image_);
+        float nonuniformity = 1 - imageUniformity(mat);
+        std::cout << "    fitness=" << ave_pixel_similarity * nonuniformity;
+        std::cout << " (ave_pixel_similarity=" << ave_pixel_similarity;
+        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+        return ave_pixel_similarity * nonuniformity;
     }
 
+//        // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+//        float imageAvePixelDiffSquared(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            int m0w = m0.cols;
+//            int m0h = m0.rows;
+//            int m1w = m1.cols;
+//            int m1h = m1.rows;
+//            assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+//            float sum_pixel_error_squared = 0;
+//            for (int x = 0; x < m0w; x++)
+//            {
+//                for (int y = 0; y < m0h; y++)
+//                {
+//                    float similar = Color::similarity(getCvMatPixel(x, y, m0),
+//                                                      getCvMatPixel(x, y, m1));
+//                    assert (between(similar, 0, 1));
+//                    float error = 1 - similar;
+//                    assert (between(error, 0, 1));
+//
+//    //                debugPrint(getCvMatPixel(x, y, m0));
+//    //                debugPrint(getCvMatPixel(x, y, m1));
+//    //                debugPrint(similar);
+//    //                debugPrint(error);
+//    //                debugPrint(sq(error));
+//
+//                    sum_pixel_error_squared += sq(error);
+//                }
+//            }
     
+//        // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+//        float imageAvePixelDiffSquared(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            int m0w = m0.cols;
+//            int m0h = m0.rows;
+//            int m1w = m1.cols;
+//            int m1h = m1.rows;
+//            assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+//    //        float sum_pixel_error_squared = 0;
+//            float sum_pixel_error = 0;
+//            for (int x = 0; x < m0w; x++)
+//            {
+//                for (int y = 0; y < m0h; y++)
+//                {
+//                    float similar = Color::similarity(getCvMatPixel(x, y, m0),
+//                                                      getCvMatPixel(x, y, m1));
+//                    assert (between(similar, 0, 1));
+//                    float error = 1 - similar;
+//                    assert (between(error, 0, 1));
+//
+//    //                debugPrint(getCvMatPixel(x, y, m0));
+//    //                debugPrint(getCvMatPixel(x, y, m1));
+//    //                debugPrint(similar);
+//    //                debugPrint(error);
+//    //                debugPrint(sq(error));
+//
+//    //                sum_pixel_error_squared += sq(error);
+//                    sum_pixel_error += error;
+//                }
+//            }
+//
+//    //        debugPrint(sum_pixel_error_squared);
+//    //        debugPrint(sum_pixel_error_squared / (m0w * m0h));
+//    //        debugPrint(1 - (sum_pixel_error_squared / (m0w * m0h)));
+//
+//    //        return 1 - (sum_pixel_error_squared / (m0w * m0h));
+//
+//    //        return 1 - sq(sum_pixel_error / (m0w * m0h));
+//            return sq(1 - (sum_pixel_error / (m0w * m0h)));
+//        }
+
+    // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+    float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        int m0w = m0.cols;
+        int m0h = m0.rows;
+        int m1w = m1.cols;
+        int m1h = m1.rows;
+        assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+//        float sum_pixel_error = 0;
+        float sum_pixel_similarity = 0;
+        for (int x = 0; x < m0w; x++)
+        {
+            for (int y = 0; y < m0h; y++)
+            {
+                float similar = Color::similarity(getCvMatPixel(x, y, m0),
+                                                  getCvMatPixel(x, y, m1));
+                assert (between(similar, 0, 1));
+//                float error = 1 - similar;
+//                assert (between(error, 0, 1));
+//                sum_pixel_error += error;
+                sum_pixel_similarity += similar;
+            }
+        }
+        return sum_pixel_similarity / (m0w * m0h);
+    }
+
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
