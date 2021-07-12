@@ -5780,9 +5780,9 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototyping SimpleTextureMatch
-    std::cout << "June 30, 2021" << std::endl;
-    SimpleImageMatch(CommandLine(argc, argv)).run();
+//    // Prototyping SimpleTextureMatch
+//    std::cout << "June 30, 2021" << std::endl;
+//    SimpleImageMatch(CommandLine(argc, argv)).run();
     
 //        CommandLine cmd
 //        ({

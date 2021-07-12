@@ -560,4 +560,30 @@ float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 inline void yield() { std::this_thread::yield(); }
+
+
+// Given a positive 32 bit signed int, round up to the next power of 2.
+
+// From: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+inline int next_power_of_2(int v)
+{
+    // compute the next highest power of 2 of 32-bit v
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+    return v;
+}
+
+inline int nearest_power_of_2(int v)
+{
+    int next = next_power_of_2(v);
+    int prev = next / 2;
+    int midpoint = (next + prev) / 2;
+    return (v < midpoint) ? prev : next;
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

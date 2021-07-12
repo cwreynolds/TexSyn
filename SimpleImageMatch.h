@@ -258,30 +258,81 @@ public:
 //            return sq(1 - (sum_pixel_error / (m0w * m0h)));
 //        }
 
-    // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
-    float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+//        float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            int m0w = m0.cols;
+//            int m0h = m0.rows;
+//            int m1w = m1.cols;
+//            int m1h = m1.rows;
+//            assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+//    //        float sum_pixel_error = 0;
+//            float sum_pixel_similarity = 0;
+//            for (int x = 0; x < m0w; x++)
+//            {
+//                for (int y = 0; y < m0h; y++)
+//                {
+//                    float similar = Color::similarity(getCvMatPixel(x, y, m0),
+//                                                      getCvMatPixel(x, y, m1));
+//                    assert (between(similar, 0, 1));
+//    //                float error = 1 - similar;
+//    //                assert (between(error, 0, 1));
+//    //                sum_pixel_error += error;
+//                    sum_pixel_similarity += similar;
+//                }
+//            }
+//            return sum_pixel_similarity / (m0w * m0h);
+//        }
+
+    // Returns a number on [0, 1] by coarse-to-fine MIP-map-ish approach.
+    float imageMipMapSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        int m0w = m0.cols;
-        int m0h = m0.rows;
-        int m1w = m1.cols;
-        int m1h = m1.rows;
-        assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
-//        float sum_pixel_error = 0;
+        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
+               (m0.cols > 0) && (m0.rows > 0));
+        
+        // How many levels of 4 way subdivision
+        
+        // Construct a MIP-map like resolution pyramid
+        // (TODO takes shortcuts assuming square power of two sized images.
+        //       If kept, needs more work to be good for other cases.)
+        std::vector<cv::Mat> pyramid0;
+        std::vector<cv::Mat> pyramid1;
+        int size = std::max(m0.cols, m0.rows);
+
+        
+        
         float sum_pixel_similarity = 0;
-        for (int x = 0; x < m0w; x++)
+        for (int x = 0; x < m0.cols; x++)
         {
-            for (int y = 0; y < m0h; y++)
+            for (int y = 0; y < m0.rows; y++)
             {
                 float similar = Color::similarity(getCvMatPixel(x, y, m0),
                                                   getCvMatPixel(x, y, m1));
                 assert (between(similar, 0, 1));
-//                float error = 1 - similar;
-//                assert (between(error, 0, 1));
-//                sum_pixel_error += error;
                 sum_pixel_similarity += similar;
             }
         }
-        return sum_pixel_similarity / (m0w * m0h);
+        return sum_pixel_similarity / (m0.cols * m0.rows);
+    }
+
+    
+    // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+    float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
+               (m0.cols > 0) && (m0.rows > 0));
+        float sum_pixel_similarity = 0;
+        for (int x = 0; x < m0.cols; x++)
+        {
+            for (int y = 0; y < m0.rows; y++)
+            {
+                float similar = Color::similarity(getCvMatPixel(x, y, m0),
+                                                  getCvMatPixel(x, y, m1));
+                assert (between(similar, 0, 1));
+                sum_pixel_similarity += similar;
+            }
+        }
+        return sum_pixel_similarity / (m0.cols * m0.rows);
     }
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.

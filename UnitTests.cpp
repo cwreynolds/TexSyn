@@ -83,9 +83,20 @@ bool utilities()
      st(spot_utility(Vec2(1.0, 1), Vec2(1, 1), 0.1, 0.9) == 1) &&
      st(spot_utility(Vec2(2.0, 1), Vec2(1, 1), 0.1, 0.9) == 0) &&
      st(withinEpsilon(spot_utility(Vec2(1.5, 1), Vec2(1, 1), 0.1, 0.9),
-                      0.5, 0.000001))
-     && st(spot_utility(Vec2(), Vec2(), 0, 1) == 1)
-     && st(spot_utility(Vec2(1, 0), Vec2(), 0, 1) == 0));
+                      0.5, 0.000001)) &&
+     st(spot_utility(Vec2(), Vec2(), 0, 1) == 1) &&
+     st(spot_utility(Vec2(1, 0), Vec2(), 0, 1) == 0) &&
+     st(next_power_of_2(0) == 0) &&
+     st(next_power_of_2(1) == 1) &&
+     st(next_power_of_2(2) == 2) &&
+     st(next_power_of_2(60) == 64) &&
+     st(next_power_of_2(std::pow(2, 30) - 1) == std::pow(2, 30)) &&
+     st(nearest_power_of_2(0) == 0) &&
+     st(nearest_power_of_2(1) == 1) &&
+     st(nearest_power_of_2(2) == 2) &&
+     st(nearest_power_of_2(3) == 4) &&
+     st(nearest_power_of_2(130) == 128) &&
+     st(nearest_power_of_2(250) == 256));
 };
 
 // Tests for Color class.
