@@ -37,6 +37,7 @@ public:
     Vec2 operator+=(const Vec2& rhs) { return *this = *this + rhs; }
     Vec2 operator-=(const Vec2& rhs) { return *this = *this - rhs; }
     Vec2 operator*=(float s) { return *this = *this * s; }
+    Vec2 operator/=(float s) { return *this = *this / s; }
     // Rotation about origin by angle in radians (or by precomputed sin/cos).
     Vec2 rotate(float a) const { return rotate(std::sin(a), std::cos(a)); }
     inline Vec2 rotate(float sin, float cos) const

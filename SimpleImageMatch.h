@@ -419,6 +419,34 @@ public:
         return uniformity;
     }
     
+    // Construct something like a "MIP map" with a series of images, each half
+    // as wide as the previous one. Returns MIP map in output argument levels.
+    // This assumes square images in the resolution pyramid, so the first step
+    // is to find a square image near the size of the input image ("cv_mat").
+    // If "cv_mat" is not square this will streatch it to fit.
+    void makeResolutionPyramid(const cv::Mat& cv_mat,
+                               std::vector<cv::Mat>& levels)
+    {
+        // Find a square image with about the same number of pixels as cv_mat
+        // (the original image) then "round" it to the nearest power of 2.
+        int res = nearest_power_of_2(std::sqrt(cv_mat.cols * cv_mat.rows));
+        // "full" holds a reference to the original image or (while looping,
+        // below) the previous scaled down level in the MIP map.
+        cv::Mat full = cv_mat;
+        cv::Mat half;
+        levels.clear();
+        // Until we get to a 1x1 image, scale down the current one ("full") by
+        // half in each dimension (into "half"), save it in the "levels"
+        // collection, and copy "half" into "full".
+        while (res > 1)
+        {
+            res /= 2;
+            cv::resize(full, half, cv::Size(res, res), 0, 0, cv::INTER_AREA);
+            levels.push_back(half);
+            full = half;
+        }
+    }
+    
     // Read a pixel as a Color value at given (x, y) in OpenCV Mat.
     Color getCvMatPixel(int x, int y, const cv::Mat& mat) const
     {
@@ -452,6 +480,7 @@ public:
     void setGuiSize()
     {
         Vec2 my_screen(2880, 1800);  // TODO Craig's screen: very unportable.
+//        my_screen /= 2;              // TODO oops, use "pixels" not "points"
         int target_x = getTargetImageSize().x();
         int target_y = getTargetImageSize().y();
         gui_grid_cols_ = my_screen.x() / (target_x + margin());
@@ -473,20 +502,26 @@ public:
         std::vector<const cv::Mat*> mats;
         mats.push_back(&newest);
         mats.push_back(&target);
-        // Now walk down the fitness sorted Population, pushing the redered mats
-        // of high fitness individuals onto the collection.
-        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
-        for (int i = 0; i < mat_max; i++)
-        {
-            Individual* individual = population_->nthBestFitness(i);
-            if (individual->getFitness() > 0)
-            {
-                Texture& texture = *GP::textureFromIndividual(individual);
-                texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-                const cv::Mat& mat = texture.getCvMat();
-                mats.push_back(&mat);
-            }
-        }
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
+//        // Now walk down the fitness sorted Population, pushing rendered cv_mats
+//        // of high fitness individuals onto the collection.
+//        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
+//        for (int i = 0; i < mat_max; i++)
+//        {
+//            Individual* individual = population_->nthBestFitness(i);
+//            if (individual->getFitness() > 0)
+//            {
+//                Texture& texture = *GP::textureFromIndividual(individual);
+//                texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//                const cv::Mat& mat = texture.getCvMat();
+//                mats.push_back(&mat);
+//            }
+//        }
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
         // Draw collection of Mats as a grid on the GUI.
         int count = 0;
         Vec2 draw_point(margin(), margin());
@@ -504,6 +539,35 @@ public:
                 draw_point = Vec2(margin(), draw_point.y());
             }
         }
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
+        std::vector<cv::Mat> newest_pyramid;
+        std::vector<cv::Mat> target_pyramid;
+        makeResolutionPyramid(newest, newest_pyramid);
+        makeResolutionPyramid(target, target_pyramid);
+        
+//        draw_point = Vec2(margin(), draw_point.y() * 2);
+        draw_point += stride_y;
+        draw_point = Vec2(margin(), draw_point.y());
+        for (auto& mat : newest_pyramid)
+        {
+            gui().drawMat(mat, draw_point);
+            draw_point += Vec2(margin() + mat.cols, 0);
+        }
+        
+//        draw_point = Vec2(margin(), draw_point.y() * 2);
+        draw_point += stride_y;
+        draw_point = Vec2(margin(), draw_point.y());
+        for (auto& mat : target_pyramid)
+        {
+            gui().drawMat(mat, draw_point);
+            draw_point += Vec2(margin() + mat.cols, 0);
+        }
+        
+
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
         gui().setWindowTitle("SimpleImageMatch -- " +
                              run_name_ +
                              " -- step " +
