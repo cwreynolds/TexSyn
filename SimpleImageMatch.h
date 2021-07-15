@@ -65,6 +65,10 @@ public:
                (target_image_.rows > 0) &&
                "target image missing or empty");
         
+        // Build "MIP map like" resolution pyramid for target image.
+        makeResolutionPyramid(target_image_, target_pyramid_);
+
+        
         // TODO do this here, or in the initializers above, or in run()?
         std::cout << "Create initial population..." << std::endl;
         LPRS().setSeed(random_seed_);
@@ -289,30 +293,37 @@ public:
     {
         assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
                (m0.cols > 0) && (m0.rows > 0));
-        
-        // How many levels of 4 way subdivision
-        
-        // Construct a MIP-map like resolution pyramid
-        // (TODO takes shortcuts assuming square power of two sized images.
-        //       If kept, needs more work to be good for other cases.)
-        std::vector<cv::Mat> pyramid0;
-        std::vector<cv::Mat> pyramid1;
-        int size = std::max(m0.cols, m0.rows);
+                
+        // TODO problem, this want to compare with target_pyramid_, but this
+        // imageMipMapSimilarity() function currently gets args passed in as
+        // two Mats m0, and m1.
 
+        // Build "MIP map like" resolution pyramid for newest evolved image.
+        std::vector<cv::Mat> newest_pyramid;
+        makeResolutionPyramid(m0, newest_pyramid);
+        
+        // TODO
+        assert(newest_pyramid.size() == target_pyramid_.size());
+        
+//        // Index of the 1x1 image level in pyramid.
+//        size_t p_index = newest_pyramid.size() - 1;
+//
+//
+//        float s = imageAvePixelSimilarity(newest_pyramid.at(p_index - 5),
+//                                          target_pyramid_.at(p_index - 5));
         
         
-        float sum_pixel_similarity = 0;
-        for (int x = 0; x < m0.cols; x++)
+        float score = 0;
+        int steps = 5;
+        for (int step = 0; step <steps; step++)
         {
-            for (int y = 0; y < m0.rows; y++)
-            {
-                float similar = Color::similarity(getCvMatPixel(x, y, m0),
-                                                  getCvMatPixel(x, y, m1));
-                assert (between(similar, 0, 1));
-                sum_pixel_similarity += similar;
-            }
+            // Index of the 1x1 image level in pyramid.
+            size_t p = newest_pyramid.size() - 1;
+            // Increment score by similarity at this pyramid level.
+            score += imageAvePixelSimilarity(newest_pyramid.at(p - step),
+                                            target_pyramid_.at(p - step));
         }
-        return sum_pixel_similarity / (m0.cols * m0.rows);
+        return score / steps;
     }
 
     
@@ -332,7 +343,11 @@ public:
                 sum_pixel_similarity += similar;
             }
         }
-        return sum_pixel_similarity / (m0.cols * m0.rows);
+        
+        // TODO July 14, 2021, trying again with squaring score for "greediness"
+//            // TOODO oops didn't, do I need it with the MIP map?
+//    //        return sum_pixel_similarity / (m0.cols * m0.rows);
+        return sq(sum_pixel_similarity / (m0.cols * m0.rows));
     }
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
@@ -425,7 +440,7 @@ public:
     // is to find a square image near the size of the input image ("cv_mat").
     // If "cv_mat" is not square this will streatch it to fit.
     void makeResolutionPyramid(const cv::Mat& cv_mat,
-                               std::vector<cv::Mat>& levels)
+                               std::vector<cv::Mat>& levels) const
     {
         // Find a square image with about the same number of pixels as cv_mat
         // (the original image) then "round" it to the nearest power of 2.
@@ -498,6 +513,10 @@ public:
     
     void drawGuiForFitnessFunction(const cv::Mat& newest, const cv::Mat& target)
     {
+        // TODO topmost experiment
+        gui().makeTopmost();
+        
+        
         // Push the two args onto the beginning of a collection of cv::Mat*.
         std::vector<const cv::Mat*> mats;
         mats.push_back(&newest);
@@ -505,20 +524,20 @@ public:
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         
-//        // Now walk down the fitness sorted Population, pushing rendered cv_mats
-//        // of high fitness individuals onto the collection.
-//        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
-//        for (int i = 0; i < mat_max; i++)
-//        {
-//            Individual* individual = population_->nthBestFitness(i);
-//            if (individual->getFitness() > 0)
-//            {
-//                Texture& texture = *GP::textureFromIndividual(individual);
-//                texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//                const cv::Mat& mat = texture.getCvMat();
-//                mats.push_back(&mat);
-//            }
-//        }
+        // Now walk down the fitness sorted Population, pushing rendered cv_mats
+        // of high fitness individuals onto the collection.
+        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
+        for (int i = 0; i < mat_max; i++)
+        {
+            Individual* individual = population_->nthBestFitness(i);
+            if (individual->getFitness() > 0)
+            {
+                Texture& texture = *GP::textureFromIndividual(individual);
+                texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+                const cv::Mat& mat = texture.getCvMat();
+                mats.push_back(&mat);
+            }
+        }
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         
@@ -542,29 +561,28 @@ public:
         
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         
-        std::vector<cv::Mat> newest_pyramid;
-        std::vector<cv::Mat> target_pyramid;
-        makeResolutionPyramid(newest, newest_pyramid);
-        makeResolutionPyramid(target, target_pyramid);
-        
-//        draw_point = Vec2(margin(), draw_point.y() * 2);
-        draw_point += stride_y;
-        draw_point = Vec2(margin(), draw_point.y());
-        for (auto& mat : newest_pyramid)
-        {
-            gui().drawMat(mat, draw_point);
-            draw_point += Vec2(margin() + mat.cols, 0);
-        }
-        
-//        draw_point = Vec2(margin(), draw_point.y() * 2);
-        draw_point += stride_y;
-        draw_point = Vec2(margin(), draw_point.y());
-        for (auto& mat : target_pyramid)
-        {
-            gui().drawMat(mat, draw_point);
-            draw_point += Vec2(margin() + mat.cols, 0);
-        }
-        
+//            std::vector<cv::Mat> newest_pyramid;
+//            std::vector<cv::Mat> target_pyramid;
+//            makeResolutionPyramid(newest, newest_pyramid);
+//            makeResolutionPyramid(target, target_pyramid);
+//
+//    //        draw_point = Vec2(margin(), draw_point.y() * 2);
+//            draw_point += stride_y;
+//            draw_point = Vec2(margin(), draw_point.y());
+//            for (auto& mat : newest_pyramid)
+//            {
+//                gui().drawMat(mat, draw_point);
+//                draw_point += Vec2(margin() + mat.cols, 0);
+//            }
+//
+//    //        draw_point = Vec2(margin(), draw_point.y() * 2);
+//            draw_point += stride_y;
+//            draw_point = Vec2(margin(), draw_point.y());
+//            for (auto& mat : target_pyramid)
+//            {
+//                gui().drawMat(mat, draw_point);
+//                draw_point += Vec2(margin() + mat.cols, 0);
+//            }
 
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         
@@ -596,6 +614,8 @@ private:
     int max_init_tree_size_ = 100;
     int min_crossover_tree_size_ = 50;
     int max_crossover_tree_size_ = 150;
+    
+    std::vector<cv::Mat> target_pyramid_;
 
     // TODO copied from EvoCamoGame,
     // TODO should this just be a member inside SimpleImageMatch instance?

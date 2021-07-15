@@ -30,7 +30,8 @@ class GUI
 {
 public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GUI() : GUI(Vec2(), Vec2(), "") {}
+//    GUI() : GUI(Vec2(), Vec2(), "") {}
+    GUI() : GUI(Vec2(), Vec2(), "gui") {}
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Note that OpenCV's coordinate system has zero in upper left
     GUI(Vec2 size_in_pixels,
@@ -182,6 +183,14 @@ public:
                          size_in_pixels.x(),
                          CV_8UC3,
                          backgroundGray());
+    }
+    
+    void makeTopmost()
+    {
+//        debugPrint(getWindowName());
+//        debugPrint(cv::getWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE));
+        cv::setWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE, 1);
+//        debugPrint(cv::getWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE));
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
