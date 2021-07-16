@@ -431,10 +431,40 @@ inline std::string float_to_percent_fractional_digits(float value, int digits)
 
 // Utilities to count and report, but otherwise tolerate, "abnormal" floats.
 #define paper_over_abnormal_values(e) paper_over_abnormal_values_helper((e), #e)
+inline int abnormal_value_counter = 0;
+inline int abnormal_value_counter_per_run = 0;
 // Filter out "abnormal" floats, substituting zero. Count and log each such.
-float paper_over_abnormal_values_helper(float x, const std::string& source);
+inline float paper_over_abnormal_values_helper(float x,
+                                               const std::string& source)
+{
+    if (!is_normal(x))
+    {
+        grabPrintLock();
+        abnormal_value_counter_per_run++;
+        if ((1000 >= abnormal_value_counter_per_run) ||
+            (0 == abnormal_value_counter_per_run % 1000000))
+        {
+            std::cout << "!!! replacing abnormal float " << x;
+            std::cout << ", from " << source << ", with 0 (";
+            std::cout << abnormal_value_counter_per_run << " so far).";
+            std::cout << std::endl;
+        }
+        x = 0;
+    }
+    return x;
+}
 // Can be called at end of run to log a summary report.
-void abnormal_value_report();
+inline void abnormal_value_report()
+{
+    if (abnormal_value_counter || abnormal_value_counter_per_run)
+    {
+        abnormal_value_counter += abnormal_value_counter_per_run;
+        std::cout << "Abnormal values replaced by zero this run: ";
+        std::cout << abnormal_value_counter_per_run << ", since launch: ";
+        std::cout << abnormal_value_counter << "." << std::endl;
+        abnormal_value_counter_per_run = 0;
+    }
+}
 
 // Returns bool indicating if the given set contains the given element.
 // TODO Stand-in for the not-until-C++20 function std::set::contains())

@@ -276,36 +276,6 @@ void jittered_grid_NxN_in_square(int n,
                                    rs.frandom01() * cell_width));
 }
 
-// Utilities to count and report, but otherwise tolerate, "abnormal" floats.
-int abnormal_value_counter = 0;
-int abnormal_value_counter_per_run = 0;
-// Filter out "abnormal" floats, substituting zero. Count and log each such.
-float paper_over_abnormal_values_helper(float x, const std::string& source)
-{
-    if (!is_normal(x))
-    {
-        grabPrintLock();
-        abnormal_value_counter_per_run++;
-        std::cout << "!!! replacing abnormal float " << x;
-        std::cout << ", from " << source << ", with 0 (";
-        std::cout << abnormal_value_counter_per_run << " so far)." << std::endl;
-        x = 0;
-    }
-    return x;
-}
-// Can be called at end of run to log a summary report.
-void abnormal_value_report()
-{
-    if (abnormal_value_counter || abnormal_value_counter_per_run)
-    {
-        abnormal_value_counter += abnormal_value_counter_per_run;
-        std::cout << "Abnormal values replaced by zero this run: ";
-        std::cout << abnormal_value_counter_per_run << ", since launch: ";
-        std::cout << abnormal_value_counter << "." << std::endl;
-        abnormal_value_counter_per_run = 0;
-    }
-}
-
 // Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
 // position, and given spot parameters (center, inner_radius, outer_radius)
 // as in Spot::getColor(), etc. (TODO use it there?)
