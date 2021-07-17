@@ -211,6 +211,14 @@ public:
     // gets args passed in as two Mats (m0, m1) just assuming m0 is "newest" and
     // m1 is "target". Needs redesign.
     //
+    //  0  64x64  4096
+    //  1  32x32  1024
+    //  2  16x16   256
+    //  3   8x8     64
+    //  4   4x4     16
+    //  5   2x2      4
+    //  6   1x1      1
+    //
     float imageMipMapSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
         assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
@@ -224,7 +232,8 @@ public:
         float score = 1;
 //        int steps = 7; // 64x64 = 4096 at highest resolution level
 //        int steps = 5; // 16x16 = 256 at highest resolution level
-        int steps = 4; // 8x8 = 64 at highest resolution level
+//        int steps = 4; // 8x8 = 64 at highest resolution level
+        int steps = 3; // 4x4 = 15 at highest resolution level
         for (int step = 0; step < steps; step++)
         {
             // Index of the 1x1 image level in pyramid.
@@ -240,7 +249,8 @@ public:
     float imageProductPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
         float product_pixel_similarity = 1;
-        similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= s;});
+//        similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= s;});
+        similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= sq(s);});
         float min_value = 0.0000000001;  // TODO
         return std::max(product_pixel_similarity, min_value);
     }
