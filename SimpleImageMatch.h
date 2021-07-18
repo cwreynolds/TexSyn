@@ -95,115 +95,7 @@ public:
         // Delete Population instance.
         population_ = nullptr;
     }
-    
-//    // TODO product-of-all-pixel-similarities
-//    float fitnessFunction(Individual* individual) // const
-//    {
-//        Texture& texture = *GP::textureFromIndividual(individual);
-//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//        cv::Mat mat = texture.getCvMat();
-//        float similarity = imageSimilarity(mat, target_image_);
-//        float nonuniformity = 1 - imageUniformity(mat);
-//        drawGuiForFitnessFunction(mat, target_image_);
-//        std::cout << "    fitness=" << similarity * nonuniformity;
-//        std::cout << " (similarity=" << similarity;
-//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//        return similarity * nonuniformity;
-//    }
-    
-//    // TODO minimum-of-all-pixel-similarities
-//    // TODO does this work? what about without nonuniformity?
-//    float fitnessFunction(Individual* individual) // const
-//    {
-//        Texture& texture = *GP::textureFromIndividual(individual);
-//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//        cv::Mat mat = texture.getCvMat();
-//        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
-//        float nonuniformity = 1 - imageUniformity(mat);
-//        drawGuiForFitnessFunction(mat, target_image_);
-//        std::cout << "    fitness=" << min_similarity * nonuniformity;
-//        std::cout << " (min_similarity=" << min_similarity;
-//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//        return min_similarity * nonuniformity;
-//    }
-
-//        // TODO just trying combining last two approaches July 10
-//        float fitnessFunction(Individual* individual) // const
-//        {
-//            Texture& texture = *GP::textureFromIndividual(individual);
-//            texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//            cv::Mat mat = texture.getCvMat();
-//
-//            float similarity = imageSimilarity(mat, target_image_);
-//
-//            float min_similarity = imageMinPixelSimilarity(mat, target_image_);
-//            float nonuniformity = 1 - imageUniformity(mat);
-//            drawGuiForFitnessFunction(mat, target_image_);
-//    //        std::cout << "    fitness=" << min_similarity * nonuniformity;
-//    //        std::cout << " (min_similarity=" << min_similarity;
-//    //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//    //        return min_similarity * nonuniformity;
-//
-//            std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
-//            std::cout << " (similarity=" << similarity;
-//            std::cout << " min_similarity=" << min_similarity;
-//            std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//
-//            return similarity * min_similarity * nonuniformity;
-//        }
-
-//        // TODO trying 1 - (average per pixel error squared) July 11
-//        float fitnessFunction(Individual* individual) // const
-//        {
-//            Texture& texture = *GP::textureFromIndividual(individual);
-//            texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//            cv::Mat mat = texture.getCvMat();
-//    //        float similarity = imageSimilarity(mat, target_image_);
-//    //        float min_similarity = imageMinPixelSimilarity(mat, target_image_);
-//    //        float nonuniformity = 1 - imageUniformity(mat);
-//            drawGuiForFitnessFunction(mat, target_image_);
-//    //        std::cout << "    fitness=" << min_similarity * nonuniformity;
-//    //        std::cout << " (min_similarity=" << min_similarity;
-//    //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//    //        return min_similarity * nonuniformity;
-//
-//    //        std::cout << "    fitness=" << similarity * min_similarity * nonuniformity;
-//    //        std::cout << " (similarity=" << similarity;
-//    //        std::cout << " min_similarity=" << min_similarity;
-//    //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//    //        return similarity * min_similarity * nonuniformity;
-//
-//    //        float fitness = imageAvePixelDiffSquared(mat, target_image_);
-//    //        std::cout << "    fitness=" << fitness << std::endl;
-//    //        return fitness;
-//
-//    //        float ave_pixel_diff = imageAvePixelDiffSquared(mat, target_image_);
-//    //        float nonuniformity = 1 - imageUniformity(mat);
-//    //        std::cout << "    fitness=" << ave_pixel_diff * nonuniformity;
-//    //        std::cout << " (ave_pixel_diff=" << ave_pixel_diff;
-//    //        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//    //        return ave_pixel_diff * nonuniformity;
-//
-//            float ave_pixel_similarity = imageAvePixelSimilarity(mat, target_image_);
-//            float nonuniformity = 1 - imageUniformity(mat);
-//            std::cout << "    fitness=" << ave_pixel_similarity * nonuniformity;
-//            std::cout << " (ave_pixel_similarity=" << ave_pixel_similarity;
-//            std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//            return ave_pixel_similarity * nonuniformity;
-//        }
-
-    
-//    float fitnessFunction(Individual* individual) // const
-//    {
-//        Texture& texture = *GP::textureFromIndividual(individual);
-//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//        cv::Mat mat = texture.getCvMat();
-//        drawGuiForFitnessFunction(mat, target_image_);
-//        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
-//        std::cout << "    fitness=" << mip_map_similarity << std::endl;
-//        return mip_map_similarity;
-//    }
-    
+        
     float fitnessFunction(Individual* individual)
     {
         Texture& texture = *GP::textureFromIndividual(individual);
@@ -237,30 +129,61 @@ public:
     //
     float imageMipMapSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
-               (m0.cols > 0) && (m0.rows > 0));
         // Build "MIP map like" resolution pyramid for newest evolved image.
         std::vector<cv::Mat> newest_pyramid;
         makeResolutionPyramid(m0, newest_pyramid);
         assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
+        
+        
+        // TODO TEMP -- July 18, 2021 10:40-ish
+        // use ONLY the 16x16 down sampled version
+        
+        // Index of the 1x1 image level in pyramid.
+        size_t p = newest_pyramid.size() - 1;
+        int step = 4;
+        // debugPrint(newest_pyramid.at(p - step).cols);  ->  16 as expected
+        return imageAvePixelSimilarity(newest_pyramid.at(p - step),
+                                       target_pyramid_.at(p - step));
 
-        // TODO July 15, pure multiplicative
-        float score = 1;
+        /*
+
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO July 15, pure multiplicative
+//        float score = 1;
+        // TODO July 15, average of layers
+        float score = 0;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+        
 //        int steps = 7; // 64x64 = 4096 at highest resolution level
 //        int steps = 5; // 16x16 = 256 at highest resolution level
 //        int steps = 4; // 8x8 = 64 at highest resolution level
 //        int steps = 3; // 4x4 = 16 at highest resolution level
 //        int steps = 4; // 8x8 = 64 at highest resolution level (July 17)
-        int steps = 3; // 4x4 = 16 at highest resolution level
+//        int steps = 3; // 4x4 = 16 at highest resolution level
+        int steps = 5; // 16x16 = 256 at highest resolution level (July 18)
         for (int step = 0; step < steps; step++)
         {
             // Index of the 1x1 image level in pyramid.
             size_t p = newest_pyramid.size() - 1;
             // Increment score by similarity at this pyramid level.
-            score *= imageProductPixelSimilarity(newest_pyramid.at(p - step),
-                                                 target_pyramid_.at(p - step));
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO July 15, pure multiplicative
+//            score *= imageProductPixelSimilarity(newest_pyramid.at(p - step),
+//                                                 target_pyramid_.at(p - step));
+            score += imageAvePixelSimilarity(newest_pyramid.at(p - step),
+                                             target_pyramid_.at(p - step));
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         }
-        return score;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO July 15, pure multiplicative
+//        return score;
+        // TODO July 15, average of layers
+        return score / steps;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+         
+         
+         */
     }
 
     // Returns a number on [0, 1]: the product of all pixel similarities.
@@ -293,24 +216,33 @@ public:
         }
     }
     
-    
+//    // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+//    float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
+//               (m0.cols > 0) && (m0.rows > 0));
+//        float sum_pixel_similarity = 0;
+//        for (int x = 0; x < m0.cols; x++)
+//        {
+//            for (int y = 0; y < m0.rows; y++)
+//            {
+//                float similar = Color::similarity(getCvMatPixel(x, y, m0),
+//                                                  getCvMatPixel(x, y, m1));
+//                assert (between(similar, 0, 1));
+//                sum_pixel_similarity += similar;
+//            }
+//        }
+//        return sum_pixel_similarity / (m0.cols * m0.rows);
+//    }
+
     // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
+    // TODO July 18, remove squaring to keep things simple for single-level MIP.
     float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
-               (m0.cols > 0) && (m0.rows > 0));
-        float sum_pixel_similarity = 0;
-        for (int x = 0; x < m0.cols; x++)
-        {
-            for (int y = 0; y < m0.rows; y++)
-            {
-                float similar = Color::similarity(getCvMatPixel(x, y, m0),
-                                                  getCvMatPixel(x, y, m1));
-                assert (between(similar, 0, 1));
-                sum_pixel_similarity += similar;
-            }
-        }
-        return sum_pixel_similarity / (m0.cols * m0.rows);
+        float sum = 0;  // sum of per-pixel similarity squared
+//        similarityHelper(m0, m1, [&](float s){ sum += sq(s); });
+        similarityHelper(m0, m1, [&](float s){ sum += s; });
+        return sum / (m0.cols * m0.rows);
     }
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
@@ -338,52 +270,53 @@ public:
         return min_pixel_similarity;
     }
     
-    // Returns a number on [0, 1] measuring how similar two images are.
-    // TODO could be more efficient, but only only takes 0.0341692 for 511x511
-    //      images so is just a tiny fraction of the time for a texture render.
-    float imageSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
-    {
-        int m0w = m0.cols;
-        int m0h = m0.rows;
-        int m1w = m1.cols;
-        int m1h = m1.rows;
-        assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        bool similarity_squared = false;
-        bool multiplicative = true;
-//        bool similarity_squared = true;
-//        bool multiplicative = false;
-        bool averaging = !multiplicative;
-        float similarlity = 0;
-        if (multiplicative) similarlity = 1;
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        for (int x = 0; x < m0w; x++)
-        {
-            for (int y = 0; y < m0h; y++)
-            {
-                float similar = Color::similarity(getCvMatPixel(x, y, m0),
-                                                  getCvMatPixel(x, y, m1));
-                assert (between(similar, 0, 1));
-                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-                if (averaging) similarlity += similar;
-                if (multiplicative) similarlity *= remapInterval(similar,
-                                                                 0, 1, 0.99, 1);
-                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            }
-        }
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        if (averaging) similarlity /= m0w * m0h;
-        if (similarity_squared) similarlity *= similarlity;
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        return similarlity;
-    }
+//        // Returns a number on [0, 1] measuring how similar two images are.
+//        // TODO could be more efficient, but only only takes 0.0341692 for 511x511
+//        //      images so is just a tiny fraction of the time for a texture render.
+//        float imageSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            int m0w = m0.cols;
+//            int m0h = m0.rows;
+//            int m1w = m1.cols;
+//            int m1h = m1.rows;
+//            assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            bool similarity_squared = false;
+//            bool multiplicative = true;
+//    //        bool similarity_squared = true;
+//    //        bool multiplicative = false;
+//            bool averaging = !multiplicative;
+//            float similarlity = 0;
+//            if (multiplicative) similarlity = 1;
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            for (int x = 0; x < m0w; x++)
+//            {
+//                for (int y = 0; y < m0h; y++)
+//                {
+//                    float similar = Color::similarity(getCvMatPixel(x, y, m0),
+//                                                      getCvMatPixel(x, y, m1));
+//                    assert (between(similar, 0, 1));
+//                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                    if (averaging) similarlity += similar;
+//                    if (multiplicative) similarlity *= remapInterval(similar,
+//                                                                     0, 1, 0.99, 1);
+//                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                }
+//            }
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            if (averaging) similarlity /= m0w * m0h;
+//            if (similarity_squared) similarlity *= similarlity;
+//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//            return similarlity;
+//        }
 
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
     float imageUniformity(const cv::Mat& mat) const
     {
         float uniformity = 1;
-        int tests = 10;
+//        int tests = 10;
+        int tests = 100;
         for (int i = 0; i < tests; i++)
         {
             Color a = getCvMatPixel(LPRS().random2(0, mat.cols),
@@ -484,9 +417,6 @@ public:
         std::vector<const cv::Mat*> mats;
         mats.push_back(&newest);
         mats.push_back(&target);
-        
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
         // Now walk down the fitness sorted Population, pushing rendered cv_mats
         // of high fitness individuals onto the collection.
         int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
@@ -501,9 +431,6 @@ public:
                 mats.push_back(&mat);
             }
         }
-        
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
         // Draw collection of Mats as a grid on the GUI.
         int count = 0;
         Vec2 draw_point(margin(), margin());
@@ -521,34 +448,6 @@ public:
                 draw_point = Vec2(margin(), draw_point.y());
             }
         }
-        
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
-//            std::vector<cv::Mat> newest_pyramid;
-//            std::vector<cv::Mat> target_pyramid;
-//            makeResolutionPyramid(newest, newest_pyramid);
-//            makeResolutionPyramid(target, target_pyramid);
-//
-//    //        draw_point = Vec2(margin(), draw_point.y() * 2);
-//            draw_point += stride_y;
-//            draw_point = Vec2(margin(), draw_point.y());
-//            for (auto& mat : newest_pyramid)
-//            {
-//                gui().drawMat(mat, draw_point);
-//                draw_point += Vec2(margin() + mat.cols, 0);
-//            }
-//
-//    //        draw_point = Vec2(margin(), draw_point.y() * 2);
-//            draw_point += stride_y;
-//            draw_point = Vec2(margin(), draw_point.y());
-//            for (auto& mat : target_pyramid)
-//            {
-//                gui().drawMat(mat, draw_point);
-//                draw_point += Vec2(margin() + mat.cols, 0);
-//            }
-
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        
         gui().setWindowTitle("SimpleImageMatch -- " +
                              run_name_ +
                              " -- step " +
@@ -584,5 +483,4 @@ private:
     // TODO should this just be a member inside SimpleImageMatch instance?
     // Points to heap-allocated Population instance during run() function.
     std::shared_ptr<Population> population_ = nullptr;
-
 };
