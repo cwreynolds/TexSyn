@@ -187,7 +187,7 @@ public:
     
     // TODO This does not seem to work on macOS Big Sur. The getWindowProperty()
     // calls return -1, which seems like an error (or "not implemented"?) code.
-    void makeTopmost()
+    void makeTopmost() const
     {
 //        debugPrint(getWindowName());
 //        debugPrint(cv::getWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE));

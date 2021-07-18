@@ -193,16 +193,32 @@ public:
 //        }
 
     
-    float fitnessFunction(Individual* individual) // const
+//    float fitnessFunction(Individual* individual) // const
+//    {
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//        cv::Mat mat = texture.getCvMat();
+//        drawGuiForFitnessFunction(mat, target_image_);
+//        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
+//        std::cout << "    fitness=" << mip_map_similarity << std::endl;
+//        return mip_map_similarity;
+//    }
+    
+    float fitnessFunction(Individual* individual)
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
         drawGuiForFitnessFunction(mat, target_image_);
         float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
-        std::cout << "    fitness=" << mip_map_similarity << std::endl;
-        return mip_map_similarity;
+        float nonuniformity = 1 - imageUniformity(mat);
+        float fitness = mip_map_similarity * nonuniformity;
+        std::cout << "    fitness=" << fitness;
+        std::cout << " (mip_map_similarity=" << mip_map_similarity;
+        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+        return fitness;
     }
+
         
     // Returns a number on [0, 1] by a MIP-map-ish approach operating at various
     // levels of resolution.
@@ -233,7 +249,9 @@ public:
 //        int steps = 7; // 64x64 = 4096 at highest resolution level
 //        int steps = 5; // 16x16 = 256 at highest resolution level
 //        int steps = 4; // 8x8 = 64 at highest resolution level
-        int steps = 3; // 4x4 = 15 at highest resolution level
+//        int steps = 3; // 4x4 = 16 at highest resolution level
+//        int steps = 4; // 8x8 = 64 at highest resolution level (July 17)
+        int steps = 3; // 4x4 = 16 at highest resolution level
         for (int step = 0; step < steps; step++)
         {
             // Index of the 1x1 image level in pyramid.
@@ -415,7 +433,7 @@ public:
         return Color(bgrPixel[2] / m, bgrPixel[1] / m, bgrPixel[0] / m);
     };
 
-    Vec2 getTargetImageSize()
+    Vec2 getTargetImageSize() const
     {
         return Vec2(target_image_.cols, target_image_.rows);
     }
