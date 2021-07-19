@@ -96,22 +96,56 @@ public:
         population_ = nullptr;
     }
         
+//    float fitnessFunction(Individual* individual)
+//    {
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//        cv::Mat mat = texture.getCvMat();
+//        drawGuiForFitnessFunction(mat, target_image_);
+//        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
+//        float fitness = mip_map_similarity * nonuniformity;
+//        std::cout << "    fitness=" << fitness;
+//        std::cout << " (mip_map_similarity=" << mip_map_similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return fitness;
+//    }
+
+//    float fitnessFunction(Individual* individual)
+//    {
+//        Texture& texture = *GP::textureFromIndividual(individual);
+//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
+//        cv::Mat mat = texture.getCvMat();
+//        drawGuiForFitnessFunction(mat, target_image_);
+////        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
+//        float threshold_similarity = imageThresholdSimilarity(mat, target_image_);
+//        float nonuniformity = 1 - imageUniformity(mat);
+//        float fitness = threshold_similarity * nonuniformity;
+//
+//        float min_value = 0.0000000001;  // TODO
+//        fitness = std::max(fitness, min_value);
+//
+//        std::cout << "    fitness=" << fitness;
+//        std::cout << " (threshold_similarity=" << threshold_similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        return fitness;
+//    }
+  
     float fitnessFunction(Individual* individual)
     {
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
         drawGuiForFitnessFunction(mat, target_image_);
-        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
+        float similarity = imageOhDearGodSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
-        float fitness = mip_map_similarity * nonuniformity;
+        float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
-        std::cout << " (mip_map_similarity=" << mip_map_similarity;
+        std::cout << " (oh_dear_god_similarity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
-
-        
+    
     // Returns a number on [0, 1] by a MIP-map-ish approach operating at various
     // levels of resolution.
     //
@@ -245,6 +279,50 @@ public:
         return sum / (m0.cols * m0.rows);
     }
 
+    // Returns a number on [0, 1]: fraction of pixels with at least "threshold"
+    // similarity.
+    float imageThresholdSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        float threshold = 0.8;
+        float sum = 0;  // sum of per-pixel similarities larger than threshold.
+//        similarityHelper(m0, m1, [&](float s){ if (s > threshold) sum += s; });
+        
+//        auto pixel_similarity =
+//            [&](float s){ sum += remapIntervalClip(s, threshold, 1, 0, 1); };
+//        similarityHelper(m0, m1, pixel_similarity);
+        
+        similarityHelper(m0,
+                         m1,
+                         [&](float s)
+                         {
+                            sum += remapIntervalClip(s, threshold, 1, 0, 1);
+                         });
+        return sum / (m0.cols * m0.rows);
+    }
+    
+    // Returns a number on [0, 1]: one last try (I really mean it THIS time).
+    // Realized that imageThresholdSimilarity()--after tweaks-- was very similar
+    // to taking average of squared per-pixel similarity. This just generalizes
+    // the square as an expentiation. (Trying 5 on July 19, 2021)
+//    float imageOhDearGodSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        float sum = 0;  // sum of exponentiated per-pixel similarities.
+//        similarityHelper(m0, m1, [&](float s){ sum += std::pow(s, 5); });
+//        return sum / (m0.cols * m0.rows);
+//    }
+    // TODO OK one more tweak, higher power, a bit more at the low end, see:
+    // https://www.wolframalpha.com/input/?i=plot++y+%3D+%28%28x+*+0.05%29+%2B+%280.95+*+x%5E10%29%29%2C+x%3D+0+to+1%2C+y+%3D+0+to+1
+    float imageOhDearGodSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        float sum = 0;  // sum of exponentiated per-pixel similarities.
+        similarityHelper(m0,
+                         m1,
+                         [&](float s){ sum += ((0.05 * s) +
+                                               (0.95 * std::pow(s, 10))); });
+        return sum / (m0.cols * m0.rows);
+    }
+
+    
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
