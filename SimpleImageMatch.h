@@ -95,42 +95,7 @@ public:
         // Delete Population instance.
         population_ = nullptr;
     }
-        
-//    float fitnessFunction(Individual* individual)
-//    {
-//        Texture& texture = *GP::textureFromIndividual(individual);
-//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//        cv::Mat mat = texture.getCvMat();
-//        drawGuiForFitnessFunction(mat, target_image_);
-//        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
-//        float nonuniformity = 1 - imageUniformity(mat);
-//        float fitness = mip_map_similarity * nonuniformity;
-//        std::cout << "    fitness=" << fitness;
-//        std::cout << " (mip_map_similarity=" << mip_map_similarity;
-//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//        return fitness;
-//    }
-
-//    float fitnessFunction(Individual* individual)
-//    {
-//        Texture& texture = *GP::textureFromIndividual(individual);
-//        texture.rasterizeToImageCache(getTargetImageSize().x(), false);
-//        cv::Mat mat = texture.getCvMat();
-//        drawGuiForFitnessFunction(mat, target_image_);
-////        float mip_map_similarity = imageMipMapSimilarity(mat, target_image_);
-//        float threshold_similarity = imageThresholdSimilarity(mat, target_image_);
-//        float nonuniformity = 1 - imageUniformity(mat);
-//        float fitness = threshold_similarity * nonuniformity;
-//
-//        float min_value = 0.0000000001;  // TODO
-//        fitness = std::max(fitness, min_value);
-//
-//        std::cout << "    fitness=" << fitness;
-//        std::cout << " (threshold_similarity=" << threshold_similarity;
-//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
-//        return fitness;
-//    }
-  
+    
     float fitnessFunction(Individual* individual)
     {
         Texture& texture = *GP::textureFromIndividual(individual);
@@ -168,6 +133,7 @@ public:
         makeResolutionPyramid(m0, newest_pyramid);
         assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
         
+#if 1  // use ONLY the 16x16 down sampled version
         
         // TODO TEMP -- July 18, 2021 10:40-ish
         // use ONLY the 16x16 down sampled version
@@ -179,7 +145,7 @@ public:
         return imageAvePixelSimilarity(newest_pyramid.at(p - step),
                                        target_pyramid_.at(p - step));
 
-        /*
+#else  // use ONLY the 16x16 down sampled version
 
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 //        // TODO July 15, pure multiplicative
@@ -187,8 +153,6 @@ public:
         // TODO July 15, average of layers
         float score = 0;
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
-        
 //        int steps = 7; // 64x64 = 4096 at highest resolution level
 //        int steps = 5; // 16x16 = 256 at highest resolution level
 //        int steps = 4; // 8x8 = 64 at highest resolution level
@@ -215,9 +179,7 @@ public:
         // TODO July 15, average of layers
         return score / steps;
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-         
-         
-         */
+#endif  // use ONLY the 16x16 down sampled version
     }
 
     // Returns a number on [0, 1]: the product of all pixel similarities.
@@ -250,31 +212,11 @@ public:
         }
     }
     
-//    // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
-//    float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
-//    {
-//        assert((m0.cols == m1.cols) && (m0.rows == m1.rows) &&
-//               (m0.cols > 0) && (m0.rows > 0));
-//        float sum_pixel_similarity = 0;
-//        for (int x = 0; x < m0.cols; x++)
-//        {
-//            for (int y = 0; y < m0.rows; y++)
-//            {
-//                float similar = Color::similarity(getCvMatPixel(x, y, m0),
-//                                                  getCvMatPixel(x, y, m1));
-//                assert (between(similar, 0, 1));
-//                sum_pixel_similarity += similar;
-//            }
-//        }
-//        return sum_pixel_similarity / (m0.cols * m0.rows);
-//    }
-
     // Returns a number on [0, 1] measuring: 1 - pixel_error_square_average.
     // TODO July 18, remove squaring to keep things simple for single-level MIP.
     float imageAvePixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
         float sum = 0;  // sum of per-pixel similarity squared
-//        similarityHelper(m0, m1, [&](float s){ sum += sq(s); });
         similarityHelper(m0, m1, [&](float s){ sum += s; });
         return sum / (m0.cols * m0.rows);
     }
@@ -285,12 +227,6 @@ public:
     {
         float threshold = 0.8;
         float sum = 0;  // sum of per-pixel similarities larger than threshold.
-//        similarityHelper(m0, m1, [&](float s){ if (s > threshold) sum += s; });
-        
-//        auto pixel_similarity =
-//            [&](float s){ sum += remapIntervalClip(s, threshold, 1, 0, 1); };
-//        similarityHelper(m0, m1, pixel_similarity);
-        
         similarityHelper(m0,
                          m1,
                          [&](float s)
@@ -304,12 +240,6 @@ public:
     // Realized that imageThresholdSimilarity()--after tweaks-- was very similar
     // to taking average of squared per-pixel similarity. This just generalizes
     // the square as an expentiation. (Trying 5 on July 19, 2021)
-//    float imageOhDearGodSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
-//    {
-//        float sum = 0;  // sum of exponentiated per-pixel similarities.
-//        similarityHelper(m0, m1, [&](float s){ sum += std::pow(s, 5); });
-//        return sum / (m0.cols * m0.rows);
-//    }
     // TODO OK one more tweak, higher power, a bit more at the low end, see:
     // https://www.wolframalpha.com/input/?i=plot++y+%3D+%28%28x+*+0.05%29+%2B+%280.95+*+x%5E10%29%29%2C+x%3D+0+to+1%2C+y+%3D+0+to+1
     float imageOhDearGodSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
@@ -348,46 +278,6 @@ public:
         return min_pixel_similarity;
     }
     
-//        // Returns a number on [0, 1] measuring how similar two images are.
-//        // TODO could be more efficient, but only only takes 0.0341692 for 511x511
-//        //      images so is just a tiny fraction of the time for a texture render.
-//        float imageSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
-//        {
-//            int m0w = m0.cols;
-//            int m0h = m0.rows;
-//            int m1w = m1.cols;
-//            int m1h = m1.rows;
-//            assert((m0w == m1w) && (m0h == m1h) && (m0w > 0) && (m0h > 0));
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            bool similarity_squared = false;
-//            bool multiplicative = true;
-//    //        bool similarity_squared = true;
-//    //        bool multiplicative = false;
-//            bool averaging = !multiplicative;
-//            float similarlity = 0;
-//            if (multiplicative) similarlity = 1;
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            for (int x = 0; x < m0w; x++)
-//            {
-//                for (int y = 0; y < m0h; y++)
-//                {
-//                    float similar = Color::similarity(getCvMatPixel(x, y, m0),
-//                                                      getCvMatPixel(x, y, m1));
-//                    assert (between(similar, 0, 1));
-//                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                    if (averaging) similarlity += similar;
-//                    if (multiplicative) similarlity *= remapInterval(similar,
-//                                                                     0, 1, 0.99, 1);
-//                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                }
-//            }
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            if (averaging) similarlity /= m0w * m0h;
-//            if (similarity_squared) similarlity *= similarlity;
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            return similarlity;
-//        }
-
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
     float imageUniformity(const cv::Mat& mat) const
