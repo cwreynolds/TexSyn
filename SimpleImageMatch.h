@@ -102,11 +102,13 @@ public:
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
         drawGuiForFitnessFunction(mat, target_image_);
-        float similarity = imageOhDearGodSimilarity(mat, target_image_);
+//        float similarity = imageOhDearGodSimilarity(mat, target_image_);
+        float similarity = imageTotalErrorSquared(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
-        std::cout << " (oh_dear_god_similarity=" << similarity;
+//        std::cout << " (oh_dear_god_similarity=" << similarity;
+        std::cout << " (imageTotalErrorSquared=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -251,7 +253,14 @@ public:
                                                (0.95 * std::pow(s, 10))); });
         return sum / (m0.cols * m0.rows);
     }
-
+    
+    // TODO July 21, 2021
+    float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        float sum = 0;
+        similarityHelper(m0, m1, [&](float s){ sum += (1 - s); });
+        return 1000000000 - sq(sum);
+    }
     
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
