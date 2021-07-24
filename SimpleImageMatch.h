@@ -103,12 +103,14 @@ public:
         cv::Mat mat = texture.getCvMat();
         drawGuiForFitnessFunction(mat, target_image_);
 //        float similarity = imageOhDearGodSimilarity(mat, target_image_);
-        float similarity = imageTotalErrorSquared(mat, target_image_);
+//        float similarity = imageTotalErrorSquared(mat, target_image_);
+        float similarity = imageYetAnotherSimilarlity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
 //        std::cout << " (oh_dear_god_similarity=" << similarity;
-        std::cout << " (imageTotalErrorSquared=" << similarity;
+//        std::cout << " (imageTotalErrorSquared=" << similarity;
+        std::cout << " (imageYetAnotherSimilarlity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -254,14 +256,65 @@ public:
         return sum / (m0.cols * m0.rows);
     }
     
-    // TODO July 21, 2021
+//        // TODO July 21, 2021
+//        float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//    //        float sum = 0;
+//    //        similarityHelper(m0, m1, [&](float s){ sum += (1 - s); });
+//    //        return 1000000000 - sq(sum);
+//
+//
+//            double sum = 0;
+//
+//
+//    //        similarityHelper(m0, m1, [&](float s){ sum += sq(1 - s); });
+//            similarityHelper(m0, m1, [&](float s)
+//            {
+//    //            debugPrint(sum);
+//    //            debugPrint(sq(1 - s))
+//                sum += sq(1 - s);
+//            });
+//
+//
+//    //        return (1000000000 - sum) / 2000000000; // TODO fix inline tuning
+//    //        return (1000000000.0 - sum) / 2000000000.0; // TODO fix inline tuning
+//
+//    //        return 1000000000 - sum; // TODO fix inline tuning
+//
+//    //        double scale = 0.0000000001;
+//    //        return (1000000000 * scale) - (sum * scale); // TODO fix inline tuning
+//
+//            return (m0.cols * m0.rows) - sum; // TODO fix inline tuning
+//
+//        }
+
+//    // TODO July 22, 2021
+//    float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        double sum = 0;
+//        similarityHelper(m0, m1, [&](float s) { sum += sq(1 - s); });
+//        float max = m0.cols * m0.rows;
+//        return (max - sum) / max; // TODO fix inline tuning
+//    }
+
+    // TODO July 22, 2021
     float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        float sum = 0;
-        similarityHelper(m0, m1, [&](float s){ sum += (1 - s); });
-        return 1000000000 - sq(sum);
+        double sum = 0;
+        float q = 10;
+        similarityHelper(m0, m1, [&](float s) { sum += sq(q * (1 - s)); });
+        float max = sq(q) * m0.cols * m0.rows;
+        return (max - sum) / max; // TODO fix inline tuning
     }
     
+    // similar to imageProductPixelSimilarity()
+    float imageYetAnotherSimilarlity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        float p = 1;
+        similarityHelper(m0, m1, [&](float s){p *= remapInterval(s,0,1,0.999,1);});
+        return p;
+    }
+
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
