@@ -5780,21 +5780,27 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototyping SimpleTextureMatch
-    std::cout << "June 30, 2021" << std::endl;
-    SimpleImageMatch(CommandLine(argc, argv)).run();
-    
-//        CommandLine cmd
-//        ({
-//            "simple_image_match",
-//    //        "/Users/cwr/Desktop/test_target_image.png",
-//    //        "/Users/cwr/Desktop/test_target_image_511_square.png",
-//            "/Users/cwr/Desktop/test_target_image_255_square.png",
-//            "/Users/cwr/Desktop/TexSyn_temp/",
-//            "20210703"
-//        });
-//        SimpleImageMatch(cmd).run();
+//        // Prototyping SimpleTextureMatch
+//        std::cout << "June 30, 2021" << std::endl;
+//        SimpleImageMatch(CommandLine(argc, argv)).run();
+//
+//    //        CommandLine cmd
+//    //        ({
+//    //            "simple_image_match",
+//    //    //        "/Users/cwr/Desktop/test_target_image.png",
+//    //    //        "/Users/cwr/Desktop/test_target_image_511_square.png",
+//    //            "/Users/cwr/Desktop/test_target_image_255_square.png",
+//    //            "/Users/cwr/Desktop/TexSyn_temp/",
+//    //            "20210703"
+//    //        });
+//    //        SimpleImageMatch(cmd).run();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Testing revised CountFunctionUsage inside EvoCamoGame
+    std::cout << "July 24, 2021" << std::endl;
+    EvoCamoGame(CommandLine(argc, argv)).run();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

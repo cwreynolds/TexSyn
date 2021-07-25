@@ -194,6 +194,9 @@ public:
             std::string step_string = " (step " + getStepAsString() + ")";
             gui().setWindowTitle(run_name_ + step_string);
             logFunctionUsageCounts(out);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            writeTrainingSetData();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
@@ -404,16 +407,33 @@ public:
         return selected;
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-        cv::Mat image = gui().getCvMat();
+//        cv::Mat image = gui().getCvMat();
+//        std::filesystem::path path = output_directory_this_run_;
+//        path /= "step_" + getStepAsString() + ".png";
+//        std::cout << "Writing tournament image to file " << path << std::endl;
+//        cv::imwrite(path, image);
+        
         std::filesystem::path path = output_directory_this_run_;
         path /= "step_" + getStepAsString() + ".png";
-        std::cout << "Writing tournament image to file " << path << std::endl;
-        cv::imwrite(path, image);
+        writeTournamentImageToFile(path);
     }
     
+    void writeTournamentImageToFile(const std::string& image_pathname)
+    {
+//        cv::Mat image = gui().getCvMat();
+//        std::filesystem::path path = output_directory_this_run_;
+//        path /= "step_" + getStepAsString() + ".png";
+        std::cout << "Writing tournament image to file "
+                  << image_pathname << std::endl;
+        cv::imwrite(image_pathname, gui().getCvMat());
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Write a "thumbnail" image with Texture and its background neighborhood.
     void writeThumbnailImageToFile(Individual* individual)
     {
@@ -532,6 +552,22 @@ public:
     std::shared_ptr<Population> getPopulation() { return population_; };
     std::shared_ptr<Population> getPopulation() const { return population_; };
     void setPopulation(std::shared_ptr<Population> p) { population_ = p; };
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Every n frames save a (JPG?) image of the "tournament" (whole window) and
+    // append line: step number, pixel xy bounding box of all three prey.
+    void writeTrainingSetData() const
+    {
+        
+        // See function
+        //   writeTournamentImageToFile()
+        //   logFunctionUsageCounts()
+        
+        std::filesystem::path path = output_directory_this_run_ + "training_set";
+        
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
