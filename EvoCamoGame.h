@@ -195,12 +195,26 @@ public:
             gui().setWindowTitle(run_name_ + step_string);
             logFunctionUsageCounts(out);
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            writeTrainingSetData();
+            // TODO July 25: 2021 11:22 when called here, on step 0 there are no
+            // positions on prey_texture_positions_ and I suspect the image in
+            // the GUI is blank. If we move it after evolutionStep() then I have
+            // the problem from logFunctionUsageCounts() days that
+            // getPopulation()->getStepCount() is already incremented.
+            //
+//            writeTrainingSetData();
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO July 25: 2021 11:22
+            // If we move it after evolutionStep() then I have
+            // the problem from logFunctionUsageCounts() days that
+            // getPopulation()->getStepCount() is already incremented.
+            //
+            writeTrainingSetData();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -308,10 +322,31 @@ public:
         return tg;
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO temp experiment
+    std::vector<Vec2> prey_texture_positions_;
+    
+//    // Draw Textures of TournamentGroup over current background in GUI.
+//    void drawTournamentGroupOverBackground(const TournamentGroup& tg)
+//    {
+//        int p = 0;
+//        for (auto& tgm : tg.members())
+//        {
+//            int size = textureSize();
+//            Texture* texture = GP::textureFromIndividual(tgm.individual);
+//            texture->rasterizeToImageCache(size, true);
+//            Vec2 center_to_ul = Vec2(1, 1) * size / 2;
+//            Vec2 position = disks_.at(p++).position - center_to_ul;
+//            cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
+//            texture->matteImageCacheDiskOverBG(size, target);
+//        }
+//    }
+    
     // Draw Textures of TournamentGroup over current background in GUI.
     void drawTournamentGroupOverBackground(const TournamentGroup& tg)
     {
         int p = 0;
+        prey_texture_positions_.clear();
         for (auto& tgm : tg.members())
         {
             int size = textureSize();
@@ -319,11 +354,14 @@ public:
             texture->rasterizeToImageCache(size, true);
             Vec2 center_to_ul = Vec2(1, 1) * size / 2;
             Vec2 position = disks_.at(p++).position - center_to_ul;
+            prey_texture_positions_.push_back(position);
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
         }
     }
-    
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
     // executes single character commands: "t" and "Q".
@@ -512,7 +550,10 @@ public:
     Vec2 guiSize() const { return gui_size_; }
     // Reference to GUI.
     GUI& gui() { return gui_; }
-    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    const GUI& gui() const { return gui_; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // TODO very temp
     int textureSize() const { return 201; }
     
@@ -556,15 +597,36 @@ public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Every n frames save a (JPG?) image of the "tournament" (whole window) and
     // append line: step number, pixel xy bounding box of all three prey.
-    void writeTrainingSetData() const
+    void writeTrainingSetData() // const
     {
-        
-        // See function
-        //   writeTournamentImageToFile()
-        //   logFunctionUsageCounts()
-        
-        std::filesystem::path path = output_directory_this_run_ + "training_set";
-        
+        int n = 10;
+//        int step = getPopulation()->getStepCount() - 1; // since step already incremented here
+        int step = getPopulation()->getStepCount();
+        if ((step % n) == 0)
+        {
+            // See function
+            //   writeTournamentImageToFile()
+            //   logFunctionUsageCounts()
+            
+//            std::filesystem::path path = output_directory_this_run_ + "training_set";
+            std::filesystem::path path;
+            path = output_directory_this_run_;
+            path /= "training_set";
+            path /= "step_" + getStepAsString();
+
+//            debugPrint(getPopulation()->getStepCount());
+            debugPrint(step);
+            debugPrint(path);
+            std::cout << "prey_texture_positions_ ";
+            for (auto p : prey_texture_positions_) { std::cout << p << " "; }
+            std::cout << std::endl;
+
+            // TODO this is not showing up, so I may be confused about draw order
+            for (auto p : prey_texture_positions_)
+            {
+                gui().drawCircle(textureSize() * 1.2, p, Color(0, 1, 0));
+            }
+        }
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
