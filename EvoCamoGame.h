@@ -194,63 +194,15 @@ public:
             std::string step_string = " (step " + getStepAsString() + ")";
             gui().setWindowTitle(run_name_ + step_string);
             logFunctionUsageCounts(out);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO July 25: 2021 11:22 when called here, on step 0 there are no
-            // positions on prey_texture_positions_ and I suspect the image in
-            // the GUI is blank. If we move it after evolutionStep() then I have
-            // the problem from logFunctionUsageCounts() days that
-            // getPopulation()->getStepCount() is already incremented.
-            //
-//            writeTrainingSetData();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO July 25: 2021 11:22
-            // If we move it after evolutionStep() then I have
-            // the problem from logFunctionUsageCounts() days that
-            // getPopulation()->getStepCount() is already incremented.
-            //
-            writeTrainingSetData();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
     }
     
-    void logFunctionUsageCounts(const std::filesystem::path& out)
-    {
-        int step = getPopulation()->getStepCount();
-        if ((step % 10) == 0)
-        {
-            // Preserve each named counter, but set its count to zero.
-            cfu_.zeroEachCounter();
-            // Count total GpFunction usage over entire Population of GpTrees.
-            cfu_.count(*getPopulation());
-            // Open output stream to file in append mode.
-            std::ofstream outfile;
-            outfile.open(out / "function_counts.txt", std::ios::app);
-            if (step == 0)
-            {
-                std::string names = "steps,ave_tree_size,ave_fitness,";
-                auto func = [&](std::string s, int c) { names += s + ","; };
-                cfu_.applyToAllCounts(func);
-                std::cout << names << std::endl;
-                outfile << names << std::endl;
-            }
-            std::string counts;
-            auto add_count = [&](int c){ counts += std::to_string(c) + ","; };
-            add_count(step);
-            add_count(getPopulation()->averageTreeSize());
-            add_count(getPopulation()->averageFitness());
-            cfu_.applyToAllCounts([&](std::string s, int c){ add_count(c); });
-            std::cout << counts << std::endl;
-            outfile << counts << std::endl;
-        }
-    }
-
     // TODO temporary utility for debugging random non-overlapping placement
     // TODO to be removed eventually
     void testdraw(const TournamentGroup& tg,
@@ -322,31 +274,11 @@ public:
         return tg;
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO temp experiment
-    std::vector<Vec2> prey_texture_positions_;
-    
-//    // Draw Textures of TournamentGroup over current background in GUI.
-//    void drawTournamentGroupOverBackground(const TournamentGroup& tg)
-//    {
-//        int p = 0;
-//        for (auto& tgm : tg.members())
-//        {
-//            int size = textureSize();
-//            Texture* texture = GP::textureFromIndividual(tgm.individual);
-//            texture->rasterizeToImageCache(size, true);
-//            Vec2 center_to_ul = Vec2(1, 1) * size / 2;
-//            Vec2 position = disks_.at(p++).position - center_to_ul;
-//            cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
-//            texture->matteImageCacheDiskOverBG(size, target);
-//        }
-//    }
-    
     // Draw Textures of TournamentGroup over current background in GUI.
     void drawTournamentGroupOverBackground(const TournamentGroup& tg)
     {
         int p = 0;
-        prey_texture_positions_.clear();
+        std::vector<Vec2> prey_texture_positions;
         for (auto& tgm : tg.members())
         {
             int size = textureSize();
@@ -354,13 +286,12 @@ public:
             texture->rasterizeToImageCache(size, true);
             Vec2 center_to_ul = Vec2(1, 1) * size / 2;
             Vec2 position = disks_.at(p++).position - center_to_ul;
-            prey_texture_positions_.push_back(position);
+            prey_texture_positions.push_back(position);
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
         }
+        writeTrainingSetData(prey_texture_positions);
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
@@ -445,16 +376,9 @@ public:
         return selected;
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-//        cv::Mat image = gui().getCvMat();
-//        std::filesystem::path path = output_directory_this_run_;
-//        path /= "step_" + getStepAsString() + ".png";
-//        std::cout << "Writing tournament image to file " << path << std::endl;
-//        cv::imwrite(path, image);
-        
         std::filesystem::path path = output_directory_this_run_;
         path /= "step_" + getStepAsString() + ".png";
         writeTournamentImageToFile(path);
@@ -462,15 +386,10 @@ public:
     
     void writeTournamentImageToFile(const std::string& image_pathname)
     {
-//        cv::Mat image = gui().getCvMat();
-//        std::filesystem::path path = output_directory_this_run_;
-//        path /= "step_" + getStepAsString() + ".png";
         std::cout << "Writing tournament image to file "
                   << image_pathname << std::endl;
         cv::imwrite(image_pathname, gui().getCvMat());
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Write a "thumbnail" image with Texture and its background neighborhood.
     void writeThumbnailImageToFile(Individual* individual)
@@ -550,9 +469,7 @@ public:
     Vec2 guiSize() const { return gui_size_; }
     // Reference to GUI.
     GUI& gui() { return gui_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const GUI& gui() const { return gui_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // TODO very temp
     int textureSize() const { return 201; }
@@ -594,42 +511,72 @@ public:
     std::shared_ptr<Population> getPopulation() const { return population_; };
     void setPopulation(std::shared_ptr<Population> p) { population_ = p; };
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Every n frames save a (JPG?) image of the "tournament" (whole window) and
-    // append line: step number, pixel xy bounding box of all three prey.
-    void writeTrainingSetData() // const
+    void logFunctionUsageCounts(const std::filesystem::path& out)
     {
-        int n = 10;
-//        int step = getPopulation()->getStepCount() - 1; // since step already incremented here
         int step = getPopulation()->getStepCount();
-        if ((step % n) == 0)
+        if ((step % 10) == 0)
         {
-            // See function
-            //   writeTournamentImageToFile()
-            //   logFunctionUsageCounts()
-            
-//            std::filesystem::path path = output_directory_this_run_ + "training_set";
-            std::filesystem::path path;
-            path = output_directory_this_run_;
-            path /= "training_set";
-            path /= "step_" + getStepAsString();
-
-//            debugPrint(getPopulation()->getStepCount());
-            debugPrint(step);
-            debugPrint(path);
-            std::cout << "prey_texture_positions_ ";
-            for (auto p : prey_texture_positions_) { std::cout << p << " "; }
-            std::cout << std::endl;
-
-            // TODO this is not showing up, so I may be confused about draw order
-            for (auto p : prey_texture_positions_)
+            // Preserve each named counter, but set its count to zero.
+            cfu_.zeroEachCounter();
+            // Count total GpFunction usage over entire Population of GpTrees.
+            cfu_.count(*getPopulation());
+            // Open output stream to file in append mode.
+            std::ofstream outfile;
+            outfile.open(out / "function_counts.txt", std::ios::app);
+            if (step == 0)
             {
-                gui().drawCircle(textureSize() * 1.2, p, Color(0, 1, 0));
+                std::string names = "steps,ave_tree_size,ave_fitness,";
+                auto func = [&](std::string s, int c) { names += s + ","; };
+                cfu_.applyToAllCounts(func);
+                std::cout << names << std::endl;
+                outfile << names << std::endl;
             }
+            std::string counts;
+            auto add_count = [&](int c){ counts += std::to_string(c) + ","; };
+            add_count(step);
+            add_count(getPopulation()->averageTreeSize());
+            add_count(getPopulation()->averageFitness());
+            cfu_.applyToAllCounts([&](std::string s, int c){ add_count(c); });
+            std::cout << counts << std::endl;
+            outfile << counts << std::endl;
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    
+    // Every n frames save a JPEG image of the "tournament" (whole window) and
+    // append line: step number, pixel xy bounding box of all three prey.
+    void writeTrainingSetData(const std::vector<Vec2>& prey_texture_positions)
+    {
+        int n = 10;
+        if ((getPopulation()->getStepCount() % n) == 0)
+        {
+            // Construct path for training set directory, create if needed.
+            std::filesystem::path directory = output_directory_this_run_;
+            directory /= "training_set";
+            std::filesystem::create_directory(directory);
+            // Construct pathname image, write to file.
+            std::filesystem::path image_path = directory;
+            image_path /= "step_" + getStepAsString() + ".jpeg";
+            cv::imwrite(image_path, gui().getCvMat());
+            // Open output stream to bounding_boxes.txt file in append mode.
+            std::ofstream outfile;
+            outfile.open(directory / "bounding_boxes.txt", std::ios::app);
+            // Construct line of text with step number and bounding boxes.
+            // Note: uses OpenCV coordinates, origin in upper left.
+            // Each bounding box is "(min_x min_y max_x max_y)"
+            std::string bboxes = getStepAsString();
+            for (auto p : prey_texture_positions)
+            {
+                bboxes += " (";
+                bboxes += std::to_string(int(p.x())) + " ";
+                bboxes += std::to_string(int(p.y())) + " ";
+                bboxes += std::to_string(int(p.x() + textureSize())) + " ";
+                bboxes += std::to_string(int(p.y() + textureSize())) + ")";
+            }
+            // Write to console log and to bounding_boxes.txt file.
+            std::cout << "prey texture bounding boxes: " << bboxes << std::endl;
+            outfile << bboxes << std::endl;
+        }
+    }
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
