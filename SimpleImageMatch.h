@@ -105,14 +105,16 @@ public:
 //        float similarity = imageOhDearGodSimilarity(mat, target_image_);
 //        float similarity = imageTotalErrorSquared(mat, target_image_);
 //        float similarity = imageYetAnotherSimilarlity(mat, target_image_);
-        float similarity = imageJuly30Similarlity(mat, target_image_);
+//        float similarity = imageJuly30Similarlity(mat, target_image_);
+        float similarity = imageJuly31Similarlity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
 //        std::cout << " (oh_dear_god_similarity=" << similarity;
 //        std::cout << " (imageTotalErrorSquared=" << similarity;
 //        std::cout << " (imageYetAnotherSimilarlity=" << similarity;
-        std::cout << " (imageJuly30Similarlity=" << similarity;
+//        std::cout << " (imageJuly30Similarlity=" << similarity;
+        std::cout << " (imageJuly31Similarlity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -429,6 +431,26 @@ public:
         assert(newest_pyramid.at(p - step).cols == n);
         return imageProductPixelSimilarity(newest_pyramid.at(p - step),
                                            target_pyramid_.at(p - step));
+    }
+
+    
+    // TODO July 31 version
+    float imageJuly31Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        assert(m0.cols == m1.cols);
+        assert(m0.rows == m1.rows);
+        float product_of_similarities = 1;
+//        const int n = 400; // take n random samples
+        const int n = 200; // take n random samples
+        for (int i = 0; i < n; i++)
+        {
+            int x = LPRS().random2(0, m0.cols);
+            int y = LPRS().random2(0, m0.rows);
+            Color a = getCvMatPixel(x, y, m0);
+            Color b = getCvMatPixel(x, y, m1);
+            product_of_similarities *= Color::similarity(a, b);
+        }
+        return product_of_similarities;
     }
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
