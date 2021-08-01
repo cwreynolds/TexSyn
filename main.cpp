@@ -5797,10 +5797,16 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing revised CountFunctionUsage inside EvoCamoGame
-    std::cout << "July 24, 2021" << std::endl;
-    EvoCamoGame(CommandLine(argc, argv)).run();
+//    // Testing revised CountFunctionUsage inside EvoCamoGame
+//    std::cout << "July 24, 2021" << std::endl;
+//    EvoCamoGame(CommandLine(argc, argv)).run();
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototyping SimpleTextureMatch
+    std::cout << "July 30, 2021" << std::endl;
+    SimpleImageMatch(CommandLine(argc, argv)).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

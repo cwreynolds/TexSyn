@@ -178,7 +178,7 @@
         camouflage, for a long time I've wanted to try using
         evolutionary texture optimization to discover novel ways to
         represent a given image. I hoped I could effectively “invent”
-        visual stylization . This would be related to, but different
+        visual stylizations. This would be related to, but different
         from, the large body of recent work in <a
           moz-do-not-send="true"
           href="https://en.wikipedia.org/wiki/Neural_Style_Transfer">style
@@ -212,9 +212,10 @@
       <img src="images/20210727_IMG_3812_511_square.jpeg" alt="target
         image" title="target image" class="img_flow" height="511"
         width="511">
-      <p>Then I would evolve a population of textures using a fitness
+      <p>I planned to evolve a population of textures using a fitness
         function based on image similarity. It seemed like it should be
-        easy to find evolved textures similar to the target image.
+        easy to find evolved textures similar to the target image, then
+        to gradually improve that similarity over evolutionary time.
         Either something is deeply wrong with my code, or none of the
         several metrics of image similarity I tried were appropriate for
         this task. I made a series of experiments from July 4 to 24. I
@@ -277,12 +278,13 @@
         width="1000">
       <p>A few seconds of screen recording of the run begun July 19,
         2021 at 2:27pm. This is the upper right hand corner of the
-        display, showing the new texture created on that step, next to
-        the target image. Perhaps the circular (often blue) feature in
+        display, showing the newest texture (created by crossover and
+        mutation on that single evolutionary step) next to the target
+        image. Perhaps the prominent, often blue, circular feature in
         the “sky” region may be created by a <i>Hyperbolic</i> texture
         operator (see <a moz-do-not-send="true" href="#20200711">July
           11, 2020</a>) based on the way detail seems pressed against
-        the edges.<br>
+        the circular boundary.<br>
       </p>
       <video controls="controls" height="136" width="268"> <source
           src="images/20210727_realtime_7-19_4.58pm.mp4"
