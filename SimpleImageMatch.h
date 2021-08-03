@@ -106,7 +106,8 @@ public:
 //        float similarity = imageTotalErrorSquared(mat, target_image_);
 //        float similarity = imageYetAnotherSimilarlity(mat, target_image_);
 //        float similarity = imageJuly30Similarlity(mat, target_image_);
-        float similarity = imageJuly31Similarlity(mat, target_image_);
+//        float similarity = imageJuly31Similarlity(mat, target_image_);
+        float similarity = imageAug2Similarlity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
@@ -114,7 +115,8 @@ public:
 //        std::cout << " (imageTotalErrorSquared=" << similarity;
 //        std::cout << " (imageYetAnotherSimilarlity=" << similarity;
 //        std::cout << " (imageJuly30Similarlity=" << similarity;
-        std::cout << " (imageJuly31Similarlity=" << similarity;
+//        std::cout << " (imageJuly31Similarlity=" << similarity;
+        std::cout << " (imageAug2Similarlity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -261,47 +263,6 @@ public:
         return sum / (m0.cols * m0.rows);
     }
     
-//        // TODO July 21, 2021
-//        float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
-//        {
-//    //        float sum = 0;
-//    //        similarityHelper(m0, m1, [&](float s){ sum += (1 - s); });
-//    //        return 1000000000 - sq(sum);
-//
-//
-//            double sum = 0;
-//
-//
-//    //        similarityHelper(m0, m1, [&](float s){ sum += sq(1 - s); });
-//            similarityHelper(m0, m1, [&](float s)
-//            {
-//    //            debugPrint(sum);
-//    //            debugPrint(sq(1 - s))
-//                sum += sq(1 - s);
-//            });
-//
-//
-//    //        return (1000000000 - sum) / 2000000000; // TODO fix inline tuning
-//    //        return (1000000000.0 - sum) / 2000000000.0; // TODO fix inline tuning
-//
-//    //        return 1000000000 - sum; // TODO fix inline tuning
-//
-//    //        double scale = 0.0000000001;
-//    //        return (1000000000 * scale) - (sum * scale); // TODO fix inline tuning
-//
-//            return (m0.cols * m0.rows) - sum; // TODO fix inline tuning
-//
-//        }
-
-//    // TODO July 22, 2021
-//    float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
-//    {
-//        double sum = 0;
-//        similarityHelper(m0, m1, [&](float s) { sum += sq(1 - s); });
-//        float max = m0.cols * m0.rows;
-//        return (max - sum) / max; // TODO fix inline tuning
-//    }
-
     // TODO July 22, 2021
     float imageTotalErrorSquared(const cv::Mat& m0, const cv::Mat& m1) const
     {
@@ -319,102 +280,6 @@ public:
         similarityHelper(m0, m1, [&](float s){p *= remapInterval(s,0,1,0.999,1);});
         return p;
     }
-
-//        // TODO July 30 version
-//        float imageJuly30Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
-//        {
-//            // Build "MIP map like" resolution pyramid for newest evolved image.
-//            std::vector<cv::Mat> newest_pyramid;
-//            makeResolutionPyramid(m0, newest_pyramid);
-//            assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
-//
-//            // use ONLY the 16x16 down sampled version
-//
-//            // Index of the 1x1 image level in pyramid.
-//            size_t p = newest_pyramid.size() - 1;
-//            int step = 4;
-//            // debugPrint(newest_pyramid.at(p - step).cols);  ->  16 as expected
-//    //        return imageAvePixelSimilarity(newest_pyramid.at(p - step),
-//    //                                       target_pyramid_.at(p - step));
-//
-//            // like imageProductPixelSimilarity
-//            // Returns a number on [0, 1]: the product of all pixel similarities.
-//            auto similarity = [&](const cv::Mat& m0, const cv::Mat& m1)
-//            {
-//    //            float product_pixel_similarity = 1;
-//    //            similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= s;});
-//    //            // similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= sq(s);});
-//    //            // float min_value = 0.0000000001;  // TODO
-//    //            // return std::max(product_pixel_similarity, min_value);
-//    //            return product_pixel_similarity;
-//                double product_pixel_similarity = 1;
-//                similarityHelper(m0, m1, [&](double s){product_pixel_similarity *= s;});
-//                // similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= sq(s);});
-//                // float min_value = 0.0000000001;  // TODO
-//                // return std::max(product_pixel_similarity, min_value);
-//                return product_pixel_similarity;
-//            };
-//
-//            return similarity(newest_pyramid.at(p - step),
-//                              target_pyramid_.at(p - step));
-//
-//    //        return std::pow(double(similarity(newest_pyramid.at(p - step),
-//    //                                          target_pyramid_.at(p - step))),
-//    //                        double(sq(16)));
-//        }
-    
-//        // TODO July 30 version
-//        float imageJuly30Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
-//        {
-//            // Use an n² downsampled version of the two textures
-//    //        const int step = 4;  // n = 16
-//            const int step = 6;  // n = 64
-//
-//            // 1 2 4 8 16 32 64 128 256
-//
-//            const int n = std::pow(2, step);
-//            // Build "MIP map like" resolution pyramid for newest evolved image.
-//            std::vector<cv::Mat> newest_pyramid;
-//            makeResolutionPyramid(m0, newest_pyramid);
-//            assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
-//            // Index of the 1x1 image level in pyramid.
-//            size_t p = newest_pyramid.size() - 1;
-//    //        int step = 4;
-//            // debugPrint(newest_pyramid.at(p - step).cols);  ->  16 as expected
-//    //        return imageAvePixelSimilarity(newest_pyramid.at(p - step),
-//    //                                       target_pyramid_.at(p - step));
-//
-//            debugPrint(newest_pyramid.at(p - step).cols);  // ->  16 as expected
-//            assert(newest_pyramid.at(p - step).cols == n);
-//
-//    //            // like imageProductPixelSimilarity
-//    //            // Returns a number on [0, 1]: the product of all pixel similarities.
-//    //            auto similarity = [&](const cv::Mat& m0, const cv::Mat& m1)
-//    //            {
-//    //    //            float product_pixel_similarity = 1;
-//    //    //            similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= s;});
-//    //    //            // similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= sq(s);});
-//    //    //            // float min_value = 0.0000000001;  // TODO
-//    //    //            // return std::max(product_pixel_similarity, min_value);
-//    //    //            return product_pixel_similarity;
-//    //                double product_pixel_similarity = 1;
-//    //                similarityHelper(m0, m1, [&](double s){product_pixel_similarity *= s;});
-//    //                // similarityHelper(m0, m1, [&](float s){product_pixel_similarity *= sq(s);});
-//    //                // float min_value = 0.0000000001;  // TODO
-//    //                // return std::max(product_pixel_similarity, min_value);
-//    //                return product_pixel_similarity;
-//    //            };
-//
-//    //        return similarity(newest_pyramid.at(p - step),
-//    //                          target_pyramid_.at(p - step));
-//
-//    //        return std::pow(double(similarity(newest_pyramid.at(p - step),
-//    //                                          target_pyramid_.at(p - step))),
-//    //                        double(sq(16)));
-//
-//            return imageProductPixelSimilarity(newest_pyramid.at(p - step),
-//                                               target_pyramid_.at(p - step));
-//        }
 
     // TODO July 30 version
     float imageJuly30Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
@@ -452,6 +317,69 @@ public:
         }
         return product_of_similarities;
     }
+
+//    // TODO Aug 2 version
+//    float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        float sum = 0;
+//        float max = std::numeric_limits<float>::min();
+//        float min = std::numeric_limits<float>::max();
+//        auto per_pixel = [&](float s)
+//        {
+//            sum += s;
+//            max = std::max(max, s);
+//            min = std::min(min, s);
+//        };
+//        similarityHelper(m0, m1, per_pixel);
+//        float ave = sum / (m0.cols * m0.rows);
+//        return ave * min * max;
+//    }
+    
+//    // TODO Aug 2 version
+//    float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        float sum = 0;
+//        float max = std::numeric_limits<float>::min();
+//        float min = std::numeric_limits<float>::max();
+//        similarityHelper(m0,
+//                         m1,
+//                         [&](float s)
+//                         {
+//                             sum += s;
+//                             max = std::max(max, s);
+//                             min = std::min(min, s);
+//                         });
+//        float ave = sum / (m0.cols * m0.rows);
+//
+//        float fitness = ave * min * max;
+//        std::cout << "    fitness = " << fitness << "  (ave, min, max = " << ave
+//                  << ", " << min << ", " << max << ")" << std::endl;
+//
+//        return fitness;
+//    }
+    
+    // TODO Aug 2 version
+    float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        float sum = 0;
+        float max = std::numeric_limits<float>::min();
+        float min = std::numeric_limits<float>::max();
+        similarityHelper(m0,
+                         m1,
+                         [&](float s)
+                         {
+                             sum += s;
+                             max = std::max(max, s);
+                             min = std::min(min, s);
+                         });
+//        float ave = sum / (m0.cols * m0.rows);
+//        std::cout << "    (ave, min, max = " << ave << ", "
+//                  << min << ", " << max << ")" << std::endl;
+//        return ave * min * max;
+        std::cout << "    (min, max = " << min << ", " << max << ")";
+        return min * max;
+    }
+
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
