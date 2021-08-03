@@ -107,7 +107,8 @@ public:
 //        float similarity = imageYetAnotherSimilarlity(mat, target_image_);
 //        float similarity = imageJuly30Similarlity(mat, target_image_);
 //        float similarity = imageJuly31Similarlity(mat, target_image_);
-        float similarity = imageAug2Similarlity(mat, target_image_);
+//        float similarity = imageAug2Similarlity(mat, target_image_);
+        float similarity = imageAug3Similarlity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
@@ -116,7 +117,8 @@ public:
 //        std::cout << " (imageYetAnotherSimilarlity=" << similarity;
 //        std::cout << " (imageJuly30Similarlity=" << similarity;
 //        std::cout << " (imageJuly31Similarlity=" << similarity;
-        std::cout << " (imageAug2Similarlity=" << similarity;
+//        std::cout << " (imageAug2Similarlity=" << similarity;
+        std::cout << " (imageAug3Similarlity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -317,46 +319,6 @@ public:
         }
         return product_of_similarities;
     }
-
-//    // TODO Aug 2 version
-//    float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
-//    {
-//        float sum = 0;
-//        float max = std::numeric_limits<float>::min();
-//        float min = std::numeric_limits<float>::max();
-//        auto per_pixel = [&](float s)
-//        {
-//            sum += s;
-//            max = std::max(max, s);
-//            min = std::min(min, s);
-//        };
-//        similarityHelper(m0, m1, per_pixel);
-//        float ave = sum / (m0.cols * m0.rows);
-//        return ave * min * max;
-//    }
-    
-//    // TODO Aug 2 version
-//    float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
-//    {
-//        float sum = 0;
-//        float max = std::numeric_limits<float>::min();
-//        float min = std::numeric_limits<float>::max();
-//        similarityHelper(m0,
-//                         m1,
-//                         [&](float s)
-//                         {
-//                             sum += s;
-//                             max = std::max(max, s);
-//                             min = std::min(min, s);
-//                         });
-//        float ave = sum / (m0.cols * m0.rows);
-//
-//        float fitness = ave * min * max;
-//        std::cout << "    fitness = " << fitness << "  (ave, min, max = " << ave
-//                  << ", " << min << ", " << max << ")" << std::endl;
-//
-//        return fitness;
-//    }
     
     // TODO Aug 2 version
     float imageAug2Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
@@ -380,6 +342,31 @@ public:
         return min * max;
     }
 
+    // TODO August 3 version
+    float imageAug3Similarlity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        assert(m0.cols == m1.cols);
+        assert(m0.rows == m1.rows);
+        // Make 32x32 grid of 1024 sample points on size-x-size.
+        int n = 32;
+        int size = m0.cols;
+        std::vector<Vec2> offsets;
+        jittered_grid_NxN_in_square(n, size, LPRS(), offsets);
+        float product_of_similarities = 1;
+        for (auto v : offsets)
+        {
+            int x = v.x() + size / 2;
+            int y = v.y() + size / 2;
+            assert(between(x, 0, size - 1));
+            assert(between(y, 0, size - 1));
+            float similarity = Color::similarity(getCvMatPixel(x, y, m0),
+                                                 getCvMatPixel(x, y, m1));
+            float min = 1 - (1.0 / 128.0);
+            float remap_similarity = remapInterval(similarity, 0, 1, min, 1);
+            product_of_similarities *= remap_similarity;
+        }
+        return product_of_similarities;
+    }
 
     // Returns a number on [0, 1] measuring minimum-of-all-pixel-similarities.
     float imageMinPixelSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
