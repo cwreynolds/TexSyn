@@ -361,7 +361,9 @@ public:
             assert(between(y, 0, size - 1));
             float similarity = Color::similarity(getCvMatPixel(x, y, m0),
                                                  getCvMatPixel(x, y, m1));
-            float min = 1 - (1.0 / 128.0);
+            // TODO 20210805 try this tweak, probably not significant
+//            float min = 1 - (1.0 / 128.0);
+            float min = 1 - (1.0 / 64);
             float remap_similarity = remapInterval(similarity, 0, 1, min, 1);
             product_of_similarities *= remap_similarity;
         }
