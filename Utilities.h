@@ -19,9 +19,7 @@
 #include <any>
 #include <set>
 #include <filesystem>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include <thread>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Vec2;
 class Color;
 
@@ -655,7 +653,8 @@ public:
 
 //inline static OccasionalSleep occasional_sleep(1, 10);
 //inline static OccasionalSleep occasional_sleep(0.05, 1);
-inline static OccasionalSleep occasional_sleep(0.1, 10);
+//inline static OccasionalSleep occasional_sleep(0.1, 10);
+inline static OccasionalSleep occasional_sleep(0.01, 1);
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -98,6 +98,7 @@ public:
     
     float fitnessFunction(Individual* individual)
     {
+        Texture::waitKey(1);
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
@@ -255,16 +256,28 @@ public:
 //        return sum / (m0.cols * m0.rows);
 //    }
 
+//        // Returns a number on [0, 1]: fraction of pixels with at least "threshold"
+//        // similarity.
+//        float imageThresholdSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            float threshold = 0.9;
+//            int count = 0;  // count per-pixel similarities larger than threshold.
+//            similarityHelper(m0, m1, [&](float s){ if (s > threshold) count++; });
+//            return count / float(m0.cols * m0.rows);
+//        }
+
     // Returns a number on [0, 1]: fraction of pixels with at least "threshold"
     // similarity.
     float imageThresholdSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        float threshold = 0.9;
-        int count = 0;  // count per-pixel similarities larger than threshold.
-        similarityHelper(m0, m1, [&](float s){ if (s > threshold) count++; });
-        return count / float(m0.cols * m0.rows);
+//        float threshold = 0.9;
+        float threshold = 0.98;
+//        int count = 0;  // count per-pixel similarities larger than threshold.
+        float sum = 0;
+        similarityHelper(m0, m1, [&](float s) {sum += (s > threshold) ? 1 : s / 100;});
+        return sum / (m0.cols * m0.rows);
     }
-    
+
     // Returns a number on [0, 1]: one last try (I really mean it THIS time).
     // Realized that imageThresholdSimilarity()--after tweaks-- was very similar
     // to taking average of squared per-pixel similarity. This just generalizes

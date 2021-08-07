@@ -100,7 +100,18 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                                               std::ref(ocv_image_mutex)));
         }
         // Wait for all row threads to finish.
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO very experimental, for SimpleImageMatch, Aug 7, 2021
         for (auto& t : all_threads) t.join();
+//        for (auto& t : all_threads)
+//        {
+//            t.join();
+//            yield();
+//            occasional_sleep.sleepIfNeeded();
+//            Texture::waitKey(1);
+//        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     }
 }
 
@@ -148,8 +159,7 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        if (i == 0) { yield(); }
-        if (i == 0) { yield(); occasional_sleep.sleepIfNeeded(); }
+        if (i == 0) { yield(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.

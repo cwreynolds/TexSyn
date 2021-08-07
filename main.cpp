@@ -5806,6 +5806,17 @@ int main(int argc, const char * argv[])
     // Prototyping SimpleTextureMatch
     std::cout << "July 30, 2021" << std::endl;
     SimpleImageMatch(CommandLine(argc, argv)).run();
+    
+//    CommandLine cmd
+//    ({
+//        "simple_image_match",
+//        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
+//        "/Users/cwr/Desktop/TexSyn_temp/",
+//        "20210807",
+//        "300",
+//        "20"
+//    });
+//    SimpleImageMatch(cmd).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
