@@ -108,7 +108,8 @@ public:
 //        float similarity = imageJuly30Similarlity(mat, target_image_);
 //        float similarity = imageJuly31Similarlity(mat, target_image_);
 //        float similarity = imageAug2Similarlity(mat, target_image_);
-        float similarity = imageAug3Similarlity(mat, target_image_);
+//        float similarity = imageAug3Similarlity(mat, target_image_);
+        float similarity = imageThresholdSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
         std::cout << "    fitness=" << fitness;
@@ -118,7 +119,8 @@ public:
 //        std::cout << " (imageJuly30Similarlity=" << similarity;
 //        std::cout << " (imageJuly31Similarlity=" << similarity;
 //        std::cout << " (imageAug2Similarlity=" << similarity;
-        std::cout << " (imageAug3Similarlity=" << similarity;
+//        std::cout << " (imageAug3Similarlity=" << similarity;
+        std::cout << " (imageThresholdSimilarity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -233,20 +235,34 @@ public:
         similarityHelper(m0, m1, [&](float s){ sum += s; });
         return sum / (m0.cols * m0.rows);
     }
+    
+    // TODO found this on August 6, when I was about to implement some that
+    // matches the comment and name, but not the body of the function. Decided
+    // to overwrite this with the thing I want now.
+
+//    // Returns a number on [0, 1]: fraction of pixels with at least "threshold"
+//    // similarity.
+//    float imageThresholdSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//    {
+//        float threshold = 0.8;
+//        float sum = 0;  // sum of per-pixel similarities larger than threshold.
+//        similarityHelper(m0,
+//                         m1,
+//                         [&](float s)
+//                         {
+//                            sum += remapIntervalClip(s, threshold, 1, 0, 1);
+//                         });
+//        return sum / (m0.cols * m0.rows);
+//    }
 
     // Returns a number on [0, 1]: fraction of pixels with at least "threshold"
     // similarity.
     float imageThresholdSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
-        float threshold = 0.8;
-        float sum = 0;  // sum of per-pixel similarities larger than threshold.
-        similarityHelper(m0,
-                         m1,
-                         [&](float s)
-                         {
-                            sum += remapIntervalClip(s, threshold, 1, 0, 1);
-                         });
-        return sum / (m0.cols * m0.rows);
+        float threshold = 0.9;
+        int count = 0;  // count per-pixel similarities larger than threshold.
+        similarityHelper(m0, m1, [&](float s){ if (s > threshold) count++; });
+        return count / float(m0.cols * m0.rows);
     }
     
     // Returns a number on [0, 1]: one last try (I really mean it THIS time).

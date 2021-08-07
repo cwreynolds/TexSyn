@@ -148,8 +148,8 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        if (i == 0) { std::this_thread::yield(); }
-        if (i == 0) { yield(); }
+//        if (i == 0) { yield(); }
+        if (i == 0) { yield(); occasional_sleep.sleepIfNeeded(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.

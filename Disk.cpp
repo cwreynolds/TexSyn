@@ -57,6 +57,7 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                                 std::ref(disks)); });
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         yield();
+        occasional_sleep.sleepIfNeeded();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 }

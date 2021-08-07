@@ -588,12 +588,10 @@ float spot_utility(Vec2 position,
 // but transform is via an angle and center point, assumes sinosoid (softness=1)
 float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength);
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This thread allows others to run. Prevents lockup during long computations.
 inline void yield() { std::this_thread::yield(); }
 
-
 // Given a positive 32 bit signed int, round up to the next power of 2.
-
 // From: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 inline int next_power_of_2(int v)
 {
@@ -615,5 +613,49 @@ inline int nearest_power_of_2(int v)
     int midpoint = (next + prev) / 2;
     return (v < midpoint) ? prev : next;
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO tried this experiment, hoping to make the SimpleImageMatch window more
+// responsive to selection and hiding. As near as I can tell, it has no effect.
+// I'll leave it here or the next batch run, but maybe it should be removed.
+
+inline static std::mutex mutex_for_occasional_sleep;
+
+// Forces this thread to sleep for nap_time after busy_time of computation.
+class OccasionalSleep
+{
+public:
+    OccasionalSleep(float nap_time, float busy_time)
+      : nap_time_(nap_time), busy_time_(busy_time) {}
+    void sleepIfNeeded()
+    {
+        // Wait to grab lock for sleep timer. (Lock released at end of block)
+        const std::lock_guard<std::mutex> lock(mutex_for_occasional_sleep);
+
+        // TODO maybe the call to yield() should be here?
+        if (!initialized_)
+        {
+            last_run_time_started_ = TimeClock::now();
+            initialized_ = true;
+        }
+        TimeDuration elapsed_time = TimeClock::now() - last_run_time_started_;
+        if (elapsed_time.count() > busy_time_)
+        {
+            int ms = nap_time_ * 1000;
+            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+            last_run_time_started_ = TimeClock::now();
+//            std::cout << "zzz..." << std::endl;
+        }
+    }
+    float nap_time_;
+    float busy_time_;
+    bool initialized_ = false;
+    TimePoint last_run_time_started_;
+};
+
+//inline static OccasionalSleep occasional_sleep(1, 10);
+//inline static OccasionalSleep occasional_sleep(0.05, 1);
+inline static OccasionalSleep occasional_sleep(0.1, 10);
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
