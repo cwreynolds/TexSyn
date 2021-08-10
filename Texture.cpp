@@ -103,6 +103,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO very experimental, for SimpleImageMatch, Aug 7, 2021
         for (auto& t : all_threads) t.join();
+        
 //        for (auto& t : all_threads)
 //        {
 //            t.join();
@@ -110,6 +111,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //            occasional_sleep.sleepIfNeeded();
 //            Texture::waitKey(1);
 //        }
+
+        
+        
+//        for (int i = 0; i < 100; i++)
+//        {
+//            for (auto& t : all_threads)
+//            {
+//                std::cout << i << " ";
+//                debugPrint(t.joinable());
+//            }
+//            std::this_thread::sleep_for(std::chrono::seconds(1));
+//        }
+//        for (auto& t : all_threads) t.join();
+        
+        
+        // Maybe I should use std::future ?
+        // https://en.cppreference.com/w/cpp/thread/future
+        // https://www.cppstories.com/2014/01/tasks-with-stdfuture-and-stdasync/
+        
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     }
