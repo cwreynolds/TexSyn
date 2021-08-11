@@ -102,8 +102,15 @@ public:
 //        Texture::waitKey(1);
 
         // TODO can I get it to listen to commands, like run/pause and exit.
+//        int key = cv::waitKey(1);
+//        if (key > 0) debugPrint(key);
+        
+        
         int key = cv::waitKey(1);
-        if (key > 0) debugPrint(key);
+        while (key == cv::waitKey(1) && key > 0)
+        {
+            debugPrint(key);
+        }
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Texture& texture = *GP::textureFromIndividual(individual);

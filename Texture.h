@@ -53,11 +53,19 @@ public:
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
     void rasterizeToImageCache(int size, bool disk) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
+//    // to run in its own thread, uses mutex to synchonize access to the image.
+//    void rasterizeRowOfDisk(int j, int size, bool disk,
+//                            cv::Mat& opencv_image,
+//                            std::mutex& ocv_image_mutex) const;
     // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
     // to run in its own thread, uses mutex to synchonize access to the image.
     void rasterizeRowOfDisk(int j, int size, bool disk,
                             cv::Mat& opencv_image,
+                            int& row_counter,
                             std::mutex& ocv_image_mutex) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
     void matteImageCacheDiskOverBG(int size, cv::Mat& bg);

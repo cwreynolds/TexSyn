@@ -84,10 +84,24 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         std::mutex ocv_image_mutex;
         // Collection of all row threads.
         std::vector<std::thread> all_threads;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        int row_counter = 0;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
         for (int j = -(size / 2); j <= (size / 2); j++)
         {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // This requires some unpacking. It creates a thread which is pushed
+//            // (using && move semantics, I think) onto the back of std::vector
+//            // all_row_threads. Because the initial/toplevel thread function is
+//            // member function of this instance, it is specified as two values,
+//            // a function pointer AND an instance pointer. The other four values
+//            // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).
+//            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
+//                                              j, size, disk,
+//                                              std::ref(*raster_),
+//                                              std::ref(ocv_image_mutex)));
             // This requires some unpacking. It creates a thread which is pushed
             // (using && move semantics, I think) onto the back of std::vector
             // all_row_threads. Because the initial/toplevel thread function is
@@ -97,7 +111,9 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
                                               j, size, disk,
                                               std::ref(*raster_),
+                                              std::ref(row_counter),
                                               std::ref(ocv_image_mutex)));
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Wait for all row threads to finish.
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,6 +146,11 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // https://en.cppreference.com/w/cpp/thread/future
         // https://www.cppstories.com/2014/01/tasks-with-stdfuture-and-stdasync/
         
+//        for (auto& t : all_threads)
+//        {
+//            debugPrint(row_counter);
+//            t.join();
+//        }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     }
@@ -137,9 +158,12 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                  cv::Mat& opencv_image,
+                                 int& row_counter,
                                  std::mutex& ocv_image_mutex) const
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
     // Half the rendering's size corresponds to the disk's center.
     int half = size / 2;
@@ -188,6 +212,10 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     const std::lock_guard<std::mutex> lock(ocv_image_mutex);
     // Copy line_image into the j-th row of opencv_image.
     row_image.copyTo(row_in_full_image);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    row_counter++;
+    debugPrint(row_counter);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 
