@@ -118,7 +118,6 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // Wait for all row threads to finish.
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO very experimental, for SimpleImageMatch, Aug 7, 2021
-        for (auto& t : all_threads) t.join();
         
 //        for (auto& t : all_threads)
 //        {
@@ -151,6 +150,18 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //            debugPrint(row_counter);
 //            t.join();
 //        }
+        
+        
+        debugPrint(row_counter);
+        debugPrint(all_threads.size());
+        while (row_counter < all_threads.size())
+        {
+            checkForUserInput();
+            debugPrint(getLastKeyPushed());
+        }
+        
+        for (auto& t : all_threads) t.join();
+
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     }
@@ -522,3 +533,12 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
                             size_in_pixels.x(),
                             size_in_pixels.y()));
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+void Texture::checkForUserInput()
+{
+    // Pause for 1/10 second (100 millisecond) return key pressed
+    int key = cv::waitKey(100);;
+    if (key > 0) { setLastKeyPushed(key); }
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

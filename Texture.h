@@ -201,6 +201,14 @@ public:
     static cv::Mat getCvMatRect(const Vec2& upper_left_position,
                                 const Vec2& size_in_pixels,
                                 const cv::Mat cv_mat);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static void checkForUserInput();
+    static inline int last_key_read_;
+    static int getLastKeyPushed() { return last_key_read_; }
+    static void setLastKeyPushed(int key) { last_key_read_ = key; }
+    // TODO maybe there should be a hook, a void() std::function, to handle
+    // per-app key commands?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;

@@ -106,11 +106,11 @@ public:
 //        if (key > 0) debugPrint(key);
         
         
-        int key = cv::waitKey(1);
-        while (key == cv::waitKey(1) && key > 0)
-        {
-            debugPrint(key);
-        }
+//        int key = cv::waitKey(1);
+//        while (key == cv::waitKey(1) && key > 0)
+//        {
+//            debugPrint(key);
+//        }
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Texture& texture = *GP::textureFromIndividual(individual);
