@@ -152,12 +152,12 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //        }
         
         
-        debugPrint(row_counter);
-        debugPrint(all_threads.size());
+//        debugPrint(row_counter);
+//        debugPrint(all_threads.size());
         while (row_counter < all_threads.size())
         {
             checkForUserInput();
-            debugPrint(getLastKeyPushed());
+            if (getLastKeyPushed() > 0) debugPrint(getLastKeyPushed());
         }
         
         for (auto& t : all_threads) t.join();
@@ -225,7 +225,7 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     row_image.copyTo(row_in_full_image);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     row_counter++;
-    debugPrint(row_counter);
+//    debugPrint(row_counter);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 

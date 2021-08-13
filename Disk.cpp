@@ -9,6 +9,10 @@
 //
 
 #include "Disk.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO temp for access to Texture::checkForUserInput() needs cleaner solution
+#include "Texture.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Relaxation process that attempts to reduce the overlaps in an arbitrary
 // collection of Disks. Overlapping Disks are pushed away from each other
@@ -23,6 +27,10 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                           float move_scale,
                                           std::vector<Disk>& disks)
 {
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    std::cout << "enter DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
+    Timer t("DiskOccupancyGrid::reduceDiskOverlap() ");
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Repeat relaxation process "retries" times, or until no overlaps remain.
     for (int i = 0; i < retries; i++)
     {
@@ -55,12 +63,49 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                                 first_disk_index,
                                                 disk_count,
                                                 std::ref(disks)); });
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        yield();
-        occasional_sleep.sleepIfNeeded();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        yield();
+//        occasional_sleep.sleepIfNeeded();
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    std::cout << "exit DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // Runs parallel update of all Disks. Parameter is function to generate one
+//    // thread, given "first_disk_index" and "disk_count" in vector "disks". Each
+//    // thread updates this given block of disks, in parallel with other threads.
+//    void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
+//                                               std::function<std::thread(int, int)>
+//                                                   thread_maker)
+//    {
+//        // TODO I arbitrarily set this to 40 (rendering uses 512.) then noticed
+//        // it got faster as I reduced it, with minimum at 8. In case that is not
+//        // a coincidence (my laptop has 8 hyperthreads) I left it as one thread
+//        // per hardware processor.
+//        int thread_count = std::thread::hardware_concurrency();
+//        int disks_per_thread = int(disks.size()) / thread_count;
+//        // Collection of worker threads.
+//        std::vector<std::thread> all_threads;
+//        for (int t = 0; t <= thread_count; t++)
+//        {
+//            int first_disk_index = t * disks_per_thread;
+//            int disk_count = ((t == thread_count)?
+//                              int(disks.size()) - first_disk_index:
+//                              disks_per_thread);
+//            all_threads.push_back(thread_maker(first_disk_index, disk_count));
+//        }
+//        // Wait for all row threads to finish.
+//        for (auto& t : all_threads) t.join();
+//    }
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+// TODO very temporary hack: a global variable to hold a global value.
+int threads_finished = 0;
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
 
 // Runs parallel update of all Disks. Parameter is function to generate one
 // thread, given "first_disk_index" and "disk_count" in vector "disks". Each
@@ -75,6 +120,10 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
     // per hardware processor.
     int thread_count = std::thread::hardware_concurrency();
     int disks_per_thread = int(disks.size()) / thread_count;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//    int threads_finished = 0;
+    threads_finished = 0;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Collection of worker threads.
     std::vector<std::thread> all_threads;
     for (int t = 0; t <= thread_count; t++)
@@ -85,9 +134,21 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
                           disks_per_thread);
         all_threads.push_back(thread_maker(first_disk_index, disk_count));
     }
+    
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    while (threads_finished < thread_count)
+    {
+        Texture::checkForUserInput();
+        if (Texture::getLastKeyPushed() > 0)
+            debugPrint(Texture::getLastKeyPushed());
+    }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+    
     // Wait for all row threads to finish.
     for (auto& t : all_threads) t.join();
 }
+
 
 // Top level for each worker thread moving spots. For "disk_count" Disks
 // beginning at "first_disk_index": if the Disk's "future_position" has
@@ -108,7 +169,13 @@ void DiskOccupancyGrid::oneThreadMovingSpots(int first_disk_index,
             disk.position = disk.future_position;
             insertDiskWrap(disk);
         }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        if (disk_index == (first_disk_index + (disk_count / 2))) { yield(); }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    threads_finished++;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 }
 
 // Top level for each worker thread adjusting spot overlap. For "disk_count"
@@ -150,8 +217,16 @@ void DiskOccupancyGrid::oneThreadAdjustingSpots(int first_disk_index,
         Vec2 before = a.future_position;
         a.future_position = wrapToCenterTile(a.future_position);
         if (a.future_position != before) no_move = false;
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        if (disk_index == (first_disk_index + (disk_count / 2))) { yield(); }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    threads_finished++;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Given a reference point (say to be rendered), and the center of a Spot,
 // adjust "spot_center" with regard to tiling, to be the nearest (perhaps in
