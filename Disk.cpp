@@ -109,6 +109,7 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 // TODO very temporary hack: a global variable to hold a global value.
 int threads_finished = 0;
+std::mutex threads_finished_mutex;
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
 
@@ -126,7 +127,6 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
     int thread_count = std::thread::hardware_concurrency();
     int disks_per_thread = int(disks.size()) / thread_count;
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//    int threads_finished = 0;
     threads_finished = 0;
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Collection of worker threads.
@@ -145,12 +145,26 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
     //      “global” clock to make sure we don't sleep in each of the (eg) 200
     //      calls since they might take very little time
     
-//    while (threads_finished < thread_count)
-//    {
-//        Texture::checkForUserInput();
+    int TEMP_COUNTER = 0;
+    
+    while (threads_finished < thread_count)
+    {
+        Texture::checkForUserInput();
 //        if (Texture::getLastKeyPushed() > 0)
 //            debugPrint(Texture::getLastKeyPushed());
-//    }
+        
+        
+//        if (TEMP_COUNTER++ > 100000)
+//        if (TEMP_COUNTER++ > 200000)
+        if (TEMP_COUNTER++ > 100000)
+        {
+            std::cout <<
+            "=================================================================="
+            " TEMP_COUNTER=" << TEMP_COUNTER <<
+            " disks.size()=" << disks.size() << std::endl;
+            break;
+        }
+    }
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
     
@@ -183,6 +197,7 @@ void DiskOccupancyGrid::oneThreadMovingSpots(int first_disk_index,
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    const std::lock_guard<std::mutex> lock(threads_finished_mutex);
     threads_finished++;
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 }
@@ -231,6 +246,7 @@ void DiskOccupancyGrid::oneThreadAdjustingSpots(int first_disk_index,
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     }
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    const std::lock_guard<std::mutex> lock(threads_finished_mutex);
     threads_finished++;
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 }

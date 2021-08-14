@@ -157,7 +157,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         while (row_counter < all_threads.size())
         {
             checkForUserInput();
-            if (getLastKeyPushed() > 0) debugPrint(getLastKeyPushed());
+//            if (getLastKeyPushed() > 0) debugPrint(getLastKeyPushed());
         }
         
         for (auto& t : all_threads) t.join();
@@ -535,14 +535,69 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO
+//     maybe move this to Utilities.h ?
+//     perhaps have global hook which Texture can specialize for OpenCV ?
+
+
+
+//    void Texture::checkForUserInput()
+//    {
+//        // Pause for 1/10 second (100 millisecond) return key pressed
+//        int key = cv::waitKey(100);;
+//    //    // Pause for 1/2 second (500 millisecond) return key pressed
+//    //    int key = cv::waitKey(500);;
+//    //    // Pause for 1/1000 second (1 millisecond) return key pressed
+//    //    int key = cv::waitKey(1);;
+//        if (key > 0) { setLastKeyPushed(key); }
+//    }
+
+//    TimePoint time_of_last_user_input_check = TimeClock::now();
+//
+//    void Texture::checkForUserInput()
+//    {
+//        using namespace std::chrono_literals;
+//
+//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
+//        if (since_last > TimeDuration(150ms))
+//        {
+//    //        // Pause for 1/10 second (100 millisecond) return key pressed
+//    //        int key = cv::waitKey(100);;
+//
+//            // Pause for 1/1000 second (1 millisecond) return key pressed.
+//            int key = cv::waitKey(1);;
+//
+//            if (key > 0) { setLastKeyPushed(key); }
+//
+//
+//            if (key > 0) { debugPrint(key); }
+//
+//
+//            time_of_last_user_input_check = TimeClock::now();
+//        }
+//    }
+
+
+TimePoint time_of_last_user_input_check = TimeClock::now();
+
 void Texture::checkForUserInput()
 {
-    // Pause for 1/10 second (100 millisecond) return key pressed
-    int key = cv::waitKey(100);;
-//    // Pause for 1/2 second (500 millisecond) return key pressed
-//    int key = cv::waitKey(500);;
-//    // Pause for 1/1000 second (1 millisecond) return key pressed
-//    int key = cv::waitKey(1);;
-    if (key > 0) { setLastKeyPushed(key); }
+    using namespace std::chrono_literals;
+
+    TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
+    if (since_last > TimeDuration(150ms))
+    {
+        // Pause for 1/1000 second (1 millisecond) return key pressed.
+        int key = cv::waitKey(1);;
+        if (key > 0) { setLastKeyPushed(key); }
+        if (key > 0) { debugPrint(key); }  // TODO TEMP
+        time_of_last_user_input_check = TimeClock::now();
+    }
+    else
+    {
+        yield();
+    }
 }
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
