@@ -539,6 +539,10 @@ void Texture::checkForUserInput()
 {
     // Pause for 1/10 second (100 millisecond) return key pressed
     int key = cv::waitKey(100);;
+//    // Pause for 1/2 second (500 millisecond) return key pressed
+//    int key = cv::waitKey(500);;
+//    // Pause for 1/1000 second (1 millisecond) return key pressed
+//    int key = cv::waitKey(1);;
     if (key > 0) { setLastKeyPushed(key); }
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

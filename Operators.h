@@ -1552,7 +1552,8 @@ public:
         // Insert randomized Disks into DiskOccupancyGrid.
         for (Disk& d : disks_) { disk_occupancy_grid_->insertDiskWrap(d); }
         // "Spread out" the kernels slightly (5 iterations) to improve coverage.
-        if (sufficient_kernel_coverage_)
+//        if (sufficient_kernel_coverage_)
+        if (sufficientKernelCoverage())
         {
             float move_scale = 0.1;  // Move 0.1 of default adjustment distance.
             disk_occupancy_grid_->reduceDiskOverlap(5, move_scale, disks_);
@@ -1562,7 +1563,8 @@ public:
     Color getColorForPhasor(Vec2 position, Disk kernel_template) const
     {
         float profile = 0;
-        if (sufficient_kernel_coverage_)
+//        if (sufficient_kernel_coverage_)
+        if (sufficientKernelCoverage())
         {
             // TODO note Complex value
             Vec2 phasor_noise =

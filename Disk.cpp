@@ -29,6 +29,11 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
 {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << "enter DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
+    debugPrint(retries);
+    debugPrint(disks.size());
+    float max_radius = 0;
+    for (auto& d : disks) { max_radius = std::max(d.radius, max_radius); }
+    debugPrint(max_radius);
     Timer t("DiskOccupancyGrid::reduceDiskOverlap() ");
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Repeat relaxation process "retries" times, or until no overlaps remain.
@@ -136,12 +141,16 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
     }
     
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    while (threads_finished < thread_count)
-    {
-        Texture::checkForUserInput();
-        if (Texture::getLastKeyPushed() > 0)
-            debugPrint(Texture::getLastKeyPushed());
-    }
+    // TODO Aug 13, turning this off for the moment -- I think I need to have a
+    //      “global” clock to make sure we don't sleep in each of the (eg) 200
+    //      calls since they might take very little time
+    
+//    while (threads_finished < thread_count)
+//    {
+//        Texture::checkForUserInput();
+//        if (Texture::getLastKeyPushed() > 0)
+//            debugPrint(Texture::getLastKeyPushed());
+//    }
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
     
