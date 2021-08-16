@@ -539,21 +539,8 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
 //     maybe move this to Utilities.h ?
 //     perhaps have global hook which Texture can specialize for OpenCV ?
 
+TimePoint time_of_last_user_input_check = TimeClock::now();
 
-
-//    void Texture::checkForUserInput()
-//    {
-//        // Pause for 1/10 second (100 millisecond) return key pressed
-//        int key = cv::waitKey(100);;
-//    //    // Pause for 1/2 second (500 millisecond) return key pressed
-//    //    int key = cv::waitKey(500);;
-//    //    // Pause for 1/1000 second (1 millisecond) return key pressed
-//    //    int key = cv::waitKey(1);;
-//        if (key > 0) { setLastKeyPushed(key); }
-//    }
-
-//    TimePoint time_of_last_user_input_check = TimeClock::now();
-//
 //    void Texture::checkForUserInput()
 //    {
 //        using namespace std::chrono_literals;
@@ -561,34 +548,76 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
 //        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
 //        if (since_last > TimeDuration(150ms))
 //        {
-//    //        // Pause for 1/10 second (100 millisecond) return key pressed
-//    //        int key = cv::waitKey(100);;
-//
 //            // Pause for 1/1000 second (1 millisecond) return key pressed.
 //            int key = cv::waitKey(1);;
+//            if (key > 0) { setLastKeyPushed(key); }
+//            if (key > 0) { debugPrint(key); }  // TODO TEMP
+//            time_of_last_user_input_check = TimeClock::now();
+//        }
+//        else
+//        {
+//            yield();
+//        }
+//    }
+
+//    std::mutex check_user_input_mutex;
+//
+//    void Texture::checkForUserInput()
+//    {
+//        const std::lock_guard<std::mutex> lock(check_user_input_mutex);
+//
+//        using namespace std::chrono_literals;
+//
+//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
+//        TimeDuration target_delay(150ms);
+//        if (since_last > target_delay)
+//        {
+//    //        // Pause for 1/1000 second (1 millisecond) return key pressed.
+//    //        int key = cv::waitKey(1);
+//
+//            // xxx
+//    //        int key = cv::waitKey(1000 * since_last.count());
+//            int key = cv::waitKey(100);
+//
+//
 //
 //            if (key > 0) { setLastKeyPushed(key); }
-//
-//
-//            if (key > 0) { debugPrint(key); }
-//
-//
+//            if (key > 0) { debugPrint(key); }  // TODO TEMP
 //            time_of_last_user_input_check = TimeClock::now();
+//        }
+//        else
+//        {
+//            yield();
+//
+//
+//    //        float seconds_left = since_last.count();
+//    //        int ms_left = 1000 * seconds_left;
+//
+//
+//
 //        }
 //    }
 
 
-TimePoint time_of_last_user_input_check = TimeClock::now();
+std::mutex check_user_input_mutex;
 
 void Texture::checkForUserInput()
 {
-    using namespace std::chrono_literals;
+    const std::lock_guard<std::mutex> lock(check_user_input_mutex);
 
+    using namespace std::chrono_literals;
+    
     TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-    if (since_last > TimeDuration(150ms))
+//    TimeDuration target_delay(150ms);
+    TimeDuration target_delay(250ms);
+    if (since_last > target_delay)
+//    if (since_last > TimeDuration(10ms))
     {
         // Pause for 1/1000 second (1 millisecond) return key pressed.
-        int key = cv::waitKey(1);;
+        int key = cv::waitKey(1);
+//        // xxx
+//        int key = cv::waitKey(240);
+
         if (key > 0) { setLastKeyPushed(key); }
         if (key > 0) { debugPrint(key); }  // TODO TEMP
         time_of_last_user_input_check = TimeClock::now();

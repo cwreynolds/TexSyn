@@ -28,13 +28,13 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                           std::vector<Disk>& disks)
 {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    std::cout << "enter DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
-    debugPrint(retries);
-    debugPrint(disks.size());
-    float max_radius = 0;
-    for (auto& d : disks) { max_radius = std::max(d.radius, max_radius); }
-    debugPrint(max_radius);
-    Timer t("DiskOccupancyGrid::reduceDiskOverlap() ");
+//    std::cout << "enter DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
+//    debugPrint(retries);
+//    debugPrint(disks.size());
+//    float max_radius = 0;
+//    for (auto& d : disks) { max_radius = std::max(d.radius, max_radius); }
+//    debugPrint(max_radius);
+//    Timer t("DiskOccupancyGrid::reduceDiskOverlap() ");
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Repeat relaxation process "retries" times, or until no overlaps remain.
     for (int i = 0; i < retries; i++)
@@ -74,7 +74,7 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
 //        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    std::cout << "exit DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
+//    std::cout << "exit DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
