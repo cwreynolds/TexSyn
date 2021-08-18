@@ -135,6 +135,8 @@ bool color_basic_operators()
     Color black(0, 0, 0);
     Color gray50(0.5, 0.5, 0.5);
     Color white(1, 1, 1);
+    Color blue(0, 0, 1);
+    Color yellow(1, 1, 0);
     Color c(0.1, 0.1, 0.1);
     return (st(withinEpsilon(wec1, wec1, 0)) &&
             st(withinEpsilon(wec1, wec2, e)) &&
@@ -154,7 +156,11 @@ bool color_basic_operators()
             st(Color(0.3, 0, 0).normalize() == Color(1, 0, 0)) &&
             st(gray50.gamma(2.2) == (white * std::pow(0.5f, 2.2f))) &&
             st(withinEpsilon(Color::similarity(black, black), 1, e)) &&
-            st(withinEpsilon(Color::similarity(black, white), 0, e)));
+            st(withinEpsilon(Color::similarity(black, white), 0, e)) &&
+            st(Color::similarity(black, blue) >
+               Color::similarity(black, yellow)) &&
+            st(Color::similarity(white, yellow) >
+               Color::similarity(white, blue)));
 }
 
 bool color_luminance()
