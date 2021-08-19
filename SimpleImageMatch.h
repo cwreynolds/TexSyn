@@ -595,6 +595,38 @@ public:
                              std::to_string(population_->getStepCount()));
         gui().refresh();
     }
+    
+    void testFitnessOnNearMiss()
+    {
+        std::string dir =
+            "/Users/cwr/Desktop/SimpleImageMatch/target_images/near_miss/";
+        std::string t  = dir + "SIM_3812_target.jpeg";
+        std::string g1 = dir + "SIM_3812_gray_1.jpeg";
+        std::string g2 = dir + "SIM_3812_gray_2.jpeg";
+        std::string g3 = dir + "SIM_3812_gray_3.jpeg";
+        
+        cv::Mat mat_t = cv::imread(t);
+        cv::Mat mat_g1 = cv::imread(g1);
+        cv::Mat mat_g2 = cv::imread(g2);
+        cv::Mat mat_g3 = cv::imread(g3);
+
+        debugPrint(imageThresholdSimilarity(mat_t, mat_t));
+        debugPrint(imageThresholdSimilarity(mat_g1, mat_t));
+        debugPrint(imageThresholdSimilarity(mat_g2, mat_t));
+        debugPrint(imageThresholdSimilarity(mat_g3, mat_t));
+        
+        // gets:
+        //
+        // imageThresholdSimilarity(mat_t, mat_t) = 1
+        // imageThresholdSimilarity(mat_g1, mat_t) = 0.779863
+        // imageThresholdSimilarity(mat_g2, mat_t) = 0.512363
+        // imageThresholdSimilarity(mat_g3, mat_t) = 0.200073
+        //
+        // So: t-vs-t is a perfect match, setting the leftmost ~1/4 to gray gets
+        // about 3/4 similarlity, setting the leftmost ~1/2 to gray gets about
+        // 1/2 similarlity, and setting the leftmost ~3/4 to gray gets about 1/4
+        // similarlity. Its almost as if it is working correctly!
+    }
 
 private:
     // Pathname of target image file.
