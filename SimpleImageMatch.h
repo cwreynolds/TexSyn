@@ -451,6 +451,58 @@ public:
         return min_pixel_similarity;
     }
     
+    // Written on Aug 20 2021, started from imageJuly30Similarlity()
+    // TODO note that this incorrectly depends on m1 being target_image_.
+    float imageCoarseToFineSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+    {
+        // Use (up to) "steps" levels of the MIP maps
+        const int steps = 6;  // n = 64
+        
+        
+        // Build "MIP map like" resolution pyramid for newest evolved image.
+        std::vector<cv::Mat> newest_pyramid;
+        makeResolutionPyramid(m0, newest_pyramid);
+        assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
+        size_t p = newest_pyramid.size() - 1;  // Index of 1x1 level in pyramid.
+        assert(newest_pyramid.at(p - steps).cols == std::pow(2, steps));
+        
+        // TODO maybe this should be a member function of its own, but for now
+        // the imageProductPixelSimilarity() name is already taken for a since
+        // hacked version
+        //
+        // Returns a number on [0, 1]: the product of all pixel similarities.
+        auto product_of_pixel_similarities =
+        [&]
+        (const cv::Mat& m0, const cv::Mat& m1)
+        {
+            float product_pixel_similarity = 1;
+            similarityHelper(m0,m1,[&](float s){product_pixel_similarity *= s;});
+            return product_pixel_similarity;
+        };
+
+        // Traverse levels of the two MIP maps in parallel, starting at the 1x1
+        // "coarse" end, compute score for each level based on product of all
+        // pixel similarlties. Return the average (weighted sum) of each level
+        // score as the final fitness for m0.
+        //
+        // TODO another way to structure this to enforce coarse-to-fine is to
+        // stop after any level where the score is too low (eg less than 0.8),
+        // so only the 1x1 level is considered until that is 80% similar, then
+        // we move on to 2x2...
+        //
+        float sum_of_per_level_scores = 0;
+        for (int i = 0; i < steps; i++)
+        {
+            cv::Mat a = newest_pyramid.at(p - i);
+            cv::Mat b = target_pyramid_.at(p - i);
+            sum_of_per_level_scores += product_of_pixel_similarities(a, b);
+        }
+        return sum_of_per_level_scores / steps;
+    }
+
+    
+    
+    
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
     float imageUniformity(const cv::Mat& mat) const
@@ -609,12 +661,20 @@ public:
         cv::Mat mat_g1 = cv::imread(g1);
         cv::Mat mat_g2 = cv::imread(g2);
         cv::Mat mat_g3 = cv::imread(g3);
-
-        debugPrint(imageThresholdSimilarity(mat_t, mat_t));
-        debugPrint(imageThresholdSimilarity(mat_g1, mat_t));
-        debugPrint(imageThresholdSimilarity(mat_g2, mat_t));
-        debugPrint(imageThresholdSimilarity(mat_g3, mat_t));
         
+        // Build "MIP map like" resolution pyramid for target image.
+        makeResolutionPyramid(mat_t, target_pyramid_);
+
+
+//        debugPrint(imageThresholdSimilarity(mat_t, mat_t));
+//        debugPrint(imageThresholdSimilarity(mat_g1, mat_t));
+//        debugPrint(imageThresholdSimilarity(mat_g2, mat_t));
+//        debugPrint(imageThresholdSimilarity(mat_g3, mat_t));
+        debugPrint(imageCoarseToFineSimilarity(mat_t, mat_t));
+        debugPrint(imageCoarseToFineSimilarity(mat_g1, mat_t));
+        debugPrint(imageCoarseToFineSimilarity(mat_g2, mat_t));
+        debugPrint(imageCoarseToFineSimilarity(mat_g3, mat_t));
+
         // gets:
         //
         // imageThresholdSimilarity(mat_t, mat_t) = 1
