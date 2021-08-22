@@ -150,12 +150,7 @@ void DiskOccupancyGrid::parallelDiskUpdate(std::vector<Disk>& disks,
     while (threads_finished < thread_count)
     {
         Texture::checkForUserInput();
-//        if (Texture::getLastKeyPushed() > 0)
-//            debugPrint(Texture::getLastKeyPushed());
         
-        
-//        if (TEMP_COUNTER++ > 100000)
-//        if (TEMP_COUNTER++ > 200000)
         if (TEMP_COUNTER++ > 100000)
         {
             std::cout <<

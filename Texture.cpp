@@ -154,10 +154,10 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         
 //        debugPrint(row_counter);
 //        debugPrint(all_threads.size());
+        
         while (row_counter < all_threads.size())
         {
             checkForUserInput();
-//            if (getLastKeyPushed() > 0) debugPrint(getLastKeyPushed());
         }
         
         for (auto& t : all_threads) t.join();
@@ -601,23 +601,43 @@ TimePoint time_of_last_user_input_check = TimeClock::now();
 
 std::mutex check_user_input_mutex;
 
+//    void Texture::checkForUserInput()
+//    {
+//        const std::lock_guard<std::mutex> lock(check_user_input_mutex);
+//
+//        using namespace std::chrono_literals;
+//
+//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
+//    //    TimeDuration target_delay(150ms);
+//        TimeDuration target_delay(250ms);
+//        if (since_last > target_delay)
+//    //    if (since_last > TimeDuration(10ms))
+//        {
+//            // Pause for 1/1000 second (1 millisecond) return key pressed.
+//            int key = cv::waitKey(1);
+//    //        // xxx
+//    //        int key = cv::waitKey(240);
+//
+//            if (key > 0) { setLastKeyPushed(key); }
+//            if (key > 0) { debugPrint(key); }  // TODO TEMP
+//            time_of_last_user_input_check = TimeClock::now();
+//        }
+//        else
+//        {
+//            yield();
+//        }
+//    }
+
 void Texture::checkForUserInput()
 {
     const std::lock_guard<std::mutex> lock(check_user_input_mutex);
-
     using namespace std::chrono_literals;
-    
     TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-//    TimeDuration target_delay(150ms);
     TimeDuration target_delay(250ms);
     if (since_last > target_delay)
-//    if (since_last > TimeDuration(10ms))
     {
         // Pause for 1/1000 second (1 millisecond) return key pressed.
         int key = cv::waitKey(1);
-//        // xxx
-//        int key = cv::waitKey(240);
-
         if (key > 0) { setLastKeyPushed(key); }
         if (key > 0) { debugPrint(key); }  // TODO TEMP
         time_of_last_user_input_check = TimeClock::now();
@@ -627,6 +647,61 @@ void Texture::checkForUserInput()
         yield();
     }
 }
+
+//void Texture::checkForUserInput()
+//{
+//    yield();
+//}
+
+//void Texture::checkForUserInput()
+//{
+//    // Pause for 1/1000 second (1 millisecond) return key pressed.
+//    int key = cv::waitKey(1);
+//    if (key > 0) { setLastKeyPushed(key); }
+//    if (key > 0) { debugPrint(key); }  // TODO TEMP
+//}
+
+//    void Texture::checkForUserInput()
+//    {
+//    //    const std::lock_guard<std::mutex> lock(check_user_input_mutex);
+//        // Pause for 1/10 second (100 millisecond) return key pressed.
+//        int key = cv::waitKey(100);
+//        if (key > 0) { setLastKeyPushed(key); }
+//        if (key > 0) { debugPrint(key); }  // TODO TEMP
+//    //    yield();
+//    }
+
+
+/*
+ 
+ // WITHOUT calls to Texture::checkForUserInput()
+ 
+ 1: t=9.37e+05, pop ave size=81 fit=0.000783486, pop best (0.06 0.034 0 0 0 0 0 0 0 0)
+ 2: t=1.13, pop ave size=81 fit=0.00128124, pop best (0.06 0.052 0.034 0.0078 0 0 0 0 0 0)
+ 3: t=5.91, pop ave size=81 fit=0.00178439, pop best (0.06 0.052 0.034 0.031 0.03 0.0078 0 0 0 0)
+ 4: t=12.4, pop ave size=81 fit=0.00202186, pop best (0.06 0.052 0.034 0.031 0.03 0.015 0.013 0.0078 0 0)
+ 5: t=12.7, pop ave size=81 fit=0.00250596, pop best (0.06 0.052 0.034 0.034 0.031 0.03 0.024 0.015 0.013 0.0078)
+ 6: t=59.5, pop ave size=81 fit=0.00333497, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
+ 7: t=37.4, pop ave size=81 fit=0.00341107, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
+ 8: t=0.887, pop ave size=82 fit=0.00412081, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
+ 9: t=0.962, pop ave size=82 fit=0.00417767, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
+ 10: t=17, pop ave size=82 fit=0.00466689, pop best (0.072 0.069 0.06 0.052 0.044 0.034 0.034 0.031 0.03 0.028)
+
+ // WITH calls to Texture::checkForUserInput()
+ 
+ 1: t=9.37e+05, pop ave size=81 fit=0.000783486, pop best (0.06 0.034 0 0 0 0 0 0 0 0)
+ 2: t=1.1, pop ave size=81 fit=0.00128124, pop best (0.06 0.052 0.034 0.0078 0 0 0 0 0 0)
+ 3: t=5.93, pop ave size=81 fit=0.00178439, pop best (0.06 0.052 0.034 0.031 0.03 0.0078 0 0 0 0)
+ 4: t=12.5, pop ave size=81 fit=0.00202186, pop best (0.06 0.052 0.034 0.031 0.03 0.015 0.013 0.0078 0 0)
+ 5: t=12.8, pop ave size=81 fit=0.00250596, pop best (0.06 0.052 0.034 0.034 0.031 0.03 0.024 0.015 0.013 0.0078)
+ 6: t=58.9, pop ave size=81 fit=0.00333497, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
+ 7: t=37.2, pop ave size=81 fit=0.00341107, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
+ 8: t=0.864, pop ave size=82 fit=0.00412081, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
+ 9: t=0.948, pop ave size=82 fit=0.00417767, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
+ 10: t=16.7, pop ave size=82 fit=0.00466689, pop best (0.072 0.069 0.06 0.052 0.044 0.034 0.034 0.031 0.03 0.028)
+
+ */
+
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

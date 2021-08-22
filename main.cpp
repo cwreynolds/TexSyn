@@ -5820,25 +5820,25 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // WIP SimpleTextureMatch
+//    std::cout << "August 19, 2021" << std::endl;
+//    // texsyn ~/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg
+//    // ~/Desktop/TexSyn_temp/ 20210815 1000 50 200
+//    CommandLine cmd
+//    ({
+//        "simple_image_match",
+//        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
+//        "/Users/cwr/Desktop/TexSyn_temp/",
+//        "20210819"
+//    });
+//    SimpleImageMatch(cmd).testFitnessOnNearMiss();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     // WIP SimpleTextureMatch
-    std::cout << "August 19, 2021" << std::endl;
-//    SimpleImageMatch(CommandLine(argc, argv)).run();
+    std::cout << "August 22, 2021" << std::endl;
+    SimpleImageMatch(CommandLine(argc, argv)).run();
     
-//    texsyn ~/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg ~/Desktop/TexSyn_temp/ 20210815 1000 50 200
-    
-    CommandLine cmd
-    ({
-        "simple_image_match",
-        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
-        "/Users/cwr/Desktop/TexSyn_temp/",
-        "20210819"
-    });
-
-//    SimpleImageMatch(cmd).run();
-    
-    SimpleImageMatch(cmd).testFitnessOnNearMiss();
-
-
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

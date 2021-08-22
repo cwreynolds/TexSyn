@@ -98,21 +98,6 @@ public:
     
     float fitnessFunction(Individual* individual)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        Texture::waitKey(1);
-
-        // TODO can I get it to listen to commands, like run/pause and exit.
-//        int key = cv::waitKey(1);
-//        if (key > 0) debugPrint(key);
-        
-        
-//        int key = cv::waitKey(1);
-//        while (key == cv::waitKey(1) && key > 0)
-//        {
-//            debugPrint(key);
-//        }
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Texture& texture = *GP::textureFromIndividual(individual);
         texture.rasterizeToImageCache(getTargetImageSize().x(), false);
         cv::Mat mat = texture.getCvMat();
@@ -124,9 +109,11 @@ public:
 //        float similarity = imageJuly31Similarlity(mat, target_image_);
 //        float similarity = imageAug2Similarlity(mat, target_image_);
 //        float similarity = imageAug3Similarlity(mat, target_image_);
-        float similarity = imageThresholdSimilarity(mat, target_image_);
+//        float similarity = imageThresholdSimilarity(mat, target_image_);
+        float similarity = imageCoarseToFineSimilarity(mat, target_image_);
         float nonuniformity = 1 - imageUniformity(mat);
         float fitness = similarity * nonuniformity;
+//        float fitness = similarity;
         std::cout << "    fitness=" << fitness;
 //        std::cout << " (oh_dear_god_similarity=" << similarity;
 //        std::cout << " (imageTotalErrorSquared=" << similarity;
@@ -135,7 +122,11 @@ public:
 //        std::cout << " (imageJuly31Similarlity=" << similarity;
 //        std::cout << " (imageAug2Similarlity=" << similarity;
 //        std::cout << " (imageAug3Similarlity=" << similarity;
-        std::cout << " (imageThresholdSimilarity=" << similarity;
+//        std::cout << " (imageThresholdSimilarity=" << similarity;
+//        std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
+//        std::cout << " (imageCoarseToFineSimilarity=" << similarity << ")";
+//        std::cout << std::endl;
+        std::cout << " (imageCoarseToFineSimilarity=" << similarity;
         std::cout << " nonuniformity=" << nonuniformity << ")" << std::endl;
         return fitness;
     }
@@ -490,12 +481,33 @@ public:
         // so only the 1x1 level is considered until that is 80% similar, then
         // we move on to 2x2...
         //
+        
+//        float sum_of_per_level_scores = 0;
+//        for (int i = 0; i < steps; i++)
+//        {
+//            cv::Mat a = newest_pyramid.at(p - i);
+//            cv::Mat b = target_pyramid_.at(p - i);
+//            sum_of_per_level_scores += product_of_pixel_similarities(a, b);
+//        }
+//        return sum_of_per_level_scores / steps;
+
+        
         float sum_of_per_level_scores = 0;
         for (int i = 0; i < steps; i++)
         {
             cv::Mat a = newest_pyramid.at(p - i);
             cv::Mat b = target_pyramid_.at(p - i);
-            sum_of_per_level_scores += product_of_pixel_similarities(a, b);
+            float level_score = product_of_pixel_similarities(a, b);
+            sum_of_per_level_scores += level_score;
+            
+            std::cout << "        ";
+            std::cout << i << " score=" << level_score;
+            std::cout << " total=" << sum_of_per_level_scores;
+            std::cout << " normed=" << sum_of_per_level_scores / steps;
+            std::cout << std::endl;
+
+            float min_level_score_to_continue = 0.3;
+            if (level_score < min_level_score_to_continue) break;
         }
         return sum_of_per_level_scores / steps;
     }
