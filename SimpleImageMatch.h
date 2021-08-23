@@ -449,7 +449,16 @@ public:
         // Use (up to) "steps" levels of the MIP maps
         const int steps = 6;  // n = 64
         
-        
+        //  level  side   area
+        //  i      2^i    (2^i)^2    0.99^area
+        //  -      ---    -------    -----------------
+        //  0      1      1          0.99
+        //  1      2      4          0.96059601
+        //  2      4      16         0.851457771094876
+        //  3      8      64         0.525596487525562
+        //  4      16     256        0.076314983906594
+        //  5      32     1024       0.000033918705402
+
         // Build "MIP map like" resolution pyramid for newest evolved image.
         std::vector<cv::Mat> newest_pyramid;
         makeResolutionPyramid(m0, newest_pyramid);
@@ -459,7 +468,7 @@ public:
         
         // TODO maybe this should be a member function of its own, but for now
         // the imageProductPixelSimilarity() name is already taken for a since
-        // hacked version
+        // modified ad hoc version.
         //
         // Returns a number on [0, 1]: the product of all pixel similarities.
         auto product_of_pixel_similarities =
@@ -467,7 +476,10 @@ public:
         (const cv::Mat& m0, const cv::Mat& m1)
         {
             float product_pixel_similarity = 1;
-            similarityHelper(m0,m1,[&](float s){product_pixel_similarity *= s;});
+//            similarityHelper(m0,m1,[&](float s){product_pixel_similarity *= s;});
+            similarityHelper(m0,
+                             m1,
+                             [&](float s){ product_pixel_similarity *= s; });
             return product_pixel_similarity;
         };
 
@@ -481,17 +493,6 @@ public:
         // so only the 1x1 level is considered until that is 80% similar, then
         // we move on to 2x2...
         //
-        
-//        float sum_of_per_level_scores = 0;
-//        for (int i = 0; i < steps; i++)
-//        {
-//            cv::Mat a = newest_pyramid.at(p - i);
-//            cv::Mat b = target_pyramid_.at(p - i);
-//            sum_of_per_level_scores += product_of_pixel_similarities(a, b);
-//        }
-//        return sum_of_per_level_scores / steps;
-
-        
         float sum_of_per_level_scores = 0;
         for (int i = 0; i < steps; i++)
         {
@@ -506,14 +507,12 @@ public:
             std::cout << " normed=" << sum_of_per_level_scores / steps;
             std::cout << std::endl;
 
-            float min_level_score_to_continue = 0.3;
+//            float min_level_score_to_continue = 0.3;
+            float min_level_score_to_continue = 0.05;
             if (level_score < min_level_score_to_continue) break;
         }
         return sum_of_per_level_scores / steps;
     }
-
-    
-    
     
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
