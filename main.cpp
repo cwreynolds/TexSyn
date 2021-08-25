@@ -5839,6 +5839,8 @@ int main(int argc, const char * argv[])
     std::cout << "August 22, 2021" << std::endl;
     SimpleImageMatch(CommandLine(argc, argv)).run();
     
+//    SimpleImageMatch::testScoreRanging();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

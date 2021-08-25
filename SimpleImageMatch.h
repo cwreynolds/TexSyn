@@ -442,23 +442,84 @@ public:
         return min_pixel_similarity;
     }
     
-    // Written on Aug 20 2021, started from imageJuly30Similarlity()
+//        // Written on Aug 20 2021, started from imageJuly30Similarlity()
+//        // TODO note that this incorrectly depends on m1 being target_image_.
+//        float imageCoarseToFineSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            // Use (up to) "steps" levels of the MIP maps
+//            const int steps = 6;  // n = 64
+//
+//            //  level  side   area
+//            //  i      2^i    (2^i)^2    0.99^area
+//            //  -      ---    -------    -----------------
+//            //  0      1      1          0.99
+//            //  1      2      4          0.96059601
+//            //  2      4      16         0.851457771094876
+//            //  3      8      64         0.525596487525562
+//            //  4      16     256        0.076314983906594
+//            //  5      32     1024       0.000033918705402
+//
+//            // Build "MIP map like" resolution pyramid for newest evolved image.
+//            std::vector<cv::Mat> newest_pyramid;
+//            makeResolutionPyramid(m0, newest_pyramid);
+//            assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
+//            size_t p = newest_pyramid.size() - 1;  // Index of 1x1 level in pyramid.
+//            assert(newest_pyramid.at(p - steps).cols == std::pow(2, steps));
+//
+//            // TODO maybe this should be a member function of its own, but for now
+//            // the imageProductPixelSimilarity() name is already taken for a since
+//            // modified ad hoc version.
+//            //
+//            // Returns a number on [0, 1]: the product of all pixel similarities.
+//            auto product_of_pixel_similarities =
+//            [&]
+//            (const cv::Mat& m0, const cv::Mat& m1)
+//            {
+//                float product_pixel_similarity = 1;
+//    //            similarityHelper(m0,m1,[&](float s){product_pixel_similarity *= s;});
+//                similarityHelper(m0,
+//                                 m1,
+//                                 [&](float s){ product_pixel_similarity *= s; });
+//                return product_pixel_similarity;
+//            };
+//
+//            // Traverse levels of the two MIP maps in parallel, starting at the 1x1
+//            // "coarse" end, compute score for each level based on product of all
+//            // pixel similarlties. Return the average (weighted sum) of each level
+//            // score as the final fitness for m0.
+//            //
+//            // TODO another way to structure this to enforce coarse-to-fine is to
+//            // stop after any level where the score is too low (eg less than 0.8),
+//            // so only the 1x1 level is considered until that is 80% similar, then
+//            // we move on to 2x2...
+//            //
+//            float sum_of_per_level_scores = 0;
+//            for (int i = 0; i < steps; i++)
+//            {
+//                cv::Mat a = newest_pyramid.at(p - i);
+//                cv::Mat b = target_pyramid_.at(p - i);
+//                float level_score = product_of_pixel_similarities(a, b);
+//                sum_of_per_level_scores += level_score;
+//
+//                std::cout << "        ";
+//                std::cout << i << " score=" << level_score;
+//                std::cout << " total=" << sum_of_per_level_scores;
+//                std::cout << " normed=" << sum_of_per_level_scores / steps;
+//                std::cout << std::endl;
+//
+//    //            float min_level_score_to_continue = 0.3;
+//                float min_level_score_to_continue = 0.05;
+//                if (level_score < min_level_score_to_continue) break;
+//            }
+//            return sum_of_per_level_scores / steps;
+//        }
+
     // TODO note that this incorrectly depends on m1 being target_image_.
     float imageCoarseToFineSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
         // Use (up to) "steps" levels of the MIP maps
         const int steps = 6;  // n = 64
         
-        //  level  side   area
-        //  i      2^i    (2^i)^2    0.99^area
-        //  -      ---    -------    -----------------
-        //  0      1      1          0.99
-        //  1      2      4          0.96059601
-        //  2      4      16         0.851457771094876
-        //  3      8      64         0.525596487525562
-        //  4      16     256        0.076314983906594
-        //  5      32     1024       0.000033918705402
-
         // Build "MIP map like" resolution pyramid for newest evolved image.
         std::vector<cv::Mat> newest_pyramid;
         makeResolutionPyramid(m0, newest_pyramid);
@@ -471,15 +532,33 @@ public:
         // modified ad hoc version.
         //
         // Returns a number on [0, 1]: the product of all pixel similarities.
+//        auto product_of_pixel_similarities =
+//        [&]
+//        (const cv::Mat& m0, const cv::Mat& m1)
+//        {
+//            float product_pixel_similarity = 1;
+//            similarityHelper(m0,
+//                             m1,
+//                             [&](float s){ product_pixel_similarity *= s; });
+//            return product_pixel_similarity;
+//        };
         auto product_of_pixel_similarities =
-        [&]
-        (const cv::Mat& m0, const cv::Mat& m1)
+        [&](const cv::Mat& m0, const cv::Mat& m1)
         {
             float product_pixel_similarity = 1;
-//            similarityHelper(m0,m1,[&](float s){product_pixel_similarity *= s;});
-            similarityHelper(m0,
-                             m1,
-                             [&](float s){ product_pixel_similarity *= s; });
+//            similarityHelper(m0,
+//                             m1,
+//                             [&](float s){ product_pixel_similarity *= s; });
+
+            assert((m0.cols==m0.rows)&&(m0.cols==m1.cols)&&(m0.cols==m1.rows));
+            int area = m0.cols * m0.rows;
+            float min = 1 - (1.0 / std::max(1.0, area / 8.0));
+            auto pf = [&](float s)
+            {
+                product_pixel_similarity *= remapInterval(s, 0, 1, min, 1);
+            };
+            similarityHelper(m0, m1, pf);
+
             return product_pixel_similarity;
         };
 
@@ -507,9 +586,9 @@ public:
             std::cout << " normed=" << sum_of_per_level_scores / steps;
             std::cout << std::endl;
 
-//            float min_level_score_to_continue = 0.3;
-            float min_level_score_to_continue = 0.05;
-            if (level_score < min_level_score_to_continue) break;
+//    //            float min_level_score_to_continue = 0.3;
+//                float min_level_score_to_continue = 0.05;
+//                if (level_score < min_level_score_to_continue) break;
         }
         return sum_of_per_level_scores / steps;
     }
@@ -697,6 +776,36 @@ public:
         // about 3/4 similarlity, setting the leftmost ~1/2 to gray gets about
         // 1/2 similarlity, and setting the leftmost ~3/4 to gray gets about 1/4
         // similarlity. Its almost as if it is working correctly!
+    }
+    
+    // Trying to figure out per-level scoring in imageCoarseToFineSimilarity().
+    static void testScoreRanging()
+    {
+        RandomSequence rs(95628347);
+        for (int i = 0; i < 6; i++)
+        {
+            int side = std::pow(2, i);
+            int area = std::pow(side, 2);
+            float pix_prod_high = 1;
+            float pix_prod_midrange = 1;
+            float pix_prod_random = 1;
+            float min = 1 - (1.0 / std::max(1.0, area / 8.0));
+            for (int j = 0; j < area; j++)
+            {
+                pix_prod_high *= remapInterval(0.99, 0, 1, min, 1);
+                pix_prod_midrange *= remapInterval(0.5, 0, 1, min, 1);
+                pix_prod_random *= remapInterval(rs.frandom01(), 0, 1, min, 1);
+            }
+            
+            std::cout << "i=" << i;
+            std::cout << "    side=" << side;
+            std::cout << "    area=" << area;
+            std::cout << "    min=" << min;
+            std::cout << "    pix_prod_high=" << pix_prod_midrange;
+            std::cout << "    pix_prod_midrange=" << pix_prod_midrange;
+            std::cout << "    pix_prod_random=" << pix_prod_random;
+            std::cout << std::endl;
+        }
     }
 
 private:
