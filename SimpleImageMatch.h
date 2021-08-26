@@ -514,6 +514,87 @@ public:
 //            return sum_of_per_level_scores / steps;
 //        }
 
+//        // TODO note that this incorrectly depends on m1 being target_image_.
+//        float imageCoarseToFineSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
+//        {
+//            // Use (up to) "steps" levels of the MIP maps
+//            const int steps = 6;  // n = 64
+//
+//            // Build "MIP map like" resolution pyramid for newest evolved image.
+//            std::vector<cv::Mat> newest_pyramid;
+//            makeResolutionPyramid(m0, newest_pyramid);
+//            assert(newest_pyramid.size() == target_pyramid_.size()); // TODO temp
+//            size_t p = newest_pyramid.size() - 1;  // Index of 1x1 level in pyramid.
+//            assert(newest_pyramid.at(p - steps).cols == std::pow(2, steps));
+//
+//            // TODO maybe this should be a member function of its own, but for now
+//            // the imageProductPixelSimilarity() name is already taken for a since
+//            // modified ad hoc version.
+//            //
+//            // Returns a number on [0, 1]: the product of all pixel similarities.
+//    //        auto product_of_pixel_similarities =
+//    //        [&]
+//    //        (const cv::Mat& m0, const cv::Mat& m1)
+//    //        {
+//    //            float product_pixel_similarity = 1;
+//    //            similarityHelper(m0,
+//    //                             m1,
+//    //                             [&](float s){ product_pixel_similarity *= s; });
+//    //            return product_pixel_similarity;
+//    //        };
+//            auto product_of_pixel_similarities =
+//            [&](const cv::Mat& m0, const cv::Mat& m1)
+//            {
+//                float product_pixel_similarity = 1;
+//    //            similarityHelper(m0,
+//    //                             m1,
+//    //                             [&](float s){ product_pixel_similarity *= s; });
+//
+//                assert((m0.cols==m0.rows)&&(m0.cols==m1.cols)&&(m0.cols==m1.rows));
+//                int area = m0.cols * m0.rows;
+//                float min = 1 - (1.0 / std::max(1.0, area / 8.0));
+//                auto pf = [&](float s)
+//                {
+//                    product_pixel_similarity *= remapInterval(s, 0, 1, min, 1);
+//                };
+//                similarityHelper(m0, m1, pf);
+//
+//                return product_pixel_similarity;
+//            };
+//
+//            // Traverse levels of the two MIP maps in parallel, starting at the 1x1
+//            // "coarse" end, compute score for each level based on product of all
+//            // pixel similarlties. Return the average (weighted sum) of each level
+//            // score as the final fitness for m0.
+//            //
+//            // TODO another way to structure this to enforce coarse-to-fine is to
+//            // stop after any level where the score is too low (eg less than 0.8),
+//            // so only the 1x1 level is considered until that is 80% similar, then
+//            // we move on to 2x2...
+//            //
+//            float sum_of_per_level_scores = 0;
+//            for (int i = 0; i < steps; i++)
+//            {
+//                cv::Mat a = newest_pyramid.at(p - i);
+//                cv::Mat b = target_pyramid_.at(p - i);
+//                float level_score = product_of_pixel_similarities(a, b);
+//                sum_of_per_level_scores += level_score;
+//
+//                std::cout << "        ";
+//                std::cout << i << " score=" << level_score;
+//                std::cout << " total=" << sum_of_per_level_scores;
+//                std::cout << " normed=" << sum_of_per_level_scores / steps;
+//                std::cout << std::endl;
+//
+//    //    //            float min_level_score_to_continue = 0.3;
+//    //                float min_level_score_to_continue = 0.05;
+//    //                if (level_score < min_level_score_to_continue) break;
+//            }
+//            return sum_of_per_level_scores / steps;
+//        }
+
+    // TODO try weighting the per-MIP-level-score to emphasize high frequencies
+    //
     // TODO note that this incorrectly depends on m1 being target_image_.
     float imageCoarseToFineSimilarity(const cv::Mat& m0, const cv::Mat& m1) const
     {
@@ -527,29 +608,15 @@ public:
         size_t p = newest_pyramid.size() - 1;  // Index of 1x1 level in pyramid.
         assert(newest_pyramid.at(p - steps).cols == std::pow(2, steps));
         
+        // Returns a number on [0, 1]: the product of all pixel similarities.
+        //
         // TODO maybe this should be a member function of its own, but for now
         // the imageProductPixelSimilarity() name is already taken for a since
         // modified ad hoc version.
-        //
-        // Returns a number on [0, 1]: the product of all pixel similarities.
-//        auto product_of_pixel_similarities =
-//        [&]
-//        (const cv::Mat& m0, const cv::Mat& m1)
-//        {
-//            float product_pixel_similarity = 1;
-//            similarityHelper(m0,
-//                             m1,
-//                             [&](float s){ product_pixel_similarity *= s; });
-//            return product_pixel_similarity;
-//        };
         auto product_of_pixel_similarities =
         [&](const cv::Mat& m0, const cv::Mat& m1)
         {
             float product_pixel_similarity = 1;
-//            similarityHelper(m0,
-//                             m1,
-//                             [&](float s){ product_pixel_similarity *= s; });
-
             assert((m0.cols==m0.rows)&&(m0.cols==m1.cols)&&(m0.cols==m1.rows));
             int area = m0.cols * m0.rows;
             float min = 1 - (1.0 / std::max(1.0, area / 8.0));
@@ -567,30 +634,34 @@ public:
         // pixel similarlties. Return the average (weighted sum) of each level
         // score as the final fitness for m0.
         //
-        // TODO another way to structure this to enforce coarse-to-fine is to
-        // stop after any level where the score is too low (eg less than 0.8),
-        // so only the 1x1 level is considered until that is 80% similar, then
-        // we move on to 2x2...
+        // TODO 20210825 experiment with nonuniform weights to emphasize higher
+        //               frequences.
         //
         float sum_of_per_level_scores = 0;
+        float sum_of_per_level_weights = 0;
         for (int i = 0; i < steps; i++)
         {
             cv::Mat a = newest_pyramid.at(p - i);
             cv::Mat b = target_pyramid_.at(p - i);
-            float level_score = product_of_pixel_similarities(a, b);
-            sum_of_per_level_scores += level_score;
+
+            // TODO so 0→0.5, 1→1, 2→1.5, 3→2, 4→2.5, 5→3.
+            float level_weight = (i + 1) * 0.5;
+            sum_of_per_level_weights += level_weight;
             
+            float level_score = product_of_pixel_similarities(a, b);
+//            sum_of_per_level_scores += level_score;
+            sum_of_per_level_scores += level_score * level_weight;
+
             std::cout << "        ";
             std::cout << i << " score=" << level_score;
-            std::cout << " total=" << sum_of_per_level_scores;
-            std::cout << " normed=" << sum_of_per_level_scores / steps;
+//            std::cout << " total=" << sum_of_per_level_scores;
+//            std::cout << " normed=" << sum_of_per_level_scores / steps;
+            std::cout << " level_score=" << level_score;
+            std::cout << " level_weight=" << level_weight;
             std::cout << std::endl;
-
-//    //            float min_level_score_to_continue = 0.3;
-//                float min_level_score_to_continue = 0.05;
-//                if (level_score < min_level_score_to_continue) break;
         }
-        return sum_of_per_level_scores / steps;
+//        return sum_of_per_level_scores / steps;
+        return sum_of_per_level_scores / sum_of_per_level_weights;
     }
     
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
