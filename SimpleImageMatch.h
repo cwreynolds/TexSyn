@@ -87,6 +87,9 @@ public:
         while (true)
         {
 //            logFunctionUsageCounts(out);
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            updateGuiWindowTitle();
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
             // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             population_->evolutionStep([&]
                                        (Individual* i)
@@ -1046,13 +1049,27 @@ public:
                 draw_point = Vec2(margin(), draw_point.y());
             }
         }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        gui().setWindowTitle("SimpleImageMatch -- " +
+//                             run_name_ +
+//                             " -- step " +
+//                             std::to_string(population_->getStepCount()));
+//        gui().refresh();
+        updateGuiWindowTitle();
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    }
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    void updateGuiWindowTitle()
+    {
         gui().setWindowTitle("SimpleImageMatch -- " +
                              run_name_ +
                              " -- step " +
                              std::to_string(population_->getStepCount()));
         gui().refresh();
     }
-    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
     void testFitnessOnNearMiss()
     {
         std::string dir =
