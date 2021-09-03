@@ -82,21 +82,124 @@ public:
     }
 
     // Run the evolution simulation.
+//    // TODO this is the original "absolute fitness" version.
+//    void run()
+//    {
+//        while (true)
+//        {
+//            // logFunctionUsageCounts(out);
+//            updateGuiWindowTitle();
+//            population_->evolutionStep([&]
+//                                       (Individual* i)
+//                                       { return fitnessFunction(i); });
+//        }
+//        // Delete Population instance.
+//        population_ = nullptr;
+//    }
+    
+    // TODO this is the new "relative (tournament) fitness" version.
     void run()
     {
         while (true)
         {
-//            logFunctionUsageCounts(out);
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            // logFunctionUsageCounts(out);
             updateGuiWindowTitle();
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            // Evolution step with wrapped EvoCamoGame::tournamentFunction().
             population_->evolutionStep([&]
-                                       (Individual* i)
-                                       { return fitnessFunction(i); });
+                                       (TournamentGroup tg)
+                                       { return tournamentFunction(tg); });
         }
         // Delete Population instance.
         population_ = nullptr;
+    }
+
+    // TODO new September 2, 2021
+    //tournament_function
+    //typedef std::function<TournamentGroup(TournamentGroup)> TournamentFunction;
+
+    TournamentGroup tournamentFunction(TournamentGroup tg)
+    {
+        class ITC  // IndividualTextureCount
+        {
+        public:
+            ITC(Individual* i, Texture* t) : ITC(i, t, 0) {};
+            ITC(Individual* i, Texture* t, int c)
+              : individual(i), texture(t), count(c) {};
+//            ITC(Individual* i) : ITC(i, GP::textureFromIndividual(i))
+//            {
+//                int width = getTargetImageSize().x();
+//                Texture* texture = GP::textureFromIndividual(tgm.individual);
+//                {
+//                    Timer t("Render");
+//                    texture->rasterizeToImageCache(width, false); // false → square.
+//                    std::cout << "  ";
+//                }
+//                cv::Mat mat = texture->getCvMat();
+//                assert((mat.cols == target_image_.cols) &&
+//                       (mat.rows == target_image_.rows));
+//            }
+            Individual* individual = nullptr;  // pointer to an Individual.
+            Texture* texture = nullptr;
+            int count = 0;
+        };
+        // Ensure each Texture has been rendered, build collection of ITCs.
+        std::vector<ITC> itcs;
+        for (auto& tgm : tg.members())
+        {
+            // TODO move this into ITC constructor?
+            int width = getTargetImageSize().x();
+            Texture* texture = GP::textureFromIndividual(tgm.individual);
+            {
+                Timer t("Render");
+                texture->rasterizeToImageCache(width, false); // false → square.
+                std::cout << "  ";
+            }
+            cv::Mat mat = texture->getCvMat();
+            assert((mat.cols == target_image_.cols) &&
+                   (mat.rows == target_image_.rows));
+            itcs.push_back({tgm.individual, texture});
+//            itcs.push_back({tgm.individual});
+        }
+        // For each pixel: score one point to the tournament group member whose
+        // pixel color is most similar to the target image pixel color.
+        for (int i = 0; i < target_image_.cols; i++)
+        {
+            for (int j = 0; j < target_image_.rows; j++)
+            {
+                float max_similarity = std::numeric_limits<float>::lowest();
+                Individual* max_sim_ind = nullptr;
+                for (auto& itc : itcs)
+                {
+                    Color a = getCvMatPixel(i, j, itc.texture->getCvMat());
+                    Color b = getCvMatPixel(i, j, target_image_);
+                    float similarity = Color::similarity(a, b);
+                    if (max_similarity < similarity)
+                    {
+                        max_similarity = similarity;
+                        max_sim_ind  = itc.individual;
+                    }
+                }
+                assert(max_sim_ind != nullptr);
+                // TODO there is probably a cleaner way to do this (but n=3...)
+                for (auto& itc : itcs)
+                {
+                    if (itc.individual == max_sim_ind) { itc.count++; }
+                }
+            }
+        }
+        // Write the ITC counts into tg "metric" field.
+        tg.setAllMetrics([&](Individual* i)
+                         {
+                             for (auto& itc : itcs)
+                             { if (i == itc.individual) { return itc.count; } }
+                             return 0; // TODO temp
+                         });
+        std::cout << "  counts:";
+        for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
+        std::cout << std::endl;
+        // Draw.
+        cv::Mat mat = GP::textureFromIndividual(tg.bestIndividual())->getCvMat();
+        drawGuiForFitnessFunction(mat, target_image_);
+        return tg;
     }
     
     float fitnessFunction(Individual* individual)
