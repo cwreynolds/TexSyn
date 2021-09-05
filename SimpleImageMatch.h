@@ -123,9 +123,21 @@ public:
         {
         public:
             ITC(Individual* i) : ITC(i, GP::textureFromIndividual(i)) {}
-            ITC(Individual* i, Texture* t) : individual(i), texture(t) {}
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//            ITC(Individual* i, Texture* t) : individual(i), texture(t) {}
+            // TODO instead of this, maybe setup() should return a ITC instead
+            //      of an Individual. In fact, try again to move setup() into
+            //      the ITC constructor.
+            ITC(Individual* i, Texture* t)
+              : individual(i),
+                texture(t),
+                nonuniformity(1 - imageUniformity(texture->getCvMat())) {}
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             Individual* individual = nullptr;
             Texture* texture = nullptr;
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+            float nonuniformity = 1;
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             int count = 0;
         };
         // Ensure each Texture has been rendered
@@ -175,7 +187,6 @@ public:
                 }
             }
         }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Setting "arbitrary" fitness only for sake of display ordering in GUI.
         for (auto& itc : itcs)
         {
@@ -184,12 +195,11 @@ public:
             {
                 Texture* texture = itc.texture;
                 cv::Mat mat = texture->getCvMat();
-//                float similarity = imageAvePixelSimilarity(mat, target_image_);
+                //float similarity = imageAvePixelSimilarity(mat, target_image_);
                 float similarity = imageAug3Similarlity(mat, target_image_);
                 individual->setFitness(similarity);
             }
         }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Write the ITC counts into tg "metric" field.
 //        tg.setAllMetrics([&](Individual* i)
 //                         {
@@ -197,18 +207,64 @@ public:
 //                             { if (i == itc.individual) { return itc.count; } }
 //                             return 0; // TODO temp
 //                         });
+//        tg.setAllMetrics([&](Individual* i)
+//                         {
+//                             float m = 0;
+//                             for (auto& itc : itcs)
+//                                { if (i == itc.individual) { m = itc.count; } }
+//                             return m;
+//                         });
         tg.setAllMetrics([&](Individual* i)
-                         {
-                             float m = 0;
-                             for (auto& itc : itcs)
-                                { if (i == itc.individual) { m = itc.count; } }
-                             return m;
-                         });
+        {
+            float m = 0;
+            for (auto& itc : itcs)
+            {
+                Individual* j = itc.individual;
+                if (i == j)
+                {
+                    cv::Mat mat = GP::textureFromIndividual(i)->getCvMat();
+                    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//                        float nonuniformity = 1 - imageUniformity(mat);
+//    //                    m = itc.count * nonuniformity;
+//                        m = int(itc.count * nonuniformity);
+                    m = int(itc.count * itc.nonuniformity);
+                    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+                }
+            }
+            return m;
+        });
         std::cout << "  counts:";
         for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        std::cout << "  nonuniformities:";
+        for (auto& tgm : tg.members())
+        {
+            Individual* i = tgm.individual;
+            for (auto& itc : itcs)
+            {
+                if (i == itc.individual){std::cout << " " << itc.nonuniformity;}
+            }
+        }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         std::cout << "  \"fitnesses\":";
-        for (auto& tgm : tg.members()) { std::cout << " " << tgm.individual->getFitness(); }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//        for (auto& tgm : tg.members()) { std::cout << " " << tgm.individual->getFitness(); }
+        bool fitness_in_order = true;
+        float prev_fitness = std::numeric_limits<float>::lowest();
+        for (auto& tgm : tg.members())
+        {
+            float f = tgm.individual->getFitness();
+            if (prev_fitness > f) fitness_in_order = false;
+            prev_fitness = f;
+            std::cout << " " << f;
+        }
+        if (!fitness_in_order) std::cout << " (ooo)";
+        
+        std::cout << "  survivals:";
+        for (auto& tgm : tg.members())
+        {
+            std::cout << " " << tgm.individual->getTournamentsSurvived();
+        }
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         std::cout << std::endl;
         // Draw.
@@ -1031,7 +1087,8 @@ public:
 
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
     // TODO Is 10 tests good? Use some other RS?
-    float imageUniformity(const cv::Mat& mat) const
+//    float imageUniformity(const cv::Mat& mat) const
+    static float imageUniformity(const cv::Mat& mat) // const
     {
         float uniformity = 1;
         // int tests = 10;
@@ -1078,7 +1135,8 @@ public:
     }
     
     // Read a pixel as a Color value at given (x, y) in OpenCV Mat.
-    Color getCvMatPixel(int x, int y, const cv::Mat& mat) const
+//    Color getCvMatPixel(int x, int y, const cv::Mat& mat) const
+    static Color getCvMatPixel(int x, int y, const cv::Mat& mat) // const
     {
         cv::Vec3b bgrPixel = mat.at<cv::Vec3b>(x, y);
         float m = 255;
