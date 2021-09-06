@@ -113,9 +113,6 @@ public:
     }
 
     // TODO new September 2, 2021
-    //tournament_function
-    //typedef std::function<TournamentGroup(TournamentGroup)> TournamentFunction;
-
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
         // Helper class for Individual, Texture, Count of most similar pixels.
@@ -123,8 +120,6 @@ public:
         {
         public:
             ITC(Individual* i) : ITC(i, GP::textureFromIndividual(i)) {}
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//            ITC(Individual* i, Texture* t) : individual(i), texture(t) {}
             // TODO instead of this, maybe setup() should return a ITC instead
             //      of an Individual. In fact, try again to move setup() into
             //      the ITC constructor.
@@ -132,13 +127,12 @@ public:
               : individual(i),
                 texture(t),
                 nonuniformity(1 - imageUniformity(texture->getCvMat())) {}
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             Individual* individual = nullptr;
             Texture* texture = nullptr;
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
             float nonuniformity = 1;
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//            void countUp() { count++; }
             int count = 0;
+            cv::Mat wins;
         };
         // Ensure each Texture has been rendered
         auto setup = [&](TournamentGroupMember& tgm)
@@ -160,6 +154,19 @@ public:
         // Build collection of ITCs.
         std::vector<ITC> itcs;
         for (auto& tgm : tg.members()) { itcs.push_back({ setup(tgm) }); }
+        // Lookup ITC for given Individual
+        auto get_itc = [&](Individual* i)
+        {
+            ITC* r = &itcs.front() ;
+            for (auto& itc : itcs) { if (i == itc.individual) { r = &itc; } }
+            return r;
+        };
+        // Set win Mats to be all black
+        for (auto& itc : itcs)
+        {
+            itc.wins = cv::Mat(target_image_.cols, target_image_.rows, CV_8UC3);
+            itc.wins.setTo(cv::Scalar(0));
+        }
         // For each pixel: score one point to the tournament group member whose
         // pixel color is most similar to the target image pixel color.
         for (int i = 0; i < target_image_.cols; i++)
@@ -180,11 +187,16 @@ public:
                     }
                 }
                 assert(max_sim_ind != nullptr);
-                // TODO there is probably a cleaner way to do this (but n=3...)
-                for (auto& itc : itcs)
-                {
-                    if (itc.individual == max_sim_ind) { itc.count++; }
-                }
+                ITC* max_sim_itc = get_itc(max_sim_ind);
+                // Increment score of Individual with max similarity this pixel.
+                max_sim_itc->count++;
+//                // Draw a white pixel on "wins" map for that Individual.
+//                cv::Vec3b white(255, 255, 255);
+//                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = white;
+                // Draw a gray pixel on "wins" map for that Individual.
+                int n = 255 * max_sim_itc->nonuniformity;
+                cv::Vec3b gray(n, n, n);
+                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = gray;
             }
         }
         // Setting "arbitrary" fitness only for sake of display ordering in GUI.
@@ -195,25 +207,12 @@ public:
             {
                 Texture* texture = itc.texture;
                 cv::Mat mat = texture->getCvMat();
-                //float similarity = imageAvePixelSimilarity(mat, target_image_);
-                float similarity = imageAug3Similarlity(mat, target_image_);
+                float similarity = imageAvePixelSimilarity(mat, target_image_);
+                //float similarity = imageAug3Similarlity(mat, target_image_);
                 individual->setFitness(similarity);
             }
         }
         // Write the ITC counts into tg "metric" field.
-//        tg.setAllMetrics([&](Individual* i)
-//                         {
-//                             for (auto& itc : itcs)
-//                             { if (i == itc.individual) { return itc.count; } }
-//                             return 0; // TODO temp
-//                         });
-//        tg.setAllMetrics([&](Individual* i)
-//                         {
-//                             float m = 0;
-//                             for (auto& itc : itcs)
-//                                { if (i == itc.individual) { m = itc.count; } }
-//                             return m;
-//                         });
         tg.setAllMetrics([&](Individual* i)
         {
             float m = 0;
@@ -223,53 +222,60 @@ public:
                 if (i == j)
                 {
                     cv::Mat mat = GP::textureFromIndividual(i)->getCvMat();
-                    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//                        float nonuniformity = 1 - imageUniformity(mat);
-//    //                    m = itc.count * nonuniformity;
-//                        m = int(itc.count * nonuniformity);
                     m = int(itc.count * itc.nonuniformity);
-                    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
                 }
             }
             return m;
         });
         std::cout << "  counts:";
         for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        std::cout << "  nonuniformities:";
-        for (auto& tgm : tg.members())
-        {
-            Individual* i = tgm.individual;
-            for (auto& itc : itcs)
-            {
-                if (i == itc.individual){std::cout << " " << itc.nonuniformity;}
-            }
-        }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         std::cout << "  \"fitnesses\":";
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        for (auto& tgm : tg.members()) { std::cout << " " << tgm.individual->getFitness(); }
+        auto get_nonuni = [&](Individual* i){return get_itc(i)->nonuniformity;};
         bool fitness_in_order = true;
         float prev_fitness = std::numeric_limits<float>::lowest();
         for (auto& tgm : tg.members())
         {
-            float f = tgm.individual->getFitness();
+            float n = get_nonuni(tgm.individual);
+            float f = n * tgm.individual->getFitness();
             if (prev_fitness > f) fitness_in_order = false;
             prev_fitness = f;
             std::cout << " " << f;
         }
         if (!fitness_in_order) std::cout << " (ooo)";
-        
+        std::cout << " (nonuniformities:";
+        for (auto& tgm : tg.members())
+        {
+            std::cout << " " << std::setprecision(2);
+            std::cout << get_nonuni(tgm.individual);
+            std::cout << std::setprecision(8);
+
+        }
+        std::cout << ")";
         std::cout << "  survivals:";
         for (auto& tgm : tg.members())
         {
             std::cout << " " << tgm.individual->getTournamentsSurvived();
         }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         std::cout << std::endl;
         // Draw.
-        cv::Mat mat = GP::textureFromIndividual(tg.bestIndividual())->getCvMat();
-        drawGuiForFitnessFunction(mat, target_image_);
+        std::vector<const cv::Mat*> mats;
+        cv::Mat blank(target_image_.cols, target_image_.rows, CV_8UC3);
+        blank.setTo(cv::Scalar(127, 127, 127));
+        mats.push_back(&target_image_);
+        for (auto& tgm : tg.members())
+        {
+            Individual* i = tgm.individual;
+            mats.push_back(&blank);
+            mats.push_back(&(GP::textureFromIndividual(i)->getCvMat()));
+            mats.push_back(&(get_itc(i)->wins));
+        }
+        drawGuiForFitnessFunction(mats);
+        
+        ///qqq
+        Vec2 pos(0, margin()/2 + gui().getSize().y() / gui_grid_rows_);
+        gui().drawRectangle(Vec2(gui().getSize().x(), 2), pos, Color(1));
+        gui().refresh();
+
         return tg;
     }
     
@@ -1186,17 +1192,25 @@ public:
     
     void drawGuiForFitnessFunction(const cv::Mat& newest, const cv::Mat& target)
     {
-        // TODO topmost experiment
-        gui().makeTopmost();
-        
-        
         // Push the two args onto the beginning of a collection of cv::Mat*.
         std::vector<const cv::Mat*> mats;
         mats.push_back(&newest);
         mats.push_back(&target);
+        drawGuiForFitnessFunction(mats);
+    }
+    
+    
+//    void drawGuiForFitnessFunction(const cv::Mat& newest, const cv::Mat& target)
+    void drawGuiForFitnessFunction(std::vector<const cv::Mat*>& mats)
+    {
+//        // Push the two args onto the beginning of a collection of cv::Mat*.
+//        std::vector<const cv::Mat*> mats;
+//        mats.push_back(&newest);
+//        mats.push_back(&target);
         // Now walk down the fitness sorted Population, pushing rendered cv_mats
         // of high fitness individuals onto the collection.
-        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
+//        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - 2;
+        int mat_max = (gui_grid_cols_ * gui_grid_rows_) - int(mats.size());
         for (int i = 0; i < mat_max; i++)
         {
             Individual* individual = population_->nthBestFitness(i);
@@ -1211,8 +1225,10 @@ public:
         // Draw collection of Mats as a grid on the GUI.
         int count = 0;
         Vec2 draw_point(margin(), margin());
-        Vec2 stride_x(target.cols + margin(), 0);
-        Vec2 stride_y(0, target.rows + margin());
+//        Vec2 stride_x(target.cols + margin(), 0);
+//        Vec2 stride_y(0, target.rows + margin());
+        Vec2 stride_x(mats.at(0)->cols + margin(), 0);
+        Vec2 stride_y(0, mats.at(0)->rows + margin());
         for (auto mat : mats)
         {
             // TODO cf drawTextureOnGui() function in GP.h
@@ -1225,17 +1241,9 @@ public:
                 draw_point = Vec2(margin(), draw_point.y());
             }
         }
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        gui().setWindowTitle("SimpleImageMatch -- " +
-//                             run_name_ +
-//                             " -- step " +
-//                             std::to_string(population_->getStepCount()));
-//        gui().refresh();
         updateGuiWindowTitle();
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     }
     
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     void updateGuiWindowTitle()
     {
         gui().setWindowTitle("SimpleImageMatch -- " +
@@ -1244,7 +1252,6 @@ public:
                              std::to_string(population_->getStepCount()));
         gui().refresh();
     }
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     void testFitnessOnNearMiss()
     {
