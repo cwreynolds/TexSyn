@@ -190,38 +190,25 @@ public:
                 ITC* max_sim_itc = get_itc(max_sim_ind);
                 // Increment score of Individual with max similarity this pixel.
                 max_sim_itc->count++;
-//                // Draw a white pixel on "wins" map for that Individual.
-//                cv::Vec3b white(255, 255, 255);
-//                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = white;
                 // Draw a gray pixel on "wins" map for that Individual.
                 int n = 255 * max_sim_itc->nonuniformity;
                 cv::Vec3b gray(n, n, n);
-                //
-                // TODO DAMMIT!! This appears to be rotated 90° to the left (so
-                // the hills at the bottom of the target are now on the right
-                // side) and possibly flipped left-right (I think I'm seeing the <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< qqq
-                // clearing on the right side of the hill near the bottom rather
-                // than top of the rotated image)
-                //
-                // (Leaving this comment here until the change below is tested.)
-                //
-//                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = gray;
-//                cv::Point position(i, j)
-                cv::Point position(j, target_image_.cols - i); // TODO maybe?
+                cv::Point position(j, i);
                 max_sim_itc->wins.at<cv::Vec3b>(position) = gray;
             }
         }
-        // Setting "arbitrary" fitness only for sake of display ordering in GUI.
+        // Set "arbitrary" alt_fitness only for sake of display ordering in GUI.
         for (auto& itc : itcs)
         {
             Individual* individual = itc.individual;
-            if (!individual->hasFitness())
+            if (individual->alt_fitness < 0)
             {
                 Texture* texture = itc.texture;
                 cv::Mat mat = texture->getCvMat();
                 float similarity = imageAvePixelSimilarity(mat, target_image_);
                 //float similarity = imageAug3Similarlity(mat, target_image_);
-                individual->setFitness(similarity);
+                assert(similarity >= 0);
+                individual->alt_fitness = similarity;
             }
         }
         // Write the ITC counts into tg "metric" field.
@@ -248,7 +235,7 @@ public:
         for (auto& tgm : tg.members())
         {
             float n = get_nonuni(tgm.individual);
-            float f = n * tgm.individual->getFitness();
+            float f = n * tgm.individual->alt_fitness;
             if (prev_fitness > f) fitness_in_order = false;
             prev_fitness = f;
             std::cout << " " << f;
@@ -269,6 +256,16 @@ public:
             std::cout << " " << tgm.individual->getTournamentsSurvived();
         }
         std::cout << std::endl;
+        // Collect pointers to all Individuals, sort by "alt_fitness".
+        std::vector<Individual*> all_alt_fitnesses;
+        population_->applyToAllIndividuals([&]
+                                           (Individual* i)
+                                           { all_alt_fitnesses.push_back(i); });
+        // Sort with largest fitness Individuals at the front.
+        std::sort(all_alt_fitnesses.begin(),
+                  all_alt_fitnesses.end(),
+                  [](Individual* a, Individual* b)
+                  { return a->alt_fitness > b->alt_fitness; });
         // Draw.
         std::vector<const cv::Mat*> mats;
         cv::Mat blank(target_image_.cols, target_image_.rows, CV_8UC3);
@@ -278,21 +275,19 @@ public:
         {
             Individual* i = tgm.individual;
             mats.push_back(&blank);
-            
-            // TODO DAMMIT!! lets verify that these two "i"s match. Why not get
-            // the first Texture from ITC also? As I was watching the rotated
-            // "wins" maps go by, it was not clear they matched. <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< qqq
-
             mats.push_back(&(GP::textureFromIndividual(i)->getCvMat()));
             mats.push_back(&(get_itc(i)->wins));
         }
+        // Two rows of highest alt_fitness.
+        for (int a = 0; a < 20; a++)
+        {
+            Individual* i = all_alt_fitnesses.at(a);
+            mats.push_back(&(GP::textureFromIndividual(i)->getCvMat()));
+        }
         drawGuiForFitnessFunction(mats);
-        
-        ///qqq
-        Vec2 pos(0, margin()/2 + gui().getSize().y() / gui_grid_rows_);
-        gui().drawRectangle(Vec2(gui().getSize().x(), 2), pos, Color(1));
+        drawLineUnderNthRowInGUI(1, Color(1));
+        drawLineUnderNthRowInGUI(3, Color(1));
         gui().refresh();
-
         return tg;
     }
     
@@ -1242,8 +1237,6 @@ public:
         // Draw collection of Mats as a grid on the GUI.
         int count = 0;
         Vec2 draw_point(margin(), margin());
-//        Vec2 stride_x(target.cols + margin(), 0);
-//        Vec2 stride_y(0, target.rows + margin());
         Vec2 stride_x(mats.at(0)->cols + margin(), 0);
         Vec2 stride_y(0, mats.at(0)->rows + margin());
         for (auto mat : mats)
@@ -1269,7 +1262,15 @@ public:
                              std::to_string(population_->getStepCount()));
         gui().refresh();
     }
-
+    
+    void drawLineUnderNthRowInGUI(int n, Color c)
+    {
+        Vec2 size(gui().getSize().x(), 1);
+        float row_height = target_image_.rows + margin();
+        Vec2 position(0, (row_height * n) + (margin() * 0.5) - 1);
+        gui().drawRectangle(size, position, c);
+    }
+    
     void testFitnessOnNearMiss()
     {
         std::string dir =
