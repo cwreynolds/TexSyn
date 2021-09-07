@@ -196,7 +196,19 @@ public:
                 // Draw a gray pixel on "wins" map for that Individual.
                 int n = 255 * max_sim_itc->nonuniformity;
                 cv::Vec3b gray(n, n, n);
-                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = gray;
+                //
+                // TODO DAMMIT!! This appears to be rotated 90° to the left (so
+                // the hills at the bottom of the target are now on the right
+                // side) and possibly flipped left-right (I think I'm seeing the <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< qqq
+                // clearing on the right side of the hill near the bottom rather
+                // than top of the rotated image)
+                //
+                // (Leaving this comment here until the change below is tested.)
+                //
+//                max_sim_itc->wins.at<cv::Vec3b>(cv::Point(i, j)) = gray;
+//                cv::Point position(i, j)
+                cv::Point position(j, target_image_.cols - i); // TODO maybe?
+                max_sim_itc->wins.at<cv::Vec3b>(position) = gray;
             }
         }
         // Setting "arbitrary" fitness only for sake of display ordering in GUI.
@@ -266,6 +278,11 @@ public:
         {
             Individual* i = tgm.individual;
             mats.push_back(&blank);
+            
+            // TODO DAMMIT!! lets verify that these two "i"s match. Why not get
+            // the first Texture from ITC also? As I was watching the rotated
+            // "wins" maps go by, it was not clear they matched. <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< qqq
+
             mats.push_back(&(GP::textureFromIndividual(i)->getCvMat()));
             mats.push_back(&(get_itc(i)->wins));
         }
