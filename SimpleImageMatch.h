@@ -226,6 +226,23 @@ public:
             }
             return m;
         });
+        
+        
+        // Update "standing"
+        for (int k = 1; k < tg.members().size(); k++)
+        {
+            Individual* current = tg.members().at(k).individual;
+            Individual* previous = tg.members().at(k - 1).individual;
+//            debugPrint(current->getStanding());
+//            debugPrint(current->getFitness());
+            current->adjustStandingForWinAgainst(*previous);
+//            debugPrint(current->getStanding());
+//            debugPrint(current->getFitness());
+        }
+
+        
+        
+        
         std::cout << "  counts:";
         for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
         std::cout << "  \"fitnesses\":";
@@ -250,12 +267,14 @@ public:
 
         }
         std::cout << ")";
-        std::cout << "  survivals:";
+//        std::cout << "  survivals:";
+        std::cout << "  relative_fitness:";
         for (auto& tgm : tg.members())
         {
-            std::cout << " " << tgm.individual->getTournamentsSurvived();
+//            std::cout << " " << tgm.individual->getTournamentsSurvived();
+            std::cout << " " << tgm.individual->getFitness();
         }
-        std::cout << std::endl;
+//        std::cout << std::endl;
         // Collect pointers to all Individuals, sort by "alt_fitness".
         std::vector<Individual*> all_alt_fitnesses;
         population_->applyToAllIndividuals([&]
@@ -266,6 +285,19 @@ public:
                   all_alt_fitnesses.end(),
                   [](Individual* a, Individual* b)
                   { return a->alt_fitness > b->alt_fitness; });
+        
+        float average_alt_fitness = 0;
+        int aaf_count = 0;
+        for (auto& individual: all_alt_fitnesses)
+        {
+            float af = individual->alt_fitness;
+            if (af >= 0) { average_alt_fitness += af; aaf_count++; }
+        }
+        average_alt_fitness /= aaf_count;
+        std::cout << " average_alt_fitness: " << average_alt_fitness;
+        std::cout << std::endl;
+
+        
         // Draw.
         std::vector<const cv::Mat*> mats;
         cv::Mat blank(target_image_.cols, target_image_.rows, CV_8UC3);
