@@ -45,6 +45,10 @@ public:
         max_crossover_tree_size_(max_init_tree_size_ * 1.5),
         target_image_(cv::imread(target_image_pathname_))
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO experimental, avoid huge differences for tiny parameter mutation.
+        Texture::seed_from_hashed_args = false;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         setGuiSize();
         
         // log parameters for this run
@@ -141,8 +145,8 @@ public:
             Texture* texture = GP::textureFromIndividual(i);
             if (texture->getCvMat().cols == 0)
             {
-                Timer t("Render");
-                std::cout << "  ";
+                // Timer t("Render");
+                // std::cout << "  ";
                 int width = target_image_.cols;
                 int height = target_image_.rows;
                 texture->rasterizeToImageCache(width, false); // false → square.
@@ -244,7 +248,8 @@ public:
         
         
         std::cout << "  counts:";
-        for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
+//        for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
+        for (auto& tgm : tg.members()) { std::cout << " " << int(tgm.metric); }
         std::cout << "  \"fitnesses\":";
         auto get_nonuni = [&](Individual* i){return get_itc(i)->nonuniformity;};
         bool fitness_in_order = true;
@@ -266,7 +271,8 @@ public:
             std::cout << std::setprecision(8);
 
         }
-        std::cout << ")";
+//        std::cout << ")";
+        std::cout << ")" << std::endl;
 //        std::cout << "  survivals:";
         std::cout << "  relative_fitness:";
         for (auto& tgm : tg.members())
@@ -294,7 +300,15 @@ public:
             if (af >= 0) { average_alt_fitness += af; aaf_count++; }
         }
         average_alt_fitness /= aaf_count;
+        std::cout << std::setprecision(2);
         std::cout << " average_alt_fitness: " << average_alt_fitness;
+        std::cout << " top_alt_fitness: (";
+        for (int k = 0; k < 5; k++)
+        {
+            if (k > 0) { std::cout << " "; }
+            std::cout << all_alt_fitnesses.at(k)->alt_fitness;
+        }
+        std::cout << ")";
         std::cout << std::endl;
 
         

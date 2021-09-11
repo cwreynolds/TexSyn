@@ -1688,17 +1688,32 @@ public:
         return getColorForPhasor(position, Disk());  // Dummy kernel is ignored.
     }
     // Seed the random number sequence from some operator parameters.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    size_t seedForRandomSequence()
+//    {
+//        return (hash_float(min_radius_) ^
+//                hash_float(max_radius_) ^
+//                hash_float(min_wavelength_) ^
+//                hash_float(max_wavelength_) ^
+//                hash_float(min_angle_) ^
+//                hash_float(max_angle_) ^
+//                hash_float(getSoftness()) ^
+//                hash_float(getDutyCycle()));
+//    }
     size_t seedForRandomSequence()
     {
-        return (hash_float(min_radius_) ^
+        return (seed_from_hashed_args ?
+                (hash_float(min_radius_) ^
                 hash_float(max_radius_) ^
                 hash_float(min_wavelength_) ^
                 hash_float(max_wavelength_) ^
                 hash_float(min_angle_) ^
                 hash_float(max_angle_) ^
                 hash_float(getSoftness()) ^
-                hash_float(getDutyCycle()));
+                hash_float(getDutyCycle())) :
+                156920869);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     const float min_radius_;
     const float max_radius_;
@@ -1763,17 +1778,32 @@ public:
                     kernel_template.wavelength);
     }
     // Seed the random number sequence from some operator parameters.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    size_t seedForRandomSequence()
+//    {
+//        // In addition to hashing softness and duty cycle, this tries to include
+//        // the textures used to define the radius, angle and wavelength of Gabor
+//        // kernels. It uses the luminance of the color at the texture's origin.
+//        return (hash_float(getSoftness()) ^
+//                hash_float(getDutyCycle()) ^
+//                hash_float(radius_texture_.getColor(Vec2()).luminance()) ^
+//                hash_float(wavelength_texture_.getColor(Vec2()).luminance()) ^
+//                hash_float(angle_texture_.getColor(Vec2()).luminance()));
+//    }
     size_t seedForRandomSequence()
     {
         // In addition to hashing softness and duty cycle, this tries to include
         // the textures used to define the radius, angle and wavelength of Gabor
         // kernels. It uses the luminance of the color at the texture's origin.
-        return (hash_float(getSoftness()) ^
-                hash_float(getDutyCycle()) ^
-                hash_float(radius_texture_.getColor(Vec2()).luminance()) ^
-                hash_float(wavelength_texture_.getColor(Vec2()).luminance()) ^
-                hash_float(angle_texture_.getColor(Vec2()).luminance()));
+        return (seed_from_hashed_args ?
+                (hash_float(getSoftness()) ^
+                 hash_float(getDutyCycle()) ^
+                 hash_float(radius_texture_.getColor(Vec2()).luminance()) ^
+                 hash_float(wavelength_texture_.getColor(Vec2()).luminance()) ^
+                 hash_float(angle_texture_.getColor(Vec2()).luminance())) :
+                61358723);
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     const Texture& radius_texture_;
     const Texture& wavelength_texture_;
@@ -1793,9 +1823,16 @@ public:
               float noise_amplitude,
               float which,
               const Texture& texture)
-      : rs_(hash_float(noise_scale) ^
-            hash_float(noise_amplitude) ^
-            hash_float(which)),
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//      : rs_(hash_float(noise_scale) ^
+//            hash_float(noise_amplitude) ^
+//            hash_float(which)),
+      : rs_(seed_from_hashed_args ?
+            (hash_float(noise_scale) ^
+             hash_float(noise_amplitude) ^
+             hash_float(which)) :
+            73625959),
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         center_(rs_.randomPointInUnitDiameterCircle()),
         basis0_(rs_.randomUnitVector()),
         basis1_(basis0_.rotate90degCCW()),

@@ -209,6 +209,9 @@ public:
     // TODO maybe there should be a hook, a void() std::function, to handle
     // per-app key commands?
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static inline bool seed_from_hashed_args = true;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
