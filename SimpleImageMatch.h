@@ -134,7 +134,6 @@ public:
             Individual* individual = nullptr;
             Texture* texture = nullptr;
             float nonuniformity = 1;
-//            void countUp() { count++; }
             int count = 0;
             cv::Mat wins;
         };
@@ -230,25 +229,14 @@ public:
             }
             return m;
         });
-        
-        
         // Update "standing"
         for (int k = 1; k < tg.members().size(); k++)
         {
             Individual* current = tg.members().at(k).individual;
             Individual* previous = tg.members().at(k - 1).individual;
-//            debugPrint(current->getStanding());
-//            debugPrint(current->getFitness());
             current->adjustStandingForWinAgainst(*previous);
-//            debugPrint(current->getStanding());
-//            debugPrint(current->getFitness());
         }
-
-        
-        
-        
         std::cout << "  counts:";
-//        for (auto& tgm : tg.members()) { std::cout << " " << tgm.metric; }
         for (auto& tgm : tg.members()) { std::cout << " " << int(tgm.metric); }
         std::cout << "  \"fitnesses\":";
         auto get_nonuni = [&](Individual* i){return get_itc(i)->nonuniformity;};
@@ -271,16 +259,12 @@ public:
             std::cout << std::setprecision(8);
 
         }
-//        std::cout << ")";
         std::cout << ")" << std::endl;
-//        std::cout << "  survivals:";
         std::cout << "  relative_fitness:";
         for (auto& tgm : tg.members())
         {
-//            std::cout << " " << tgm.individual->getTournamentsSurvived();
             std::cout << " " << tgm.individual->getFitness();
         }
-//        std::cout << std::endl;
         // Collect pointers to all Individuals, sort by "alt_fitness".
         std::vector<Individual*> all_alt_fitnesses;
         population_->applyToAllIndividuals([&]
@@ -310,7 +294,6 @@ public:
         }
         std::cout << ")";
         std::cout << std::endl;
-
         
         // Draw.
         std::vector<const cv::Mat*> mats;

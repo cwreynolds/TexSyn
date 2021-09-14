@@ -5835,22 +5835,58 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // WIP SimpleTextureMatch
-    std::cout << "August 22, 2021" << std::endl;
-    SimpleImageMatch(CommandLine(argc, argv)).run();
-        
-//    CommandLine cmd
-//    ({
-//        "simple_image_match",
-//        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
-//        ".",
-//        "20210905",
-//        "300",
-//        "15"
-//    });
-//    SimpleImageMatch(cmd).run();
+//        // WIP SimpleTextureMatch
+//        std::cout << "August 22, 2021" << std::endl;
+//        SimpleImageMatch(CommandLine(argc, argv)).run();
+//
+//    //    CommandLine cmd
+//    //    ({
+//    //        "simple_image_match",
+//    //        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
+//    //        ".",
+//    //        "20210905",
+//    //        "300",
+//    //        "15"
+//    //    });
+//    //    SimpleImageMatch(cmd).run();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//    // Testing Texture::seed_from_hashed_args
+//    std::cout << "September 12, 2021" << std::endl;
+//
+//    auto test_case = [](float p)
+//    {
+//        Texture::displayAndFile(PhasorNoiseRanges(0.3, 0.4,
+//                                                  0.1, p,
+//                                                  0.03, 0.10,
+//                                                  0, 1,
+//                                                  Uniform(0.1, 0.4, 0.8),
+//                                                  Uniform(0.9, 0.3, 0.1)));
+//
+//    };
+//    auto two = [&]()
+//    {
+//        debugPrint(Texture::seed_from_hashed_args);
+//        // These parameters are "close" in value:
+//        test_case(0.30);
+//        test_case(0.31);
+//    };
+//
+//    // By default these are quite different:
+//    two();
+//    // While these are roughly similar:
+//    Texture::seed_from_hashed_args = false;
+//    two();
+//
+//    Texture::waitKey();
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // WIP SimpleTextureMatch
+    std::cout << "September 12, 2021" << std::endl;
+    SimpleImageMatch(CommandLine(argc, argv)).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
