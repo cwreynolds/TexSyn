@@ -127,15 +127,31 @@ public:
             // TODO instead of this, maybe setup() should return a ITC instead
             //      of an Individual. In fact, try again to move setup() into
             //      the ITC constructor.
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            ITC(Individual* i, Texture* t)
+//              : individual(i),
+//                texture(t),
+//                nonuniformity(1 - imageUniformity(texture->getCvMat())) {}
             ITC(Individual* i, Texture* t)
               : individual(i),
                 texture(t),
-                nonuniformity(1 - imageUniformity(texture->getCvMat())) {}
+                nonuniformity(1 - imageUniformity(texture->getCvMat())),
+                sw_counts(count_of_sub_windows, 0) {}
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Individual* individual = nullptr;
             Texture* texture = nullptr;
             float nonuniformity = 1;
             int count = 0;
             cv::Mat wins;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            int sqrt_of_sub_windows = 5;
+            size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
+            std::vector<int> sw_counts;
+            void countIJ(int i, int j)
+            {
+                
+            }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
         // Ensure each Texture has been rendered
         auto setup = [&](TournamentGroupMember& tgm)
@@ -223,7 +239,9 @@ public:
                 Individual* j = itc.individual;
                 if (i == j)
                 {
-                    cv::Mat mat = GP::textureFromIndividual(i)->getCvMat();
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                    cv::Mat mat = GP::textureFromIndividual(i)->getCvMat();
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     m = int(itc.count * itc.nonuniformity);
                 }
             }
