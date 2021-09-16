@@ -144,15 +144,38 @@ public:
             int count = 0;
             cv::Mat wins;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            int sqrt_of_sub_windows = 5;
+//            int sqrt_of_sub_windows = 5;
+            int sqrt_of_sub_windows = 2;
             size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
             std::vector<int> sw_counts;
             void countIJ(int i, int j)
             {
+                cv::Mat mat = texture->getCvMat();
+                assert(mat.cols == mat.rows); // TODO assume square Mat
+//                int p = i / mat.cols;
+//                int q = j / mat.rows;
+                int p = float(i) / (float(mat.cols) / float(sqrt_of_sub_windows));
+                int q = float(j) / (float(mat.rows) / float(sqrt_of_sub_windows));
+                int c = (p * sqrt_of_sub_windows) + q;
+                assert(c < count_of_sub_windows);
+                sw_counts.at(c)++;
+            }
+            int swLeastCount()
+            {
+                int least = std::numeric_limits<int>::max();
+                for (auto c : sw_counts) { if (least > c ){ least = c; } }
                 
+//                std::cout << vec_to_string(sw_counts);
+//                std::cout << " → " << least << std::endl;
+
+                return least;
             }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        bool weakest_link = false;
+        bool weakest_link = true;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Ensure each Texture has been rendered
         auto setup = [&](TournamentGroupMember& tgm)
         {
@@ -208,7 +231,17 @@ public:
                 assert(max_sim_ind != nullptr);
                 ITC* max_sim_itc = get_itc(max_sim_ind);
                 // Increment score of Individual with max similarity this pixel.
-                max_sim_itc->count++;
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                max_sim_itc->count++;
+                if (weakest_link)
+                {
+                    max_sim_itc->countIJ(i, j);
+                }
+                else
+                {
+                    max_sim_itc->count++;
+                }
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // Draw a gray pixel on "wins" map for that Individual.
                 int n = 255 * max_sim_itc->nonuniformity;
                 cv::Vec3b gray(n, n, n);
@@ -241,8 +274,16 @@ public:
                 {
                     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //                    cv::Mat mat = GP::textureFromIndividual(i)->getCvMat();
+//                    m = int(itc.count * itc.nonuniformity);
+                    if (weakest_link)
+                    {
+                        m = int(itc.swLeastCount() * itc.nonuniformity);
+                    }
+                    else
+                    {
+                        m = int(itc.count * itc.nonuniformity);
+                    }
                     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    m = int(itc.count * itc.nonuniformity);
                 }
             }
             return m;
