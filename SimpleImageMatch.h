@@ -145,29 +145,86 @@ public:
             cv::Mat wins;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //            int sqrt_of_sub_windows = 5;
-            int sqrt_of_sub_windows = 2;
+//            int sqrt_of_sub_windows = 2;
+            float sqrt_of_sub_windows = 2;
             size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
             std::vector<int> sw_counts;
             void countIJ(int i, int j)
             {
                 cv::Mat mat = texture->getCvMat();
                 assert(mat.cols == mat.rows); // TODO assume square Mat
-//                int p = i / mat.cols;
-//                int q = j / mat.rows;
-                int p = float(i) / (float(mat.cols) / float(sqrt_of_sub_windows));
-                int q = float(j) / (float(mat.rows) / float(sqrt_of_sub_windows));
+//                int p = float(i) / (float(mat.cols) / float(sqrt_of_sub_windows));
+//                int q = float(j) / (float(mat.rows) / float(sqrt_of_sub_windows));
+//                int p = i / (wins.cols / float(sqrt_of_sub_windows));
+//                int q = j / (wins.rows / float(sqrt_of_sub_windows));
+                int p = i / (wins.cols / sqrt_of_sub_windows);
+                int q = j / (wins.rows / sqrt_of_sub_windows);
                 int c = (p * sqrt_of_sub_windows) + q;
                 assert(c < count_of_sub_windows);
                 sw_counts.at(c)++;
             }
+//                int swLeastCount()
+//                {
+//                    int least = std::numeric_limits<int>::max();
+//                    for (auto c : sw_counts) { if (least > c ){ least = c; } }
+//                    return least;
+//                }
             int swLeastCount()
             {
                 int least = std::numeric_limits<int>::max();
-                for (auto c : sw_counts) { if (least > c ){ least = c; } }
+                int i = 0;
+                int least_i = 0;
+                for (auto c : sw_counts)
+                {
+                    if (least > c ){ least = c; least_i = i; }
+                    i++;
+                }
                 
-//                std::cout << vec_to_string(sw_counts);
-//                std::cout << " → " << least << std::endl;
-
+//    //                cv::Mat mat = texture->getCvMat();
+//    //                cv::Mat mat = wins;
+//                    for (int i = 0; i < wins.cols; i++)
+//                    {
+//                        for (int j = 0; j < wins.rows; j++)
+//                        {
+//    //                        cv::Vec3b gray(n, n, n);
+//                            cv::Point position(j, i);
+//    //                        mat.at<cv::Vec3b>(position) = gray;
+//                            cv::Vec3b before = wins.at<cv::Vec3b>(position);
+//    //                        for (int k = 0; k < 3; k++) { before[k] *= 0.5; }
+//    //                        before[0] *= 0.5;
+//    //                        debugPrint(int(before[0]));
+//                            before[0] /= 2;
+//    //                        debugPrint(int(before[0]));
+//                            wins.at<cv::Vec3b>(position) = before;
+//                        }
+//
+                
+                for (int i = 0; i < wins.cols; i++)
+                {
+                    for (int j = 0; j < wins.rows; j++)
+                    {
+//                        int p = float(i) / (float(wins.cols) / float(sqrt_of_sub_windows));
+//                        int q = float(j) / (float(wins.rows) / float(sqrt_of_sub_windows));
+//                        int p = i / (wins.cols / float(sqrt_of_sub_windows));
+//                        int q = j / (wins.rows / float(sqrt_of_sub_windows));
+                        int p = i / (wins.cols / sqrt_of_sub_windows);
+                        int q = j / (wins.rows / sqrt_of_sub_windows);
+                        int c = (p * sqrt_of_sub_windows) + q;
+                        assert(c < count_of_sub_windows);
+                        if (c != least_i)
+                        {
+                            cv::Point position(j, i);
+                            cv::Vec3b before = wins.at<cv::Vec3b>(position);
+//                            for (int k = 0; k < 3; k++) { before[k] /= 2; }
+                            before[0] *= 0.1;
+                            before[1] *= 0.1;
+                            before[2] *= 0.4;
+                            wins.at<cv::Vec3b>(position) = before;
+                        }
+                    }
+                }
+                // std::cout << vec_to_string(sw_counts);
+                // std::cout << " → " << least << std::endl;
                 return least;
             }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -376,6 +433,11 @@ public:
         drawLineUnderNthRowInGUI(1, Color(1));
         drawLineUnderNthRowInGUI(3, Color(1));
         gui().refresh();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        std::cout << "wait..." << std::endl;
+//        Texture::waitKey();
+//        // swLeastCount
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return tg;
     }
     
