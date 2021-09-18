@@ -153,10 +153,6 @@ public:
             {
                 cv::Mat mat = texture->getCvMat();
                 assert(mat.cols == mat.rows); // TODO assume square Mat
-//                int p = float(i) / (float(mat.cols) / float(sqrt_of_sub_windows));
-//                int q = float(j) / (float(mat.rows) / float(sqrt_of_sub_windows));
-//                int p = i / (wins.cols / float(sqrt_of_sub_windows));
-//                int q = j / (wins.rows / float(sqrt_of_sub_windows));
                 int p = i / (wins.cols / sqrt_of_sub_windows);
                 int q = j / (wins.rows / sqrt_of_sub_windows);
                 int c = (p * sqrt_of_sub_windows) + q;
@@ -179,34 +175,10 @@ public:
                     if (least > c ){ least = c; least_i = i; }
                     i++;
                 }
-                
-//    //                cv::Mat mat = texture->getCvMat();
-//    //                cv::Mat mat = wins;
-//                    for (int i = 0; i < wins.cols; i++)
-//                    {
-//                        for (int j = 0; j < wins.rows; j++)
-//                        {
-//    //                        cv::Vec3b gray(n, n, n);
-//                            cv::Point position(j, i);
-//    //                        mat.at<cv::Vec3b>(position) = gray;
-//                            cv::Vec3b before = wins.at<cv::Vec3b>(position);
-//    //                        for (int k = 0; k < 3; k++) { before[k] *= 0.5; }
-//    //                        before[0] *= 0.5;
-//    //                        debugPrint(int(before[0]));
-//                            before[0] /= 2;
-//    //                        debugPrint(int(before[0]));
-//                            wins.at<cv::Vec3b>(position) = before;
-//                        }
-//
-                
                 for (int i = 0; i < wins.cols; i++)
                 {
                     for (int j = 0; j < wins.rows; j++)
                     {
-//                        int p = float(i) / (float(wins.cols) / float(sqrt_of_sub_windows));
-//                        int q = float(j) / (float(wins.rows) / float(sqrt_of_sub_windows));
-//                        int p = i / (wins.cols / float(sqrt_of_sub_windows));
-//                        int q = j / (wins.rows / float(sqrt_of_sub_windows));
                         int p = i / (wins.cols / sqrt_of_sub_windows);
                         int q = j / (wins.rows / sqrt_of_sub_windows);
                         int c = (p * sqrt_of_sub_windows) + q;
@@ -215,7 +187,7 @@ public:
                         {
                             cv::Point position(j, i);
                             cv::Vec3b before = wins.at<cv::Vec3b>(position);
-//                            for (int k = 0; k < 3; k++) { before[k] /= 2; }
+                            // Apply dark red filter to ignored pixels.
                             before[0] *= 0.1;
                             before[1] *= 0.1;
                             before[2] *= 0.4;
@@ -433,11 +405,6 @@ public:
         drawLineUnderNthRowInGUI(1, Color(1));
         drawLineUnderNthRowInGUI(3, Color(1));
         gui().refresh();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        std::cout << "wait..." << std::endl;
-//        Texture::waitKey();
-//        // swLeastCount
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return tg;
     }
     

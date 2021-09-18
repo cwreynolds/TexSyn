@@ -187,6 +187,8 @@ public:
     
     // TODO This does not seem to work on macOS Big Sur. The getWindowProperty()
     // calls return -1, which seems like an error (or "not implemented"?) code.
+    // TODO note: I think I am using OpenCV released version 4.5.1, released
+    // December 22, 2020. The newest version is 4.5.3 on July 19, 2021.
     void makeTopmost() const
     {
 //        debugPrint(getWindowName());
