@@ -146,7 +146,8 @@ public:
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //            int sqrt_of_sub_windows = 5;
 //            int sqrt_of_sub_windows = 2;
-            float sqrt_of_sub_windows = 2;
+//            float sqrt_of_sub_windows = 2;
+            float sqrt_of_sub_windows = 3;
             size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
             std::vector<int> sw_counts;
             void countIJ(int i, int j)
@@ -165,14 +166,24 @@ public:
 //                    for (auto c : sw_counts) { if (least > c ){ least = c; } }
 //                    return least;
 //                }
-            int swLeastCount()
+            
+            // TODO 20210920: since the two runs I recently tried using "worst
+            // of subwindow counts" were REALLY not successful (and perhaps just
+            // randomly, but VERY slow, probably because of lots of Blur) I
+            // decided to try one with "best of subwindow counts":
+            
+//            int swLeastCount()
+            int swMaxCount()
             {
-                int least = std::numeric_limits<int>::max();
+//                int least = std::numeric_limits<int>::max();
+                int max_count = std::numeric_limits<int>::min();
                 int i = 0;
-                int least_i = 0;
+//                int least_i = 0;
+                int max_i = 0;
                 for (auto c : sw_counts)
                 {
-                    if (least > c ){ least = c; least_i = i; }
+//                    if (least > c ){ least = c; least_i = i; }
+                    if (max_count < c ){ max_count = c; max_i = i; }
                     i++;
                 }
                 for (int i = 0; i < wins.cols; i++)
@@ -183,7 +194,8 @@ public:
                         int q = j / (wins.rows / sqrt_of_sub_windows);
                         int c = (p * sqrt_of_sub_windows) + q;
                         assert(c < count_of_sub_windows);
-                        if (c != least_i)
+//                        if (c != least_i)
+                        if (c != max_i)
                         {
                             cv::Point position(j, i);
                             cv::Vec3b before = wins.at<cv::Vec3b>(position);
@@ -197,7 +209,8 @@ public:
                 }
                 // std::cout << vec_to_string(sw_counts);
                 // std::cout << " → " << least << std::endl;
-                return least;
+//                return least;
+                return max_count;
             }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         };
@@ -306,7 +319,8 @@ public:
 //                    m = int(itc.count * itc.nonuniformity);
                     if (weakest_link)
                     {
-                        m = int(itc.swLeastCount() * itc.nonuniformity);
+//                        m = int(itc.swLeastCount() * itc.nonuniformity);
+                        m = int(itc.swMaxCount() * itc.nonuniformity);
                     }
                     else
                     {
