@@ -308,6 +308,25 @@ public:
         // Write the ITC counts into tg "metric" field.
         tg.setAllMetrics([&](Individual* i)
         {
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            // TODO 20210921 very experimental.
+            int count_of_sub_windows = 0; // TODO fix
+            std::vector<Individual*> sw_winner(count_of_sub_windows, nullptr);
+            for (int sw = 0; sw < count_of_sub_windows; sw++)
+            {
+                // assume there are three ITCs.
+                sw_winner[sw] = itcs.at(0).individual;
+                if (itcs.at(0).sw_counts[sw] < itcs.at(1).sw_counts[sw])
+                {
+                    sw_winner[sw] = itcs.at(1).individual;
+                }
+                else if (itcs.at(0).sw_counts[sw] < itcs.at(2).sw_counts[sw])
+                {
+                    sw_winner[sw] = itcs.at(2).individual;
+                }
+            }
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
             float m = 0;
             for (auto& itc : itcs)
             {
