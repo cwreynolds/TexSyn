@@ -115,6 +115,15 @@ public:
         // Delete Population instance.
         population_ = nullptr;
     }
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    //            float sqrt_of_sub_windows = 3;
+    //            size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
+    static inline float sqrt_of_sub_windows = 4;
+    static inline size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
+    
 
     // TODO new September 2, 2021
     TournamentGroup tournamentFunction(TournamentGroup tg)
@@ -144,11 +153,6 @@ public:
             int count = 0;
             cv::Mat wins;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            int sqrt_of_sub_windows = 5;
-//            int sqrt_of_sub_windows = 2;
-//            float sqrt_of_sub_windows = 2;
-            float sqrt_of_sub_windows = 3;
-            size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
             std::vector<int> sw_counts;
             void countIJ(int i, int j)
             {
@@ -213,6 +217,45 @@ public:
                 return max_count;
             }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+            
+            int swCountInWinners(const std::vector<Individual*>& sw_winner)
+            {
+                int total = 0;
+                for (int sw = 0; sw < count_of_sub_windows; sw++)
+                {
+                    if (sw_winner.at(sw) == individual)
+                    {
+                        total += sw_counts.at(sw);
+                    }
+                }
+                
+                for (int i = 0; i < wins.cols; i++)
+                {
+                    for (int j = 0; j < wins.rows; j++)
+                    {
+                        int p = i / (wins.cols / sqrt_of_sub_windows);
+                        int q = j / (wins.rows / sqrt_of_sub_windows);
+                        int sw = (p * sqrt_of_sub_windows) + q;
+                        assert(sw < count_of_sub_windows);
+                        if (sw_winner.at(sw) != individual)
+                        {
+                            cv::Point position(j, i);
+                            cv::Vec3b before = wins.at<cv::Vec3b>(position);
+                            // Apply dark red filter to ignored pixels.
+                            before[0] *= 0.1;
+                            before[1] *= 0.1;
+                            before[2] *= 0.4;
+                            wins.at<cv::Vec3b>(position) = before;
+                        }
+                    }
+                }
+                return total;
+            }
+
+            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
         };
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //        bool weakest_link = false;
@@ -305,28 +348,29 @@ public:
                 individual->alt_fitness = similarity;
             }
         }
+        
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO 20210921 very experimental.
+        std::vector<Individual*> sw_winner(count_of_sub_windows, nullptr);
+        for (int sw = 0; sw < count_of_sub_windows; sw++)
+        {
+            // TODO assume there are three ITCs, rewrite later if kept.
+            sw_winner[sw] = itcs.at(0).individual;
+            if (itcs.at(0).sw_counts[sw] < itcs.at(1).sw_counts[sw])
+            {
+                sw_winner[sw] = itcs.at(1).individual;
+            }
+            else if (itcs.at(0).sw_counts[sw] < itcs.at(2).sw_counts[sw])
+            {
+                sw_winner[sw] = itcs.at(2).individual;
+            }
+        }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        
+
         // Write the ITC counts into tg "metric" field.
         tg.setAllMetrics([&](Individual* i)
         {
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            // TODO 20210921 very experimental.
-            int count_of_sub_windows = 0; // TODO fix
-            std::vector<Individual*> sw_winner(count_of_sub_windows, nullptr);
-            for (int sw = 0; sw < count_of_sub_windows; sw++)
-            {
-                // assume there are three ITCs.
-                sw_winner[sw] = itcs.at(0).individual;
-                if (itcs.at(0).sw_counts[sw] < itcs.at(1).sw_counts[sw])
-                {
-                    sw_winner[sw] = itcs.at(1).individual;
-                }
-                else if (itcs.at(0).sw_counts[sw] < itcs.at(2).sw_counts[sw])
-                {
-                    sw_winner[sw] = itcs.at(2).individual;
-                }
-            }
-            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
             float m = 0;
             for (auto& itc : itcs)
             {
@@ -339,7 +383,12 @@ public:
                     if (weakest_link)
                     {
 //                        m = int(itc.swLeastCount() * itc.nonuniformity);
-                        m = int(itc.swMaxCount() * itc.nonuniformity);
+                        
+                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//                        m = int(itc.swMaxCount() * itc.nonuniformity);
+                        m = int(itc.swCountInWinners(sw_winner) *
+                                itc.nonuniformity);
+                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
                     }
                     else
                     {
