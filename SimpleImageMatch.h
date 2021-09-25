@@ -144,7 +144,10 @@ public:
             ITC(Individual* i, Texture* t)
               : individual(i),
                 texture(t),
-                nonuniformity(1 - imageUniformity(texture->getCvMat())),
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//                nonuniformity(1 - imageUniformity(texture->getCvMat())),
+                nonuniformity(1 - imageUniformity(texture->getCvMat(), 0.8)),
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
                 sw_counts(count_of_sub_windows, 0) {}
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Individual* individual = nullptr;
@@ -345,7 +348,11 @@ public:
                 float similarity = imageAvePixelSimilarity(mat, target_image_);
                 //float similarity = imageAug3Similarlity(mat, target_image_);
                 assert(similarity >= 0);
-                individual->alt_fitness = similarity;
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+                // TODO 20210925, shouldn't these be scaled by nonuniformity?
+//                individual->alt_fitness = similarity;
+                individual->alt_fitness = similarity * itc.nonuniformity;
+                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
             }
         }
         
@@ -1302,13 +1309,48 @@ public:
         return sum_of_per_level_scores / steps;
     }
 
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//        // Returns a number on [0, 1] measuring how uniform a CV Mat is.
+//        // TODO Is 10 tests good? Use some other RS?
+//    //    float imageUniformity(const cv::Mat& mat) const
+//        static float imageUniformity(const cv::Mat& mat) // const
+//        {
+//            float uniformity = 1;
+//            // int tests = 10;
+//            int tests = 100;
+//            for (int i = 0; i < tests; i++)
+//            {
+//                Color a = getCvMatPixel(LPRS().random2(0, mat.cols),
+//                                        LPRS().random2(0, mat.rows),
+//                                        mat);
+//                Color b = getCvMatPixel(LPRS().random2(0, mat.cols),
+//                                        LPRS().random2(0, mat.rows),
+//                                        mat);
+//                if (Color::similarity(a, b) < 0.95) uniformity /= 2;
+//            }
+//            return uniformity;
+//        }
+    
+    // TODO this has been basically unchanged since July 4. Decided to experiment
+    // with the threshold for pixel similarity, since a common "failure mode" is
+    // for the population to converge on a very gentle gradient with sky blue on
+    // top and hill green below.
+    //
+    // TODO is moving similarity_threshold from 0.95 to 0.8 the right direction?
+    //
+    // TODO maybe use jittered_grid_NxN_in_square() to better distribute samples?
+    
     // Returns a number on [0, 1] measuring how uniform a CV Mat is.
-    // TODO Is 10 tests good? Use some other RS?
-//    float imageUniformity(const cv::Mat& mat) const
-    static float imageUniformity(const cv::Mat& mat) // const
+    // (Backward compatible version.)
+    static float imageUniformity(const cv::Mat& mat)
+    {
+        return imageUniformity(mat, 0.95);
+    }
+    
+    // Returns a number on [0, 1] measuring how uniform a CV Mat is.
+    static float imageUniformity(const cv::Mat& mat, float similarity_threshold)
     {
         float uniformity = 1;
-        // int tests = 10;
         int tests = 100;
         for (int i = 0; i < tests; i++)
         {
@@ -1318,11 +1360,13 @@ public:
             Color b = getCvMatPixel(LPRS().random2(0, mat.cols),
                                     LPRS().random2(0, mat.rows),
                                     mat);
-            if (Color::similarity(a, b) < 0.95) uniformity /= 2;
+            if (Color::similarity(a, b) < similarity_threshold) uniformity /= 2;
         }
         return uniformity;
     }
-    
+
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
     // Construct something like a "MIP map" with a series of images, each half
     // as wide as the previous one. Returns MIP map in output argument levels.
     // This assumes square images in the resolution pyramid, so the first step
