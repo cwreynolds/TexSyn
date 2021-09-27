@@ -5898,32 +5898,36 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Testing SimpleImageMatch::imageUniformity()
-    std::cout << "September 26, 2021" << std::endl;
-    Vec2 p0;
-    Vec2 p1(0.24, 0.08);
-    Color blue(0, 0, 1);
-    Color yellow(1, 1, 0);
-    Texture::setDefaultRenderSize(255);
-    for (int i = 0; i < 4; i++)
-    {
-        float f = i / 6.0;
-        debugPrint(i);
-        debugPrint(f);
-        Uniform u0(interpolate(f, blue, yellow));
-        Uniform u1(interpolate(f, yellow, blue));
-        Grating texture(p0, u0, p1, u1, 0.4, 0.5);
-        Texture::displayAndFile(texture);
-        cv::Mat mat = texture.getCvMat();
-        debugPrint(interpolate(f, blue, yellow));
-        debugPrint(SimpleImageMatch::imageUniformity(mat));
-        debugPrint(SimpleImageMatch::imageUniformity(mat, 0.8));
-        
-        u0.rasterizeToImageCache(255, true);
-        debugPrint(SimpleImageMatch::imageUniformity(u0.getCvMat()));
-    }
-    Texture::waitKey();
+//    // Testing SimpleImageMatch::imageUniformity()
+//    std::cout << "September 26, 2021" << std::endl;
+//    Vec2 p0;
+//    Vec2 p1(0.24, 0.08);
+//    Color blue(0, 0, 1);
+//    Color yellow(1, 1, 0);
+//    Texture::setDefaultRenderSize(255);
+//    Texture::setDefaultRenderAsDisk(false);
+//    for (int i = 0; i < 4; i++)
+//    {
+//        float f = i / 6.0;
+//        debugPrint(i);
+//        debugPrint(f);
+//        Uniform u0(interpolate(f, blue, yellow));
+//        Uniform u1(interpolate(f, yellow, blue));
+//        Grating texture(p0, u0, p1, u1, 0.4, 0.5);
+//        Texture::displayAndFile(texture);
+//        cv::Mat mat = texture.getCvMat();
+//        debugPrint(SimpleImageMatch::imageUniformity(mat));
+//        debugPrint(SimpleImageMatch::imageUniformity(mat, 0.8));
+//        debugPrint(SimpleImageMatch::imageUniformity2(mat));
+//    }
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // WIP SimpleTextureMatch
+    std::cout << "September 27, 2021" << std::endl;
+    SimpleImageMatch(CommandLine(argc, argv)).run();
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

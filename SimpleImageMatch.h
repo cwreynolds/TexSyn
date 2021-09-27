@@ -146,7 +146,8 @@ public:
                 texture(t),
                 //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
 //                nonuniformity(1 - imageUniformity(texture->getCvMat())),
-                nonuniformity(1 - imageUniformity(texture->getCvMat(), 0.8)),
+//                nonuniformity(1 - imageUniformity(texture->getCvMat(), 0.8)),
+                nonuniformity(1 - imageUniformity2(texture->getCvMat())),
                 //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
                 sw_counts(count_of_sub_windows, 0) {}
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1354,18 +1355,52 @@ public:
         int tests = 100;
         for (int i = 0; i < tests; i++)
         {
-            Color a = getCvMatPixel(LPRS().random2(0, mat.cols),
-                                    LPRS().random2(0, mat.rows),
+//            Color a = getCvMatPixel(LPRS().random2(0, mat.cols),
+//                                    LPRS().random2(0, mat.rows),
+//                                    mat);
+//            Color b = getCvMatPixel(LPRS().random2(0, mat.cols),
+//                                    LPRS().random2(0, mat.rows),
+//                                    mat);
+//            if (Color::similarity(a, b) < similarity_threshold) uniformity /= 2;
+
+            Color a = getCvMatPixel(LPRS().randomN(mat.cols),
+                                    LPRS().randomN(mat.rows),
                                     mat);
-            Color b = getCvMatPixel(LPRS().random2(0, mat.cols),
-                                    LPRS().random2(0, mat.rows),
+            Color b = getCvMatPixel(LPRS().randomN(mat.cols),
+                                    LPRS().randomN(mat.rows),
                                     mat);
+
+//                float sim = Color::similarity(a, b);
+//                if (sim < similarity_threshold)
+//                {
+//    //                std::cout << i << ": sim=" << sim;
+//    //                std::cout << " a=" << a << " b=" << b << std::endl;
+//                    uniformity /= 2;
+//                }
+            
             if (Color::similarity(a, b) < similarity_threshold) uniformity /= 2;
-//            debugPrint(a);
-//            debugPrint(b);
-//            debugPrint(uniformity);
         }
         return uniformity;
+    }
+
+    // Returns a number on [0, 1] measuring how uniform a CV Mat is.
+    // This version takes average of similarity between 100 random pairs of
+    // pixels, then exponentiates result to emphasize nearly uniform textures.
+    static float imageUniformity2(const cv::Mat& mat)
+    {
+        float uniformity = 0;
+        int tests = 100;
+        for (int i = 0; i < tests; i++)
+        {
+            Color a = getCvMatPixel(LPRS().randomN(mat.cols),
+                                    LPRS().randomN(mat.rows),
+                                    mat);
+            Color b = getCvMatPixel(LPRS().randomN(mat.cols),
+                                    LPRS().randomN(mat.rows),
+                                    mat);
+            uniformity += Color::similarity(a, b);
+        }
+        return std::pow(uniformity / tests, 4);
     }
 
     //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
