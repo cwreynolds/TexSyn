@@ -1361,6 +1361,9 @@ public:
                                     LPRS().random2(0, mat.rows),
                                     mat);
             if (Color::similarity(a, b) < similarity_threshold) uniformity /= 2;
+//            debugPrint(a);
+//            debugPrint(b);
+//            debugPrint(uniformity);
         }
         return uniformity;
     }
