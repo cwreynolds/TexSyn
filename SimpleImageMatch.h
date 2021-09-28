@@ -83,6 +83,13 @@ public:
                                                    max_crossover_tree_size_,
                                                    GP::fs());
         std::cout << "...done." << std::endl;
+        
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        debugPrint(imageUniformity2(target_image_));
+        debugPrint(imageNonuniformity(target_image_));
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     }
 
     // Run the evolution simulation.
@@ -123,6 +130,10 @@ public:
     static inline size_t count_of_sub_windows = sq(sqrt_of_sub_windows);
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+    // 0 to 0.39 ish
+//    static inline float max_nonuniformity = 0;
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     
 
     // TODO new September 2, 2021
@@ -147,9 +158,15 @@ public:
                 //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
 //                nonuniformity(1 - imageUniformity(texture->getCvMat())),
 //                nonuniformity(1 - imageUniformity(texture->getCvMat(), 0.8)),
-                nonuniformity(1 - imageUniformity2(texture->getCvMat())),
-                //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+                nonuniformity(imageNonuniformity(texture->getCvMat())),
                 sw_counts(count_of_sub_windows, 0) {}
+//                sw_counts(count_of_sub_windows, 0)
+//            {
+//                debugPrint(nonuniformity);
+//                max_nonuniformity = std::max(nonuniformity, max_nonuniformity);
+//                debugPrint(max_nonuniformity);
+//            }
+            //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Individual* individual = nullptr;
             Texture* texture = nullptr;
@@ -1400,7 +1417,20 @@ public:
                                     mat);
             uniformity += Color::similarity(a, b);
         }
-        return std::pow(uniformity / tests, 4);
+        // TODO 20210927 this did not seem right. Too much focus on super
+        // contrasty patterns, and what might have been an inability to
+        // distinguish between low and mid range uniformity. These could
+        // conceiveably be due to the exponentiation.
+//        return std::pow(uniformity / tests, 4);
+        return uniformity / tests;
+    }
+    
+    // To adjust range of "nonuniformity" onto [0, 1].
+    static float imageNonuniformity(const cv::Mat& mat)
+    {
+        float raw = 1 - imageUniformity2(mat);
+        float good_enough = 0.28;  // Arbitrary, based on casual observation.
+        return remapIntervalClip(raw, 0, good_enough, 0, 1);
     }
 
     //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
