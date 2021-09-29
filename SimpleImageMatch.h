@@ -50,7 +50,14 @@ public:
         Texture::seed_from_hashed_args = false;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         setGuiSize();
-        
+                
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        debugPrint(imageUniformity2(target_image_));
+        debugPrint(imageNonuniformity(target_image_));
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
         // log parameters for this run
         std::cout << "SimpleImageMatch parameters:" << std::endl;
         std::cout << "    "; debugPrint(target_image_pathname_)
@@ -72,7 +79,6 @@ public:
         // Build "MIP map like" resolution pyramid for target image.
         makeResolutionPyramid(target_image_, target_pyramid_);
 
-        
         // TODO do this here, or in the initializers above, or in run()?
         std::cout << "Create initial population..." << std::endl;
         LPRS().setSeed(random_seed_);
@@ -83,13 +89,6 @@ public:
                                                    max_crossover_tree_size_,
                                                    GP::fs());
         std::cout << "...done." << std::endl;
-        
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
-        debugPrint(imageUniformity2(target_image_));
-        debugPrint(imageNonuniformity(target_image_));
-        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     }
 
     // Run the evolution simulation.
@@ -1429,7 +1428,9 @@ public:
     static float imageNonuniformity(const cv::Mat& mat)
     {
         float raw = 1 - imageUniformity2(mat);
-        float good_enough = 0.28;  // Arbitrary, based on casual observation.
+//        float good_enough = 0.28;  // Arbitrary, based on casual observation.
+//        float good_enough = 0.2;  // Arbitrary, based on casual observation.
+        float good_enough = 0.35;  // Arbitrary, based on casual observation.
         return remapIntervalClip(raw, 0, good_enough, 0, 1);
     }
 
