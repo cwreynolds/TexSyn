@@ -1430,7 +1430,8 @@ public:
         float raw = 1 - imageUniformity2(mat);
 //        float good_enough = 0.28;  // Arbitrary, based on casual observation.
 //        float good_enough = 0.2;  // Arbitrary, based on casual observation.
-        float good_enough = 0.35;  // Arbitrary, based on casual observation.
+//        float good_enough = 0.35;  // Arbitrary, based on casual observation.
+        float good_enough = 0.28;  // Arbitrary, based on casual observation.
         return remapIntervalClip(raw, 0, good_enough, 0, 1);
     }
 
