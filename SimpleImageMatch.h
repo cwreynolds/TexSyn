@@ -41,8 +41,14 @@ public:
         individuals_(cmd.positionalArgument(4, 120)),
         subpops_(cmd.positionalArgument(5, 6)),
         max_init_tree_size_(cmd.positionalArgument(6, 100)),
-        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
-        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
+//        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
+        min_crossover_tree_size_
+            (cmd.positionalArgument(7, max_init_tree_size_ * 0.5f)),
+        max_crossover_tree_size_
+            (cmd.positionalArgument(8, max_init_tree_size_ * 1.5f)),
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         target_image_(cv::imread(target_image_pathname_))
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,13 +57,6 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         setGuiSize();
                 
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
-        debugPrint(imageUniformity2(target_image_));
-        debugPrint(imageNonuniformity(target_image_));
-        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
-        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-
         // log parameters for this run
         std::cout << "SimpleImageMatch parameters:" << std::endl;
         std::cout << "    "; debugPrint(target_image_pathname_)
@@ -75,6 +74,13 @@ public:
         assert((target_image_.cols > 0) &&
                (target_image_.rows > 0) &&
                "target image missing or empty");
+        
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        debugPrint(imageUniformity2(target_image_));
+        debugPrint(imageNonuniformity(target_image_));
+        std::cout << "~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~" << std::endl;
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
         
         // Build "MIP map like" resolution pyramid for target image.
         makeResolutionPyramid(target_image_, target_pyramid_);

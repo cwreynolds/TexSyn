@@ -40,8 +40,14 @@ public:
         individuals_(cmd.positionalArgument(7, 120)),
         subpops_(cmd.positionalArgument(8, 6)),
         max_init_tree_size_(cmd.positionalArgument(9, 100)),
-        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
-        max_crossover_tree_size_(max_init_tree_size_ * 1.5)
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
+//        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
+        min_crossover_tree_size_
+            (cmd.positionalArgument(10, max_init_tree_size_ * 0.5f)),
+        max_crossover_tree_size_
+            (cmd.positionalArgument(11, max_init_tree_size_ * 1.5f))
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         if ((backgroundScale() > 10000) || (backgroundScale() <  0.0001))
         {
