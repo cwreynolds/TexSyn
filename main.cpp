@@ -5924,19 +5924,25 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // WIP SimpleTextureMatch
-    std::cout << "October 1, 2021" << std::endl;
-    SimpleImageMatch(CommandLine(argc, argv)).run();
+//        // WIP SimpleTextureMatch
+//        std::cout << "October 1, 2021" << std::endl;
+//        SimpleImageMatch(CommandLine(argc, argv)).run();
+//
+//    //        CommandLine cmd
+//    //        ({
+//    //            "simple_image_match",
+//    //    //        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
+//    //    //        ".",
+//    //    //        // "20210930", "300", "15", "150", "100", "200"
+//    //    //        "20210930"
+//    //        });
+//    //        SimpleImageMatch(cmd).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//        CommandLine cmd
-//        ({
-//            "simple_image_match",
-//    //        "/Users/cwr/Desktop/SimpleImageMatch/target_images/IMG_3812_255_square.jpeg",
-//    //        ".",
-//    //        // "20210930", "300", "15", "150", "100", "200"
-//    //        "20210930"
-//        });
-//        SimpleImageMatch(cmd).run();
+    // Decided I wanted to retry some of the early interactive camouflage runs.
+    std::cout << "October 10, 2021" << std::endl;
+    EvoCamoGame(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

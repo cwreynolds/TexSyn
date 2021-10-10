@@ -296,7 +296,8 @@ public:
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
         }
-        writeTrainingSetData(prey_texture_positions);
+        // TODO 20211010 turn this off. If needed later add global enable flag.
+        // writeTrainingSetData(prey_texture_positions);
     }
 
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
