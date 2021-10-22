@@ -131,33 +131,36 @@
         19, 2021</a>
       <h1>Camouflage on redwood leaf litter, <i>again</i><br>
       </h1>
-      <p>Last April 14, I made an <code>evo_camo_game</code> run on
-        this same set of background images. They show redwood leaf
-        litter, blown off trees in my neighborhood, and against the curb
-        on the other side of the street. The previous results were ok,
-        these are better, but not what I consider “strong.” I use that
-        term when I look at an image showing a <i>tournament </i>of
-        three camouflage textures, and it takes a while to find them.
-        Most runs have some strong individuals, which happen to be
-        randomly placed in positions where they “melt” into the
-        background. For example the one near the bottom center in the
-        first image below, from simulation step 2886. In the best runs,
-        there will be some tournaments where all three are very well
-        camouflaged. These all fall short of that level.<br>
+      <p>Last <a moz-do-not-send="true" href="#20210414">April 14</a>,
+        I made an <code>evo_camo_game</code> run on this same set of
+        background images. They show redwood leaf litter, blown off
+        trees in my neighborhood, and against the curb on the other side
+        of the street. The previous results were ok, these are better,
+        but not what I consider “strong.” I use that term when I look at
+        an image showing a “tournament” of three camouflage textures,
+        and it takes a while to find them. Most runs have some strong
+        individuals which happen to be randomly placed in positions
+        where they “melt” into the background. For example the one near
+        the bottom center in the first image below, from simulation step
+        2886. In the best runs, there will be some tournaments where all
+        three are very well camouflaged. This run falls short of that
+        level.<br>
       </p>
       <p>(I'll also note that this run (<font size="-2"><code>redwood_leaf_litter_20211010_1014</code></font>)
         used a larger simulation. The population size was increased from
-        120 to 200, and the crossover size min/max where increased to 75
-        and 225. I ran it for 3300 steps, or about 16 “generation
-        equivalents” (3300 ÷ 200 = 16.5) so roughly the same as earlier
-        runs, adjusted for population size. The extra tree depth seemed
-        to make a lot of the texture renders noticeably slower. In the
-        end, it did not significantly increase the quality of results.)<br>
+        120 to 200, and the crossover size min/max where increased from
+        [60, 180] to [75, 225]. I ran it for 3300 steps, or about 16
+        “generation equivalents” (3300 ÷ 200 = 16.5) so roughly the same
+        as earlier runs, adjusted for population size. The extra tree
+        depth seemed to make a lot of the texture renders noticeably
+        slower. In the end, this large simulation did not significantly
+        increase the quality of results.)<br>
       </p>
       <p>As I wrap up my experiments with interactive evolution of
         camouflage, I am writing a report. It is not for publication in
         a journal, but just meant to be a more readable summary than
-        this blog/diary.<br>
+        this blog/diary. I wanted better images to include in that
+        report.<br>
       </p>
       <img src="images/20211019_step_2886.png" alt="20211019_step_2886"
         title="20211019_step_2886" class="img_flow" width="800"
@@ -44497,8 +44500,8 @@ href="http://www.heathershrewsbury.com/dreu2010/wp-content/uploads/2010/07/AnIma
         synthesis. It is intended for use by a <em>genetic programming</em>
         (“GP”) system, a type of <em>genetic algorithm</em>. The GP
         system performs <em>simulated evolution</em> on a <em>population</em>
-        of individual programs, according to a <em>fitness function</em>
-        (also known as a <em>fitness metric</em>, <em>utility function</em>,
+        of individual programs, according to a <em>fitness function</em>.
+        (Also known as a <em>fitness metric</em>, <em>utility function</em>,
         or a <em>loss function</em> in machine learning.) In this
         application to texture synthesis, the programs are compositions
         of functions from the <strong>TexSyn</strong> library. When
