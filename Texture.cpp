@@ -108,11 +108,31 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             // member function of this instance, it is specified as two values,
             // a function pointer AND an instance pointer. The other four values
             // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).
-            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
-                                              j, size, disk,
-                                              std::ref(*raster_),
-                                              std::ref(row_counter),
-                                              std::ref(ocv_image_mutex)));
+            
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+            
+//            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
+//                                              j, size, disk,
+//                                              std::ref(*raster_),
+//                                              std::ref(row_counter),
+//                                              std::ref(ocv_image_mutex)));
+
+            if (render_thread_per_row)
+            {
+                all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
+                                                  this,
+                                                  j, size, disk,
+                                                  std::ref(*raster_),
+                                                  std::ref(row_counter),
+                                                  std::ref(ocv_image_mutex)));
+            }
+            else
+            {
+                rasterizeRowOfDisk(j, size, disk,
+                                   *raster_, row_counter, ocv_image_mutex);
+            }
+            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Wait for all row threads to finish.
@@ -155,12 +175,29 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //        debugPrint(row_counter);
 //        debugPrint(all_threads.size());
         
-        while (row_counter < all_threads.size())
-        {
-            checkForUserInput();
-        }
+
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         
-        for (auto& t : all_threads) t.join();
+//        while (row_counter < all_threads.size())
+//        {
+//            checkForUserInput();
+//        }
+//
+//        for (auto& t : all_threads) t.join();
+
+        if (render_thread_per_row)
+        {
+            while (row_counter < all_threads.size())
+            {
+                checkForUserInput();
+            }
+            
+            for (auto& t : all_threads) t.join();
+        }
+        else
+        {
+        }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -178,6 +215,19 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 {
     // Half the rendering's size corresponds to the disk's center.
     int half = size / 2;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+    // TODO investigating the "crash for even render size" bug
+    // TODO this is the wrong solution, but at least indicates where it happens.
+    // TODO does this "fix" work for render-as-disk?
+    // TODO does this work when Texture::render_thread_per_row is true?
+    if (half - j == size)
+    {
+        std::cout << "aha!" << std::endl;
+        return;
+    }
+    
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // First and last pixels on j-th row of time
     int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
     cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
@@ -218,7 +268,22 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     // Define a new image which is a "pointer" to j-th row of opencv_image.
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//    debugPrint(size);
+//    debugPrint(half - j);
+//    debugPrint(cv::Rect(0, half - j, size, 1))
+//    debugPrint(std::to_string(size) + " " + std::to_string(half - j));
+//    assert("(half - j) > 0" && (half - j) > 0);
+    
+
+//    {
+//        grabPrintLock();
+//        cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
+//    }
+    
+    
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Wait to grab lock for access to image. (Lock released at end of block)
     const std::lock_guard<std::mutex> lock(ocv_image_mutex);
     // Copy line_image into the j-th row of opencv_image.

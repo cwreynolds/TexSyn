@@ -229,5 +229,12 @@ private:
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
     static int default_opencv_mat_type_;
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+public:
+    // Global for one-thread-per-row rendering.
+    // TODO should have accessors if kept.
+    static inline bool render_thread_per_row = true;
+private:
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     int valid_bot_ = validity_key_ / 2;
 };
