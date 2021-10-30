@@ -176,6 +176,11 @@ public:
     // Get/set global default "render as disk" flag: disk if true, else square.
     static bool getDefaultRenderAsDisk() { return render_as_disk_; }
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    // Get/set global switch for "parallel render": one thread per row.
+    static int getParallelRender() { return render_thread_per_row_; }
+    static void setParallelRender(bool p) { render_thread_per_row_ = p; }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     thread_local static inline int expensive_to_nest = 0;
     // Score a Texture on how much "high" frequency it has.
     // TODO temp? Similar in intent to wiggliness() in GP.h
@@ -233,7 +238,8 @@ private:
 public:
     // Global for one-thread-per-row rendering.
     // TODO should have accessors if kept.
-    static inline bool render_thread_per_row = true;
+//    static inline bool render_thread_per_row = true;
+    static inline bool render_thread_per_row_ = true;
 private:
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     int valid_bot_ = validity_key_ / 2;

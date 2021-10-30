@@ -78,8 +78,10 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     {
         // Reset our OpenCV Mat to be (size, size) at default depth.
         raster_->create(size, size, getDefaultOpencvMatType());
-        // TODO Code assumes disk center at window center, so size must be odd.
-        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//        // TODO Code assumes disk center at window center, so size must be odd.
+//        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Synchronizes access to opencv_image by multiple row threads.
         std::mutex ocv_image_mutex;
         // Collection of all row threads.
@@ -117,7 +119,8 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //                                              std::ref(row_counter),
 //                                              std::ref(ocv_image_mutex)));
 
-            if (render_thread_per_row)
+//            if (render_thread_per_row)
+            if (getParallelRender())
             {
                 all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
                                                   this,
@@ -128,8 +131,9 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             }
             else
             {
-                rasterizeRowOfDisk(j, size, disk,
-                                   *raster_, row_counter, ocv_image_mutex);
+                rasterizeRowOfDisk(j, size, disk, *raster_,
+                                   row_counter, ocv_image_mutex);
+                checkForUserInput();
             }
             //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
@@ -185,18 +189,15 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //
 //        for (auto& t : all_threads) t.join();
 
-        if (render_thread_per_row)
+//        if (render_thread_per_row)
+        if (getParallelRender())
         {
-            while (row_counter < all_threads.size())
-            {
-                checkForUserInput();
-            }
-            
+            while (row_counter < all_threads.size()) { checkForUserInput(); }
             for (auto& t : all_threads) t.join();
         }
-        else
-        {
-        }
+//        else
+//        {
+//        }
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

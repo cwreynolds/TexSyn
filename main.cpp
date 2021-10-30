@@ -5949,25 +5949,20 @@ int main(int argc, const char * argv[])
     // Prototyping training set for "find conspicuous disk."
     std::cout << "October 29, 2021" << std::endl;
     {
-        Texture::setDefaultRenderAsDisk(false);
-        
+        Texture::setDefaultRenderAsDisk(true);
+//        Texture::setDefaultRenderAsDisk(false);
+
 //        Texture::setDefaultRenderSize(501);
         Texture::setDefaultRenderSize(500);
-        Texture::render_thread_per_row = false;
+        Texture::setParallelRender(false);
 
         Color green(0, 1, 0);
         Uniform t0(green);
         Uniform t1(green.luminance());
-//        Uniform t1(green.luminance() * 1.1);
-
         Grating grating(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
-        
         Texture::displayAndFile(grating);
-        
         Texture::waitKey();
     }
-    
-    
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
