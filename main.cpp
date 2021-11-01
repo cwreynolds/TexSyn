@@ -5958,36 +5958,68 @@ int main(int argc, const char * argv[])
 //        Texture::setDefaultRenderSize(501);
 //        Texture::setDefaultRenderSize(500);
         
+//        Texture::displayAndFile(grating);
 
-        Color green(0, 1, 0);
-//        Uniform t0(green);
-//        Uniform t1(green.luminance());
-        Uniform t0(green.luminance());
-        Uniform t1(green);
+//            Color green(0, 1, 0);
+//    //        Uniform t0(green);
+//    //        Uniform t1(green.luminance());
+//            Uniform t0(green.luminance());
+//            Uniform t1(green);
+//
+//            auto embiggen = [&](int size)
+//            {
+//                Texture::setDefaultRenderSize(size);
+//    //            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
+//    //            Spot texture(Vec2(), 0, t1, 0.9, t0);
+//                Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+//                texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
+//                                              Texture::getDefaultRenderAsDisk());
+//                cv::Mat mat = texture.getCvMat().clone();
+//                cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
+//                return mat;
+//            };
+//
+//
+//
+//            cv::imshow("disk 15", embiggen(15));
+//            cv::imshow("disk 16", embiggen(16));
+//            cv::imshow("disk 17", embiggen(17));
 
-        auto embiggen = [&](int size)
+        
+//        Color green(0, 1, 0);
+//        Uniform t0(green.luminance());
+//        Uniform t1(green);
+//        auto show_test_disk_image = [&](int size)
+//        {
+//            Texture::setDefaultRenderSize(size);
+//            Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+//            texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
+//                                          Texture::getDefaultRenderAsDisk());
+//            cv::Mat mat = texture.getCvMat().clone();
+//            cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
+//            cv::imshow("disk " + std::to_string(size), mat);
+//
+//        };
+        
+        auto show_test_disk_image = [&](int size)
         {
             Texture::setDefaultRenderSize(size);
-//            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
-//            Spot texture(Vec2(), 0, t1, 0.9, t0);
-            Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+//            Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+            Uniform texture(1);
             texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
                                           Texture::getDefaultRenderAsDisk());
             cv::Mat mat = texture.getCvMat().clone();
             cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
-            return mat;
+            cv::imshow("disk " + std::to_string(size), mat);
+            
         };
-
-        
-//        Texture::displayAndFile(grating);
-        
-        cv::imshow("disk 15", embiggen(15));
-        cv::imshow("disk 16", embiggen(16));
-        cv::imshow("disk 17", embiggen(17));
-
+        show_test_disk_image(15);
+        show_test_disk_image(16);
+        show_test_disk_image(17);
         Texture::waitKey();
 
-
+        // TODO don't forget to change Texture::matteImageCacheDiskOverBG()
+        // TODO remember to test antialiasing, non-disk, parallel render
     }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

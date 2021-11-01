@@ -35,6 +35,8 @@ public:
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
+    // Get color at position, clipping to unit RGB color cube, and anti-aliased.
+    Color getColorClippedAntialiased(Vec2 position, float size) const;
     // Utility for getColor(), special-cased for when alpha is 0 or 1.
     Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
                                      const Texture& t0, const Texture& t1) const;
@@ -217,7 +219,65 @@ public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static inline bool seed_from_hashed_args = true;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-private:
+
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    class RasterizeRowHelper
+    {
+    public:
+        RasterizeRowHelper(int j, int size, bool disk) :
+            j_(j), size_(size), disk_(disk)
+        {
+            odd_size = size % 2;
+//            half = size / float(2);
+            half = size / 2;
+            
+            auto half_step_toward_0 =[](float x)
+                { return x + (x > 0 ? -0.5 : 0.5); };
+            
+//            row_y = odd_size ? j : (j + (j > 0 ? -0.5 : 0.5));
+            row_y = odd_size ? j : half_step_toward_0(j);
+            
+            // define float offsets for even-diameter case??????????????
+
+            last_pixel_index =
+                (disk ?
+                 (odd_size ?
+                  std::sqrt(sq(half) - sq(j)) :
+//                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)))) :
+                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)) + 1)) :
+                 half);
+            first_pixel_index = -last_pixel_index;
+//            first_pixel_index = -(last_pixel_index - (odd_size ? 0 : 1));
+
+            
+//            // First and last pixels on j-th row of time
+//            int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
+
+            
+            std::cout << "RR:";
+            std::cout << " j=" << j;
+            std::cout << " size=" << size;
+
+            std::cout << " odd_size=" << odd_size;
+            std::cout << " half=" << half;
+            std::cout << " first_pixel_index=" << first_pixel_index;
+            std::cout << " last_pixel_index=" << last_pixel_index;
+            std::cout << " row_y=" << row_y;
+            std::cout << std::endl;
+        }
+        bool odd_size;
+        int half;
+        int first_pixel_index;
+        int last_pixel_index;
+        float row_y;
+    private:
+        int j_;
+        int size_;
+        bool disk_;
+    };
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    
+    private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
     int valid_top_ = validity_key_;

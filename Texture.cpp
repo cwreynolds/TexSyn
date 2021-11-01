@@ -216,17 +216,24 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 {
     // Half the rendering's size corresponds to the disk's center.
     int half = size / 2;
+    
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    // TODO 20211101 testing new RasterizeRow helper class
+    
+
+//    debugPrint(half);
+    RasterizeRowHelper rr(j, size, disk);
+
 
     // TODO investigating the "crash for even render size" bug
     // TODO this is the wrong solution, but at least indicates where it happens.
     // TODO does this "fix" work for render-as-disk?
     // TODO does this work when Texture::render_thread_per_row is true?
     
-    debugPrint(j);
-    debugPrint(half);
-    debugPrint(half - j);
-    debugPrint(size);
+//    debugPrint(j);
+//    debugPrint(half);
+//    debugPrint(half - j);
+//    debugPrint(size);
 
     if (half - j == size)
     {
@@ -236,37 +243,42 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    // TODO 20211101 switching over to using RasterizeRowHelper
     // First and last pixels on j-th row of time
-    int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
+//    int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
     
-    debugPrint(x_limit);
+//    debugPrint(x_limit);
     
 //    if ((size % 2 == 0) && (x_limit == 0)) return;
     
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
     cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
-    for (int i = -x_limit; i <= x_limit; i++)
+    // TODO 20211101 switching over to using RasterizeRowHelper
+//    for (int i = -x_limit; i <= x_limit; i++)
+    for (int i = rr.first_pixel_index; i <= rr.last_pixel_index; i++)
     {
         // Read TexSyn Color from Texture at (i, j).
-        Color color(0, 0, 0);
+//        Color color(0, 0, 0);
         Vec2 pixel_center = Vec2(i, j) / half;
         expensive_to_nest = 0;
-        if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
-        {
-            float pixel_radius = 2.0 / size;
-            std::vector<Vec2> offsets;
-            RandomSequence rs(pixel_center.hash());
-            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
-                                        pixel_radius * 2, rs, offsets);
-            for (Vec2 offset : offsets)
-                color += getColorClipped(pixel_center + offset);
-            color = color / sq(sqrt_of_aa_subsample_count);
-        }
-        else
-        {
-            color = getColorClipped(pixel_center);
-        }
+//        if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
+//        {
+//            float pixel_radius = 2.0 / size;
+//            std::vector<Vec2> offsets;
+//            RandomSequence rs(pixel_center.hash());
+//            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
+//                                        pixel_radius * 2, rs, offsets);
+//            for (Vec2 offset : offsets)
+//                color += getColorClipped(pixel_center + offset);
+//            color = color / sq(sqrt_of_aa_subsample_count);
+//        }
+//        else
+//        {
+//            color = getColorClipped(pixel_center);
+//        }
+        Color color = getColorClippedAntialiased(pixel_center, size);
+        
         // Adjust for display gamma.
         color = color.gamma(1 / defaultGamma());
         // Make OpenCV color, with reversed component order.
@@ -339,6 +351,33 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
         // Copy the cache row into the destination row.
         cache_row.copyTo(bg_row);
     }
+}
+
+Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
+{
+    // Read TexSyn Color from Texture at (i, j).
+    Color color(0, 0, 0);
+//        Vec2 pixel_center = Vec2(i, j) / half;
+    expensive_to_nest = 0;
+    if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
+    {
+        float pixel_radius = 2.0 / size;
+        std::vector<Vec2> offsets;
+//            RandomSequence rs(pixel_center.hash());
+        RandomSequence rs(position.hash());
+        jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
+                                    pixel_radius * 2, rs, offsets);
+        for (Vec2 offset : offsets)
+//                color += getColorClipped(pixel_center + offset);
+            color += getColorClipped(position + offset);
+        color = color / sq(sqrt_of_aa_subsample_count);
+    }
+    else
+    {
+//            color = getColorClipped(pixel_center);
+        color = getColorClipped(position);
+    }
+    return color;
 }
 
 // Display a collection of Textures, each in a window, then wait for a char.
