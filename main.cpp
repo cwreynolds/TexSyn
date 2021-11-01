@@ -5949,19 +5949,45 @@ int main(int argc, const char * argv[])
     // Prototyping training set for "find conspicuous disk."
     std::cout << "October 29, 2021" << std::endl;
     {
+        // TODO 20211031 make sure this works for TRUE before we are done
+        Texture::setParallelRender(false);
+        
         Texture::setDefaultRenderAsDisk(true);
 //        Texture::setDefaultRenderAsDisk(false);
 
 //        Texture::setDefaultRenderSize(501);
-        Texture::setDefaultRenderSize(500);
-        Texture::setParallelRender(false);
+//        Texture::setDefaultRenderSize(500);
+        
 
         Color green(0, 1, 0);
-        Uniform t0(green);
-        Uniform t1(green.luminance());
-        Grating grating(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
-        Texture::displayAndFile(grating);
+//        Uniform t0(green);
+//        Uniform t1(green.luminance());
+        Uniform t0(green.luminance());
+        Uniform t1(green);
+
+        auto embiggen = [&](int size)
+        {
+            Texture::setDefaultRenderSize(size);
+//            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
+//            Spot texture(Vec2(), 0, t1, 0.9, t0);
+            Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+            texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
+                                          Texture::getDefaultRenderAsDisk());
+            cv::Mat mat = texture.getCvMat().clone();
+            cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
+            return mat;
+        };
+
+        
+//        Texture::displayAndFile(grating);
+        
+        cv::imshow("disk 15", embiggen(15));
+        cv::imshow("disk 16", embiggen(16));
+        cv::imshow("disk 17", embiggen(17));
+
         Texture::waitKey();
+
+
     }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

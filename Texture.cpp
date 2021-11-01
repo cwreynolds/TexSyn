@@ -222,15 +222,28 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     // TODO this is the wrong solution, but at least indicates where it happens.
     // TODO does this "fix" work for render-as-disk?
     // TODO does this work when Texture::render_thread_per_row is true?
+    
+    debugPrint(j);
+    debugPrint(half);
+    debugPrint(half - j);
+    debugPrint(size);
+
     if (half - j == size)
     {
         std::cout << "aha!" << std::endl;
         return;
     }
-    
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // First and last pixels on j-th row of time
     int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
+    
+    debugPrint(x_limit);
+    
+//    if ((size % 2 == 0) && (x_limit == 0)) return;
+    
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
     cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
     for (int i = -x_limit; i <= x_limit; i++)
@@ -261,7 +274,16 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                color.g() * 255,
                                color.r() * 255);
         // Write OpenCV color to corresponding pixel on row image:
-        row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // TODO 20211031 ok, this fails for even sized textures
+//        assert((half + i) < size);
+        
+//        row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+        if ((half + i) < size)
+        {
+            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+        }
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
