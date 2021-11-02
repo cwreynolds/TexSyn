@@ -231,45 +231,76 @@ public:
 //            half = size / float(2);
             half = size / 2;
             
-            auto half_step_toward_0 =[](float x)
-                { return x + (x > 0 ? -0.5 : 0.5); };
-            
+            // Which row we are on? [0, size-1]
+//            row_index = (odd_size ?
+//                         j + half :
+//                         j + half - 1);
+            row_index = j + half + (odd_size ? 0 : -1);
+
+//            auto half_step_toward_0 =[](float x)
+//                { return x + (x > 0 ? -0.5 : 0.5); };
 //            row_y = odd_size ? j : (j + (j > 0 ? -0.5 : 0.5));
-            row_y = odd_size ? j : half_step_toward_0(j);
-            
+//            row_y = odd_size ? j : half_step_toward_0(j);
+
+            row_y = (odd_size ? j : j - 0.5);
+
             // define float offsets for even-diameter case??????????????
 
-            last_pixel_index =
-                (disk ?
-                 (odd_size ?
-                  std::sqrt(sq(half) - sq(j)) :
+//            last_pixel_index =
+//                (disk ?
+//                 (odd_size ?
+//                  std::sqrt(sq(half) - sq(j)) :
 //                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)))) :
-                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)) + 1)) :
-                 half);
-            first_pixel_index = -last_pixel_index;
-//            first_pixel_index = -(last_pixel_index - (odd_size ? 0 : 1));
-
+////                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)) + 1)) :
+//                 half);
+//            last_pixel_index = disk ? std::sqrt(sq(half) - sq(j)) : half;
             
-//            // First and last pixels on j-th row of time
-//            int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
+//                last_pixel_index = (disk ?
+//                                    (odd_size ?
+//                                     std::sqrt(sq(half) - sq(j)) :
+//                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
+//                                    half);
+//
+//    //            first_pixel_index = -last_pixel_index;
+//                first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
 
-            
-            std::cout << "RR:";
-            std::cout << " j=" << j;
-            std::cout << " size=" << size;
+//            last_pixel_index = (disk ?
+//                                (odd_size ?
+//                                 std::sqrt(sq(half) - sq(j)) :
+//                                 std::sqrt(sq(size * 0.5) - sq(row_y))) :
+//                                half);
 
-            std::cout << " odd_size=" << odd_size;
-            std::cout << " half=" << half;
-            std::cout << " first_pixel_index=" << first_pixel_index;
-            std::cout << " last_pixel_index=" << last_pixel_index;
-            std::cout << " row_y=" << row_y;
-            std::cout << std::endl;
+            last_pixel_index = (disk ?
+                                (odd_size ?
+                                 std::sqrt(sq(half) - sq(j)) :
+                                 std::sqrt(sq(size * 0.5) - sq(row_y))) :
+                                (odd_size ? half : half - 1));
+
+//            first_pixel_index = -last_pixel_index;
+//            first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
+//                first_pixel_index = (-last_pixel_index +
+//    //                                 (odd_size ? 0 : -1) +
+//                                     (disk && odd_size ? 0 : 1));
+//            first_pixel_index = -last_pixel_index;
+            first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
+
+//            std::cout << "RR:";
+//            std::cout << " j=" << j;
+//            std::cout << " size=" << size;
+//            std::cout << " odd_size=" << odd_size;
+//            std::cout << " half=" << half;
+//            std::cout << " row_y=" << row_y;
+//            std::cout << " row_index=" << row_index;
+//            std::cout << " first_pixel_index=" << first_pixel_index;
+//            std::cout << " last_pixel_index=" << last_pixel_index;
+//            std::cout << std::endl;
         }
         bool odd_size;
         int half;
         int first_pixel_index;
         int last_pixel_index;
         float row_y;
+        int row_index;
     private:
         int j_;
         int size_;

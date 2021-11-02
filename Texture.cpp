@@ -91,7 +91,15 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
-        for (int j = -(size / 2); j <= (size / 2); j++)
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//        for (int j = -(size / 2); j <= (size / 2); j++)
+            
+        bool odd_size = size % 2;
+        int last_j = size / 2;
+        int first_j = -last_j + (odd_size ? 0 : 1);
+        for (int j = first_j; j <= last_j; j++)
+
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         {
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //            // This requires some unpacking. It creates a thread which is pushed
@@ -235,11 +243,12 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 //    debugPrint(half - j);
 //    debugPrint(size);
 
-    if (half - j == size)
-    {
-        std::cout << "aha!" << std::endl;
-        return;
-    }
+//    if (half - j == size)
+//    {
+//        std::cout << "aha!" << std::endl;
+//        row_counter++;
+//        return;
+//    }
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
@@ -258,6 +267,9 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 //    for (int i = -x_limit; i <= x_limit; i++)
     for (int i = rr.first_pixel_index; i <= rr.last_pixel_index; i++)
     {
+//        std::cout << "(" << i << "," << j << ") "; ///////////////////////////
+        
+        
         // Read TexSyn Color from Texture at (i, j).
 //        Color color(0, 0, 0);
         Vec2 pixel_center = Vec2(i, j) / half;
@@ -290,11 +302,11 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // TODO 20211031 ok, this fails for even sized textures
 //        assert((half + i) < size);
         
-//        row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
-        if ((half + i) < size)
-        {
-            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
-        }
+        row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+//        if ((half + i) < size)
+//        {
+//            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+//        }
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
@@ -302,6 +314,10 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         if (i == 0) { yield(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
+    
+//    std::cout << std::endl; /////////////////////////////////////////////////
+
+    
     // Define a new image which is a "pointer" to j-th row of opencv_image.
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //    debugPrint(size);
