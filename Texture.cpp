@@ -347,7 +347,7 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 
 
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
-// Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+// Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
 void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
 {
     // Ensure the Texture has been rendered to image cache.

@@ -5972,27 +5972,24 @@ int main(int argc, const char * argv[])
                                           Texture::getDefaultRenderAsDisk());
             cv::Mat mat = texture.getCvMat().clone();
             cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
-            cv::imshow((Texture::getDefaultRenderAsDisk() ?
-                        std::string("disk ") :
-                        std::string("square ")) +
-                       std::to_string(size),
-                       mat);
-            std::cout << std::endl << std::endl;
-
+//            std::string title = (Texture::getDefaultRenderAsDisk() ?
+//                                 std::string("disk ") :
+//                                 std::string("square "));
+            std::string title =
+                (Texture::getDefaultRenderAsDisk() ? "disk " : "square ");
+            cv::imshow(title + std::to_string(size), mat);
         };
         
 //        EvoCamoGame(CommandLine(argc, argv)).run();
         
+        Texture::setDefaultRenderAsDisk(true);
         show_test_disk_image(15);
         show_test_disk_image(16);
         show_test_disk_image(17);
-        
         Texture::setDefaultRenderAsDisk(false);
-
         show_test_disk_image(15);
         show_test_disk_image(16);
         show_test_disk_image(17);
-
         
 //        show_test_disk_image(5);
 //        show_test_disk_image(6);
@@ -6002,6 +5999,15 @@ int main(int argc, const char * argv[])
 //        show_test_disk_image(52);
 //        show_test_disk_image(53);
 
+//        show_test_disk_image(511);
+//        show_test_disk_image(512);
+//        show_test_disk_image(513);
+        
+//        Texture::setDefaultRenderAsDisk(true);
+//        show_test_disk_image(511);
+//        show_test_disk_image(512);
+//        show_test_disk_image(513);
+//        Texture::setDefaultRenderAsDisk(false);
 //        show_test_disk_image(511);
 //        show_test_disk_image(512);
 //        show_test_disk_image(513);
