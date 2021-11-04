@@ -307,11 +307,72 @@ public:
 //            bool disk_;
 //        };
 
+//        class RasterizeRowHelper
+//        {
+//        public:
+//    //        RasterizeRowHelper(int j, int size, bool disk) :
+//    //            j_(j), size_(size), disk_(disk)
+//            RasterizeRowHelper(int j_, int size_, bool disk_)
+//                : j(j_), size(size_), disk(disk_)
+//            {
+//                odd = size % 2;                        // Is size (diameter) odd?
+//                half = size / 2;                       // Half size (radius) as int
+//                row_index = j + half + (odd ? 0 : -1); // Which row? [0, size-1]
+//                row_y = odd ? j : j - 0.5;             // Row center as float
+//
+//                // Index of first and last pixel of disk on this row.
+//    //                last_pixel_index = (disk ?
+//    //                                    (odd ?
+//    //    //                                 std::sqrt(sq(half) - sq(j)) :
+//    //                                     std::sqrt(sq(size * 0.5) - sq(row_y)) :
+//    //                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
+//    //                                    (odd ? half : half - 1));
+//
+//                // TODO fiddling on 20211103 to fix non-quarter-rotate-symmetry bug:
+//
+//                last_pixel_index = (disk ?
+//    //                                std::sqrt(sq(size * 0.5) - sq(row_y)) :
+//    //                                std::sqrt(sq(size * 0.5 + 0.49) - sq(row_y)) :
+//    //                                std::sqrt(sq(size * 0.5 - 0.49) - sq(row_y)) :
+//    //                                std::sqrt(sq(size * 0.5 - 0.49) - sq(row_y)) :
+//    //                                std::sqrt(sq(size * 0.5) - sq(row_y)) - 0.49 :
+//
+//                                    (std::sqrt(sq(size * 0.5) - sq(row_y)) -
+//                                     (odd ? 0 : 0.49)) :
+//
+//
+//                                    (odd ? half : half - 1));
+//                first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
+//
+//                //std::cout << "RR:";
+//                //std::cout << " j=" << j;
+//                //std::cout << " size=" << size;
+//                //std::cout << " odd=" << odd;
+//                //std::cout << " half=" << half;
+//                //std::cout << " row_y=" << row_y;
+//                //std::cout << " row_index=" << row_index;
+//                //std::cout << " first_pixel_index=" << first_pixel_index;
+//                //std::cout << " last_pixel_index=" << last_pixel_index;
+//                //std::cout << std::endl;
+//            }
+//            int j;
+//            int size;
+//            bool disk;
+//            bool odd;
+//            int half;
+//            int row_index;
+//            float row_y;
+//            int first_pixel_index;
+//            int last_pixel_index;
+//    //    private:
+//    //        int j_;
+//    //        int size_;
+//    //        bool disk_;
+//        };
+
     class RasterizeRowHelper
     {
     public:
-//        RasterizeRowHelper(int j, int size, bool disk) :
-//            j_(j), size_(size), disk_(disk)
         RasterizeRowHelper(int j_, int size_, bool disk_)
             : j(j_), size(size_), disk(disk_)
         {
@@ -319,23 +380,18 @@ public:
             half = size / 2;                       // Half size (radius) as int
             row_index = j + half + (odd ? 0 : -1); // Which row? [0, size-1]
             row_y = odd ? j : j - 0.5;             // Row center as float
-
-            // Index of first and last pixel of disk on this row.
-//                last_pixel_index = (disk ?
-//                                    (odd ?
-//    //                                 std::sqrt(sq(half) - sq(j)) :
-//                                     std::sqrt(sq(size * 0.5) - sq(row_y)) :
-//                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
-//                                    (odd ? half : half - 1));
-            last_pixel_index = (disk ?
-                                std::sqrt(sq(size * 0.5) - sq(row_y)) :
-                                (odd ? half : half - 1));
+            
+            // Index (signed) of first and last pixel of disk on this row.
+            last_pixel_index =
+                (disk ?
+                 (std::sqrt(sq(size * 0.5) - sq(row_y)) - (odd ? 0 : 0.5)) :
+                 (odd ? half : half - 1));
             first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
 
             //std::cout << "RR:";
             //std::cout << " j=" << j;
             //std::cout << " size=" << size;
-            //std::cout << " odd_size=" << odd_size;
+            //std::cout << " odd=" << odd;
             //std::cout << " half=" << half;
             //std::cout << " row_y=" << row_y;
             //std::cout << " row_index=" << row_index;
@@ -352,10 +408,6 @@ public:
         float row_y;
         int first_pixel_index;
         int last_pixel_index;
-//    private:
-//        int j_;
-//        int size_;
-//        bool disk_;
     };
 
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

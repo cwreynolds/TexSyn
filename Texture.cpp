@@ -291,6 +291,12 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 //        }
         Color color = getColorClippedAntialiased(pixel_center, size);
         
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        // TODO 20211104 super temp debugging grid
+        // if ((i + j) % 2) color *= 0.6;
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+        
         // Adjust for display gamma.
         color = color.gamma(1 / defaultGamma());
         // Make OpenCV color, with reversed component order.
