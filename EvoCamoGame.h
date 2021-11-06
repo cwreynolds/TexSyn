@@ -479,8 +479,11 @@ public:
     const GUI& gui() const { return gui_; }
 
     // TODO very temp
-    int textureSize() const { return 201; }
-    
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+//    int textureSize() const { return 201; }
+    int textureSize() const { return 200; }
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
     // Get/set position of most recent mouse (left) click in GUI.
     Vec2 getLastMouseClick() const { return last_mouse_click_; }
     void setLastMouseClick(Vec2 mouse_pos) { last_mouse_click_ = mouse_pos; }

@@ -5950,61 +5950,68 @@ int main(int argc, const char * argv[])
     std::cout << "October 29, 2021" << std::endl;
     {
         // TODO 20211031 make sure this works for TRUE before we are done
-//        Texture::setParallelRender(false);
+        Texture::setParallelRender(false);
                 
         auto show_test_disk_image = [&](int size)
         {
             Texture::setDefaultRenderSize(size);
-//            Spot texture(Vec2(), 0.1, t0, 0.9, t1);
-            
-//            Color green(0, 1, 0);
-//            Uniform t0(green.luminance());
-//            Uniform t1(green);
-//            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
-
-            Uniform texture(1);
-            
-            
+            Color green(0, 1, 0);
+            Uniform t0(green.luminance());
+            Uniform t1(green);
+            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
+            // Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+            // Uniform texture(1);
             texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
                                           Texture::getDefaultRenderAsDisk());
             cv::Mat mat = texture.getCvMat().clone();
-            cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
+            // cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
             std::string title = (Texture::getDefaultRenderAsDisk() ?
                                  "disk " : "square ");
             cv::imshow(title + std::to_string(size), mat);
         };
         
-//        EvoCamoGame(CommandLine(argc, argv)).run();
-        
-//        show_test_disk_image(5);
-//        show_test_disk_image(6);
-//        show_test_disk_image(7);
-        
-//        Texture::setDefaultRenderAsDisk(true);
-//        show_test_disk_image(15);
-//        show_test_disk_image(16);
-//        show_test_disk_image(17);
-//        Texture::setDefaultRenderAsDisk(false);
-//        show_test_disk_image(15);
-//        show_test_disk_image(16);
-//        show_test_disk_image(17);
-        
-//        Texture::setDefaultRenderAsDisk(true);
-//        show_test_disk_image(511);
-//        show_test_disk_image(512);
-//        show_test_disk_image(513);
-//        Texture::setDefaultRenderAsDisk(false);
-//        show_test_disk_image(511);
-//        show_test_disk_image(512);
-//        show_test_disk_image(513);
-        
-        show_test_disk_image(71);
-        show_test_disk_image(72);
-        show_test_disk_image(73);
+        //show_test_disk_image(5);
+        //show_test_disk_image(6);
+        //show_test_disk_image(7);
+        //
+        //Texture::setDefaultRenderAsDisk(true);
+        //show_test_disk_image(15);
+        //show_test_disk_image(16);
+        //show_test_disk_image(17);
+        //Texture::setDefaultRenderAsDisk(false);
+        //show_test_disk_image(15);
+        //show_test_disk_image(16);
+        //show_test_disk_image(17);
+        //
+        //Texture::setDefaultRenderAsDisk(true);
+        //show_test_disk_image(511);
+        //show_test_disk_image(512);
+        //show_test_disk_image(513);
+        //Texture::setDefaultRenderAsDisk(false);
+        //show_test_disk_image(511);
+        //show_test_disk_image(512);
+        //show_test_disk_image(513);
+        //
+        //show_test_disk_image(71);
+        //show_test_disk_image(72);
+        //show_test_disk_image(73);
+        //
+        // Texture::waitKey();
 
-
-        Texture::waitKey();
-
+        // EvoCamoGame(CommandLine(argc, argv)).run();
+        
+        
+        CommandLine cmd
+        ({
+            "evo_camo_game",
+            "/Users/cwr/Pictures/camouflage_backgrounds/redwood_leaf_litter/",
+            "/Users/cwr/Desktop/TexSyn_temp/",
+            "0.5",
+            "20211105"
+        });
+        EvoCamoGame(cmd).run();
+        
+        
         // TODO don't forget to change Texture::matteImageCacheDiskOverBG()
         // TODO remember to test antialiasing, non-disk, parallel render
     }

@@ -351,6 +351,30 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+//    {
+//        // Ensure the Texture has been rendered to image cache.
+//        rasterizeToImageCache(size, true);
+//        // Half the rendering's size corresponds to the disk's center.
+//        int half = size / 2;
+//        // For each row.
+//        for (int j = -half; j <= half; j++)
+//        {
+//            // First and last pixels on j-th row of time
+//            int x_limit = std::sqrt(sq(half) - sq(j));
+//            // On j-th row, +/- x_limit from center.
+//            cv::Rect row_rect(half - x_limit, half - j, x_limit * 2, 1);
+//            // Create two submats (ROI) of the image cache and the destination mat.
+//            cv::Mat cache_row(*raster_, row_rect);
+//            cv::Mat bg_row(bg, row_rect);
+//            // Copy the cache row into the destination row.
+//            cache_row.copyTo(bg_row);
+//        }
+//    }
 
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
 // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
@@ -361,12 +385,40 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
     // Half the rendering's size corresponds to the disk's center.
     int half = size / 2;
     // For each row.
-    for (int j = -half; j <= half; j++)
+    
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+//    for (int j = -half; j <= half; j++)
+    
+    bool odd_size = size % 2;
+    int last_j = size / 2;
+    int first_j = -last_j + (odd_size ? 0 : 1);
+    for (int j = first_j; j <= last_j; j++)
+    //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
     {
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
         // First and last pixels on j-th row of time
         int x_limit = std::sqrt(sq(half) - sq(j));
         // On j-th row, +/- x_limit from center.
         cv::Rect row_rect(half - x_limit, half - j, x_limit * 2, 1);
+        
+        /*
+        bool disk = true; // TODO ???
+        RasterizeRowHelper rr(j, size, disk);
+
+//        // First and last pixels on j-th row of time
+//        int x_limit = std::sqrt(sq(half) - sq(j));
+        // On j-th row, +/- x_limit from center.
+        cv::Rect row_rect(half - rr.first_pixel_index,
+                          half - j,
+                          rr.last_pixel_index - rr.first_pixel_index,
+                          1);
+        
+        debugPrint(half - rr.first_pixel_index);
+        debugPrint(half - j);
+        debugPrint(rr.last_pixel_index - rr.first_pixel_index);
+         */
+        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
+
         // Create two submats (ROI) of the image cache and the destination mat.
         cv::Mat cache_row(*raster_, row_rect);
         cv::Mat bg_row(bg, row_rect);
@@ -374,6 +426,8 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
         cache_row.copyTo(bg_row);
     }
 }
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
 Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
 {
