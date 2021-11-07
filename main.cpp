@@ -5952,23 +5952,23 @@ int main(int argc, const char * argv[])
         // TODO 20211031 make sure this works for TRUE before we are done
         Texture::setParallelRender(false);
                 
-        auto show_test_disk_image = [&](int size)
-        {
-            Texture::setDefaultRenderSize(size);
-            Color green(0, 1, 0);
-            Uniform t0(green.luminance());
-            Uniform t1(green);
-            Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
-            // Spot texture(Vec2(), 0.1, t0, 0.9, t1);
-            // Uniform texture(1);
-            texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
-                                          Texture::getDefaultRenderAsDisk());
-            cv::Mat mat = texture.getCvMat().clone();
-            // cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
-            std::string title = (Texture::getDefaultRenderAsDisk() ?
-                                 "disk " : "square ");
-            cv::imshow(title + std::to_string(size), mat);
-        };
+        //auto show_test_disk_image = [&](int size)
+        //{
+        //    Texture::setDefaultRenderSize(size);
+        //    Color green(0, 1, 0);
+        //    Uniform t0(green.luminance());
+        //    Uniform t1(green);
+        //    Grating texture(Vec2(), t0, Vec2(0.1, 0.2), t1, 0.2, 0.5);
+        //    // Spot texture(Vec2(), 0.1, t0, 0.9, t1);
+        //    // Uniform texture(1);
+        //    texture.rasterizeToImageCache(Texture::getDefaultRenderSize(),
+        //                                  Texture::getDefaultRenderAsDisk());
+        //    cv::Mat mat = texture.getCvMat().clone();
+        //    // cv::resize(mat, mat, cv::Size(), 20, 20, cv::INTER_NEAREST);
+        //    std::string title = (Texture::getDefaultRenderAsDisk() ?
+        //                         "disk " : "square ");
+        //    cv::imshow(title + std::to_string(size), mat);
+        //};
         
         //show_test_disk_image(5);
         //show_test_disk_image(6);
@@ -6001,19 +6001,53 @@ int main(int argc, const char * argv[])
         // EvoCamoGame(CommandLine(argc, argv)).run();
         
         
-        CommandLine cmd
-        ({
-            "evo_camo_game",
-            "/Users/cwr/Pictures/camouflage_backgrounds/redwood_leaf_litter/",
-            "/Users/cwr/Desktop/TexSyn_temp/",
-            "0.5",
-            "20211105"
-        });
-        EvoCamoGame(cmd).run();
+        //CommandLine cmd
+        //({
+        //    "evo_camo_game",
+        //    "/Users/cwr/Pictures/camouflage_backgrounds/redwood_leaf_litter/",
+        //    "/Users/cwr/Desktop/TexSyn_temp/",
+        //    "0.5",
+        //    "20211105"
+        //});
+        //EvoCamoGame(cmd).run();
         
         
         // TODO don't forget to change Texture::matteImageCacheDiskOverBG()
         // TODO remember to test antialiasing, non-disk, parallel render
+        
+        //int vert = 0;
+        //auto test = [&](int diameter)
+        //{
+        //    Texture::setDefaultRenderSize(diameter);
+        //    int margin = 2;
+        //    int bg_size = diameter + 2 * margin;
+        //    cv::Mat bg(bg_size, bg_size, CV_8UC3, cv::Scalar(255, 127, 0));
+        //    Uniform texture(1, 0, 0);
+        //    texture.rasterizeToImageCache(diameter, true);
+        //    cv::Mat tm = texture.getCvMat().clone();
+        //    cv::Mat target = Texture::getCvMatRect(Vec2(margin, margin),
+        //                                           Vec2(diameter, diameter),
+        //                                           bg);
+        //    texture.matteImageCacheDiskOverBG(diameter, target);
+        //    int biggen = 20;
+        //    cv::resize(bg, bg, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
+        //    cv::resize(tm, tm, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
+        //    std::string sd = std::to_string(diameter);
+        //    std::string sbg = "bg " + sd;
+        //    std::string stm = "texture mat " + sd;
+        //
+        //    cv::imshow(sbg, bg);
+        //    cv::imshow(stm, tm);
+        //    int indent = biggen;
+        //    cv::moveWindow(sbg, indent + (diameter + 2) * biggen, vert);
+        //    cv::moveWindow(stm, indent, vert);
+        //    vert += (bg_size + 3) * biggen;
+        //};
+        //test(15);
+        //test(16);
+        //Texture::waitKey();
+        
+        EvoCamoGame(CommandLine(argc, argv)).run();
     }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
