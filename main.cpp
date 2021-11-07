@@ -5950,7 +5950,7 @@ int main(int argc, const char * argv[])
     std::cout << "October 29, 2021" << std::endl;
     {
         // TODO 20211031 make sure this works for TRUE before we are done
-        Texture::setParallelRender(false);
+        // Texture::setParallelRender(false);
                 
         //auto show_test_disk_image = [&](int size)
         //{
@@ -6011,43 +6011,56 @@ int main(int argc, const char * argv[])
         //});
         //EvoCamoGame(cmd).run();
         
-        
         // TODO don't forget to change Texture::matteImageCacheDiskOverBG()
         // TODO remember to test antialiasing, non-disk, parallel render
         
-        //int vert = 0;
-        //auto test = [&](int diameter)
-        //{
-        //    Texture::setDefaultRenderSize(diameter);
-        //    int margin = 2;
-        //    int bg_size = diameter + 2 * margin;
-        //    cv::Mat bg(bg_size, bg_size, CV_8UC3, cv::Scalar(255, 127, 0));
-        //    Uniform texture(1, 0, 0);
-        //    texture.rasterizeToImageCache(diameter, true);
-        //    cv::Mat tm = texture.getCvMat().clone();
-        //    cv::Mat target = Texture::getCvMatRect(Vec2(margin, margin),
-        //                                           Vec2(diameter, diameter),
-        //                                           bg);
-        //    texture.matteImageCacheDiskOverBG(diameter, target);
-        //    int biggen = 20;
-        //    cv::resize(bg, bg, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
-        //    cv::resize(tm, tm, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
-        //    std::string sd = std::to_string(diameter);
-        //    std::string sbg = "bg " + sd;
-        //    std::string stm = "texture mat " + sd;
-        //
-        //    cv::imshow(sbg, bg);
-        //    cv::imshow(stm, tm);
-        //    int indent = biggen;
-        //    cv::moveWindow(sbg, indent + (diameter + 2) * biggen, vert);
-        //    cv::moveWindow(stm, indent, vert);
-        //    vert += (bg_size + 3) * biggen;
-        //};
-        //test(15);
-        //test(16);
-        //Texture::waitKey();
+        int vert = 0;
+        auto test_disk_render_and_mat = [&](int diameter)
+        {
+            Texture::setDefaultRenderSize(diameter);
+            int margin = 2;
+            int bg_size = diameter + 2 * margin;
+            cv::Mat bg(bg_size, bg_size, CV_8UC3, cv::Scalar(255, 127, 0));
+            Uniform texture(1, 0, 0);
+            texture.rasterizeToImageCache(diameter,
+                                          Texture::getDefaultRenderAsDisk());
+            cv::Mat tm = texture.getCvMat().clone();
+            cv::Mat target = Texture::getCvMatRect(Vec2(margin, margin),
+                                                   Vec2(diameter, diameter),
+                                                   bg);
+            texture.matteImageCacheDiskOverBG(diameter, target);
+            int biggen = 20;
+            cv::resize(bg, bg, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
+            cv::resize(tm, tm, cv::Size(), biggen, biggen, cv::INTER_NEAREST);
+            std::string sd = std::to_string(diameter);
+            std::string sbg = "bg " + sd;
+            std::string stm = "texture mat " + sd;
         
-        EvoCamoGame(CommandLine(argc, argv)).run();
+            cv::imshow(sbg, bg);
+            cv::imshow(stm, tm);
+            int indent = biggen;
+            cv::moveWindow(sbg, indent + (diameter + 2) * biggen, vert);
+            cv::moveWindow(stm, indent, vert);
+            vert += (bg_size + 3) * biggen;
+        };
+        test_disk_render_and_mat(15);
+        test_disk_render_and_mat(16);
+        Texture::waitKey();
+        
+        // EvoCamoGame(CommandLine(argc, argv)).run();
+        
+        //// Antialiasing test from https://cwreynolds.github.io/TexSyn/#20200927
+        //Uniform yellow(1, 1, 0);
+        //Uniform blue(0, 0, 1);
+        //Grating grating(Vec2(), yellow, Vec2(0.2, 0), blue, 0.01, 0.5);
+        //Scale scaled_grating(10, grating);
+        //Blur blur(1, scaled_grating);
+        //CotsMap cotsmap1(Vec2(0,0), Vec2(.4,0), Vec2(.2,.2), Vec2(0,.4), blur);
+        //CotsMap cotsmap2(Vec2(0,0), Vec2(.4,0), Vec2(.2,.2), Vec2(0,.4), blur);
+        //Texture::displayAndFile(cotsmap1);
+        //Blur::sqrt_of_subsample_count = 40;
+        //Texture::displayAndFile(cotsmap2);
+        //Texture::waitKey();
     }
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

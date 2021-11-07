@@ -370,10 +370,66 @@ public:
 //    //        bool disk_;
 //        };
 
-    class RasterizeRowHelper
+//    class RasterizeRowHelper
+//    {
+//    public:
+//        RasterizeRowHelper(int size_) : RasterizeRowHelper(0, size_) {}
+//        RasterizeRowHelper(int j_, int size_)
+//            : RasterizeRowHelper(j_, size_, true) {}
+//        RasterizeRowHelper(int size_, bool disk_)
+//            : RasterizeRowHelper(0, size_, disk_) {}
+//        RasterizeRowHelper(int j_, int size_, bool disk_)
+//            : j(j_), size(size_), disk(disk_)
+//        {
+//            odd = size % 2;                        // Is size (diameter) odd?
+//            half = size / 2;                       // Half size (radius) as int
+//            row_index = j + half + (odd ? 0 : -1); // Which row? [0, size-1]
+//            row_y = odd ? j : j - 0.5;             // Row center as float
+//
+//            // Index (signed) of first and last pixel of disk on this row.
+//            last_pixel_index =
+//                (disk ?
+//                 (std::sqrt(sq(size * 0.5) - sq(row_y)) - (odd ? 0 : 0.5)) :
+//                 (odd ? half : half - 1));
+//            first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
+//
+//            bot_j = half;
+//            top_j = -bot_j + (odd ? 0 : 1);
+//
+//
+//
+//            //std::cout << "RR:";
+//            //std::cout << " j=" << j;
+//            //std::cout << " size=" << size;
+//            //std::cout << " odd=" << odd;
+//            //std::cout << " half=" << half;
+//            //std::cout << " row_y=" << row_y;
+//            //std::cout << " row_index=" << row_index;
+//            //std::cout << " first_pixel_index=" << first_pixel_index;
+//            //std::cout << " last_pixel_index=" << last_pixel_index;
+//            //std::cout << std::endl;
+//        }
+//        int j;
+//        int size;
+//        bool disk;
+//        bool odd;
+//        int half;
+//        int row_index;
+//        float row_y;
+//        int first_pixel_index;
+//        int last_pixel_index;
+//
+//        int top_j;
+//        int bot_j;
+//    };
+
+    class RasterizeHelper
     {
     public:
-        RasterizeRowHelper(int j_, int size_, bool disk_)
+        RasterizeHelper(int size_) : RasterizeHelper(0, size_) {}
+        RasterizeHelper(int j_, int size_) : RasterizeHelper(j_, size_, true) {}
+        RasterizeHelper(int size_, bool disk_) : RasterizeHelper(0,size_,disk_){}
+        RasterizeHelper(int j_, int size_, bool disk_)
             : j(j_), size(size_), disk(disk_)
         {
             odd = size % 2;                        // Is size (diameter) odd?
@@ -387,6 +443,10 @@ public:
                  (std::sqrt(sq(size * 0.5) - sq(row_y)) - (odd ? 0 : 0.5)) :
                  (odd ? half : half - 1));
             first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
+            
+            // TODO should these be top / bot_row_index?
+            bot_j = half;
+            top_j = -bot_j + (odd ? 0 : 1);
 
             //std::cout << "RR:";
             //std::cout << " j=" << j;
@@ -408,6 +468,9 @@ public:
         float row_y;
         int first_pixel_index;
         int last_pixel_index;
+        
+        int top_j;
+        int bot_j;
     };
 
     //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
