@@ -584,6 +584,196 @@ public:
             outfile << bboxes << std::endl;
         }
     }
+    
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    // TODO 20211109
+    // Experimental code for generating training set of images for learning to
+    // "find conspicuous disks". Generates random image files with a background
+    // texture and a disk of another texture matted on top. Image files maybe
+    // 1024 square? Textures a mix of "random" TexSyn textures and some natural
+    // textures from photos, as in /Users/cwr/Pictures/camouflage_backgrounds
+    //
+    // (Maybe filenames like 3485729384_0132_0981.jpg where the first number is
+    // just a random UID, and the second two numbers are the ground truth center
+    // location of the disk.)
+
+    // QQQ
+    
+    
+//    void generateTrainingSetForFindConspicuousDisks()
+//    {
+//        // In this function backgroundImageDirectory() is actually one level up,
+//        // the directory containing the image directories.
+//        const std::vector<std::string> background_image_directories =
+//            directory_filenames(backgroundImageDirectory());
+//
+//        debugPrint(backgroundImageDirectory());
+//        debugPrint(vec_to_string(background_image_directories));
+//
+////        std::vector<std::string> background_image_filenames;
+//        std::vector<std::string> bg_filenames;
+//        for (auto& dirname : background_image_directories)
+//        {
+//            std::filesystem::path directory(backgroundImageDirectory());
+//            directory /= dirname;
+//            std::cout << std::endl;
+//            debugPrint(directory);
+//            if (std::filesystem::is_directory(directory))
+//            {
+//                const std::vector<std::string> per_dir_filenames =
+//                    directory_filenames(directory);
+//                bg_filenames.insert(end(bg_filenames),
+//                                    begin(per_dir_filenames),
+//                                    end(per_dir_filenames));
+//                std::cout << vec_to_string(per_dir_filenames) << std::endl;
+//                std::cout << vec_to_string(bg_filenames) << std::endl;
+//                debugPrint(bg_filenames.size());
+//            }
+//        }
+//    }
+
+//        void generateTrainingSetForFindConspicuousDisks()
+//        {
+//    //        // In this function backgroundImageDirectory() is actually one level up,
+//    //        // the directory containing the image directories.
+//    //        const std::vector<std::string> background_image_directories =
+//    //            directory_filenames(backgroundImageDirectory());
+//
+//            debugPrint(backgroundImageDirectory());
+//
+//            // TODO new approach using more native std::filesystem
+//
+//            std::vector<std::filesystem::path> directories;
+//            for (const auto& entry :
+//                 std::filesystem::directory_iterator(backgroundImageDirectory()))
+//            {
+//                directories.push_back(entry);
+//            }
+//            debugPrint(vec_to_string(directories));
+//
+//
+//
+//    //        std::vector<std::string> bg_filenames;
+//            std::vector<std::filesystem::path> bg_filenames;
+//    //        for (auto& dirname : background_image_directories)
+//    //        for (auto& dirname : directories)
+//            for (auto& directory : directories)
+//            {
+//    //            std::filesystem::path directory(backgroundImageDirectory());
+//    //            directory /= dirname;
+//                std::cout << std::endl;
+//                debugPrint(directory);
+//                if (std::filesystem::is_directory(directory))
+//                {
+//    //                const std::vector<std::string> per_dir_filenames =
+//    //                    directory_filenames(directory);
+//
+//                    std::vector<std::filesystem::path> per_dir_filenames;
+//                    for (const auto& entry :
+//                         std::filesystem::directory_iterator(directory))
+//                    {
+//                        per_dir_filenames.push_back(entry);
+//                    }
+//
+//
+//                    bg_filenames.insert(end(bg_filenames),
+//                                        begin(per_dir_filenames),
+//                                        end(per_dir_filenames));
+//                    std::cout << vec_to_string(per_dir_filenames) << std::endl;
+//                    std::cout << vec_to_string(bg_filenames) << std::endl;
+//                    debugPrint(bg_filenames.size());
+//                }
+//            }
+//        }
+
+//        void generateTrainingSetForFindConspicuousDisks()
+//        {
+//            // In this function backgroundImageDirectory() is actually one level up,
+//            // the directory containing the image directories.
+//            debugPrint(backgroundImageDirectory());
+//
+//            // Collect the contents (directories of images) in "directories".
+//            std::vector<std::filesystem::path> directories;
+//            typedef std::filesystem::directory_iterator di;
+//    //        for (const auto& entry :
+//    //             std::filesystem::directory_iterator(backgroundImageDirectory()))
+//            for (const auto& entry : di(backgroundImageDirectory()))
+//            {
+//                directories.push_back(entry);
+//            }
+//            debugPrint(vec_to_string(directories));
+//
+//            // Collect contents of each subdir, flattening all image file pathnames
+//            // into "bg_filenames"
+//            std::vector<std::filesystem::path> bg_filenames;
+//            for (auto& directory : directories)
+//            {
+//                std::cout << std::endl;
+//                debugPrint(directory);
+//                if (std::filesystem::is_directory(directory))
+//                {
+//    //                // Collect contents of "directory" into "filenames".
+//    //                std::vector<std::filesystem::path> filenames;
+//                    // Collect contents of "directory" into "files".
+//                    std::vector<std::filesystem::path> files;
+//    //                for (const auto& entry :
+//    //                     std::filesystem::directory_iterator(directory))
+//    //                for (const auto& entry : di(directory))
+//    //                {
+//    //                    filenames.push_back(entry);
+//    //                }
+//                    for (const auto& entry : di(directory)){files.push_back(entry);}
+//                    // Append image pathnames from this directory to the main list.
+//                    bg_filenames.insert(end(bg_filenames),
+//    //                                    begin(filenames),
+//    //                                    end(filenames));
+//    //                std::cout << vec_to_string(filenames) << std::endl;
+//                                        begin(files),
+//                                        end(files));
+//                    std::cout << vec_to_string(files) << std::endl;
+//                    std::cout << vec_to_string(bg_filenames) << std::endl;
+//                    debugPrint(bg_filenames.size());
+//                }
+//            }
+//        }
+
+    void generateTrainingSetForFindConspicuousDisks()
+    {
+        // In this function backgroundImageDirectory() is actually one level up,
+        // the directory containing the image directories.
+        debugPrint(backgroundImageDirectory());
+
+        // Collect the contents (directories of images) in "directories".
+        std::vector<std::filesystem::path> directories;
+        typedef std::filesystem::directory_iterator di;
+        for (const auto& entry : di(backgroundImageDirectory()))
+        {
+            directories.push_back(entry);
+        }
+        debugPrint(vec_to_string(directories));
+
+        // Collect contents of each subdir, flattening all image file pathnames
+        // into "bg_filenames"
+        std::vector<std::filesystem::path> all_bg;
+        for (auto& directory : directories)
+        {
+            std::cout << std::endl;
+            debugPrint(directory);
+            if (std::filesystem::is_directory(directory))
+            {
+                // Collect contents of "directory" into "files".
+                std::vector<std::filesystem::path> files;
+                for (const auto& entry : di(directory)){files.push_back(entry);}
+                // Append image pathnames from this directory to the main list.
+                all_bg.insert(end(all_bg), begin(files), end(files));
+                std::cout << vec_to_string(files) << std::endl;
+                std::cout << vec_to_string(all_bg) << std::endl;
+                debugPrint(all_bg.size());
+            }
+        }
+    }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
