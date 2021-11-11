@@ -596,7 +596,10 @@ public:
     // (Maybe filenames like 3485729384_0132_0981.jpg where the first number is
     // just a random UID, and the second two numbers are the ground truth center
     // location of the disk.)
-
+    //
+    // Maybe this should be its own top level class with a CommandLine arg? Not
+    // sure how much it has in common with EvoCamoGame.
+    //
     // QQQ
     
     
@@ -737,42 +740,182 @@ public:
 //            }
 //        }
 
+//    void generateTrainingSetForFindConspicuousDisks()
+//    {
+//        // In this function backgroundImageDirectory() is actually one level up,
+//        // the directory containing the image directories.
+//        debugPrint(backgroundImageDirectory());
+//
+//        // Collect the contents (directories of images) in "directories".
+//        std::vector<std::filesystem::path> directories;
+//        typedef std::filesystem::directory_iterator di;
+//        for (const auto& entry : di(backgroundImageDirectory()))
+//        {
+//            directories.push_back(entry);
+//        }
+//        debugPrint(vec_to_string(directories));
+//
+//        // Collect contents of each subdir, flattening all image file pathnames
+//        // into "bg_filenames"
+//        std::vector<std::filesystem::path> all_bg;
+//        for (auto& directory : directories)
+//        {
+//            std::cout << std::endl;
+//            debugPrint(directory);
+//            if (std::filesystem::is_directory(directory))
+//            {
+//                // Collect contents of "directory" into "files".
+//                std::vector<std::filesystem::path> files;
+//                for (const auto& entry : di(directory)){files.push_back(entry);}
+//                // Append image pathnames from this directory to the main list.
+//                all_bg.insert(end(all_bg), begin(files), end(files));
+//                std::cout << vec_to_string(files) << std::endl;
+//                std::cout << vec_to_string(all_bg) << std::endl;
+//                debugPrint(all_bg.size());
+//            }
+//        }
+//    }
+    
+    
+    typedef std::filesystem::directory_iterator di;
+    typedef std::filesystem::path pn;
+
     void generateTrainingSetForFindConspicuousDisks()
     {
+        LPRS().setSeed(20211110);
+        
         // In this function backgroundImageDirectory() is actually one level up,
         // the directory containing the image directories.
-        debugPrint(backgroundImageDirectory());
-
-        // Collect the contents (directories of images) in "directories".
-        std::vector<std::filesystem::path> directories;
-        typedef std::filesystem::directory_iterator di;
-        for (const auto& entry : di(backgroundImageDirectory()))
+        std::vector<pn> bg_paths =
+            fcdCollectImagePathnames(backgroundImageDirectory());
+        
+        std::cout << vec_to_string(bg_paths) << std::endl;
+        debugPrint(bg_paths.size());
+        
+        fcdReadBackgroundImages(bg_paths);
+        debugPrint(backgroundImages().size());
+        
+        cv::Mat output(fcdOutputImageSize(), fcdOutputImageSize(), CV_8UC3);
+        for (int i = 0; i < 500; i++)
         {
-            directories.push_back(entry);
+            output = fcdSelectRandomBackgroundImage();
+            // TODO note, this is getting scaled down since my screen is less
+            // than 1024 PIXELS high.
+            cv::imshow("output", output);
+            Texture::waitKey();
         }
-        debugPrint(vec_to_string(directories));
-
-        // Collect contents of each subdir, flattening all image file pathnames
-        // into "bg_filenames"
-        std::vector<std::filesystem::path> all_bg;
-        for (auto& directory : directories)
+    }
+    
+    std::vector<pn> fcdCollectImagePathnames(pn dir_of_image_dirs)
+    {
+        debugPrint(dir_of_image_dirs);
+        std::vector<pn> all_images;
+        // For each of the directories of images under dir_of_image_dirs.
+        for (const auto& entry : di(dir_of_image_dirs))
         {
+            pn directory = entry;
             std::cout << std::endl;
             debugPrint(directory);
             if (std::filesystem::is_directory(directory))
             {
                 // Collect contents of "directory" into "files".
-                std::vector<std::filesystem::path> files;
-                for (const auto& entry : di(directory)){files.push_back(entry);}
+                std::vector<pn> files;
+                for (const auto& f : di(directory)) { files.push_back(f); }
                 // Append image pathnames from this directory to the main list.
-                all_bg.insert(end(all_bg), begin(files), end(files));
+                all_images.insert(end(all_images), begin(files), end(files));
                 std::cout << vec_to_string(files) << std::endl;
-                std::cout << vec_to_string(all_bg) << std::endl;
-                debugPrint(all_bg.size());
             }
         }
+        return all_images;
+    }
+    
+    
+    // Read specified background image files, scale, and save as cv::Mats.
+    void fcdReadBackgroundImages(std::vector<pn> image_pathnames)
+    {
+        // TODO ?
+        float background_scale = 0.5;
+        
+        
+//        // Names of all files in backgroundImageDirectory() (expect image files)
+//        const std::vector<std::string> background_image_filenames =
+//        directory_filenames(backgroundImageDirectory());
+        std::cout << "Reading background images:" << std::endl;
+//        int min_x = std::numeric_limits<int>::max();
+//        int min_y = std::numeric_limits<int>::max();
+//        for (auto& filename : background_image_filenames)
+        for (auto& pathname : image_pathnames)
+        {
+//            // Compose absolute pathname for this background image file.
+//            std::string pathname = backgroundImageDirectory() + "/" + filename;
+            // Read the image file into an OpenCV image.
+            cv::Mat bg = cv::imread(pathname);
+            // When valid image file. (To ignore README.txt, .DS_Store, etc.)
+            if (cv::haveImageReader(pathname))
+            {
+                std::cout << "    " << pathname << std::endl;
+                // Keep track of smallest image dimensions.
+//                if (min_x > bg.cols) { min_x = bg.cols; }
+//                if (min_y > bg.rows) { min_y = bg.rows; }
+//                    if (min_x > bg.cols) { min_x = bg.cols; debugPrint(min_x); }
+//                    if (min_y > bg.rows) { min_y = bg.rows; debugPrint(min_y); }
+//                    // Adjust the size/resolution by "background_scale" parameter.
+//                    cv::resize(bg, bg,
+//    //                           cv::Size(), backgroundScale(), backgroundScale(),
+//                               cv::Size(), background_scale, background_scale,
+//                               cv::INTER_CUBIC);
+//                    // Add to collection of background images.
+//                    addBackgroundImage(bg);
+                
+                // Adjust the size/resolution by "background_scale" parameter.
+                cv::resize(bg, bg,
+                           cv::Size(), background_scale, background_scale,
+                           cv::INTER_CUBIC);
+
+                if (std::min(bg.rows, bg.cols) < fcdOutputImageSize())
+                {
+                    std::cout << "Scaled size smaller than output image size (";
+                    std::cout << fcdOutputImageSize();
+                    std::cout << "). Ignoring image file " << pathname;
+                }
+                else
+                {
+                    // Add to collection of background images.
+                    addBackgroundImage(bg);
+                }
+            }
+        }
+        std::cout << "Found " << backgroundImages().size();
+        std::cout << " background images." << std::endl;
+        assert(!backgroundImages().empty());
+//        checkBackgroundImageSizes(min_x, min_y);
     }
 
+    int fcdOutputImageSize() const { return 1024; }
+
+    // Randomly select one of the given backgrounds, then randomly select a
+    // window-sized rectangle within it.
+    // TODO Slightly modified version of selectRandomBackgroundForWindow()
+    cv::Mat fcdSelectRandomBackgroundImage()
+    {
+        // Pick one of the given background images at random.
+        const cv::Mat& bg = LPRS().randomSelectElement(backgroundImages());
+        // Find how much bigger (than GUI window) the original background is.
+//        int dx = std::max(0, int(bg.cols - guiSize().x()));
+//        int dy = std::max(0, int(bg.rows - guiSize().y()));
+        int dx = std::max(0, int(bg.cols - fcdOutputImageSize()));
+        int dy = std::max(0, int(bg.rows - fcdOutputImageSize()));
+        // Randomly select an offset within that size difference.
+        Vec2 random_position(LPRS().randomN(dx), LPRS().randomN(dy));
+        // Return a "submat" reference into the random rectangle inside "bg".
+//        return Texture::getCvMatRect(random_position, guiSize(), bg);
+        return Texture::getCvMatRect(random_position,
+                                     Vec2(fcdOutputImageSize(),
+                                          fcdOutputImageSize()),
+                                     bg);
+    }
+
+    
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
 private:
