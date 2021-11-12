@@ -67,10 +67,16 @@ public:
                             cv::Mat& opencv_image,
                             int& row_counter,
                             std::mutex& ocv_image_mutex) const;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
     void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
+    
+    // TODO 20211112: using for debugging, make part of UnitTest?
+    // Verify that given mat is: square and symmetric (vertically, horizontally,
+    // and diagonally (90° rotation))
+    static bool isDiskSymmetric(const cv::Mat& mat);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue

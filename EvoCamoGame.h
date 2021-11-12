@@ -606,9 +606,37 @@ public:
     typedef std::filesystem::directory_iterator di;
     typedef std::filesystem::path pn;
 
+//        void generateTrainingSetForFindConspicuousDisks()
+//        {
+//            LPRS().setSeed(20211111);
+//
+//            // In this function backgroundImageDirectory() is actually one level up,
+//            // the directory containing the image directories.
+//            pn image_direcory = backgroundImageDirectory();
+//            std::vector<pn> bg_paths = fcdCollectImagePathnames(image_direcory);
+//            std::sort(bg_paths.begin(), bg_paths.end());
+//
+//            fcdReadBackgroundImages(bg_paths);
+//            debugPrint(backgroundImages().size());
+//
+//            Vec2 output_size(fcdOutputImageSize(), fcdOutputImageSize());
+//    //        cv::Mat output(fcdOutputImageSize(), fcdOutputImageSize(), CV_8UC3);
+//    //        cv::Mat output(output_size.x(), output_size.y(), CV_8UC3);
+//    //        cv::Mat output;
+//            for (int i = 0; i < 500; i++)
+//            {
+//    //            output = fcdSelectRandomBackgroundImage();
+//                cv::Mat output = fcdSelectRandomBackgroundImage(output_size);
+//                // TODO note, this is getting scaled down since my screen is less
+//                // than 1024 PIXELS high.
+//                cv::imshow("output", output);
+//                Texture::waitKey();
+//            }
+//        }
+    
     void generateTrainingSetForFindConspicuousDisks()
     {
-        LPRS().setSeed(20211111);
+        LPRS().setSeed(20211112);
         
         // In this function backgroundImageDirectory() is actually one level up,
         // the directory containing the image directories.
@@ -619,10 +647,40 @@ public:
         fcdReadBackgroundImages(bg_paths);
         debugPrint(backgroundImages().size());
         
-        cv::Mat output(fcdOutputImageSize(), fcdOutputImageSize(), CV_8UC3);
+        Vec2 output_size(fcdOutputImageSize(), fcdOutputImageSize());
+        Vec2 disk_size(201, 201);  // TODO define API to return this.
         for (int i = 0; i < 500; i++)
         {
-            output = fcdSelectRandomBackgroundImage();
+            cv::Mat output = fcdSelectRandomBackgroundImage(output_size).clone();
+            
+            cv::Mat disk = fcdSelectRandomBackgroundImage(disk_size);
+            // TODO refactor matteImageCacheDiskOverBG() to pass in raster_ to a
+            //      version where the contents of the disk are in a cv::Mat
+//            Texture::matteImageCacheDiskOverBG(<#int size#>, <#cv::Mat &bg#>)
+//            Vec2 position = (output_size - disk_size) * LPRS().frandom01();
+//            Vec2 position((output_size - disk_size).x() * LPRS().frandom01(),
+//                          (output_size - disk_size).y() * LPRS().frandom01());
+            Vec2 diff = output_size - disk_size;
+            Vec2 position(diff.x() * LPRS().frandom01(),
+                          diff.y() * LPRS().frandom01());
+            
+            Vec2 center = position + disk_size / 2;
+            std::cout << "center (" << int(center.x()) << ", "
+                      << int(center.y()) << ")" << std::endl;
+            
+            cv::rectangle(output,
+                          cv::Point(position.x() - 5, position.y() - 5),
+                          cv::Point(position.x() + 205, position.y() + 205),
+                          cv::Scalar(255, 255, 255));
+            
+            cv::Mat target = Texture::getCvMatRect(position, disk_size, output);
+            disk.copyTo(target);
+            
+            // TODO would be nice to have a utility to select a random location
+            // on a given cv::Mat, which could then be the target. Similarly,
+            // the utility could be used inside fcdSelectRandomBackgroundImage()
+            // where a Texture::raster_ would be passed in.
+            
             // TODO note, this is getting scaled down since my screen is less
             // than 1024 PIXELS high.
             cv::imshow("output", output);
@@ -704,6 +762,20 @@ public:
         Vec2 output_size(fcdOutputImageSize(), fcdOutputImageSize());
         // Return a "submat" reference into the random rectangle inside "bg".
         return Texture::getCvMatRect(random_position, output_size, bg);
+    }
+    
+    cv::Mat fcdSelectRandomBackgroundImage(Vec2 size_in_pixels)
+    {
+        // Pick one of the given background images at random.
+        const cv::Mat& bg = LPRS().randomSelectElement(backgroundImages());
+        // How much bigger (than the output) is the background image.
+        int dx = std::max(0, int(bg.cols - fcdOutputImageSize()));
+        int dy = std::max(0, int(bg.rows - fcdOutputImageSize()));
+        // Randomly select an offset within that size difference.
+        Vec2 random_position(LPRS().randomN(dx), LPRS().randomN(dy));
+//        Vec2 output_size(fcdOutputImageSize(), fcdOutputImageSize());
+        // Return a "submat" reference into the random rectangle inside "bg".
+        return Texture::getCvMatRect(random_position, size_in_pixels, bg);
     }
     
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

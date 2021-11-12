@@ -476,43 +476,72 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 
 // TODO more fiddling 20211107:
 
+//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+//    {
+//        // Ensure the Texture has been rendered to image cache as disk.
+//        rasterizeToImageCache(size, true);
+//
+//    //    bool disk = true; // TODO ???
+//    //    RasterizeRowHelper rr(0, size, disk);
+//    //    bool disk = true; // TODO ???
+//        RasterizeHelper rh(size);
+//
+//    //    // Half the rendering's size corresponds to the disk's center.
+//    //    int half = size / 2;
+//
+//        // For each row.
+//    //    bool odd = size % 2;
+//    //    int last_j = size / 2;
+//    //    int last_j = rr.half;
+//    //    int first_j = -last_j + (odd ? 0 : 1);
+//    //    int first_j = -last_j + (rr.odd ? 0 : 1);
+//    //    for (int j = first_j; j <= last_j; j++)
+//        for (int j = rh.top_j; j <= rh.bot_j; j++)
+//        {
+//    //        bool disk = true; // TODO ???
+//    //        RasterizeRowHelper rr(j, size, disk);
+//    //        rr = RasterizeRowHelper(j, size, disk);
+//            rh = RasterizeHelper(j, size);
+//
+//            // On j-th row, from first to last pixel.
+//    //        cv::Rect row_rect(half + rr.first_pixel_index,
+//    //                          half + j + (odd ? 0 : -1),
+//    //        cv::Rect row_rect(rr.half + rr.first_pixel_index,
+//    ////                          rr.half + j + (odd ? 0 : -1),
+//    //                          rr.half + j + (rr.odd ? 0 : -1),
+//    //                          -rr.first_pixel_index + rr.last_pixel_index + 1,
+//    //                          1);
+//            cv::Rect row_rect(rh.half + rh.first_pixel_index,
+//                              rh.half + j + (rh.odd ? 0 : -1),
+//                              -rh.first_pixel_index + rh.last_pixel_index + 1,
+//                              1);
+//            // Create two submats (ROI) of the image cache and the destination mat.
+//            cv::Mat cache_row(*raster_, row_rect);
+//            cv::Mat bg_row(bg, row_rect);
+//            // Copy the cache row into the destination row.
+//            cache_row.copyTo(bg_row);
+//        }
+//    }
+
+// TODO clean up then refactor ro break off version for cv::Mat 20211112:
+
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
 // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
 void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
 {
     // Ensure the Texture has been rendered to image cache as disk.
     rasterizeToImageCache(size, true);
-    
-//    bool disk = true; // TODO ???
-//    RasterizeRowHelper rr(0, size, disk);
-//    bool disk = true; // TODO ???
-    RasterizeHelper rh(size);
-
-//    // Half the rendering's size corresponds to the disk's center.
-//    int half = size / 2;
-    
     // For each row.
-//    bool odd = size % 2;
-//    int last_j = size / 2;
-//    int last_j = rr.half;
-//    int first_j = -last_j + (odd ? 0 : 1);
-//    int first_j = -last_j + (rr.odd ? 0 : 1);
-//    for (int j = first_j; j <= last_j; j++)
+    RasterizeHelper rh(size);
     for (int j = rh.top_j; j <= rh.bot_j; j++)
     {
-//        bool disk = true; // TODO ???
-//        RasterizeRowHelper rr(j, size, disk);
-//        rr = RasterizeRowHelper(j, size, disk);
+        // Update rh for current row.
         rh = RasterizeHelper(j, size);
-
+        
         // On j-th row, from first to last pixel.
-//        cv::Rect row_rect(half + rr.first_pixel_index,
-//                          half + j + (odd ? 0 : -1),
-//        cv::Rect row_rect(rr.half + rr.first_pixel_index,
-////                          rr.half + j + (odd ? 0 : -1),
-//                          rr.half + j + (rr.odd ? 0 : -1),
-//                          -rr.first_pixel_index + rr.last_pixel_index + 1,
-//                          1);
+        // TODO shouldn't those 3 args be calculated inside RasterizeHelper?
         cv::Rect row_rect(rh.half + rh.first_pixel_index,
                           rh.half + j + (rh.odd ? 0 : -1),
                           -rh.first_pixel_index + rh.last_pixel_index + 1,
@@ -524,6 +553,31 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
         cache_row.copyTo(bg_row);
     }
 }
+
+
+// TODO 20211112: using for debugging, make part of UnitTest?
+// Verify that given mat is: square and symmetric (vertically, horizontally,
+// and diagonally (90° rotation))
+bool Texture::isDiskSymmetric(const cv::Mat& mat)
+{
+    bool ok = true;
+    int w = mat.cols;
+    int h = mat.rows;
+
+    for (int y = 0; y < h; y++)
+    {
+        int x0 = 0;
+        int x1 = w - 1;
+        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y));
+        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y));
+        if (pixel0 != pixel1) { ok = false; }
+        if (!ok) { break; }
+    }
+    
+    
+    return ok;
+}
+
 
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
