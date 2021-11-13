@@ -525,7 +525,34 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 //        }
 //    }
 
-// TODO clean up then refactor ro break off version for cv::Mat 20211112:
+// TODO clean up then refactor to break off version for cv::Mat 20211112:
+
+//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+//    {
+//        // Ensure the Texture has been rendered to image cache as disk.
+//        rasterizeToImageCache(size, true);
+//        // For each row.
+//        RasterizeHelper rh(size);
+//        for (int j = rh.top_j; j <= rh.bot_j; j++)
+//        {
+//            // Update rh for current row.
+//            rh = RasterizeHelper(j, size);
+//
+//            // On j-th row, from first to last pixel.
+//            // TODO shouldn't those 3 args be calculated inside RasterizeHelper?
+//            cv::Rect row_rect(rh.half + rh.first_pixel_index,
+//                              rh.half + j + (rh.odd ? 0 : -1),
+//                              -rh.first_pixel_index + rh.last_pixel_index + 1,
+//                              1);
+//            // Create two submats (ROI) of the image cache and the destination mat.
+//            cv::Mat cache_row(*raster_, row_rect);
+//            cv::Mat bg_row(bg, row_rect);
+//            // Copy the cache row into the destination row.
+//            cache_row.copyTo(bg_row);
+//        }
+//    }
 
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
 // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
@@ -533,6 +560,15 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
 {
     // Ensure the Texture has been rendered to image cache as disk.
     rasterizeToImageCache(size, true);
+    // Matte cached disk image over bg.
+    matteImageCacheDiskOverBG(*raster_, bg);
+}
+
+// Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
+void Texture::matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
+{
+    assert(disk.rows == disk.cols);
+    int size = disk.rows;
     // For each row.
     RasterizeHelper rh(size);
     for (int j = rh.top_j; j <= rh.bot_j; j++)
@@ -546,38 +582,211 @@ void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
                           rh.half + j + (rh.odd ? 0 : -1),
                           -rh.first_pixel_index + rh.last_pixel_index + 1,
                           1);
-        // Create two submats (ROI) of the image cache and the destination mat.
-        cv::Mat cache_row(*raster_, row_rect);
+        // Create two submats (ROIs) of the disk mat and the destination mat.
+        cv::Mat disk_row(disk, row_rect);
         cv::Mat bg_row(bg, row_rect);
-        // Copy the cache row into the destination row.
-        cache_row.copyTo(bg_row);
+        // Copy the disk row into the destination row.
+        disk_row.copyTo(bg_row);
     }
 }
 
+
+//    // TODO 20211112: using for debugging, make part of UnitTest?
+//    // Verify that given mat is: square and symmetric (vertically, horizontally,
+//    // and diagonally (90° rotation))
+//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
+//    {
+//        bool ok = true;
+//        int w = mat.cols;
+//        int h = mat.rows;
+//
+//        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
+//        {
+//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+//            return pixel0 != pixel1;
+//        };
+//
+//        for (int y = 0; y < h; y++)
+//        {
+//            int x0 = 0;
+//            int x1 = w - 1;
+//    //        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y));
+//    //        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y));
+//    //        if (pixel0 != pixel1) { ok = false; }
+//            if (pixels_differ(x0, y, x1, y)) { ok = false; }
+//            if (!ok) { break; }
+//        }
+//
+//        return ok;
+//    }
+
+//    // TODO 20211112: using for debugging, make part of UnitTest?
+//    // Verify that given mat is: square and symmetric (vertically, horizontally,
+//    // and diagonally (90° rotation))
+//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
+//    {
+//        bool ok = mat.cols == mat.rows;
+//        int size = mat.cols;
+//
+//        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
+//        {
+//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+//            return pixel0 != pixel1;
+//        };
+//
+//        // Check for x/horizontal symmetry.
+//        for (int y = 0; y < size; y++)
+//        {
+//            int x0 = 0;
+//            int x1 = size - 1;
+//            do
+//            {
+//                if (pixels_differ(x0, y, x1, y)) { ok = false; }
+//                if (!ok) { break; }
+//                x0++;
+//                x1--;
+//            }
+//            while (x0 < x1);
+//            if (!ok) { break; }
+//        }
+//
+//        // Check for y/vertical symmetry.
+//        for (int x = 0; x < size; x++)
+//        {
+//            int y0 = 0;
+//            int y1 = size - 1;
+//            do
+//            {
+//                if (pixels_differ(x, y0, x, y1)) { ok = false; }
+//                if (!ok) { break; }
+//                y0++;
+//                y1--;
+//            }
+//            while (y0 < y1);
+//            if (!ok) { break; }
+//        }
+//
+//        // Check for 90°/diagonal symmetry.
+//        for (int p = 0; p < size; p++)
+//        {
+//            for (int q = 0; q < size; q++)
+//            {
+//                if (pixels_differ(p, q, q, p)) { ok = false; }
+//                if (!ok) { break; }
+//            }
+//            if (!ok) { break; }
+//        }
+//
+//
+//
+//        return ok;
+//    }
 
 // TODO 20211112: using for debugging, make part of UnitTest?
 // Verify that given mat is: square and symmetric (vertically, horizontally,
-// and diagonally (90° rotation))
+// and diagonally (90° rotation)). Note: this function has multiple return
+// statements. I try to avoid that, but doing so here made it 9 lines longer.
 bool Texture::isDiskSymmetric(const cv::Mat& mat)
 {
-    bool ok = true;
-    int w = mat.cols;
-    int h = mat.rows;
-
-    for (int y = 0; y < h; y++)
+    if (mat.cols != mat.rows) { return false; }
+    auto pixels_differ = [&](int x0, int y0, int x1, int y1)
+    {
+        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+        return pixel0 != pixel1;
+    };
+    // Check for x/horizontal symmetry.
+    for (int y = 0; y < mat.rows; y++)
     {
         int x0 = 0;
-        int x1 = w - 1;
-        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y));
-        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y));
-        if (pixel0 != pixel1) { ok = false; }
-        if (!ok) { break; }
+        int x1 = mat.rows - 1;
+        do
+        {
+            if (pixels_differ(x0, y, x1, y)) { return false; }
+            x0++;
+            x1--;
+        }
+        while (x0 < x1);
     }
-    
-    
-    return ok;
+    // Check for y/vertical symmetry.
+    for (int x = 0; x < mat.rows; x++)
+    {
+        int y0 = 0;
+        int y1 = mat.rows - 1;
+        do
+        {
+            if (pixels_differ(x, y0, x, y1)) { return false; }
+            y0++;
+            y1--;
+        }
+        while (y0 < y1);
+    }
+    // Check for 90°/diagonal symmetry.
+    for (int p = 0; p < mat.rows; p++)
+    {
+        for (int q = 0; q < mat.rows; q++)
+        {
+            if (pixels_differ(p, q, q, p)) { return false; }
+        }
+    }
+    return true;
 }
 
+//    // TODO 20211112: using for debugging, make part of UnitTest?
+//    // Verify that given mat is: square and symmetric (vertically, horizontally,
+//    // and diagonally (90° rotation)). Note: this function has multiple return
+//    // statements. I try to avoid that, but doing so here made it 9 lines longer.
+//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
+//    {
+//        if (mat.cols != mat.rows) { return false; }
+//        auto pixels_differ = [&](int x0, int y0, int x1, int y1) -> void
+//        {
+//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+//    //        return pixel0 != pixel1;
+//            if (pixel0 != pixel1) return false;
+//        };
+//        // Check for x/horizontal symmetry.
+//        for (int y = 0; y < mat.rows; y++)
+//        {
+//            int x0 = 0;
+//            int x1 = mat.rows - 1;
+//            do
+//            {
+//    //            if (pixels_differ(x0, y, x1, y)) { return false; }
+//                pixels_differ(x0, y, x1, y);
+//                x0++;
+//                x1--;
+//            }
+//            while (x0 < x1);
+//        }
+//        // Check for y/vertical symmetry.
+//        for (int x = 0; x < mat.rows; x++)
+//        {
+//            int y0 = 0;
+//            int y1 = mat.rows - 1;
+//            do
+//            {
+//    //            if (pixels_differ(x, y0, x, y1)) { return false; }
+//                pixels_differ(x, y0, x, y1);
+//                y0++;
+//                y1--;
+//            }
+//            while (y0 < y1);
+//        }
+//        // Check for 90°/diagonal symmetry.
+//        for (int p = 0; p < mat.rows; p++)
+//        {
+//            for (int q = 0; q < mat.rows; q++)
+//            {
+//    //            if (pixels_differ(p, q, q, p)) { return false; }
+//                pixels_differ(p, q, q, p);
+//            }
+//        }
+//        return true;
+//    }
 
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

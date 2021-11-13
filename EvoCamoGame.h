@@ -674,7 +674,8 @@ public:
                           cv::Scalar(255, 255, 255));
             
             cv::Mat target = Texture::getCvMatRect(position, disk_size, output);
-            disk.copyTo(target);
+//            disk.copyTo(target);
+            Texture::matteImageCacheDiskOverBG(disk, target); 
             
             // TODO would be nice to have a utility to select a random location
             // on a given cv::Mat, which could then be the target. Similarly,

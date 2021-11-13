@@ -71,6 +71,10 @@ public:
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
     void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
     
+    // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
+    static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg);
+
+    
     // TODO 20211112: using for debugging, make part of UnitTest?
     // Verify that given mat is: square and symmetric (vertically, horizontally,
     // and diagonally (90° rotation))
