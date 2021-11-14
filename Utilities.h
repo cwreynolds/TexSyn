@@ -658,3 +658,15 @@ inline static OccasionalSleep occasional_sleep(0.01, 1);
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+inline std::string n_letters(int n, RandomSequence& rs)
+{
+    std::string result;
+    std::string letters = ("abcdefghijklmnopqrstuvwxyz"
+                           "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    for (int i = 0; i < n; i++)
+    {
+        result += letters.at((rs.nextInt() / 61) % letters.size());
+    }
+    return result;
+}
