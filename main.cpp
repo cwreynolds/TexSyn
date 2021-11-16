@@ -6078,16 +6078,16 @@ int main(int argc, const char * argv[])
 
     // fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
 
-//    CommandLine cmd
-//    ({
-//        "GenerateTrainingSetForFindConspicuousDisks",
-//        "/Users/cwr/Desktop/TexSyn_temp/fcd_training_set",
-//        "/Users/cwr/Pictures/camouflage_backgrounds",
-//        "123456789"
-//    });
-//    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
-//    fcd.run();
-    
+    //    CommandLine cmd
+    //    ({
+    //        "GenerateTrainingSetForFindConspicuousDisks",
+    //        "/Users/cwr/Desktop/TexSyn_temp/fcd_training_set",
+    //        "/Users/cwr/Pictures/camouflage_backgrounds",
+    //        "123456789"
+    //    });
+    //    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
+    //    fcd.run();
+
     GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -357,203 +357,6 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
-//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-//    {
-//        // Ensure the Texture has been rendered to image cache.
-//        rasterizeToImageCache(size, true);
-//        // Half the rendering's size corresponds to the disk's center.
-//        int half = size / 2;
-//        // For each row.
-//        for (int j = -half; j <= half; j++)
-//        {
-//            // First and last pixels on j-th row of time
-//            int x_limit = std::sqrt(sq(half) - sq(j));
-//            // On j-th row, +/- x_limit from center.
-//            cv::Rect row_rect(half - x_limit, half - j, x_limit * 2, 1);
-//            // Create two submats (ROI) of the image cache and the destination mat.
-//            cv::Mat cache_row(*raster_, row_rect);
-//            cv::Mat bg_row(bg, row_rect);
-//            // Copy the cache row into the destination row.
-//            cache_row.copyTo(bg_row);
-//        }
-//    }
-
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-//    {
-//        // Ensure the Texture has been rendered to image cache.
-//        rasterizeToImageCache(size, true);
-//        // Half the rendering's size corresponds to the disk's center.
-//        int half = size / 2;
-//        // For each row.
-//
-//        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-//    //    for (int j = -half; j <= half; j++)
-//
-//        bool odd = size % 2;
-//        int last_j = size / 2;
-//        int first_j = -last_j + (odd ? 0 : 1);
-//        for (int j = first_j; j <= last_j; j++)
-//        //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-//        {
-//            //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-//    //        // First and last pixels on j-th row of time
-//    //        int x_limit = std::sqrt(sq(half) - sq(j));
-//    //        // On j-th row, +/- x_limit from center.
-//    //        cv::Rect row_rect(half - x_limit, half - j, x_limit * 2, 1);
-//
-//            bool disk = true; // TODO ???
-//            RasterizeRowHelper rr(j, size, disk);
-//
-//    //        // First and last pixels on j-th row of time
-//    //        int x_limit = std::sqrt(sq(half) - sq(j));
-//            // On j-th row, +/- x_limit from center.
-//    //        cv::Rect row_rect(half - rr.first_pixel_index,
-//            cv::Rect row_rect(half + rr.first_pixel_index,
-//    //                          half - j,
-//    //                          half + j,
-//                              half + j + (odd ? 0 : -1),
-//    //                          rr.last_pixel_index - rr.first_pixel_index,
-//    //                          -rr.first_pixel_index + rr.last_pixel_index + (odd ? 1 : 0),
-//                              -rr.first_pixel_index + rr.last_pixel_index + 1,
-//                              1);
-//
-//            debugPrint(j);
-//            debugPrint(size);
-//            debugPrint(half);
-//            debugPrint(rr.first_pixel_index);
-//            debugPrint(rr.last_pixel_index);
-//            debugPrint(half + rr.first_pixel_index);
-//            debugPrint(half + j);
-//            debugPrint(-rr.first_pixel_index + rr.last_pixel_index);
-//
-//            // cv::Rect_<<#typename _Tp#>>(<#_Tp _x#>, <#_Tp _y#>, <#_Tp _width#>, <#_Tp _height#>)
-//
-//            //~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~
-//
-//            // Create two submats (ROI) of the image cache and the destination mat.
-//            cv::Mat cache_row(*raster_, row_rect);
-//            cv::Mat bg_row(bg, row_rect);
-//            // Copy the cache row into the destination row.
-//            cache_row.copyTo(bg_row);
-//        }
-//    }
-
-
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-//    {
-//        // Ensure the Texture has been rendered to image cache.
-//        rasterizeToImageCache(size, true);
-//        // Half the rendering's size corresponds to the disk's center.
-//        int half = size / 2;
-//        // For each row.
-//        bool odd = size % 2;
-//        int last_j = size / 2;
-//        int first_j = -last_j + (odd ? 0 : 1);
-//        for (int j = first_j; j <= last_j; j++)
-//        {
-//            bool disk = true; // TODO ???
-//            RasterizeRowHelper rr(j, size, disk);
-//            // On j-th row, from first to last pixel.
-//            cv::Rect row_rect(half + rr.first_pixel_index,
-//                              half + j + (odd ? 0 : -1),
-//                              -rr.first_pixel_index + rr.last_pixel_index + 1,
-//                              1);
-//            // Create two submats (ROI) of the image cache and the destination mat.
-//            cv::Mat cache_row(*raster_, row_rect);
-//            cv::Mat bg_row(bg, row_rect);
-//            // Copy the cache row into the destination row.
-//            cache_row.copyTo(bg_row);
-//        }
-//    }
-
-// TODO more fiddling 20211107:
-
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-//    {
-//        // Ensure the Texture has been rendered to image cache as disk.
-//        rasterizeToImageCache(size, true);
-//
-//    //    bool disk = true; // TODO ???
-//    //    RasterizeRowHelper rr(0, size, disk);
-//    //    bool disk = true; // TODO ???
-//        RasterizeHelper rh(size);
-//
-//    //    // Half the rendering's size corresponds to the disk's center.
-//    //    int half = size / 2;
-//
-//        // For each row.
-//    //    bool odd = size % 2;
-//    //    int last_j = size / 2;
-//    //    int last_j = rr.half;
-//    //    int first_j = -last_j + (odd ? 0 : 1);
-//    //    int first_j = -last_j + (rr.odd ? 0 : 1);
-//    //    for (int j = first_j; j <= last_j; j++)
-//        for (int j = rh.top_j; j <= rh.bot_j; j++)
-//        {
-//    //        bool disk = true; // TODO ???
-//    //        RasterizeRowHelper rr(j, size, disk);
-//    //        rr = RasterizeRowHelper(j, size, disk);
-//            rh = RasterizeHelper(j, size);
-//
-//            // On j-th row, from first to last pixel.
-//    //        cv::Rect row_rect(half + rr.first_pixel_index,
-//    //                          half + j + (odd ? 0 : -1),
-//    //        cv::Rect row_rect(rr.half + rr.first_pixel_index,
-//    ////                          rr.half + j + (odd ? 0 : -1),
-//    //                          rr.half + j + (rr.odd ? 0 : -1),
-//    //                          -rr.first_pixel_index + rr.last_pixel_index + 1,
-//    //                          1);
-//            cv::Rect row_rect(rh.half + rh.first_pixel_index,
-//                              rh.half + j + (rh.odd ? 0 : -1),
-//                              -rh.first_pixel_index + rh.last_pixel_index + 1,
-//                              1);
-//            // Create two submats (ROI) of the image cache and the destination mat.
-//            cv::Mat cache_row(*raster_, row_rect);
-//            cv::Mat bg_row(bg, row_rect);
-//            // Copy the cache row into the destination row.
-//            cache_row.copyTo(bg_row);
-//        }
-//    }
-
-// TODO clean up then refactor to break off version for cv::Mat 20211112:
-
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-//    {
-//        // Ensure the Texture has been rendered to image cache as disk.
-//        rasterizeToImageCache(size, true);
-//        // For each row.
-//        RasterizeHelper rh(size);
-//        for (int j = rh.top_j; j <= rh.bot_j; j++)
-//        {
-//            // Update rh for current row.
-//            rh = RasterizeHelper(j, size);
-//
-//            // On j-th row, from first to last pixel.
-//            // TODO shouldn't those 3 args be calculated inside RasterizeHelper?
-//            cv::Rect row_rect(rh.half + rh.first_pixel_index,
-//                              rh.half + j + (rh.odd ? 0 : -1),
-//                              -rh.first_pixel_index + rh.last_pixel_index + 1,
-//                              1);
-//            // Create two submats (ROI) of the image cache and the destination mat.
-//            cv::Mat cache_row(*raster_, row_rect);
-//            cv::Mat bg_row(bg, row_rect);
-//            // Copy the cache row into the destination row.
-//            cache_row.copyTo(bg_row);
-//        }
-//    }
-
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
 // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
 void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
@@ -575,13 +378,8 @@ void Texture::matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
     {
         // Update rh for current row.
         rh = RasterizeHelper(j, size);
-        
         // On j-th row, from first to last pixel.
-        // TODO shouldn't those 3 args be calculated inside RasterizeHelper?
-        cv::Rect row_rect(rh.half + rh.first_pixel_index,
-                          rh.half + j + (rh.odd ? 0 : -1),
-                          -rh.first_pixel_index + rh.last_pixel_index + 1,
-                          1);
+        cv::Rect row_rect(rh.row_rect_x, rh.row_index, rh.row_rect_w, 1);
         // Create two submats (ROIs) of the disk mat and the destination mat.
         cv::Mat disk_row(disk, row_rect);
         cv::Mat bg_row(bg, row_rect);
@@ -589,100 +387,6 @@ void Texture::matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
         disk_row.copyTo(bg_row);
     }
 }
-
-
-//    // TODO 20211112: using for debugging, make part of UnitTest?
-//    // Verify that given mat is: square and symmetric (vertically, horizontally,
-//    // and diagonally (90° rotation))
-//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
-//    {
-//        bool ok = true;
-//        int w = mat.cols;
-//        int h = mat.rows;
-//
-//        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
-//        {
-//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
-//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
-//            return pixel0 != pixel1;
-//        };
-//
-//        for (int y = 0; y < h; y++)
-//        {
-//            int x0 = 0;
-//            int x1 = w - 1;
-//    //        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y));
-//    //        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y));
-//    //        if (pixel0 != pixel1) { ok = false; }
-//            if (pixels_differ(x0, y, x1, y)) { ok = false; }
-//            if (!ok) { break; }
-//        }
-//
-//        return ok;
-//    }
-
-//    // TODO 20211112: using for debugging, make part of UnitTest?
-//    // Verify that given mat is: square and symmetric (vertically, horizontally,
-//    // and diagonally (90° rotation))
-//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
-//    {
-//        bool ok = mat.cols == mat.rows;
-//        int size = mat.cols;
-//
-//        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
-//        {
-//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
-//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
-//            return pixel0 != pixel1;
-//        };
-//
-//        // Check for x/horizontal symmetry.
-//        for (int y = 0; y < size; y++)
-//        {
-//            int x0 = 0;
-//            int x1 = size - 1;
-//            do
-//            {
-//                if (pixels_differ(x0, y, x1, y)) { ok = false; }
-//                if (!ok) { break; }
-//                x0++;
-//                x1--;
-//            }
-//            while (x0 < x1);
-//            if (!ok) { break; }
-//        }
-//
-//        // Check for y/vertical symmetry.
-//        for (int x = 0; x < size; x++)
-//        {
-//            int y0 = 0;
-//            int y1 = size - 1;
-//            do
-//            {
-//                if (pixels_differ(x, y0, x, y1)) { ok = false; }
-//                if (!ok) { break; }
-//                y0++;
-//                y1--;
-//            }
-//            while (y0 < y1);
-//            if (!ok) { break; }
-//        }
-//
-//        // Check for 90°/diagonal symmetry.
-//        for (int p = 0; p < size; p++)
-//        {
-//            for (int q = 0; q < size; q++)
-//            {
-//                if (pixels_differ(p, q, q, p)) { ok = false; }
-//                if (!ok) { break; }
-//            }
-//            if (!ok) { break; }
-//        }
-//
-//
-//
-//        return ok;
-//    }
 
 // TODO 20211112: using for debugging, make part of UnitTest?
 // Verify that given mat is: square and symmetric (vertically, horizontally,
@@ -734,85 +438,24 @@ bool Texture::isDiskSymmetric(const cv::Mat& mat)
     return true;
 }
 
-//    // TODO 20211112: using for debugging, make part of UnitTest?
-//    // Verify that given mat is: square and symmetric (vertically, horizontally,
-//    // and diagonally (90° rotation)). Note: this function has multiple return
-//    // statements. I try to avoid that, but doing so here made it 9 lines longer.
-//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
-//    {
-//        if (mat.cols != mat.rows) { return false; }
-//        auto pixels_differ = [&](int x0, int y0, int x1, int y1) -> void
-//        {
-//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
-//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
-//    //        return pixel0 != pixel1;
-//            if (pixel0 != pixel1) return false;
-//        };
-//        // Check for x/horizontal symmetry.
-//        for (int y = 0; y < mat.rows; y++)
-//        {
-//            int x0 = 0;
-//            int x1 = mat.rows - 1;
-//            do
-//            {
-//    //            if (pixels_differ(x0, y, x1, y)) { return false; }
-//                pixels_differ(x0, y, x1, y);
-//                x0++;
-//                x1--;
-//            }
-//            while (x0 < x1);
-//        }
-//        // Check for y/vertical symmetry.
-//        for (int x = 0; x < mat.rows; x++)
-//        {
-//            int y0 = 0;
-//            int y1 = mat.rows - 1;
-//            do
-//            {
-//    //            if (pixels_differ(x, y0, x, y1)) { return false; }
-//                pixels_differ(x, y0, x, y1);
-//                y0++;
-//                y1--;
-//            }
-//            while (y0 < y1);
-//        }
-//        // Check for 90°/diagonal symmetry.
-//        for (int p = 0; p < mat.rows; p++)
-//        {
-//            for (int q = 0; q < mat.rows; q++)
-//            {
-//    //            if (pixels_differ(p, q, q, p)) { return false; }
-//                pixels_differ(p, q, q, p);
-//            }
-//        }
-//        return true;
-//    }
-
-
-//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
 Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
 {
     // Read TexSyn Color from Texture at (i, j).
     Color color(0, 0, 0);
-//        Vec2 pixel_center = Vec2(i, j) / half;
     expensive_to_nest = 0;
     if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
     {
         float pixel_radius = 2.0 / size;
         std::vector<Vec2> offsets;
-//            RandomSequence rs(pixel_center.hash());
         RandomSequence rs(position.hash());
         jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
                                     pixel_radius * 2, rs, offsets);
         for (Vec2 offset : offsets)
-//                color += getColorClipped(pixel_center + offset);
             color += getColorClipped(position + offset);
         color = color / sq(sqrt_of_aa_subsample_count);
     }
     else
     {
-//            color = getColorClipped(pixel_center);
         color = getColorClipped(position);
     }
     return color;
@@ -1087,8 +730,6 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
         Vec2 lr = upper_left_position + size_in_pixels;
         assert("rect extends off left edge" && (ul.x() >= 0));
         assert("rect extends off top edge" && (ul.y() >= 0));
-//        assert("rect extends off right edge" && (lr.x() < cv_mat.cols));
-//        assert("rect extends off bottom edge" && (lr.y() < cv_mat.rows));
         assert("rect extends off right edge" && (lr.x() <= cv_mat.cols));
         assert("rect extends off bottom edge" && (lr.y() <= cv_mat.rows));
     }

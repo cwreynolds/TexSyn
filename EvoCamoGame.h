@@ -585,201 +585,6 @@ public:
         }
     }
     
-//        //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-//        // TODO 20211109
-//        //
-//        // Experimental code for generating training set of images for learning to
-//        // "find conspicuous disks". Generates random image files with a background
-//        // texture and a disk of another texture matted on top. Image files maybe
-//        // 1024 square? Textures a mix of "random" TexSyn textures and some natural
-//        // textures from photos, as in /Users/cwr/Pictures/camouflage_backgrounds
-//        //
-//        // (Maybe filenames like 3485729384_0132_0981.jpg where the first number is
-//        // just a random UID, and the second two numbers are the ground truth center
-//        // location of the disk.)
-//        //
-//        // Maybe this should be its own top level class with a CommandLine arg? Not
-//        // sure how much it has in common with EvoCamoGame.
-//        //
-//        // QQQ
-//            
-//        typedef std::filesystem::directory_iterator di;
-//        typedef std::filesystem::path pn;
-//        
-//        void generateTrainingSetForFindConspicuousDisks()
-//        {
-//            LPRS().setSeed(20211113);
-//            
-//            // In this function backgroundImageDirectory() is actually one level up,
-//            // the directory containing the image directories.
-//            pn image_direcory = backgroundImageDirectory();
-//            std::vector<pn> bg_paths = fcdCollectImagePathnames(image_direcory);
-//            std::sort(bg_paths.begin(), bg_paths.end());
-//
-//            fcdReadBackgroundImages(bg_paths);
-//            debugPrint(backgroundImages().size());
-//            
-//            for (int i = 0; i < 500; i++)
-//            {
-//                cv::Mat output = fcdSelectRandomBackgroundImage().clone();
-//                cv::Mat disk = fcdSelectRandomDiskImage();
-//                Vec2 diff = fcdOutputSize() - fcdDiskSize();
-//                Vec2 position(diff.x() * LPRS().frandom01(),
-//                              diff.y() * LPRS().frandom01());
-//                Vec2 center = position + fcdDiskSize() / 2;
-//    //            std::cout << "center (" << int(center.x()) << ", "
-//    //                      << int(center.y()) << ")" << std::endl;
-//                std::cout << "name: " << fndOutputFileName(center) << std::endl;
-//                
-//                // TODO temp for texting, draw square around disk.
-//                cv::rectangle(output,
-//                              cv::Point(position.x() - 5, position.y() - 5),
-//                              cv::Point(position.x() + 205, position.y() + 205),
-//                              cv::Scalar(255, 255, 255));
-//                
-//                // Matte disk texture over random position in output texture.
-//                cv::Mat target =
-//                    Texture::getCvMatRect(position, fcdDiskSize(), output);
-//                Texture::matteImageCacheDiskOverBG(disk, target);
-//
-//                // TODO note, this is getting scaled down since my screen is less
-//                // than 1024 PIXELS high.
-//                cv::imshow("output", output);
-//                Texture::waitKey();
-//            }
-//        }
-//        
-//        std::vector<pn> fcdCollectImagePathnames(pn dir_of_image_dirs)
-//        {
-//            std::vector<pn> all_images;
-//            // For each of the directories of images under dir_of_image_dirs.
-//            for (const auto& entry : di(dir_of_image_dirs))
-//            {
-//                pn directory = entry;
-//                if (std::filesystem::is_directory(directory))
-//                {
-//                    // Collect contents of "directory" into "files".
-//                    std::vector<pn> files;
-//                    for (const auto& f : di(directory)) { files.push_back(f); }
-//                    // Append image pathnames from this directory to the main list.
-//                    all_images.insert(end(all_images), begin(files), end(files));
-//                }
-//            }
-//            return all_images;
-//        }
-//        
-//        // Read specified background image files, scale, and save as cv::Mats.
-//        void fcdReadBackgroundImages(std::vector<pn> image_pathnames)
-//        {
-//            // TODO ?
-//            float background_scale = 0.5;
-//            std::cout << "Reading background images:" << std::endl;
-//            for (auto& pathname : image_pathnames)
-//            {
-//                // Read the image file into an OpenCV image.
-//                cv::Mat bg = cv::imread(pathname);
-//                // When valid image file. (To ignore README.txt, .DS_Store, etc.)
-//                if (cv::haveImageReader(pathname))
-//                {
-//                    std::cout << "    ";
-//                    
-//    //                // Adjust the size/resolution by "background_scale" parameter.
-//    //                cv::resize(bg, bg,
-//    //                           cv::Size(), background_scale, background_scale,
-//    //                           cv::INTER_CUBIC);
-//                    // Adjust the size/resolution by "background_scale" parameter.
-//                    if (std::min(bg.rows, bg.cols) >=
-//                        (fcdOutputSize().x() / background_scale))
-//                    {
-//                        cv::resize(bg, bg,
-//                                   cv::Size(), background_scale, background_scale,
-//                                   cv::INTER_CUBIC);
-//                    }
-//                    if (std::min(bg.rows, bg.cols) >= fcdOutputSize().x())
-//                    {
-//                        // Add to collection of background images.
-//                        std::cout << "Adding " << pathname << std::endl;
-//                        addBackgroundImage(bg);
-//                    }
-//                    else
-//                    {
-//                        // Log and ignore.
-//                        std::cout << "Ignore " << pathname << " Scaled input image "
-//                                  << "smaller than output image size ("
-//                                  << fcdOutputSize().x() << ")." << std::endl;
-//                    }
-//                }
-//            }
-//            std::cout << "Found " << backgroundImages().size();
-//            std::cout << " background images." << std::endl;
-//            assert(!backgroundImages().empty());
-//        }
-//
-//        // Randomly select content to be the background of a generated image. This
-//        // may be from one of the given source photographs, or synthesized on the
-//        // fly as a TexSyn texture.
-//        cv::Mat fcdSelectRandomBackgroundImage()
-//        {
-//            // Use a photo 60% of the time, otherwise synthesize a texture.
-//            return (LPRS().frandom01() < 0.6 ?
-//                    fcdSelectRandomPhoto(fcdOutputSize()) :
-//                    fcdMakeRandomTexture(fcdOutputSize()));
-//        }
-//
-//        // Randomly select content for disk on a generated image. This may be from
-//        // one of the given source photographs, or synthesized on the fly as a
-//        // TexSyn texture.
-//        cv::Mat fcdSelectRandomDiskImage()
-//        {
-//            // Use a photo 30% of the time, otherwise synthesize a texture.
-//            return (LPRS().frandom01() < 0.3 ?
-//                    fcdSelectRandomPhoto(fcdDiskSize()) :
-//                    fcdMakeRandomTexture(fcdDiskSize()));
-//        }
-//
-//        // Randomly select one of the given source photographs, then randomly select
-//        // a "size_in_pixels" rectangle within it.
-//        cv::Mat fcdSelectRandomPhoto(Vec2 size_in_pixels)
-//        {
-//            // Pick one of the given background images at random.
-//            const cv::Mat& bg = LPRS().randomSelectElement(backgroundImages());
-//            // How much bigger (than the output) is the background image.
-//            int dx = std::max(0, int(bg.cols - fcdOutputSize().x()));
-//            int dy = std::max(0, int(bg.rows - fcdOutputSize().y()));
-//            // Randomly select an offset within that size difference.
-//            Vec2 random_position(LPRS().randomN(dx), LPRS().randomN(dy));
-//            // Return a "submat" reference into the random rectangle inside "bg".
-//            return Texture::getCvMatRect(random_position, size_in_pixels, bg);
-//        }
-//        
-//        // Generate a random TexSyn texture from a random LazyPredator GpTree.
-//        cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
-//        {
-//            std::cout << "making texture (size " << size_in_pixels <<  ")...";
-//            Timer t("done.");
-//            int max_init_tree_size = 40;
-//            const FunctionSet& function_set = GP::fs();
-//            GpTree tree;
-//            function_set.makeRandomTree(max_init_tree_size, tree);
-//            Individual individual(tree);
-//            Texture* texture = GP::textureFromIndividual(&individual);
-//            texture->rasterizeToImageCache(size_in_pixels.x(), false);
-//            return texture->getCvMat();
-//        }
-//        
-//        // Random UUID-like string plus pixel x and y of disk center.
-//        std::string fndOutputFileName(Vec2 center)
-//        {
-//            return (n_letters(10, LPRS()) +
-//                    "_" + std::to_string(int(center.x())) +
-//                    "_" + std::to_string(int(center.y())));
-//        }
-//        
-//        Vec2 fcdDiskSize() const { return Vec2(201, 201); }
-//        Vec2 fcdOutputSize() const { return Vec2(1024, 1024); }
-//
-//        //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-
 private:
     // Name of run. (Defaults to directory holding background image files.)
     const std::string run_name_;
@@ -834,9 +639,6 @@ private:
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
 
-//~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-// TODO 20211109
-//
 // Experimental code for generating training set of images for learning to
 // "find conspicuous disks". Generates random image files with a background
 // texture and a disk of another texture matted on top. Image files maybe
@@ -847,12 +649,9 @@ private:
 // just a random UID, and the second two numbers are the ground truth center
 // location of the disk.)
 //
-// Maybe this should be its own top level class with a CommandLine arg? Not
-// sure how much it has in common with EvoCamoGame.
-//
-// QQQ
+// Perhaps this should be in its own file?
 
-// command line?
+// command line args:
 // fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
 
 class GenerateTrainingSetForFindConspicuousDisks
@@ -906,11 +705,6 @@ public:
         cv::imshow("output", output);
         // TODO needs to save to file
         std::string path = output_directory_ / outputFileName(center);
-//        std::cout << "Writing image " << ++output_counter_
-//                  << " to " << path << std::endl;
-//        std::cout << "Writing image " << ++output_counter_
-//        << " to " << path << " ... ";
-//        Timer t("done,");
         std::cout << "Writing image " << ++output_counter_
                   << " to " << path << " ... ";
         cv::imwrite(path, output);
@@ -1021,8 +815,6 @@ public:
     // Generate a random TexSyn texture from a random LazyPredator GpTree.
     cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
     {
-//        std::cout << "Making texture (" << size_in_pixels.x() << "x"
-//                  << size_in_pixels.y() << ")...";
         std::cout << "Making texture (" << size_in_pixels.x() << "x"
                   << size_in_pixels.y() << ")..." << std::flush;
         Timer t("done,");
@@ -1063,14 +855,10 @@ private:
     const float disk_size_;
     // Maximum size of random LazyPredator GpTree for TexSyn Texture.
     const int tree_size_;
-    
+    // Collection of all image file pathnames found under input_photo_dir_.
     std::vector<pn> all_photo_pathnames_;
+    // Collection of all input photos, as cv::Mats, in all_photo_pathnames_
     std::vector<cv::Mat> all_photos_;
-    
+    // Used only for logging.
     int output_counter_ = 0;
 };
-
-// command line?
-// fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
-
-//~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

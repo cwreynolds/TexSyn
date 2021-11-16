@@ -55,12 +55,6 @@ public:
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
     void rasterizeToImageCache(int size, bool disk) const;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
-//    // to run in its own thread, uses mutex to synchonize access to the image.
-//    void rasterizeRowOfDisk(int j, int size, bool disk,
-//                            cv::Mat& opencv_image,
-//                            std::mutex& ocv_image_mutex) const;
     // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
     // to run in its own thread, uses mutex to synchonize access to the image.
     void rasterizeRowOfDisk(int j, int size, bool disk,
@@ -73,14 +67,10 @@ public:
     
     // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
     static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg);
-
-    
     // TODO 20211112: using for debugging, make part of UnitTest?
     // Verify that given mat is: square and symmetric (vertically, horizontally,
     // and diagonally (90° rotation))
     static bool isDiskSymmetric(const cv::Mat& mat);
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
@@ -188,11 +178,9 @@ public:
     // Get/set global default "render as disk" flag: disk if true, else square.
     static bool getDefaultRenderAsDisk() { return render_as_disk_; }
     static void setDefaultRenderAsDisk(bool disk) { render_as_disk_ = disk; }
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Get/set global switch for "parallel render": one thread per row.
     static int getParallelRender() { return render_thread_per_row_; }
     static void setParallelRender(bool p) { render_thread_per_row_ = p; }
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     thread_local static inline int expensive_to_nest = 0;
     // Score a Texture on how much "high" frequency it has.
     // TODO temp? Similar in intent to wiggliness() in GP.h
@@ -230,209 +218,6 @@ public:
     static inline bool seed_from_hashed_args = true;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        class RasterizeRowHelper
-//        {
-//        public:
-//            RasterizeRowHelper(int j, int size, bool disk) :
-//                j_(j), size_(size), disk_(disk)
-//            {
-//                odd_size = size % 2;
-//    //            half = size / float(2);
-//                half = size / 2;
-//
-//                // Which row we are on? [0, size-1]
-//    //            row_index = (odd_size ?
-//    //                         j + half :
-//    //                         j + half - 1);
-//                row_index = j + half + (odd_size ? 0 : -1);
-//
-//    //            auto half_step_toward_0 =[](float x)
-//    //                { return x + (x > 0 ? -0.5 : 0.5); };
-//    //            row_y = odd_size ? j : (j + (j > 0 ? -0.5 : 0.5));
-//    //            row_y = odd_size ? j : half_step_toward_0(j);
-//
-//                row_y = (odd_size ? j : j - 0.5);
-//
-//                // define float offsets for even-diameter case??????????????
-//
-//    //            last_pixel_index =
-//    //                (disk ?
-//    //                 (odd_size ?
-//    //                  std::sqrt(sq(half) - sq(j)) :
-//    //                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)))) :
-//    ////                  half_step_toward_0(std::sqrt(sq(half) - sq(row_y)) + 1)) :
-//    //                 half);
-//    //            last_pixel_index = disk ? std::sqrt(sq(half) - sq(j)) : half;
-//
-//    //                last_pixel_index = (disk ?
-//    //                                    (odd_size ?
-//    //                                     std::sqrt(sq(half) - sq(j)) :
-//    //                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
-//    //                                    half);
-//    //
-//    //    //            first_pixel_index = -last_pixel_index;
-//    //                first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
-//
-//    //            last_pixel_index = (disk ?
-//    //                                (odd_size ?
-//    //                                 std::sqrt(sq(half) - sq(j)) :
-//    //                                 std::sqrt(sq(size * 0.5) - sq(row_y))) :
-//    //                                half);
-//
-//                last_pixel_index = (disk ?
-//                                    (odd_size ?
-//                                     std::sqrt(sq(half) - sq(j)) :
-//                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
-//                                    (odd_size ? half : half - 1));
-//
-//    //            first_pixel_index = -last_pixel_index;
-//    //            first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
-//    //                first_pixel_index = (-last_pixel_index +
-//    //    //                                 (odd_size ? 0 : -1) +
-//    //                                     (disk && odd_size ? 0 : 1));
-//    //            first_pixel_index = -last_pixel_index;
-//                first_pixel_index = -last_pixel_index + (odd_size ? 0 : -1);
-//
-//    //            std::cout << "RR:";
-//    //            std::cout << " j=" << j;
-//    //            std::cout << " size=" << size;
-//    //            std::cout << " odd_size=" << odd_size;
-//    //            std::cout << " half=" << half;
-//    //            std::cout << " row_y=" << row_y;
-//    //            std::cout << " row_index=" << row_index;
-//    //            std::cout << " first_pixel_index=" << first_pixel_index;
-//    //            std::cout << " last_pixel_index=" << last_pixel_index;
-//    //            std::cout << std::endl;
-//            }
-//            bool odd_size;
-//            int half;
-//            int first_pixel_index;
-//            int last_pixel_index;
-//            float row_y;
-//            int row_index;
-//        private:
-//            int j_;
-//            int size_;
-//            bool disk_;
-//        };
-
-//        class RasterizeRowHelper
-//        {
-//        public:
-//    //        RasterizeRowHelper(int j, int size, bool disk) :
-//    //            j_(j), size_(size), disk_(disk)
-//            RasterizeRowHelper(int j_, int size_, bool disk_)
-//                : j(j_), size(size_), disk(disk_)
-//            {
-//                odd = size % 2;                        // Is size (diameter) odd?
-//                half = size / 2;                       // Half size (radius) as int
-//                row_index = j + half + (odd ? 0 : -1); // Which row? [0, size-1]
-//                row_y = odd ? j : j - 0.5;             // Row center as float
-//
-//                // Index of first and last pixel of disk on this row.
-//    //                last_pixel_index = (disk ?
-//    //                                    (odd ?
-//    //    //                                 std::sqrt(sq(half) - sq(j)) :
-//    //                                     std::sqrt(sq(size * 0.5) - sq(row_y)) :
-//    //                                     std::sqrt(sq(size * 0.5) - sq(row_y))) :
-//    //                                    (odd ? half : half - 1));
-//
-//                // TODO fiddling on 20211103 to fix non-quarter-rotate-symmetry bug:
-//
-//                last_pixel_index = (disk ?
-//    //                                std::sqrt(sq(size * 0.5) - sq(row_y)) :
-//    //                                std::sqrt(sq(size * 0.5 + 0.49) - sq(row_y)) :
-//    //                                std::sqrt(sq(size * 0.5 - 0.49) - sq(row_y)) :
-//    //                                std::sqrt(sq(size * 0.5 - 0.49) - sq(row_y)) :
-//    //                                std::sqrt(sq(size * 0.5) - sq(row_y)) - 0.49 :
-//
-//                                    (std::sqrt(sq(size * 0.5) - sq(row_y)) -
-//                                     (odd ? 0 : 0.49)) :
-//
-//
-//                                    (odd ? half : half - 1));
-//                first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
-//
-//                //std::cout << "RR:";
-//                //std::cout << " j=" << j;
-//                //std::cout << " size=" << size;
-//                //std::cout << " odd=" << odd;
-//                //std::cout << " half=" << half;
-//                //std::cout << " row_y=" << row_y;
-//                //std::cout << " row_index=" << row_index;
-//                //std::cout << " first_pixel_index=" << first_pixel_index;
-//                //std::cout << " last_pixel_index=" << last_pixel_index;
-//                //std::cout << std::endl;
-//            }
-//            int j;
-//            int size;
-//            bool disk;
-//            bool odd;
-//            int half;
-//            int row_index;
-//            float row_y;
-//            int first_pixel_index;
-//            int last_pixel_index;
-//    //    private:
-//    //        int j_;
-//    //        int size_;
-//    //        bool disk_;
-//        };
-
-//    class RasterizeRowHelper
-//    {
-//    public:
-//        RasterizeRowHelper(int size_) : RasterizeRowHelper(0, size_) {}
-//        RasterizeRowHelper(int j_, int size_)
-//            : RasterizeRowHelper(j_, size_, true) {}
-//        RasterizeRowHelper(int size_, bool disk_)
-//            : RasterizeRowHelper(0, size_, disk_) {}
-//        RasterizeRowHelper(int j_, int size_, bool disk_)
-//            : j(j_), size(size_), disk(disk_)
-//        {
-//            odd = size % 2;                        // Is size (diameter) odd?
-//            half = size / 2;                       // Half size (radius) as int
-//            row_index = j + half + (odd ? 0 : -1); // Which row? [0, size-1]
-//            row_y = odd ? j : j - 0.5;             // Row center as float
-//
-//            // Index (signed) of first and last pixel of disk on this row.
-//            last_pixel_index =
-//                (disk ?
-//                 (std::sqrt(sq(size * 0.5) - sq(row_y)) - (odd ? 0 : 0.5)) :
-//                 (odd ? half : half - 1));
-//            first_pixel_index = -last_pixel_index + (odd ? 0 : -1);
-//
-//            bot_j = half;
-//            top_j = -bot_j + (odd ? 0 : 1);
-//
-//
-//
-//            //std::cout << "RR:";
-//            //std::cout << " j=" << j;
-//            //std::cout << " size=" << size;
-//            //std::cout << " odd=" << odd;
-//            //std::cout << " half=" << half;
-//            //std::cout << " row_y=" << row_y;
-//            //std::cout << " row_index=" << row_index;
-//            //std::cout << " first_pixel_index=" << first_pixel_index;
-//            //std::cout << " last_pixel_index=" << last_pixel_index;
-//            //std::cout << std::endl;
-//        }
-//        int j;
-//        int size;
-//        bool disk;
-//        bool odd;
-//        int half;
-//        int row_index;
-//        float row_y;
-//        int first_pixel_index;
-//        int last_pixel_index;
-//
-//        int top_j;
-//        int bot_j;
-//    };
-
     class RasterizeHelper
     {
     public:
@@ -457,16 +242,24 @@ public:
             // TODO should these be top / bot_row_index?
             bot_j = half;
             top_j = -bot_j + (odd ? 0 : 1);
-
+            
+            row_rect_x = half + first_pixel_index;
+            row_rect_w = -first_pixel_index + last_pixel_index + 1;
+            
             //std::cout << "RR:";
             //std::cout << " j=" << j;
             //std::cout << " size=" << size;
+            //std::cout << " disk=" << disk;
             //std::cout << " odd=" << odd;
             //std::cout << " half=" << half;
-            //std::cout << " row_y=" << row_y;
             //std::cout << " row_index=" << row_index;
+            //std::cout << " row_y=" << row_y;
             //std::cout << " first_pixel_index=" << first_pixel_index;
             //std::cout << " last_pixel_index=" << last_pixel_index;
+            //std::cout << " top_j=" << top_j;
+            //std::cout << " bot_j=" << bot_j;
+            //std::cout << " row_rect_x=" << row_rect_x;
+            //std::cout << " row_rect_w=" << row_rect_w;
             //std::cout << std::endl;
         }
         int j;
@@ -478,14 +271,13 @@ public:
         float row_y;
         int first_pixel_index;
         int last_pixel_index;
-        
         int top_j;
         int bot_j;
+        int row_rect_x;
+        int row_rect_w;
     };
-
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     
-    private:
+private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
     int valid_top_ = validity_key_;
@@ -499,16 +291,10 @@ public:
     static inline int render_size_ = 511;
     // Global default "render as disk" flag: render disk if true, else square.
     static inline bool render_as_disk_ = true;
+    // Global for one-thread-per-row rendering.
+    static inline bool render_thread_per_row_ = true;
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
     static int default_opencv_mat_type_;
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-public:
-    // Global for one-thread-per-row rendering.
-    // TODO should have accessors if kept.
-//    static inline bool render_thread_per_row = true;
-    static inline bool render_thread_per_row_ = true;
-private:
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     int valid_bot_ = validity_key_ / 2;
 };
