@@ -88,24 +88,13 @@ void LotsOfSpotsBase::randomizeSpotRotations()
     for (auto& spot : spots) spot.angle = rs.frandom01() * pi * 2;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    // Seed the random number sequence from some operator parameters.
-//    size_t LotsOfSpotsBase::seedForRandomSequence()
-//    {
-//        return (hash_float(spot_density) ^
-//                hash_float(min_radius) ^
-//                hash_float(max_radius) ^
-//                hash_float(soft_edge_width));
-//    }
-
 // Seed the random number sequence from some operator parameters.
 size_t LotsOfSpotsBase::seedForRandomSequence()
 {
-    return (seed_from_hashed_args ?
+    return (getSeedFromHashedArgs() ?
             (hash_float(spot_density) ^
              hash_float(min_radius) ^
              hash_float(max_radius) ^
              hash_float(soft_edge_width)) :
             264371215);
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

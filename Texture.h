@@ -214,9 +214,13 @@ public:
     // TODO maybe there should be a hook, a void() std::function, to handle
     // per-app key commands?
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    static inline bool seed_from_hashed_args = true;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    // Global switch: should subclassed textures that use RandomSequence objects
+    // seed them from consturctor args, or from a constant "random" value. The
+    // latter case is used only in SimpleImageMatch ("to avoid huge differences
+    // for tiny parameter mutation.").
+    static bool getSeedFromHashedArgs() { return seed_from_hashed_args_; }
+    static void setSeedFromHashedArgs(bool h) { seed_from_hashed_args_ = h; }
 
     class RasterizeHelper
     {
@@ -293,8 +297,14 @@ private:
     static inline bool render_as_disk_ = true;
     // Global for one-thread-per-row rendering.
     static inline bool render_thread_per_row_ = true;
+    // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
+    static int default_opencv_mat_type_;
+    // Global switch should subclassed textures that use RandomSequence objects
+    // seed them from consturctor args, or from a constant "random" value. The
+    // latter case is used only in SimpleImageMatch ("to avoid huge differences
+    // for tiny parameter mutation.").
+    static inline bool seed_from_hashed_args_ = true;
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
-    static int default_opencv_mat_type_;
     int valid_bot_ = validity_key_ / 2;
 };

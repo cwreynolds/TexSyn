@@ -41,20 +41,14 @@ public:
         individuals_(cmd.positionalArgument(4, 120)),
         subpops_(cmd.positionalArgument(5, 6)),
         max_init_tree_size_(cmd.positionalArgument(6, 100)),
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
-//        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
         min_crossover_tree_size_
             (cmd.positionalArgument(7, max_init_tree_size_ * 0.5f)),
         max_crossover_tree_size_
             (cmd.positionalArgument(8, max_init_tree_size_ * 1.5f)),
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         target_image_(cv::imread(target_image_pathname_))
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO experimental, avoid huge differences for tiny parameter mutation.
-        Texture::seed_from_hashed_args = false;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Avoid huge differences for tiny parameter mutation.
+        Texture::setSeedFromHashedArgs(false);
         setGuiSize();
                 
         // log parameters for this run

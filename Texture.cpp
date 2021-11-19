@@ -713,10 +713,7 @@ const std::vector<Color>& Texture::cachedRandomColorSamples(RandomSequence& rs)
     return cached_random_color_samples_;
 }
 
-// TODO 20201203 experiment change default type from CV_32FC3 to CV_8UC3
-// int Texture::default_opencv_mat_type_ = CV_32FC3;
-// TODO 20201207 seems to be working fine, switch over to this as default
-//               eventually remove the conditionalization.
+// Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
 int Texture::default_opencv_mat_type_ = CV_8UC3;
 
 // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
