@@ -6090,6 +6090,25 @@ int main(int argc, const char * argv[])
 
     GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
     
+    // command line args:
+    // fcd how_many
+    //     output_dir
+    //     input_photo_dir
+    //     seed
+    //     bg_scale
+    //     output_size
+    //     disk_size
+    //     tree_size
+
+    // 20211203 run (to reach 5000 total: 5000 - 2007 = 2993):
+    // texsyn 2993 /Users/cwr/Desktop/TexSyn_temp/fcd_training_set /Users/cwr/Pictures/camouflage_backgrounds 20211203
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//    // Make EvoCamoGame run for IEC 2021 report.
+//    std::cout << "November 20, 2021" << std::endl;
+//    EvoCamoGame(CommandLine(argc, argv)).run();
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

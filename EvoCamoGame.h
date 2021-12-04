@@ -652,7 +652,14 @@ private:
 // Perhaps this should be in its own file?
 
 // command line args:
-// fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
+// fcd how_many
+//     output_dir
+//     input_photo_dir
+//     seed
+//     bg_scale
+//     output_size
+//     disk_size
+//     tree_size
 
 class GenerateTrainingSetForFindConspicuousDisks
 {
@@ -661,15 +668,17 @@ class GenerateTrainingSetForFindConspicuousDisks
 public:
     // Constructor to get parameters from pre-parsed "unix style" command line.
     GenerateTrainingSetForFindConspicuousDisks(const CommandLine& cmd)
-      : output_directory_(cmd.positionalArgument(1, ".")),
-        input_photo_dir_(cmd.positionalArgument(2, ".")),
-        random_seed_(cmd.positionalArgument(3, int(LPRS().defaultSeed()))),
-        background_scale_(cmd.positionalArgument(4, float(0.5))),
-        output_size_(cmd.positionalArgument(5, 1024)),
-        disk_size_(cmd.positionalArgument(6, 201)),
-        tree_size_(cmd.positionalArgument(7, 40))
+      : how_many_(cmd.positionalArgument(1, 1)),
+        output_directory_(cmd.positionalArgument(2, ".")),
+        input_photo_dir_(cmd.positionalArgument(3, ".")),
+        random_seed_(cmd.positionalArgument(4, int(LPRS().defaultSeed()))),
+        background_scale_(cmd.positionalArgument(5, float(0.5))),
+        output_size_(cmd.positionalArgument(6, 1024)),
+        disk_size_(cmd.positionalArgument(7, 201)),
+        tree_size_(cmd.positionalArgument(8, 40))
     {
         std::cout << "GenerateTrainingSetForFindConspicuousDisks:" << std::endl;
+        std::cout << "    "; debugPrint(how_many_);
         std::cout << "    "; debugPrint(output_directory_);
         std::cout << "    "; debugPrint(input_photo_dir_);
         std::cout << "    "; debugPrint(random_seed_);
@@ -678,14 +687,14 @@ public:
         std::cout << "    "; debugPrint(disk_size_);
         std::cout << "    "; debugPrint(tree_size_);
     }
-        
+    
     // Perform the run generating training data for "find conspicuous disks”.
     // TODO current runs forever.
     void run()
     {
         LPRS().setSeed(random_seed_);
         readAllInputPhotos();
-        while (true) { generateOneOutputImage(); }
+        while (output_counter_ < how_many_) { generateOneOutputImage(); }
     }
     
     void generateOneOutputImage()
@@ -714,6 +723,7 @@ public:
     // Read all input photo files as cv::Mats, adjust size, save when OK.
     void readAllInputPhotos()
     {
+        Timer t("Reading background images");
         std::cout << "Reading background images:" << std::endl;
         collectPhotoPathnames(input_photo_dir_);
         std::sort(all_photo_pathnames_.begin(), all_photo_pathnames_.end());
@@ -841,6 +851,8 @@ public:
     Vec2 outputSize() const { return Vec2(output_size_, output_size_); }
 
 private:
+    // How many training examples to generate.
+    const int how_many_;
     // Pathname of directory where generated image files will be written.
     const pn output_directory_;
     // Pathname of directory where photos will be found (OK if none found).
