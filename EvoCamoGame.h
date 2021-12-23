@@ -874,3 +874,40 @@ private:
     // Used only for logging.
     int output_counter_ = 0;
 };
+
+
+// TODO 20211223 protyping experiments
+
+class EvoCamoVsStaticFCD
+{
+public:
+    typedef std::filesystem::directory_iterator di;
+    typedef std::filesystem::path pn;
+
+    // Constructor to get parameters from pre-parsed "unix style" command line.
+    EvoCamoVsStaticFCD(const CommandLine& cmd)
+    {
+    }
+    
+    void run()
+    {
+        std::cout << "Start run()." << std::endl;
+        testGetGDriveFiles(test_directory);
+        std::cout << "End run()." << std::endl;
+    }
+    
+    std::string test_directory =
+        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+    
+    // From the given input_photo_dir, search the sub-directory tree, collecting
+    // pathnames of all valid image files into all_photo_pathnames_.
+    void testGetGDriveFiles(pn directory)
+    {
+        // For each item within the given top level directory.
+        for (const auto& i : di(directory))
+        {
+            pn item = i;
+            debugPrint(item)
+        }
+    }
+};

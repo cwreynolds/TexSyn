@@ -6073,41 +6073,48 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Prototyping training set for "find conspicuous disk."
-    std::cout << "November 9, 2021" << std::endl;
-
-    // fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
-
-    //    CommandLine cmd
-    //    ({
-    //        "GenerateTrainingSetForFindConspicuousDisks",
-    //        "/Users/cwr/Desktop/TexSyn_temp/fcd_training_set",
-    //        "/Users/cwr/Pictures/camouflage_backgrounds",
-    //        "123456789"
-    //    });
-    //    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
-    //    fcd.run();
-
-    GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
-    
-    // command line args:
-    // fcd how_many
-    //     output_dir
-    //     input_photo_dir
-    //     seed
-    //     bg_scale
-    //     output_size
-    //     disk_size
-    //     tree_size
-
-    // 20211203 run (to reach 5000 total: 5000 - 2007 = 2993):
-    // texsyn 2993 /Users/cwr/Desktop/TexSyn_temp/fcd_training_set /Users/cwr/Pictures/camouflage_backgrounds 20211203
+//    // Prototyping training set for "find conspicuous disk."
+//    std::cout << "November 9, 2021" << std::endl;
+//
+//    // fcd output_dir input_photo_dir seed bg_scale output_size disk_size tree_size
+//
+//    //    CommandLine cmd
+//    //    ({
+//    //        "GenerateTrainingSetForFindConspicuousDisks",
+//    //        "/Users/cwr/Desktop/TexSyn_temp/fcd_training_set",
+//    //        "/Users/cwr/Pictures/camouflage_backgrounds",
+//    //        "123456789"
+//    //    });
+//    //    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
+//    //    fcd.run();
+//
+//    GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
+//
+//    // command line args:
+//    // fcd how_many
+//    //     output_dir
+//    //     input_photo_dir
+//    //     seed
+//    //     bg_scale
+//    //     output_size
+//    //     disk_size
+//    //     tree_size
+//
+//    // 20211203 run (to reach 5000 total: 5000 - 2007 = 2993):
+//    // texsyn 2993 /Users/cwr/Desktop/TexSyn_temp/fcd_training_set /Users/cwr/Pictures/camouflage_backgrounds 20211203
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 //    // Make EvoCamoGame run for IEC 2021 report.
 //    std::cout << "November 20, 2021" << std::endl;
 //    EvoCamoGame(CommandLine(argc, argv)).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototyping training set for "find conspicuous disk."
+    std::cout << "December 23 2021" << std::endl;
+    
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
