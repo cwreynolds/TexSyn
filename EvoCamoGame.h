@@ -881,33 +881,99 @@ private:
 class EvoCamoVsStaticFCD
 {
 public:
+    // copied in for prototyping, spell out inline?
     typedef std::filesystem::directory_iterator di;
     typedef std::filesystem::path pn;
 
     // Constructor to get parameters from pre-parsed "unix style" command line.
-    EvoCamoVsStaticFCD(const CommandLine& cmd)
-    {
-    }
+    // (Currently does nothing.)
+    EvoCamoVsStaticFCD(const CommandLine& cmd) {}
     
     void run()
     {
-        std::cout << "Start run()." << std::endl;
-        testGetGDriveFiles(test_directory);
-        std::cout << "End run()." << std::endl;
+        int step = 0;
+        pn directory = test_directory;
+        std::cout << "Start run in " << directory << std::endl;
+        
+        testListGDriveFiles(directory);
+
+        auto list = listMyFiles(directory);
+        if (!list.empty())
+        {
+            std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
+        }
+        
+        while (true)
+        {
+            std::cout << "Write file " << step << std::endl;
+            writeTestFile(step, directory);
+            waitForReply(step, directory);
+            step++;
+        }
     }
-    
-    std::string test_directory =
-        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
-    
+
     // From the given input_photo_dir, search the sub-directory tree, collecting
     // pathnames of all valid image files into all_photo_pathnames_.
-    void testGetGDriveFiles(pn directory)
+    void testListGDriveFiles(pn directory)
     {
+        std::cout << "Initial contents of dir:" << std::endl;
         // For each item within the given top level directory.
         for (const auto& i : di(directory))
         {
             pn item = i;
+            std::cout << "    ";
             debugPrint(item)
         }
     }
+    
+    // Returns a collection of strings, each the name of one of "my files" in
+    // the given directory. Names have had file's path and extension removed.
+    std::vector<std::string> listMyFiles(pn directory)
+    {
+        std::vector<std::string> strings;
+        for (const auto& i : di(directory))
+        {
+            std::string stem_string(pn(i).stem());
+            std::string stem_prefix = stem_string.substr(0, my_prefix_.size());
+            if (stem_prefix == my_prefix_) { strings.push_back(stem_string); }
+        }
+        return strings;
+    }
+    
+    void writeTestFile(int step, pn directory)
+    {
+        std::ofstream fout(prefixAndNumber(directory, my_prefix_, step));
+        // TODO 20211224 just write dummy contents.
+        fout << std::to_string(step) << std::endl;
+    }
+
+    pn prefixAndNumber(pn directory, const std::string& prefix, int step)
+    {
+        std::string step_string = std::to_string(step);
+        return directory / (prefix + step_string);
+    }
+    
+    std::string makeOtherFilename(int step)
+    {
+        std::string step_string = std::to_string(step);
+        return other_prefix_ + step_string + ".txt";
+    }
+    
+    void waitForReply(int step, pn directory)
+    {
+        auto other_file = directory / makeOtherFilename(step);
+        while (!std::filesystem::exists(other_file))
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            testListGDriveFiles(directory); // TODO
+        }
+        
+        std::cout << "done waiting for " << other_file << std::endl;
+    }
+
+private:
+    std::string test_directory =
+        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+    std::string my_prefix_ = "camo_";
+    std::string other_prefix_ = "find_";
 };
