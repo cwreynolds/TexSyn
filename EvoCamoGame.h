@@ -962,18 +962,44 @@ public:
     void waitForReply(int step, pn directory)
     {
         auto other_file = directory / makeOtherFilename(step);
-        while (!std::filesystem::exists(other_file))
+//        while (!std::filesystem::exists(other_file))
+        while (!isFilePresent(other_file))
         {
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            testListGDriveFiles(directory); // TODO
+//            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+//            testListGDriveFiles(directory); // TODO
         }
         
         std::cout << "done waiting for " << other_file << std::endl;
     }
+    
+    // Like std::filesystem::exists() but for unknown reasons, that does not
+    // seem to work for newly created files on G Drive. TODO Why?
+    bool isFilePresent(pn file)
+    {
+        bool result = false;
+        pn directory = file.parent_path();
+        std::string filename = file.filename();
+        
+//        debugPrint(file);
+//        debugPrint(filename);
+//        debugPrint(directory);
+
+        for (const auto& i : di(directory))
+        {
+            std::string dir_item_name(pn(i).filename());
+            
+//            debugPrint(dir_item_name)
+            
+            if (filename == dir_item_name) { result = true; }
+        }
+        return result;
+    }
 
 private:
     std::string test_directory =
-        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+//        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+        "/Users/cwr/Desktop/test1";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
 };
