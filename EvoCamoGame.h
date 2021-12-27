@@ -878,6 +878,23 @@ private:
 
 // TODO 20211223 protyping experiments
 
+//    > texsyn
+//    TexSyn version 0.9.7 (alpha macOS-x86_64)
+//    All unit tests PASS. Run time for unit test suite: 0.0520711 seconds
+//    December 23 2021
+//    Start run in "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/"
+//    Initial contents of dir:
+//    Write file 0
+//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_0.txt"
+//    Write file 1
+//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_1.txt"
+//    Write file 2
+//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_2.txt"
+//    Write file 3
+//    ^C
+//    > ls "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/"
+//    camo_0        camo_1        camo_2        camo_3        find_0.txt    find_1.txt    find_2.txt
+
 class EvoCamoVsStaticFCD
 {
 public:
@@ -962,35 +979,27 @@ public:
     void waitForReply(int step, pn directory)
     {
         auto other_file = directory / makeOtherFilename(step);
-//        while (!std::filesystem::exists(other_file))
         while (!isFilePresent(other_file))
         {
-//            std::this_thread::sleep_for(std::chrono::seconds(5));
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-//            testListGDriveFiles(directory); // TODO
+            std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
         }
-        
-        std::cout << "done waiting for " << other_file << std::endl;
+//        std::cout << "done waiting for " << other_file << std::endl;
     }
     
     // Like std::filesystem::exists() but for unknown reasons, that does not
-    // seem to work for newly created files on G Drive. TODO Why?
+    // seem to work for newly created files on G Drive.
+    //
+    // TODO Why? This version works on G Drive, but it seems simply
+    //      calling std::filesystem::exists() should be enough.
+    //
     bool isFilePresent(pn file)
     {
         bool result = false;
         pn directory = file.parent_path();
         std::string filename = file.filename();
-        
-//        debugPrint(file);
-//        debugPrint(filename);
-//        debugPrint(directory);
-
         for (const auto& i : di(directory))
         {
             std::string dir_item_name(pn(i).filename());
-            
-//            debugPrint(dir_item_name)
-            
             if (filename == dir_item_name) { result = true; }
         }
         return result;
@@ -998,8 +1007,8 @@ public:
 
 private:
     std::string test_directory =
-//        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
-        "/Users/cwr/Desktop/test1";
+        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+//        "/Users/cwr/Desktop/test1";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
 };
