@@ -895,6 +895,9 @@ private:
 //    > ls "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/"
 //    camo_0        camo_1        camo_2        camo_3        find_0.txt    find_1.txt    find_2.txt
 
+// On 20211227: same as above but after writing camo_n now deletes camo_(n-1)
+//              if it exists.
+
 class EvoCamoVsStaticFCD
 {
 public:
@@ -924,6 +927,7 @@ public:
         {
             std::cout << "Write file " << step << std::endl;
             writeTestFile(step, directory);
+            deleteMyFile(step - 1, directory);
             waitForReply(step, directory);
             step++;
         }
@@ -956,36 +960,42 @@ public:
         }
         return strings;
     }
-    
+
+    // Mock version of writing file for given step.
     void writeTestFile(int step, pn directory)
     {
-        std::ofstream fout(prefixAndNumber(directory, my_prefix_, step));
+        std::ofstream fout(makeMyPathname(step, directory));
         // TODO 20211224 just write dummy contents.
         fout << std::to_string(step) << std::endl;
     }
 
-    pn prefixAndNumber(pn directory, const std::string& prefix, int step)
+    // Delete the given file, usually after having written the next one.
+    void deleteMyFile(int step, pn directory)
     {
-        std::string step_string = std::to_string(step);
-        return directory / (prefix + step_string);
+        std::filesystem::remove(makeMyPathname(step, directory));
+    }
+
+    // Form the pathname for the "other" agent of file for given step number.
+    pn makeOtherPathname(int step, pn directory)
+    {
+        return directory / (other_prefix_ + std::to_string(step) + ".txt");
     }
     
-    std::string makeOtherFilename(int step)
+    // Form the pathname for this agent of file for given step number.
+    pn makeMyPathname(int step, pn directory)
     {
-        std::string step_string = std::to_string(step);
-        return other_prefix_ + step_string + ".txt";
+        return directory / (my_prefix_ + std::to_string(step) + ".txt");
     }
-    
+
+    // Wait until other agent's file for given step appears.
     void waitForReply(int step, pn directory)
     {
-        auto other_file = directory / makeOtherFilename(step);
-        while (!isFilePresent(other_file))
+        while (!isFilePresent(makeOtherPathname(step, directory)))
         {
             std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
         }
-//        std::cout << "done waiting for " << other_file << std::endl;
     }
-    
+
     // Like std::filesystem::exists() but for unknown reasons, that does not
     // seem to work for newly created files on G Drive.
     //
@@ -1008,7 +1018,6 @@ public:
 private:
     std::string test_directory =
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
-//        "/Users/cwr/Desktop/test1";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
 };
