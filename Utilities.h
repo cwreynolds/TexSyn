@@ -18,8 +18,9 @@
 #include <chrono>
 #include <any>
 #include <set>
-#include <filesystem>
 #include <thread>
+#include <filesystem>
+namespace fs = std::filesystem;
 class Vec2;
 class Color;
 
@@ -495,9 +496,9 @@ inline std::string date_hours_minutes()
 inline std::vector<std::string> directory_filenames(std::string directory_path)
 {
     std::vector<std::string> directory_contents;
-    std::filesystem::path directory(directory_path);
-    assert(std::filesystem::is_directory(directory));
-    for (const auto& entry : std::filesystem::directory_iterator(directory))
+    fs::path directory(directory_path);
+    assert(fs::is_directory(directory));
+    for (const auto& entry : fs::directory_iterator(directory))
     {
         if (entry.is_regular_file())
         {
@@ -548,7 +549,7 @@ public:
     // Command name with any pathname part removed.
     std::string commandNameWithoutPath() const
     {
-        return std::filesystem::path(commandName()).filename();
+        return fs::path(commandName()).filename();
     }
 private:
     // Given traditional main() parameters argc/argv, return BY VALUE an

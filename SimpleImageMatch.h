@@ -34,7 +34,7 @@ public:
 
     SimpleImageMatch(const CommandLine& cmd)
       : target_image_pathname_(cmd.positionalArgument(1)),
-        run_name_(std::filesystem::path(target_image_pathname_).stem()),
+        run_name_(fs::path(target_image_pathname_).stem()),
         output_directory_(cmd.positionalArgument(2, ".")),
         output_directory_this_run_(runOutputDirectory()),
         random_seed_(cmd.positionalArgument(3, int(LPRS().defaultSeed()))),
@@ -1483,12 +1483,12 @@ public:
     // A subdirectory under output_directory_ for results from this run.
     std::string runOutputDirectory()
     {
-        if (!std::filesystem::exists(output_directory_))
+        if (!fs::exists(output_directory_))
         {
             debugPrint(output_directory_);
             assert(!"output_directory_ does not exist.");
         }
-        std::filesystem::path run_output_dir = output_directory_;
+        fs::path run_output_dir = output_directory_;
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
     }

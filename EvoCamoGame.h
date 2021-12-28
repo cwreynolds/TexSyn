@@ -185,10 +185,10 @@ public:
                                                    GP::fs()));
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
-        std::filesystem::path out = output_directory_this_run_;
+        fs::path out = output_directory_this_run_;
         std::cout << "Create output directory for this run: ";
         std::cout << out << std::endl;
-        std::filesystem::create_directory(out);
+        fs::create_directory(out);
         // Init GUI window.
         gui().setWindowName(run_name_);
         gui().refresh();
@@ -386,7 +386,7 @@ public:
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-        std::filesystem::path path = output_directory_this_run_;
+        fs::path path = output_directory_this_run_;
         path /= "step_" + getStepAsString() + ".png";
         writeTournamentImageToFile(path);
     }
@@ -418,7 +418,7 @@ public:
         std::string suffix = suffixes.at(index);
         std::string step = getStepAsString();
         // Construct pathname for file.
-        std::filesystem::path path = output_directory_this_run_;
+        fs::path path = output_directory_this_run_;
         path /= ("thumbnail_" + step + suffix + ".png");
         // Write image file.
         std::cout << "Writing thumbnail image to file " << path << std::endl;
@@ -431,7 +431,7 @@ public:
     void writeSourceCodeToFile(Individual* individual, std::string filename)
     {
         // Construct pathname for file.
-        std::filesystem::path path = output_directory_this_run_;
+        fs::path path = output_directory_this_run_;
         path /= filename;
         std::cout << "Writing source code to file " << path << std::endl;
         // Open stream to file.
@@ -489,7 +489,7 @@ public:
     // (Provides consistent behavior with and without trailing "/".)
     std::string runNameDefault(const CommandLine& command_line)
     {
-        std::filesystem::path path = command_line.positionalArgument(1);
+        fs::path path = command_line.positionalArgument(1);
         std::string fn = path.filename();
         return (fn != "") ? fn : std::string(path.parent_path().filename());
     }
@@ -497,12 +497,12 @@ public:
     // A subdirectory under output_directory_ for results from this run.
     std::string runOutputDirectory()
     {
-        if (!std::filesystem::exists(output_directory_))
+        if (!fs::exists(output_directory_))
         {
             debugPrint(output_directory_);
             assert(!"output_directory_ does not exist.");
         }
-        std::filesystem::path run_output_dir = output_directory_;
+        fs::path run_output_dir = output_directory_;
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
     }
@@ -518,7 +518,7 @@ public:
     std::shared_ptr<Population> getPopulation() const { return population_; };
     void setPopulation(std::shared_ptr<Population> p) { population_ = p; };
     
-    void logFunctionUsageCounts(const std::filesystem::path& out)
+    void logFunctionUsageCounts(const fs::path& out)
     {
         int step = getPopulation()->getStepCount();
         if ((step % 10) == 0)
@@ -557,11 +557,11 @@ public:
         if ((getPopulation()->getStepCount() % n) == 0)
         {
             // Construct path for training set directory, create if needed.
-            std::filesystem::path directory = output_directory_this_run_;
+            fs::path directory = output_directory_this_run_;
             directory /= "training_set";
-            std::filesystem::create_directory(directory);
+            fs::create_directory(directory);
             // Construct pathname image, write to file.
-            std::filesystem::path image_path = directory;
+            fs::path image_path = directory;
             image_path /= "step_" + getStepAsString() + ".jpeg";
             cv::imwrite(image_path, gui().getCvMat());
             // Open output stream to bounding_boxes.txt file in append mode.
@@ -663,8 +663,8 @@ private:
 
 class GenerateTrainingSetForFindConspicuousDisks
 {
-    typedef std::filesystem::directory_iterator di;
-    typedef std::filesystem::path pn;
+    typedef fs::directory_iterator di;
+    typedef fs::path pn;
 public:
     // Constructor to get parameters from pre-parsed "unix style" command line.
     GenerateTrainingSetForFindConspicuousDisks(const CommandLine& cmd)
@@ -768,7 +768,7 @@ public:
         for (const auto& i : di(directory))
         {
             pn item = i;
-            if (std::filesystem::is_directory(item))
+            if (fs::is_directory(item))
             {
                 // Recurse on sub-directories.
                 collectPhotoPathnames(item);
@@ -898,21 +898,22 @@ private:
 // On 20211227: same as above but after writing camo_n now deletes camo_(n-1)
 //              if it exists.
 
+// TODO 20211227 maybe "shared_directory_" should be a member variable.
+//      Don't see a need to pass it around between all member functions.
+
 class EvoCamoVsStaticFCD
 {
 public:
-    // copied in for prototyping, spell out inline?
-    typedef std::filesystem::directory_iterator di;
-    typedef std::filesystem::path pn;
-
     // Constructor to get parameters from pre-parsed "unix style" command line.
     // (Currently does nothing.)
     EvoCamoVsStaticFCD(const CommandLine& cmd) {}
     
+    // TODO prototype for testing, just writes dummy files. Eventually would
+    //      write files with newest tournament image.
     void run()
     {
         int step = 0;
-        pn directory = test_directory;
+        fs::path directory = test_directory;
         std::cout << "Start run in " << directory << std::endl;
         
         testListGDriveFiles(directory);
@@ -935,13 +936,13 @@ public:
 
     // From the given input_photo_dir, search the sub-directory tree, collecting
     // pathnames of all valid image files into all_photo_pathnames_.
-    void testListGDriveFiles(pn directory)
+    void testListGDriveFiles(fs::path directory)
     {
         std::cout << "Initial contents of dir:" << std::endl;
         // For each item within the given top level directory.
-        for (const auto& i : di(directory))
+        for (const auto& i : fs::directory_iterator(directory))
         {
-            pn item = i;
+            fs::path item = i;
             std::cout << "    ";
             debugPrint(item)
         }
@@ -949,12 +950,12 @@ public:
     
     // Returns a collection of strings, each the name of one of "my files" in
     // the given directory. Names have had file's path and extension removed.
-    std::vector<std::string> listMyFiles(pn directory)
+    std::vector<std::string> listMyFiles(fs::path directory)
     {
         std::vector<std::string> strings;
-        for (const auto& i : di(directory))
+        for (const auto& i : fs::directory_iterator(directory))
         {
-            std::string stem_string(pn(i).stem());
+            std::string stem_string(fs::path(i).stem());
             std::string stem_prefix = stem_string.substr(0, my_prefix_.size());
             if (stem_prefix == my_prefix_) { strings.push_back(stem_string); }
         }
@@ -962,7 +963,7 @@ public:
     }
 
     // Mock version of writing file for given step.
-    void writeTestFile(int step, pn directory)
+    void writeTestFile(int step, fs::path directory)
     {
         std::ofstream fout(makeMyPathname(step, directory));
         // TODO 20211224 just write dummy contents.
@@ -970,25 +971,25 @@ public:
     }
 
     // Delete the given file, usually after having written the next one.
-    void deleteMyFile(int step, pn directory)
+    void deleteMyFile(int step, fs::path directory)
     {
-        std::filesystem::remove(makeMyPathname(step, directory));
+        fs::remove(makeMyPathname(step, directory));
     }
 
     // Form the pathname for the "other" agent of file for given step number.
-    pn makeOtherPathname(int step, pn directory)
+    fs::path makeOtherPathname(int step, fs::path directory)
     {
         return directory / (other_prefix_ + std::to_string(step) + ".txt");
     }
     
     // Form the pathname for this agent of file for given step number.
-    pn makeMyPathname(int step, pn directory)
+    fs::path makeMyPathname(int step, fs::path directory)
     {
         return directory / (my_prefix_ + std::to_string(step) + ".txt");
     }
 
     // Wait until other agent's file for given step appears.
-    void waitForReply(int step, pn directory)
+    void waitForReply(int step, fs::path directory)
     {
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
@@ -996,20 +997,20 @@ public:
         }
     }
 
-    // Like std::filesystem::exists() but for unknown reasons, that does not
+    // Like fs::exists() but for unknown reasons, that does not
     // seem to work for newly created files on G Drive.
     //
     // TODO Why? This version works on G Drive, but it seems simply
-    //      calling std::filesystem::exists() should be enough.
+    //      calling fs::exists() should be enough.
     //
-    bool isFilePresent(pn file)
+    bool isFilePresent(fs::path file)
     {
         bool result = false;
-        pn directory = file.parent_path();
+        fs::path directory = file.parent_path();
         std::string filename = file.filename();
-        for (const auto& i : di(directory))
+        for (const auto& i : fs::directory_iterator(directory))
         {
-            std::string dir_item_name(pn(i).filename());
+            std::string dir_item_name(fs::path(i).filename());
             if (filename == dir_item_name) { result = true; }
         }
         return result;
