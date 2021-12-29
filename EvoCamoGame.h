@@ -913,7 +913,8 @@ public:
     void run()
     {
         int step = 0;
-        fs::path directory = test_directory;
+//        fs::path directory = test_directory;
+        fs::path directory = comm_directory_;
         std::cout << "Start run in " << directory << std::endl;
         
         testListGDriveFiles(directory);
@@ -968,6 +969,10 @@ public:
         std::ofstream fout(makeMyPathname(step, directory));
         // TODO 20211224 just write dummy contents.
         fout << std::to_string(step) << std::endl;
+        
+        std::cout << "wrote test file   "
+                  << makeMyPathname(step, directory) << std::endl;
+
     }
 
     // Delete the given file, usually after having written the next one.
@@ -976,13 +981,15 @@ public:
         fs::remove(makeMyPathname(step, directory));
     }
 
-    // Form the pathname for the "other" agent of file for given step number.
+//    // Form the pathname for the "other" agent of file for given step number.
+    // Form pathname for file of given step number from the "other" agent.
     fs::path makeOtherPathname(int step, fs::path directory)
     {
         return directory / (other_prefix_ + std::to_string(step) + ".txt");
     }
     
-    // Form the pathname for this agent of file for given step number.
+//    // Form the pathname for this agent of file for given step number.
+    // Form pathname for file of given step number from "this" agent.
     fs::path makeMyPathname(int step, fs::path directory)
     {
         return directory / (my_prefix_ + std::to_string(step) + ".txt");
@@ -991,10 +998,16 @@ public:
     // Wait until other agent's file for given step appears.
     void waitForReply(int step, fs::path directory)
     {
+        Timer t("Elapsed time");
+        std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
+
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
             std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
         }
+        
+        std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
+
     }
 
     // Like fs::exists() but for unknown reasons, that does not
@@ -1017,8 +1030,13 @@ public:
     }
 
 private:
-    std::string test_directory =
-        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/";
+    // The shared directory on Google Drive. Each run's direcotry is inside it.
+    std::string comm_directory_ =
+        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
+    
+//    std::string test_directory = comm_directory_ + "temp/";
+
+
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
 };
