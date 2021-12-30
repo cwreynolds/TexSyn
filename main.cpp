@@ -6114,7 +6114,7 @@ int main(int argc, const char * argv[])
     // Prototyping training set for "find conspicuous disk."
     std::cout << "December 23 2021" << std::endl;
     
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run_test();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

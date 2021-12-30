@@ -876,31 +876,21 @@ private:
 };
 
 
-// TODO 20211223 protyping experiments
-
-//    > texsyn
-//    TexSyn version 0.9.7 (alpha macOS-x86_64)
-//    All unit tests PASS. Run time for unit test suite: 0.0520711 seconds
-//    December 23 2021
-//    Start run in "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/"
-//    Initial contents of dir:
-//    Write file 0
-//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_0.txt"
-//    Write file 1
-//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_1.txt"
-//    Write file 2
-//    done waiting for "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/find_2.txt"
-//    Write file 3
-//    ^C
-//    > ls "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/temp/"
-//    camo_0        camo_1        camo_2        camo_3        find_0.txt    find_1.txt    find_2.txt
-
-// On 20211227: same as above but after writing camo_n now deletes camo_(n-1)
-//              if it exists.
-
+// EvoCamoVsStaticFCD protype experiments
+//
 // TODO 20211227 maybe "shared_directory_" should be a member variable.
 //      Don't see a need to pass it around between all member functions.
-
+//      Could make same argument for "step".
+//
+// TODO 20211229 — make a new class derived from EvoCamoGame
+//     The parts that need to be changed
+//        waitForUserInput() — needs to be conditionalized or overridden
+//        setLastMouseClick() — need to call with result from Colab
+//     Relevant to changes:
+//        tournamentFunction()
+//        setMouseCallbackForTournamentFunction() —
+//            can stay the same but functionality need to be replaced
+//
 class EvoCamoVsStaticFCD
 {
 public:
@@ -910,29 +900,27 @@ public:
     
     // TODO prototype for testing, just writes dummy files. Eventually would
     //      write files with newest tournament image.
-    void run()
+    void run_test()
     {
-        int step = 0;
-//        fs::path directory = test_directory;
-        fs::path directory = comm_directory_;
+        fs::path directory = shared_directory_;
         std::cout << "Start run in " << directory << std::endl;
-        
         testListGDriveFiles(directory);
-
         auto list = listMyFiles(directory);
         if (!list.empty())
         {
             std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
         }
-        
-        while (true)
-        {
-            std::cout << "Write file " << step << std::endl;
-            writeTestFile(step, directory);
-            deleteMyFile(step - 1, directory);
-            waitForReply(step, directory);
-            step++;
-        }
+        for (int step = 0; ; step++) { performStep(step, directory); }
+    }
+    
+    // TODO this will need to take cv::Mat (or whatever) and write it to a jpeg
+    //      file with a name compatible with the Python half.
+    void performStep(int step, fs::path directory)
+    {
+        std::cout << "Write file " << step << std::endl;
+        writeTestFile(step, directory);
+        deleteMyFile(step - 1, directory);
+        waitForReply(step, directory);
     }
 
     // From the given input_photo_dir, search the sub-directory tree, collecting
@@ -981,14 +969,12 @@ public:
         fs::remove(makeMyPathname(step, directory));
     }
 
-//    // Form the pathname for the "other" agent of file for given step number.
     // Form pathname for file of given step number from the "other" agent.
     fs::path makeOtherPathname(int step, fs::path directory)
     {
         return directory / (other_prefix_ + std::to_string(step) + ".txt");
     }
     
-//    // Form the pathname for this agent of file for given step number.
     // Form pathname for file of given step number from "this" agent.
     fs::path makeMyPathname(int step, fs::path directory)
     {
@@ -1000,14 +986,11 @@ public:
     {
         Timer t("Elapsed time");
         std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
-
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
             std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
         }
-        
         std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
-
     }
 
     // Like fs::exists() but for unknown reasons, that does not
@@ -1030,13 +1013,9 @@ public:
     }
 
 private:
-    // The shared directory on Google Drive. Each run's direcotry is inside it.
-    std::string comm_directory_ =
+    // Shared "communication" directory on Drive.
+    std::string shared_directory_ =
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
-    
-//    std::string test_directory = comm_directory_ + "temp/";
-
-
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
 };
