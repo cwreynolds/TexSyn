@@ -193,8 +193,10 @@ public:
         gui().setWindowName(run_name_);
         gui().refresh();
         // Loop of interactive evolution steps, until "Q" command or forced exit.
-        running_ = true;
-        while (running_)
+//        running_ = true;
+//        while (running_)
+        setRunningState(true);
+        while (getRunningState())
         {
             // Display step count in GUI title bar.
             std::string step_string = " (step " + getStepAsString() + ")";
@@ -300,16 +302,51 @@ public:
         // writeTrainingSetData(prey_texture_positions);
     }
 
+//        // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
+//        // user's selection of the "worst" camouflage. This also "listens" for and
+//        // executes single character commands: "t" and "Q".
+//    //    void waitForUserInput()
+//        // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
+//        virtual void waitForUserInput()
+//        {
+//            waitForMouseUp();  // In case mouse button still down from last click.
+//    //        wait_for_mouse_click_ = true;
+//            setWaitForMouseClick(true);
+//            int previous_key = cv::waitKeyEx(1);
+//            // Loop until mouse is clicked in window.
+//    //        while (wait_for_mouse_click_)
+//            while (getWaitForMouseClick())
+//            {
+//                // Wait for 1/4 second, and read any key typed during that time.
+//                int key = cv::waitKey(250);  // 1/4 second (250/1000)
+//                // When newly-pressed (key down) event.
+//                if ((key > 0) && (key != previous_key))
+//                {
+//                    // For "t" command: write whole window tournament image to file.
+//                    if (key == 't') { writeTournamentImageToFile(); }
+//                    // For "Q" command: exit run() loop.
+//                    if (key == 'Q')
+//                    {
+//                        running_ = false;
+//                        wait_for_mouse_click_ = false;
+//                        setWaitForMouseClick(false);
+//                    }
+//                }
+//                previous_key = key;
+//            }
+//        }
+
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
     // executes single character commands: "t" and "Q".
-    void waitForUserInput()
+    // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
+    virtual void waitForUserInput()
     {
         waitForMouseUp();  // In case mouse button still down from last click.
-        wait_for_mouse_click_ = true;
+        setWaitForMouseClick(true);
         int previous_key = cv::waitKeyEx(1);
         // Loop until mouse is clicked in window.
-        while (wait_for_mouse_click_)
+        while (getWaitForMouseClick())
         {
             // Wait for 1/4 second, and read any key typed during that time.
             int key = cv::waitKey(250);  // 1/4 second (250/1000)
@@ -321,8 +358,9 @@ public:
                 // For "Q" command: exit run() loop.
                 if (key == 'Q')
                 {
-                    running_ = false;
-                    wait_for_mouse_click_ = false;
+//                    running_ = false;
+                    setRunningState(false);
+                    setWaitForMouseClick(false);
                 }
             }
             previous_key = key;
@@ -358,7 +396,8 @@ public:
                 else
                 {
                     c->setLastMouseClick(click);
-                    c->wait_for_mouse_click_ = false;
+//                    c->wait_for_mouse_click_ = false;
+                    c->setWaitForMouseClick(false);
                 }
             }
             if (event == cv::EVENT_LBUTTONUP)  // Left button up.
@@ -481,10 +520,6 @@ public:
     // TODO very temp
     int textureSize() const { return 201; }
 
-    // Get/set position of most recent mouse (left) click in GUI.
-    Vec2 getLastMouseClick() const { return last_mouse_click_; }
-    void setLastMouseClick(Vec2 mouse_pos) { last_mouse_click_ = mouse_pos; }
-
     // Get default run name from background_image_directory_.
     // (Provides consistent behavior with and without trailing "/".)
     std::string runNameDefault(const CommandLine& command_line)
@@ -585,6 +620,19 @@ public:
         }
     }
     
+    // Get/set position of most recent mouse (left) click in GUI.
+    Vec2 getLastMouseClick() const { return last_mouse_click_; }
+    void setLastMouseClick(Vec2 mouse_pos) { last_mouse_click_ = mouse_pos; }
+
+    // Get/set whether we are currently waiting for a mouse click in GUI.
+    bool getWaitForMouseClick() const { return wait_for_mouse_click_; }
+    void setWaitForMouseClick(bool wait) { wait_for_mouse_click_ = wait; }
+
+    // Get/set whether we are currently running the step loop in run().
+    bool getRunningState() const { return running_; }
+    void setRunningState(bool running_state) { running_ = running_state; }
+
+
 private:
     // Name of run. (Defaults to directory holding background image files.)
     const std::string run_name_;
@@ -876,28 +924,39 @@ private:
 };
 
 
-// EvoCamoVsStaticFCD protype experiments
+// PythonComms protype experiments (was EvoCamoVsStaticFCD)
 //
 // TODO 20211227 maybe "shared_directory_" should be a member variable.
 //      Don't see a need to pass it around between all member functions.
 //      Could make same argument for "step".
 //
-// TODO 20211229 — make a new class derived from EvoCamoGame
-//     The parts that need to be changed
-//        waitForUserInput() — needs to be conditionalized or overridden
-//        setLastMouseClick() — need to call with result from Colab
-//     Relevant to changes:
-//        tournamentFunction()
-//        setMouseCallbackForTournamentFunction() —
-//            can stay the same but functionality need to be replaced
-//
-class EvoCamoVsStaticFCD
+//class EvoCamoVsStaticFCD
+class PythonComms
 {
 public:
-    // Constructor to get parameters from pre-parsed "unix style" command line.
-    // (Currently does nothing.)
-    EvoCamoVsStaticFCD(const CommandLine& cmd) {}
-    
+//    // Constructor to get parameters from pre-parsed "unix style" command line.
+//    // (Currently does nothing.)
+//    EvoCamoVsStaticFCD(const CommandLine& cmd){}
+//    PythonComms(const CommandLine& cmd){}
+//    {
+//        class A
+//        {
+//        public:
+//            void foo() { std::cout << "A" << std::endl; }
+//        };
+//        class B : public A
+//        {
+//        public:
+//            void foo() { std::cout << "B" << std::endl; }
+//        };
+//
+//        A().foo();
+//        B().foo();
+//
+//        exit(EXIT_SUCCESS);
+//    }
+    PythonComms(){}
+
     // TODO prototype for testing, just writes dummy files. Eventually would
     //      write files with newest tournament image.
     void run_test()
@@ -910,18 +969,48 @@ public:
         {
             std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
         }
-        for (int step = 0; ; step++) { performStep(step, directory); }
+//        for (int step = 0; ; step++) { performStep(step, directory); }
+        for (int step = 0; ; step++) { performStep(step); }
     }
     
+//        // TODO this will need to take cv::Mat (or whatever) and write it to a jpeg
+//        //      file with a name compatible with the Python half.
+//        Vec2 performStep(int step) { return performStep(step, shared_directory_); }
+//        Vec2 performStep(int step, fs::path directory)
+//        {
+//            std::cout << "Write file " << step << std::endl;
+//    //        writeTestFile(step, directory);
+//    //        auto cv_mat = cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
+//            cv::Mat cv_mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
+//            writeMyFile(step, directory, cv_mat);
+//            deleteMyFile(step - 1, directory);
+//            return waitForReply(step, directory);
+//        }
+
     // TODO this will need to take cv::Mat (or whatever) and write it to a jpeg
     //      file with a name compatible with the Python half.
-    void performStep(int step, fs::path directory)
+//    Vec2 performStep(int step) { return performStep(step, shared_directory_); }
+    
+    Vec2 performStep(int step)
+    {
+        return performStep(step, cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0)));
+    }
+    Vec2 performStep(int step, const cv::Mat& cv_mat)
+    {
+        return performStep(step, cv_mat, shared_directory_);
+    }
+    Vec2 performStep(int step, const cv::Mat& cv_mat, fs::path directory)
     {
         std::cout << "Write file " << step << std::endl;
-        writeTestFile(step, directory);
+        writeMyFile(step, directory, cv_mat);
         deleteMyFile(step - 1, directory);
-        waitForReply(step, directory);
+        return waitForReply(step, directory);
     }
+    
+//    cv::Mat cv_mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
+//
+//    void writeMyFile(int step, fs::path directory)
+
 
     // From the given input_photo_dir, search the sub-directory tree, collecting
     // pathnames of all valid image files into all_photo_pathnames_.
@@ -951,16 +1040,33 @@ public:
         return strings;
     }
 
-    // Mock version of writing file for given step.
-    void writeTestFile(int step, fs::path directory)
-    {
-        std::ofstream fout(makeMyPathname(step, directory));
-        // TODO 20211224 just write dummy contents.
-        fout << std::to_string(step) << std::endl;
-        
-        std::cout << "wrote test file   "
-                  << makeMyPathname(step, directory) << std::endl;
+//    // Mock version of writing file for given step.
+//    void writeTestFile(int step, fs::path directory)
+//    {
+//        std::ofstream fout(makeMyPathname(step, directory));
+//        // TODO 20211224 just write dummy contents.
+//        fout << std::to_string(step) << std::endl;
+//
+//        std::cout << "wrote test file   "
+//                  << makeMyPathname(step, directory) << std::endl;
+//
+//    }
+    
+    
+//    writeMyFile(step, directory, cv::Mat(1, 1, CV_8UC3, Scalar(0, 0, 0)));
 
+    // Write given image to file for given step.
+    void writeMyFile(int step, fs::path directory, const cv::Mat& cv_mat)
+    {
+//        std::ofstream fout(makeMyPathname(step, directory));
+//        // TODO 20211224 just write dummy contents.
+//        fout << std::to_string(step) << std::endl;
+        
+        auto pathname = makeMyPathname(step, directory);
+        bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
+        assert(image_written_to_file_ok);
+        std::cout << "wrote test file   " << pathname << std::endl;
+        
     }
 
     // Delete the given file, usually after having written the next one.
@@ -972,17 +1078,20 @@ public:
     // Form pathname for file of given step number from the "other" agent.
     fs::path makeOtherPathname(int step, fs::path directory)
     {
-        return directory / (other_prefix_ + std::to_string(step) + ".txt");
+//        return directory / (other_prefix_ + std::to_string(step) + ".txt");
+        return directory / (other_prefix_ + std::to_string(step) + other_suffix_);
     }
     
     // Form pathname for file of given step number from "this" agent.
     fs::path makeMyPathname(int step, fs::path directory)
     {
-        return directory / (my_prefix_ + std::to_string(step) + ".txt");
+//        return directory / (my_prefix_ + std::to_string(step) + ".txt");
+        return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
     }
 
     // Wait until other agent's file for given step appears.
-    void waitForReply(int step, fs::path directory)
+//    void waitForReply(int step, fs::path directory)
+    Vec2 waitForReply(int step, fs::path directory)
     {
         Timer t("Elapsed time");
         std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
@@ -991,6 +1100,31 @@ public:
             std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
         }
         std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
+        
+        // TODO 20211230 -- read XY out of file
+        
+        
+        
+        
+//                std::ofstream fout(makeMyPathname(step, directory));
+//                // TODO 20211224 just write dummy contents.
+//                fout << std::to_string(step) << std::endl;
+        
+        std::ifstream input_file(makeOtherPathname(step, directory));
+        
+//        if (!input_file.is_open()) {
+//            cerr << "Could not open the file - '"
+//            << filename << "'" << endl;
+//            return EXIT_FAILURE;
+//        }
+
+        float x, y;
+        input_file >> x;
+        input_file >> y;
+        input_file.close();
+        Vec2 position(x, y);
+        debugPrint(position);
+        return position;
     }
 
     // Like fs::exists() but for unknown reasons, that does not
@@ -1018,4 +1152,44 @@ private:
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
+    std::string my_suffix_ = ".jpeg";
+    std::string other_suffix_ = ".txt";
+};
+
+
+// TODO 20211229 — make a new class derived from EvoCamoGame
+//     The parts that need to be changed
+//        waitForUserInput() — needs to be conditionalized or overridden
+//        setLastMouseClick() — need to call with result from Colab
+//     Relevant to changes:
+//        tournamentFunction()
+//        setMouseCallbackForTournamentFunction() —
+//            can stay the same but functionality need to be replaced
+//
+
+class EvoCamoVsStaticFCD : public EvoCamoGame
+{
+public:
+    EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd) {}
+    
+
+    // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
+    // user's selection of the "worst" camouflage. This also "listens" for and
+    // executes single character commands: "t" and "Q".
+    // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
+    void waitForUserInput() override
+    {
+        int step = getPopulation()->getStepCount();
+        Vec2 prediction = getComms().performStep(step, gui().getCvMat());
+        setLastMouseClick(prediction);
+        
+        gui().drawCircle(textureSize() * 0.55, prediction * 1024, Color(1));
+        gui().refresh();
+        
+        // TODO very temp
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+    PythonComms& getComms() { return comms_; }
+private:
+    PythonComms comms_;
 };
