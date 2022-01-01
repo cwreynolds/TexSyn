@@ -517,8 +517,14 @@ public:
     GUI& gui() { return gui_; }
     const GUI& gui() const { return gui_; }
 
+//    // TODO very temp
+//    int textureSize() const { return 201; }
     // TODO very temp
-    int textureSize() const { return 201; }
+    int texture_size_ = 201;
+    // TODO 20211231 for backward compatibility / testing
+    int textureSize() const { return getTextureSize(); }
+    int getTextureSize() const { return texture_size_; }
+    void setTextureSize(int size) { texture_size_ = size; }
 
     // Get default run name from background_image_directory_.
     // (Provides consistent behavior with and without trailing "/".)
@@ -1167,11 +1173,23 @@ private:
 //            can stay the same but functionality need to be replaced
 //
 
+// Run at 1/8 full resolution:
+//     texsyn ~/Pictures/camouflage_backgrounds/unused/orange_pyracantha/
+//            /Users/cwr/Desktop/TexSyn_temp
+//            0.0625 # 0.5 / 8
+//            20211231
+//            128 128 # 1024 / 8
+
 class EvoCamoVsStaticFCD : public EvoCamoGame
 {
 public:
-    EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd) {}
-    
+    EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd)
+    {
+        // TODO for prototyping, rethink implementation.
+        // Adjust texture/disk size to be 1/8 as large
+        // setTextureSize(getTextureSize() * backgroundScale() * 2);
+        setTextureSize(getTextureSize() / 8);
+    }
 
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
@@ -1183,7 +1201,16 @@ public:
         Vec2 prediction = getComms().performStep(step, gui().getCvMat());
         setLastMouseClick(prediction);
         
-        gui().drawCircle(textureSize() * 0.55, prediction * 1024, Color(1));
+        int image_size = gui().getSize().x();
+
+        debugPrint(textureSize() * 0.55)
+        debugPrint(prediction * image_size)
+        
+//        gui().drawCircle(textureSize() * 0.55,
+//                         prediction * 1024, Color(1));
+        gui().drawCircle(textureSize() * 0.55,
+                         prediction * image_size,
+                         Color(1));
         gui().refresh();
         
         // TODO very temp
