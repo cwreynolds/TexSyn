@@ -936,67 +936,15 @@ private:
 //      Don't see a need to pass it around between all member functions.
 //      Could make same argument for "step".
 //
-//class EvoCamoVsStaticFCD
 class PythonComms
 {
 public:
-//    // Constructor to get parameters from pre-parsed "unix style" command line.
-//    // (Currently does nothing.)
-//    EvoCamoVsStaticFCD(const CommandLine& cmd){}
-//    PythonComms(const CommandLine& cmd){}
-//    {
-//        class A
-//        {
-//        public:
-//            void foo() { std::cout << "A" << std::endl; }
-//        };
-//        class B : public A
-//        {
-//        public:
-//            void foo() { std::cout << "B" << std::endl; }
-//        };
-//
-//        A().foo();
-//        B().foo();
-//
-//        exit(EXIT_SUCCESS);
-//    }
     PythonComms(){}
 
-    // TODO prototype for testing, just writes dummy files. Eventually would
-    //      write files with newest tournament image.
-    void run_test()
-    {
-        fs::path directory = shared_directory_;
-        std::cout << "Start run in " << directory << std::endl;
-        testListGDriveFiles(directory);
-        auto list = listMyFiles(directory);
-        if (!list.empty())
-        {
-            std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
-        }
-//        for (int step = 0; ; step++) { performStep(step, directory); }
-        for (int step = 0; ; step++) { performStep(step); }
-    }
-    
-//        // TODO this will need to take cv::Mat (or whatever) and write it to a jpeg
-//        //      file with a name compatible with the Python half.
-//        Vec2 performStep(int step) { return performStep(step, shared_directory_); }
-//        Vec2 performStep(int step, fs::path directory)
-//        {
-//            std::cout << "Write file " << step << std::endl;
-//    //        writeTestFile(step, directory);
-//    //        auto cv_mat = cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
-//            cv::Mat cv_mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
-//            writeMyFile(step, directory, cv_mat);
-//            deleteMyFile(step - 1, directory);
-//            return waitForReply(step, directory);
-//        }
-
-    // TODO this will need to take cv::Mat (or whatever) and write it to a jpeg
-    //      file with a name compatible with the Python half.
-//    Vec2 performStep(int step) { return performStep(step, shared_directory_); }
-    
+    // Perform one step of communication with the Python side.
+    //     Arg "step" is required
+    //     Arg "cv_mat" is normally used but default to dummy file for testing.
+    //     Arg "directory" normally not used, default to "shared_directory_".
     Vec2 performStep(int step)
     {
         return performStep(step, cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0)));
@@ -1012,62 +960,10 @@ public:
         deleteMyFile(step - 1, directory);
         return waitForReply(step, directory);
     }
-    
-//    cv::Mat cv_mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0));
-//
-//    void writeMyFile(int step, fs::path directory)
-
-
-    // From the given input_photo_dir, search the sub-directory tree, collecting
-    // pathnames of all valid image files into all_photo_pathnames_.
-    void testListGDriveFiles(fs::path directory)
-    {
-        std::cout << "Initial contents of dir:" << std::endl;
-        // For each item within the given top level directory.
-        for (const auto& i : fs::directory_iterator(directory))
-        {
-            fs::path item = i;
-            std::cout << "    ";
-            debugPrint(item)
-        }
-    }
-    
-    // Returns a collection of strings, each the name of one of "my files" in
-    // the given directory. Names have had file's path and extension removed.
-    std::vector<std::string> listMyFiles(fs::path directory)
-    {
-        std::vector<std::string> strings;
-        for (const auto& i : fs::directory_iterator(directory))
-        {
-            std::string stem_string(fs::path(i).stem());
-            std::string stem_prefix = stem_string.substr(0, my_prefix_.size());
-            if (stem_prefix == my_prefix_) { strings.push_back(stem_string); }
-        }
-        return strings;
-    }
-
-//    // Mock version of writing file for given step.
-//    void writeTestFile(int step, fs::path directory)
-//    {
-//        std::ofstream fout(makeMyPathname(step, directory));
-//        // TODO 20211224 just write dummy contents.
-//        fout << std::to_string(step) << std::endl;
-//
-//        std::cout << "wrote test file   "
-//                  << makeMyPathname(step, directory) << std::endl;
-//
-//    }
-    
-    
-//    writeMyFile(step, directory, cv::Mat(1, 1, CV_8UC3, Scalar(0, 0, 0)));
 
     // Write given image to file for given step.
     void writeMyFile(int step, fs::path directory, const cv::Mat& cv_mat)
     {
-//        std::ofstream fout(makeMyPathname(step, directory));
-//        // TODO 20211224 just write dummy contents.
-//        fout << std::to_string(step) << std::endl;
-        
         auto pathname = makeMyPathname(step, directory);
         bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
         assert(image_written_to_file_ok);
@@ -1075,7 +971,7 @@ public:
         
     }
 
-    // Delete the given file, usually after having written the next one.
+    // Delete the given file, presumably after having written the next one.
     void deleteMyFile(int step, fs::path directory)
     {
         fs::remove(makeMyPathname(step, directory));
@@ -1084,46 +980,63 @@ public:
     // Form pathname for file of given step number from the "other" agent.
     fs::path makeOtherPathname(int step, fs::path directory)
     {
-//        return directory / (other_prefix_ + std::to_string(step) + ".txt");
         return directory / (other_prefix_ + std::to_string(step) + other_suffix_);
     }
     
     // Form pathname for file of given step number from "this" agent.
     fs::path makeMyPathname(int step, fs::path directory)
     {
-//        return directory / (my_prefix_ + std::to_string(step) + ".txt");
         return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
     }
 
     // Wait until other agent's file for given step appears.
 //    void waitForReply(int step, fs::path directory)
+    
+//    // Wait until Python side's response file for given step appears. Parse that
+//    // file into 2 float values, an x and y of the prediction in image-relative
+//    // coordinates (each on [0, 1]), return as Vec2.
+//    Vec2 waitForReply(int step, fs::path directory)
+//    {
+//        Timer t("Elapsed time");
+//        std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
+//        while (!isFilePresent(makeOtherPathname(step, directory)))
+//        {
+//            std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
+//        }
+//        std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
+//
+//
+//        std::ifstream input_file(makeOtherPathname(step, directory));
+//
+//
+//        float x, y;
+//        input_file >> x;
+//        input_file >> y;
+//        input_file.close();
+//        Vec2 position(x, y);
+//        debugPrint(position);
+//        return position;
+//    }
+
+    // Wait until Python side's response file for given step appears. Parse that
+    // file into 2 float values, an x and y of the prediction in image-relative
+    // coordinates (each on [0, 1]), return as Vec2.
     Vec2 waitForReply(int step, fs::path directory)
     {
         Timer t("Elapsed time");
-        std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
+        auto opn = makeOtherPathname(step, directory);
+        std::cout << "start waiting for " << opn << std::endl;
+        // Wait until response file appears.
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
-            std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
+            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
+            // so that the OpenCV window responds to select/hide commands.
+            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
         }
-        std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
+        std::cout << "done waiting for  " << opn << std::endl;
         
-        // TODO 20211230 -- read XY out of file
-        
-        
-        
-        
-//                std::ofstream fout(makeMyPathname(step, directory));
-//                // TODO 20211224 just write dummy contents.
-//                fout << std::to_string(step) << std::endl;
-        
-        std::ifstream input_file(makeOtherPathname(step, directory));
-        
-//        if (!input_file.is_open()) {
-//            cerr << "Could not open the file - '"
-//            << filename << "'" << endl;
-//            return EXIT_FAILURE;
-//        }
-
+        // Parse two floats, x and y, from response file.
+        std::ifstream input_file(opn);
         float x, y;
         input_file >> x;
         input_file >> y;
@@ -1150,6 +1063,48 @@ public:
             if (filename == dir_item_name) { result = true; }
         }
         return result;
+    }
+
+    // TODO prototype for testing, just writes dummy files.
+    void run_test()
+    {
+        fs::path directory = shared_directory_;
+        std::cout << "Start run in " << directory << std::endl;
+        testListGDriveFiles(directory);
+        auto list = listMyFiles(directory);
+        if (!list.empty())
+        {
+            std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
+        }
+        for (int step = 0; ; step++) { performStep(step); }
+    }
+    
+    // TODO prototype for testing.
+    void testListGDriveFiles(fs::path directory)
+    {
+        std::cout << "Initial contents of dir:" << std::endl;
+        // For each item within the given top level directory.
+        for (const auto& i : fs::directory_iterator(directory))
+        {
+            fs::path item = i;
+            std::cout << "    ";
+            debugPrint(item)
+        }
+    }
+    
+    // TODO prototype for testing.
+    // Returns a collection of strings, each the name of one of "my files" in
+    // the given directory. Names have had file's path and extension removed.
+    std::vector<std::string> listMyFiles(fs::path directory)
+    {
+        std::vector<std::string> strings;
+        for (const auto& i : fs::directory_iterator(directory))
+        {
+            std::string stem_string(fs::path(i).stem());
+            std::string stem_prefix = stem_string.substr(0, my_prefix_.size());
+            if (stem_prefix == my_prefix_) { strings.push_back(stem_string); }
+        }
+        return strings;
     }
 
 private:
