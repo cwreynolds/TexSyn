@@ -6111,16 +6111,35 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Prototyping training set for "find conspicuous disk."
-    std::cout << "December 23 2021" << std::endl;
+//        // Prototyping training set for "find conspicuous disk."
+//        std::cout << "December 23 2021" << std::endl;
+//        
+//    //    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run_test();
+//    //    PythonComms(CommandLine(argc, argv)).run_test();
+//    //    PythonComms().run_test();
+//
+//        
+//        EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
     
-//    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run_test();
-//    PythonComms(CommandLine(argc, argv)).run_test();
-//    PythonComms().run_test();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Prototyping training set for "find 3 disks".
+    std::cout << "January 21, 2022" << std::endl;
+    
+    // Experiment with making images containing only random synthetic texture
+    // for use with the 'complex' version of Find_3_Disks.ipynb. Actual training
+    // examples will be constructed in memory before a run by Python code.
+    //
+    // Too many of these are "uniform" should I reject those?
+    
+    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+    for (int i = 0; i < 100; i++)
+    {
+        cv::imshow("texture", f3d.fcdMakeRandomTexture(Vec2(128, 128)));
+        Texture::waitKey(500);
+    }
+    Texture::waitKey();
 
-    
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
-    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
