@@ -6126,17 +6126,58 @@ int main(int argc, const char * argv[])
     // Prototyping training set for "find 3 disks".
     std::cout << "January 21, 2022" << std::endl;
     
+    std::string test_dir = "/Users/cwr/Desktop/TexSyn_temp/f3d_test/";
+
     // Experiment with making images containing only random synthetic texture
     // for use with the 'complex' version of Find_3_Disks.ipynb. Actual training
     // examples will be constructed in memory before a run by Python code.
     //
     // Too many of these are "uniform" should I reject those?
     
+    // Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
+//    auto rgb_bounds_volume = [](cv::Mat image)
+    auto nonuniformity = [](cv::Mat image)
+    {
+        float r_max = 0;
+        float g_max = 0;
+        float b_max = 0;
+        float r_min = 1;
+        float g_min = 1;
+        float b_min = 1;
+        for (int y = 0; y < image.rows; y++)
+        {
+            for (int x = 0; x < image.cols; x++)
+            {
+                cv::Vec3b p = image.at<cv::Vec3b>(cv::Point(x, y));
+                float r = p[2] / 255.0f;
+                float g = p[1] / 255.0f;
+                float b = p[0] / 255.0f;
+                r_max = std::max(r, r_max);
+                r_min = std::min(r, r_min);
+                g_max = std::max(g, g_max);
+                g_min = std::min(g, g_min);
+                b_max = std::max(b, b_max);
+                b_min = std::min(b, b_min);
+            }
+        }
+        return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
+    };
+        
     GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+    Vec2 output_size(256, 256);
     for (int i = 0; i < 100; i++)
     {
-        cv::imshow("texture", f3d.fcdMakeRandomTexture(Vec2(128, 128)));
-        Texture::waitKey(500);
+        std::cout << i << ": ";
+        cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
+        float nu = nonuniformity(image);
+        if (nu > 0)
+        {
+            cv::imshow("texture", image);
+            debugPrint(nu)
+            Texture::waitKey(500);
+            std::string fn = test_dir + n_letters(10, LPRS()) + ".jpg";
+            cv::imwrite(fn, image);
+        }
     }
     Texture::waitKey();
 
