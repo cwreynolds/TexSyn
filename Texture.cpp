@@ -440,6 +440,10 @@ bool Texture::isDiskSymmetric(const cv::Mat& mat)
 
 Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
 {
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO experimental 20220123
+    position /= secret_render_scale_factor_;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // Read TexSyn Color from Texture at (i, j).
     Color color(0, 0, 0);
     expensive_to_nest = 0;

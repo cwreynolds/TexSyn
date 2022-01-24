@@ -281,6 +281,12 @@ public:
         int row_rect_w;
     };
     
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO experimental 20220123
+    static inline float secret_render_scale_factor_ = 1;
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
+
 private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;

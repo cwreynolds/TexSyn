@@ -6162,23 +6162,34 @@ int main(int argc, const char * argv[])
         }
         return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
     };
-        
-    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+
+    LPRS().setSeed(20220123);
     Vec2 output_size(256, 256);
-    for (int i = 0; i < 100; i++)
+    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+    for (int i = 0; i < 50; i++)
     {
         std::cout << i << ": ";
-        cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
-        float nu = nonuniformity(image);
-        if (nu > 0)
+        // TODO experimental 20220123
+        float save_scale = Texture::secret_render_scale_factor_;
+        Texture::secret_render_scale_factor_ = 201.0 / 1024.0;
+        float non_uniformity = 0;
+        while (non_uniformity == 0)
         {
-            cv::imshow("texture", image);
-            debugPrint(nu)
-            Texture::waitKey(500);
-            std::string fn = test_dir + n_letters(10, LPRS()) + ".jpg";
-            cv::imwrite(fn, image);
+            cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
+            float nu = nonuniformity(image);
+            if (nu > 0)
+            {
+                non_uniformity = nu;
+                cv::imshow("texture", image);
+                debugPrint(non_uniformity)
+                Texture::waitKey(500);
+                std::string fn = test_dir + n_letters(10, LPRS()) + ".jpg";
+                cv::imwrite(fn, image);
+            }
         }
+        Texture::secret_render_scale_factor_ = save_scale;
     }
+    
     Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
