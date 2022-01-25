@@ -6127,6 +6127,13 @@ int main(int argc, const char * argv[])
     std::cout << "January 21, 2022" << std::endl;
     
     std::string test_dir = "/Users/cwr/Desktop/TexSyn_temp/f3d_test/";
+    
+//    LPRS().setSeed(20220123);
+//    LPRS().setSeed(20220124);
+    LPRS().setSeed(320220124);
+    Vec2 output_size(256, 256);
+    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+
 
     // Experiment with making images containing only random synthetic texture
     // for use with the 'complex' version of Find_3_Disks.ipynb. Actual training
@@ -6134,8 +6141,9 @@ int main(int argc, const char * argv[])
     //
     // Too many of these are "uniform" should I reject those?
     
-    // Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
-//    auto rgb_bounds_volume = [](cv::Mat image)
+    // Returns a measure of non-unifornity, a float on [0, 1].
+    // TODO Didn't I write this before somewhere?
+    // TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
     auto nonuniformity = [](cv::Mat image)
     {
         float r_max = 0;
@@ -6163,12 +6171,10 @@ int main(int argc, const char * argv[])
         return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
     };
 
-    LPRS().setSeed(20220123);
-    Vec2 output_size(256, 256);
-    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
-    for (int i = 0; i < 50; i++)
+    // Generate and write one instance of a f3d_texsyn_image. Skips completely
+    // uniform textures.
+    auto write_f3d_texsyn_image = [&]()
     {
-        std::cout << i << ": ";
         // TODO experimental 20220123
         float save_scale = Texture::secret_render_scale_factor_;
         Texture::secret_render_scale_factor_ = 201.0 / 1024.0;
@@ -6176,10 +6182,9 @@ int main(int argc, const char * argv[])
         while (non_uniformity == 0)
         {
             cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
-            float nu = nonuniformity(image);
-            if (nu > 0)
+            non_uniformity = nonuniformity(image);
+            if (non_uniformity > 0)
             {
-                non_uniformity = nu;
                 cv::imshow("texture", image);
                 debugPrint(non_uniformity)
                 Texture::waitKey(500);
@@ -6188,6 +6193,42 @@ int main(int argc, const char * argv[])
             }
         }
         Texture::secret_render_scale_factor_ = save_scale;
+    };
+    
+    std::string backgrounds_dir = "/Users/cwr/Pictures/camouflage_backgrounds/";
+    std::vector<std::string> one_per_set =
+    {
+        "clover/IMG_2844.jpeg",
+        "fungus_pores_2/pores_of_Trametes_gibbosa.jpg",
+        "huntington_hedge/IMG_7689.jpeg",
+        "kitchen_granite/IMG_7518.jpeg",
+        "michaels_gravel/IMG_7408.JPG",
+        "oak_leaf_litter/IMG_6548.jpeg",
+        "pebbles_in_concrete/IMG_7580.jpeg",
+        "redbud_and_sky/P1010982.jpeg",
+        "redwood_leaf_litter/IMG_6498.jpeg",
+        "tree_leaf_blossom_sky/IMG_4418.jpeg",
+        "yellow_flower_on_green/IMG_7412.JPG",
+        "unused/backyard_oak/P1000247.jpeg",
+        "unused/blue_pavement/IMG_5889.jpeg",
+        "unused/gray_pavement/IMG_7257.jpeg",
+        "unused/maple_leaf_litter/IMG_8325.jpeg",
+        "unused/moss_leaves_soil/IMG_8369.jpeg",
+        "unused/orange_pyracantha/IMG_6798.jpeg",
+        "unused/oxalis_sprouts/IMG_8288.jpeg",
+        "unused/purple_flowers_on_green/IMG_6306.jpeg",
+        "unused/red_bougainvillea/IMG_6396.jpeg",
+        "unused/red_gray_capsules/IMG_6967.jpeg",
+        "unused/tree_bark/IMG_2890.jpeg"
+    };
+    
+
+
+    // Write 50 files containing random f3d_texsyn_image.
+    for (int i = 0; i < 50; i++)
+    {
+        std::cout << i << ": ";
+        write_f3d_texsyn_image();
     }
     
     Texture::waitKey();
