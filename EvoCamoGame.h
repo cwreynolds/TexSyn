@@ -882,7 +882,9 @@ public:
         std::cout << "Making texture (" << size_in_pixels.x() << "x"
                   << size_in_pixels.y() << ")..." << std::flush;
         Timer t("done,");
-        int max_init_tree_size = 40;
+        // TODO 20220125 does making this bigger produce fewer Uniforms?
+//        int max_init_tree_size = 40;
+        int max_init_tree_size = tree_size_;
         const FunctionSet& function_set = GP::fs();
         GpTree tree;
         function_set.makeRandomTree(max_init_tree_size, tree);

@@ -6123,115 +6123,158 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
+//    // Prototyping training set for "find 3 disks".
+//    std::cout << "January 21, 2022" << std::endl;
+//
+//    std::string test_dir = "/Users/cwr/Desktop/TexSyn_temp/f3d_test/";
+//
+////    LPRS().setSeed(20220123);
+////    LPRS().setSeed(20220124);
+//    LPRS().setSeed(320220124);
+//    Vec2 output_size(256, 256);
+//    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+//
+//
+//    // Experiment with making images containing only random synthetic texture
+//    // for use with the 'complex' version of Find_3_Disks.ipynb. Actual training
+//    // examples will be constructed in memory before a run by Python code.
+//    //
+//    // Too many of these are "uniform" should I reject those?
+//
+//    // Returns a measure of non-unifornity, a float on [0, 1].
+//    // TODO Didn't I write this before somewhere?
+//    // TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
+//    auto nonuniformity = [](cv::Mat image)
+//    {
+//        float r_max = 0;
+//        float g_max = 0;
+//        float b_max = 0;
+//        float r_min = 1;
+//        float g_min = 1;
+//        float b_min = 1;
+//        for (int y = 0; y < image.rows; y++)
+//        {
+//            for (int x = 0; x < image.cols; x++)
+//            {
+//                cv::Vec3b p = image.at<cv::Vec3b>(cv::Point(x, y));
+//                float r = p[2] / 255.0f;
+//                float g = p[1] / 255.0f;
+//                float b = p[0] / 255.0f;
+//                r_max = std::max(r, r_max);
+//                r_min = std::min(r, r_min);
+//                g_max = std::max(g, g_max);
+//                g_min = std::min(g, g_min);
+//                b_max = std::max(b, b_max);
+//                b_min = std::min(b, b_min);
+//            }
+//        }
+//        return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
+//    };
+//
+//    // Generate and write one instance of a f3d_texsyn_image. Skips completely
+//    // uniform textures.
+//    auto write_f3d_texsyn_image = [&]()
+//    {
+//        // TODO experimental 20220123
+//        float save_scale = Texture::secret_render_scale_factor_;
+//        Texture::secret_render_scale_factor_ = 201.0 / 1024.0;
+//        float non_uniformity = 0;
+//        while (non_uniformity == 0)
+//        {
+//            cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
+//            non_uniformity = nonuniformity(image);
+//            if (non_uniformity > 0)
+//            {
+//                cv::imshow("texture", image);
+//                debugPrint(non_uniformity)
+//                Texture::waitKey(500);
+//                std::string fn = test_dir + n_letters(10, LPRS()) + ".jpg";
+//                cv::imwrite(fn, image);
+//            }
+//        }
+//        Texture::secret_render_scale_factor_ = save_scale;
+//    };
+//
+//    std::string backgrounds_dir = "/Users/cwr/Pictures/camouflage_backgrounds/";
+//    std::vector<std::string> one_per_set =
+//    {
+//        "clover/IMG_2844.jpeg",
+//        "fungus_pores_2/pores_of_Trametes_gibbosa.jpg",
+//        "huntington_hedge/IMG_7689.jpeg",
+//        "kitchen_granite/IMG_7518.jpeg",
+//        "michaels_gravel/IMG_7408.JPG",
+//        "oak_leaf_litter/IMG_6548.jpeg",
+//        "pebbles_in_concrete/IMG_7580.jpeg",
+//        "redbud_and_sky/P1010982.jpeg",
+//        "redwood_leaf_litter/IMG_6498.jpeg",
+//        "tree_leaf_blossom_sky/IMG_4418.jpeg",
+//        "yellow_flower_on_green/IMG_7412.JPG",
+//        "unused/backyard_oak/P1000247.jpeg",
+//        "unused/blue_pavement/IMG_5889.jpeg",
+//        "unused/gray_pavement/IMG_7257.jpeg",
+//        "unused/maple_leaf_litter/IMG_8325.jpeg",
+//        "unused/moss_leaves_soil/IMG_8369.jpeg",
+//        "unused/orange_pyracantha/IMG_6798.jpeg",
+//        "unused/oxalis_sprouts/IMG_8288.jpeg",
+//        "unused/purple_flowers_on_green/IMG_6306.jpeg",
+//        "unused/red_bougainvillea/IMG_6396.jpeg",
+//        "unused/red_gray_capsules/IMG_6967.jpeg",
+//        "unused/tree_bark/IMG_2890.jpeg"
+//    };
+//
+//
+//
+//    // Write 50 files containing random f3d_texsyn_image.
+//    for (int i = 0; i < 50; i++)
+//    {
+//        std::cout << i << ": ";
+//        write_f3d_texsyn_image();
+//    }
+//
+//    Texture::waitKey();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Prototyping training set for "find 3 disks".
-    std::cout << "January 21, 2022" << std::endl;
-    
-    std::string test_dir = "/Users/cwr/Desktop/TexSyn_temp/f3d_test/";
-    
-//    LPRS().setSeed(20220123);
-//    LPRS().setSeed(20220124);
-    LPRS().setSeed(320220124);
-    Vec2 output_size(256, 256);
-    GenerateTrainingSetForFindConspicuousDisks f3d(CommandLine({ "t", "0" }));
+    std::cout << "January 25, 2022" << std::endl;
 
+//    how_many_ = 20
+//    output_directory_ = "/Users/cwr/Desktop/TexSyn_temp/f3d_test"
+//    input_photo_dir_ = "/Users/cwr/Pictures/camouflage_backgrounds"
+//    random_seed_ = 20220125
+//    background_scale_ = 0.5
+//    output_size_ = 1024
+//    disk_size_ = 201
+//    tree_size_ = 40
 
-    // Experiment with making images containing only random synthetic texture
-    // for use with the 'complex' version of Find_3_Disks.ipynb. Actual training
-    // examples will be constructed in memory before a run by Python code.
-    //
-    // Too many of these are "uniform" should I reject those?
-    
-    // Returns a measure of non-unifornity, a float on [0, 1].
-    // TODO Didn't I write this before somewhere?
-    // TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
-    auto nonuniformity = [](cv::Mat image)
-    {
-        float r_max = 0;
-        float g_max = 0;
-        float b_max = 0;
-        float r_min = 1;
-        float g_min = 1;
-        float b_min = 1;
-        for (int y = 0; y < image.rows; y++)
-        {
-            for (int x = 0; x < image.cols; x++)
-            {
-                cv::Vec3b p = image.at<cv::Vec3b>(cv::Point(x, y));
-                float r = p[2] / 255.0f;
-                float g = p[1] / 255.0f;
-                float b = p[0] / 255.0f;
-                r_max = std::max(r, r_max);
-                r_min = std::min(r, r_min);
-                g_max = std::max(g, g_max);
-                g_min = std::min(g, g_min);
-                b_max = std::max(b, b_max);
-                b_min = std::min(b, b_min);
-            }
-        }
-        return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
-    };
+    CommandLine cmd
+    ({
+        "GenerateTrainingSetForFindConspicuousDisks",
+        "20",                                         // how_many_
+        "/Users/cwr/Desktop/TexSyn_temp/f3d_test",    // output_directory_
+        "/Users/cwr/Pictures/camouflage_backgrounds", // input_photo_dir_
+        "20220125",                                   // random_seed_
+        "0.5",                                        // background_scale_
+        "128",                                        // output_size_
+        "25",                                         // disk_size_
+        "100"                                         // tree_size_
+    });
+    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
+    fcd.run();
 
-    // Generate and write one instance of a f3d_texsyn_image. Skips completely
-    // uniform textures.
-    auto write_f3d_texsyn_image = [&]()
-    {
-        // TODO experimental 20220123
-        float save_scale = Texture::secret_render_scale_factor_;
-        Texture::secret_render_scale_factor_ = 201.0 / 1024.0;
-        float non_uniformity = 0;
-        while (non_uniformity == 0)
-        {
-            cv::Mat image = f3d.fcdMakeRandomTexture(output_size);
-            non_uniformity = nonuniformity(image);
-            if (non_uniformity > 0)
-            {
-                cv::imshow("texture", image);
-                debugPrint(non_uniformity)
-                Texture::waitKey(500);
-                std::string fn = test_dir + n_letters(10, LPRS()) + ".jpg";
-                cv::imwrite(fn, image);
-            }
-        }
-        Texture::secret_render_scale_factor_ = save_scale;
-    };
-    
-    std::string backgrounds_dir = "/Users/cwr/Pictures/camouflage_backgrounds/";
-    std::vector<std::string> one_per_set =
-    {
-        "clover/IMG_2844.jpeg",
-        "fungus_pores_2/pores_of_Trametes_gibbosa.jpg",
-        "huntington_hedge/IMG_7689.jpeg",
-        "kitchen_granite/IMG_7518.jpeg",
-        "michaels_gravel/IMG_7408.JPG",
-        "oak_leaf_litter/IMG_6548.jpeg",
-        "pebbles_in_concrete/IMG_7580.jpeg",
-        "redbud_and_sky/P1010982.jpeg",
-        "redwood_leaf_litter/IMG_6498.jpeg",
-        "tree_leaf_blossom_sky/IMG_4418.jpeg",
-        "yellow_flower_on_green/IMG_7412.JPG",
-        "unused/backyard_oak/P1000247.jpeg",
-        "unused/blue_pavement/IMG_5889.jpeg",
-        "unused/gray_pavement/IMG_7257.jpeg",
-        "unused/maple_leaf_litter/IMG_8325.jpeg",
-        "unused/moss_leaves_soil/IMG_8369.jpeg",
-        "unused/orange_pyracantha/IMG_6798.jpeg",
-        "unused/oxalis_sprouts/IMG_8288.jpeg",
-        "unused/purple_flowers_on_green/IMG_6306.jpeg",
-        "unused/red_bougainvillea/IMG_6396.jpeg",
-        "unused/red_gray_capsules/IMG_6967.jpeg",
-        "unused/tree_bark/IMG_2890.jpeg"
-    };
-    
+    //GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
 
+    // command line args:
+    // fcd how_many
+    //     output_dir
+    //     input_photo_dir
+    //     seed
+    //     bg_scale
+    //     output_size
+    //     disk_size
+    //     tree_size
 
-    // Write 50 files containing random f3d_texsyn_image.
-    for (int i = 0; i < 50; i++)
-    {
-        std::cout << i << ": ";
-        write_f3d_texsyn_image();
-    }
-    
-    Texture::waitKey();
+    // 20211203 run (to reach 5000 total: 5000 - 2007 = 2993):
+    // texsyn 2993 /Users/cwr/Desktop/TexSyn_temp/fcd_training_set /Users/cwr/Pictures/camouflage_backgrounds 20211203
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
