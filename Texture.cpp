@@ -912,3 +912,46 @@ void Texture::checkForUserInput()
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+// TODO experimental 20220127
+
+// Returns a measure of non-unifornity, a float on [0, 1].
+// TODO Didn't I write this before somewhere?
+// TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
+
+// a static function something like `Texture::matUniformity(const cv::Mat& mat, int samples = 0)` — returns float — **0** for mat that spans the RGB gamut to **1** for all pixels equal — where `samples==0` means look at all pixels.
+
+
+float Texture::matUniformity(const cv::Mat& cv_mat, int samples)
+{
+    // TODO temp for debugging:
+    assert(samples == 0);
+    
+    float r_max = 0;
+    float g_max = 0;
+    float b_max = 0;
+    float r_min = 1;
+    float g_min = 1;
+    float b_min = 1;
+    for (int y = 0; y < cv_mat.rows; y++)
+    {
+        for (int x = 0; x < cv_mat.cols; x++)
+        {
+            cv::Vec3b p = cv_mat.at<cv::Vec3b>(cv::Point(x, y));
+            float r = p[2] / 255.0f;
+            float g = p[1] / 255.0f;
+            float b = p[0] / 255.0f;
+            r_max = std::max(r, r_max);
+            r_min = std::min(r, r_min);
+            g_max = std::max(g, g_max);
+            g_min = std::min(g, g_min);
+            b_max = std::max(b, b_max);
+            b_min = std::min(b, b_min);
+        }
+    }
+    return 1 - std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
+};
+
+//~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~

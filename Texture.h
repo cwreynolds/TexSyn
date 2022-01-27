@@ -286,6 +286,22 @@ public:
     static inline float secret_render_scale_factor_ = 1;
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO experimental 20220127
+    
+    // Returns a measure of non-unifornity, a float on [0, 1].
+    // TODO Didn't I write this before somewhere?
+    // TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
+    
+    // a static function something like `Texture::matUniformity(const cv::Mat& mat, int samples = 0)` — returns float — **0** for mat that spans the RGB gamut to **1** for all pixels equal — where `samples==0` means look at all pixels.
+        
+        
+    static float matUniformity(const cv::Mat& cv_mat)
+        { return matUniformity(cv_mat, 0); }
+    static float matUniformity(const cv::Mat& cv_mat, int samples);
+
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    
 
 private:
     static inline const int validity_key_ = 1234567890;

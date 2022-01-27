@@ -719,6 +719,9 @@ class GenerateTrainingSetForFindConspicuousDisks
 {
     typedef fs::directory_iterator di;
     typedef fs::path pn;
+    
+    // TODO 20220127 adjust bg scale by output_size_
+    const int dos_ = 1024; // Default output size (to adjust background_scale_).
 public:
     // Constructor to get parameters from pre-parsed "unix style" command line.
     GenerateTrainingSetForFindConspicuousDisks(const CommandLine& cmd)
@@ -726,8 +729,14 @@ public:
         output_directory_(cmd.positionalArgument(2, ".")),
         input_photo_dir_(cmd.positionalArgument(3, ".")),
         random_seed_(cmd.positionalArgument(4, int(LPRS().defaultSeed()))),
-        background_scale_(cmd.positionalArgument(5, float(0.5))),
-        output_size_(cmd.positionalArgument(6, 1024)),
+
+        // TODO 20220127 adjust bg scale by output_size_
+//        background_scale_(cmd.positionalArgument(5, float(0.5))),
+        background_scale_(cmd.positionalArgument(5, float(0.5)) *
+                          (cmd.positionalArgument(6, dos_) / float(dos_))),
+//        output_size_(cmd.positionalArgument(6, 1024)),
+        output_size_(cmd.positionalArgument(6, dos_)),
+
         disk_size_(cmd.positionalArgument(7, 201)),
         tree_size_(cmd.positionalArgument(8, 40))
     {
@@ -810,7 +819,9 @@ public:
             {
                 cv::resize(photo, photo,
                            cv::Size(), background_scale_, background_scale_,
-                           cv::INTER_CUBIC);
+                           // 20220127 I think this is better for scaling down:
+//                           cv::INTER_CUBIC);
+                           cv::INTER_LANCZOS4);
             }
             // If the adjusted size is large enough
             std::cout << "    ";
@@ -895,22 +906,83 @@ public:
         return Texture::getCvMatRect(random_position, size_in_pixels, photo);
     }
     
+//    // Generate a random TexSyn texture from a random LazyPredator GpTree.
+//    cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
+//    {
+//        std::cout << "Making texture (" << size_in_pixels.x() << "x"
+//                  << size_in_pixels.y() << ")..." << std::flush;
+//        Timer t("done,");
+//        // TODO 20220125 does making this bigger produce fewer Uniforms?
+////        int max_init_tree_size = 40;
+//        int max_init_tree_size = tree_size_;
+//        const FunctionSet& function_set = GP::fs();
+//        GpTree tree;
+//        function_set.makeRandomTree(max_init_tree_size, tree);
+//        Individual individual(tree);
+//        Texture* texture = GP::textureFromIndividual(&individual);
+//        texture->rasterizeToImageCache(size_in_pixels.x(), false);
+//        return texture->getCvMat();
+//    }
+
+//    // TODO 20220127
+//    // Generate a random TexSyn texture from a random LazyPredator GpTree.
+//    cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
+//    {
+////        bool boring_uniform_texture = true;
+//        while (true) {
+//            std::cout << "Making texture (" << size_in_pixels.x() << "x"
+//                      << size_in_pixels.y() << ")..." << std::flush;
+//            Timer t("done,");
+//            int max_init_tree_size = tree_size_;
+//            const FunctionSet& function_set = GP::fs();
+//            GpTree tree;
+//            function_set.makeRandomTree(max_init_tree_size, tree);
+//            Individual individual(tree);
+//            Texture* texture = GP::textureFromIndividual(&individual);
+//            texture->rasterizeToImageCache(size_in_pixels.x(), false);
+//
+//            cv::Mat cv_mat = texture->getCvMat();
+//            float uniformity = Texture::matUniformity(cv_mat);
+////            boring_uniform_texture = ;
+//
+//            if (uniformity == 1)
+//                { std::cout << " ...rejecting uniform texture... "; }
+//            else
+//                { return cv_mat; }
+//        }
+//    }
+
+    // TODO 20220127
     // Generate a random TexSyn texture from a random LazyPredator GpTree.
     cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
     {
-        std::cout << "Making texture (" << size_in_pixels.x() << "x"
-                  << size_in_pixels.y() << ")..." << std::flush;
-        Timer t("done,");
-        // TODO 20220125 does making this bigger produce fewer Uniforms?
-//        int max_init_tree_size = 40;
-        int max_init_tree_size = tree_size_;
-        const FunctionSet& function_set = GP::fs();
-        GpTree tree;
-        function_set.makeRandomTree(max_init_tree_size, tree);
-        Individual individual(tree);
-        Texture* texture = GP::textureFromIndividual(&individual);
-        texture->rasterizeToImageCache(size_in_pixels.x(), false);
-        return texture->getCvMat();
+        while (true)
+        {
+            std::cout << "Making texture (" << size_in_pixels.x() << "x"
+                      << size_in_pixels.y() << ")..." << std::flush;
+            Timer t("done,");
+            int max_init_tree_size = tree_size_;
+            const FunctionSet& function_set = GP::fs();
+            GpTree tree;
+            function_set.makeRandomTree(max_init_tree_size, tree);
+            Individual individual(tree);
+            Texture* texture = GP::textureFromIndividual(&individual);
+            texture->rasterizeToImageCache(size_in_pixels.x(), false);
+            cv::Mat cv_mat = texture->getCvMat();
+//            float uniformity = Texture::matUniformity(cv_mat);
+//            if (uniformity == 1)
+//                { std::cout << " ...rejecting uniform texture... "; }
+//            else
+//                { return cv_mat; }
+            if (Texture::matUniformity(cv_mat) == 1)
+            {
+                std::cout << "reject uniform texture...";
+            }
+            else
+            {
+                return cv_mat;
+            }
+        }
     }
     
     // Random UUID-like string plus pixel x and y of disk center.
@@ -970,15 +1042,24 @@ public:
         cv::Mat output = selectRandomBackgroundImage().clone();
         
         Vec2 center;
+        
+        std::vector<Vec2> centers = find3RandomDiskCenters();
+        
+//        debugPrint(vec_to_string(centers));
 
-        for(int i = 0; i < 3; i++)
+
+//        for(int i = 0; i < 3; i++)
+        for (auto c : centers)
         {
             cv::Mat disk = selectRandomDiskImage();
-            Vec2 diff = outputSize() - diskSize();
-            Vec2 position(diff.x() * LPRS().frandom01(),
-                          diff.y() * LPRS().frandom01());
-//            Vec2 center = position + diskSize() / 2;
-            center = position + diskSize() / 2;
+//                Vec2 diff = outputSize() - diskSize();
+//                Vec2 position(diff.x() * LPRS().frandom01(),
+//                              diff.y() * LPRS().frandom01());
+//    //            Vec2 center = position + diskSize() / 2;
+//                center = position + diskSize() / 2;
+            center = c;
+            Vec2 position = center - diskSize() / 2;
+
 
             // Matte disk texture over random position in output texture.
             cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
@@ -987,6 +1068,54 @@ public:
         writeOneOutputImage(output, center);
     }
 
+    // Rewritten from Find_3_Disks.ipynb
+    // Find 3 non-overlapping disk positions inside image.
+
+    //    # Find 3 non-overlapping disk positions inside image.
+    //    def random_center():
+    //        s = image_size - (2 * disk_radius)
+    //        return (np.random.random_sample(2) * s) + disk_radius
+    //    centers = [random_center()]
+    //    min_dist = 3 * disk_radius
+    //    while len(centers) < 3:
+    //        c = random_center()
+    //        all_ok = True
+    //        for o in centers:
+    //            if (df.dist2d(c, o) < min_dist):
+    //                all_ok = False
+    //        if (all_ok):
+    //            centers.append(c)
+
+    std::vector<Vec2> find3RandomDiskCenters()
+    {
+        auto random_center = [&]()
+        {
+//            Vec2 excess = outputSize() - diskSize();
+//            return (diskSize() / 2 +
+//                    Vec2(LPRS().frandom01() * excess.x(),
+//                         LPRS().frandom01() * excess.y()));
+            
+            // bigger margins:
+            
+            Vec2 excess = outputSize() - (diskSize() * 1.5);
+            return (diskSize() * 0.75 +
+                    Vec2(LPRS().frandom01() * excess.x(),
+                         LPRS().frandom01() * excess.y()));
+        };
+        std::vector<Vec2> centers = {random_center()};
+        float min_dist = diskSize().x() * 1.5;
+        while (centers.size() < 3)
+        {
+            Vec2 c = random_center();
+            bool all_ok = true;
+            for (auto o : centers)
+            {
+                if ((c - o).length() < min_dist) { all_ok = false; }
+            }
+            if (all_ok) { centers.push_back(c); }
+        }
+        return centers;
+    }
 
 };
 
