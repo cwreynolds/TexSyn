@@ -751,7 +751,9 @@ public:
         while (output_counter_ < how_many_) { generateOneOutputImage(); }
     }
     
-    void generateOneOutputImage()
+    // TODO 20220126 make virtual so I can override it in 3 disk vesion
+//    void generateOneOutputImage()
+    virtual void generateOneOutputImage()
     {
         cv::Mat output = selectRandomBackgroundImage().clone();
         cv::Mat disk = selectRandomDiskImage();
@@ -764,6 +766,23 @@ public:
         cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
         Texture::matteImageCacheDiskOverBG(disk, target);
         
+        // TODO 20220126 modularize for 3 disk vesion
+
+//        // Display and save the new training image.
+//        cv::imshow("output", output);
+//        // TODO needs to save to file
+//        std::string path = output_directory_ / outputFileName(center);
+//        std::cout << "Writing image " << ++output_counter_
+//                  << " to " << path << " ... ";
+//        cv::imwrite(path, output);
+//        std::cout << "done." <<std::endl;
+        
+        writeOneOutputImage(output, center);
+    }
+    
+    // TODO 20220126 modularize for 3 disk vesion
+    void writeOneOutputImage(const cv::Mat& output, Vec2 center)
+    {
         // Display and save the new training image.
         cv::imshow("output", output);
         // TODO needs to save to file
@@ -905,6 +924,7 @@ public:
 
     Vec2 diskSize() const { return Vec2(disk_size_, disk_size_); }
     Vec2 outputSize() const { return Vec2(output_size_, output_size_); }
+    int treeSize() const { return tree_size_; }
 
 private:
     // How many training examples to generate.
@@ -931,6 +951,44 @@ private:
     int output_counter_ = 0;
 };
 
+// TODO QQQ
+class GenerateTrainingSetForFind3Disks :
+    public GenerateTrainingSetForFindConspicuousDisks
+{
+public:
+    // Constructor to get parameters from pre-parsed "unix style" command line.
+    
+    GenerateTrainingSetForFind3Disks(const CommandLine& cmd) :
+        GenerateTrainingSetForFindConspicuousDisks(cmd)
+    {
+        
+    }
+    
+    // Customize this for the 3 disk case.
+    void generateOneOutputImage() override
+    {
+        cv::Mat output = selectRandomBackgroundImage().clone();
+        
+        Vec2 center;
+
+        for(int i = 0; i < 3; i++)
+        {
+            cv::Mat disk = selectRandomDiskImage();
+            Vec2 diff = outputSize() - diskSize();
+            Vec2 position(diff.x() * LPRS().frandom01(),
+                          diff.y() * LPRS().frandom01());
+//            Vec2 center = position + diskSize() / 2;
+            center = position + diskSize() / 2;
+
+            // Matte disk texture over random position in output texture.
+            cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
+            Texture::matteImageCacheDiskOverBG(disk, target);
+        }
+        writeOneOutputImage(output, center);
+    }
+
+
+};
 
 // PythonComms protype experiments (was EvoCamoVsStaticFCD)
 //

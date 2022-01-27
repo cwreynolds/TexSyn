@@ -6237,18 +6237,9 @@ int main(int argc, const char * argv[])
     // Prototyping training set for "find 3 disks".
     std::cout << "January 25, 2022" << std::endl;
 
-//    how_many_ = 20
-//    output_directory_ = "/Users/cwr/Desktop/TexSyn_temp/f3d_test"
-//    input_photo_dir_ = "/Users/cwr/Pictures/camouflage_backgrounds"
-//    random_seed_ = 20220125
-//    background_scale_ = 0.5
-//    output_size_ = 1024
-//    disk_size_ = 201
-//    tree_size_ = 40
-
     CommandLine cmd
     ({
-        "GenerateTrainingSetForFindConspicuousDisks",
+        "GenerateTrainingSetForFind3Disks",
         "20",                                         // how_many_
         "/Users/cwr/Desktop/TexSyn_temp/f3d_test",    // output_directory_
         "/Users/cwr/Pictures/camouflage_backgrounds", // input_photo_dir_
@@ -6258,23 +6249,10 @@ int main(int argc, const char * argv[])
         "25",                                         // disk_size_
         "100"                                         // tree_size_
     });
-    GenerateTrainingSetForFindConspicuousDisks fcd(cmd);
-    fcd.run();
+    GenerateTrainingSetForFind3Disks f3d(cmd);
+    f3d.run();
 
     //GenerateTrainingSetForFindConspicuousDisks(CommandLine(argc, argv)).run();
-
-    // command line args:
-    // fcd how_many
-    //     output_dir
-    //     input_photo_dir
-    //     seed
-    //     bg_scale
-    //     output_size
-    //     disk_size
-    //     tree_size
-
-    // 20211203 run (to reach 5000 total: 5000 - 2007 = 2993):
-    // texsyn 2993 /Users/cwr/Desktop/TexSyn_temp/fcd_training_set /Users/cwr/Pictures/camouflage_backgrounds 20211203
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
