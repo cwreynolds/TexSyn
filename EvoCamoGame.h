@@ -821,7 +821,8 @@ public:
                            cv::Size(), background_scale_, background_scale_,
                            // 20220127 I think this is better for scaling down:
 //                           cv::INTER_CUBIC);
-                           cv::INTER_LANCZOS4);
+//                           cv::INTER_LANCZOS4);
+                           cv::INTER_AREA);
             }
             // If the adjusted size is large enough
             std::cout << "    ";
