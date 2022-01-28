@@ -124,7 +124,7 @@ public:
                 // Adjust the size/resolution by "background_scale" parameter.
                 cv::resize(bg, bg,
                            cv::Size(), backgroundScale(), backgroundScale(),
-                           cv::INTER_CUBIC);
+                           cv::INTER_AREA);
                 // Add to collection of background images.
                 addBackgroundImage(bg);
             }
@@ -193,8 +193,6 @@ public:
         gui().setWindowName(run_name_);
         gui().refresh();
         // Loop of interactive evolution steps, until "Q" command or forced exit.
-//        running_ = true;
-//        while (running_)
         setRunningState(true);
         while (getRunningState())
         {
@@ -302,40 +300,6 @@ public:
         // writeTrainingSetData(prey_texture_positions);
     }
 
-//        // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
-//        // user's selection of the "worst" camouflage. This also "listens" for and
-//        // executes single character commands: "t" and "Q".
-//    //    void waitForUserInput()
-//        // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
-//        virtual void waitForUserInput()
-//        {
-//            waitForMouseUp();  // In case mouse button still down from last click.
-//    //        wait_for_mouse_click_ = true;
-//            setWaitForMouseClick(true);
-//            int previous_key = cv::waitKeyEx(1);
-//            // Loop until mouse is clicked in window.
-//    //        while (wait_for_mouse_click_)
-//            while (getWaitForMouseClick())
-//            {
-//                // Wait for 1/4 second, and read any key typed during that time.
-//                int key = cv::waitKey(250);  // 1/4 second (250/1000)
-//                // When newly-pressed (key down) event.
-//                if ((key > 0) && (key != previous_key))
-//                {
-//                    // For "t" command: write whole window tournament image to file.
-//                    if (key == 't') { writeTournamentImageToFile(); }
-//                    // For "Q" command: exit run() loop.
-//                    if (key == 'Q')
-//                    {
-//                        running_ = false;
-//                        wait_for_mouse_click_ = false;
-//                        setWaitForMouseClick(false);
-//                    }
-//                }
-//                previous_key = key;
-//            }
-//        }
-
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
     // executes single character commands: "t" and "Q".
@@ -358,7 +322,6 @@ public:
                 // For "Q" command: exit run() loop.
                 if (key == 'Q')
                 {
-//                    running_ = false;
                     setRunningState(false);
                     setWaitForMouseClick(false);
                 }
@@ -391,12 +354,9 @@ public:
                     Individual* i = c->selectIndividualFromMouseClick(click);
                     c->writeThumbnailImageToFile(i);
                 }
-                // else if (flags & cv::EVENT_FLAG_CTRLKEY) {}
-                // else if (flags & cv::EVENT_FLAG_ALTKEY) {}
                 else
                 {
                     c->setLastMouseClick(click);
-//                    c->wait_for_mouse_click_ = false;
                     c->setWaitForMouseClick(false);
                 }
             }
@@ -517,8 +477,6 @@ public:
     GUI& gui() { return gui_; }
     const GUI& gui() const { return gui_; }
 
-//    // TODO very temp
-//    int textureSize() const { return 201; }
     // TODO very temp
     int texture_size_ = 201;
     // TODO 20211231 for backward compatibility / testing
@@ -693,6 +651,8 @@ private:
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 };
 
+// TODO this should be in its own file.
+
 // Experimental code for generating training set of images for learning to
 // "find conspicuous disks". Generates random image files with a background
 // texture and a disk of another texture matted on top. Image files maybe
@@ -702,8 +662,6 @@ private:
 // (Maybe filenames like 3485729384_0132_0981.jpg where the first number is
 // just a random UID, and the second two numbers are the ground truth center
 // location of the disk.)
-//
-// Perhaps this should be in its own file?
 
 // command line args:
 // fcd how_many
@@ -729,14 +687,9 @@ public:
         output_directory_(cmd.positionalArgument(2, ".")),
         input_photo_dir_(cmd.positionalArgument(3, ".")),
         random_seed_(cmd.positionalArgument(4, int(LPRS().defaultSeed()))),
-
-        // TODO 20220127 adjust bg scale by output_size_
-//        background_scale_(cmd.positionalArgument(5, float(0.5))),
         background_scale_(cmd.positionalArgument(5, float(0.5)) *
                           (cmd.positionalArgument(6, dos_) / float(dos_))),
-//        output_size_(cmd.positionalArgument(6, 1024)),
         output_size_(cmd.positionalArgument(6, dos_)),
-
         disk_size_(cmd.positionalArgument(7, 201)),
         tree_size_(cmd.positionalArgument(8, 40))
     {
@@ -760,8 +713,6 @@ public:
         while (output_counter_ < how_many_) { generateOneOutputImage(); }
     }
     
-    // TODO 20220126 make virtual so I can override it in 3 disk vesion
-//    void generateOneOutputImage()
     virtual void generateOneOutputImage()
     {
         cv::Mat output = selectRandomBackgroundImage().clone();
@@ -774,22 +725,10 @@ public:
         // Matte disk texture over random position in output texture.
         cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
         Texture::matteImageCacheDiskOverBG(disk, target);
-        
-        // TODO 20220126 modularize for 3 disk vesion
-
-//        // Display and save the new training image.
-//        cv::imshow("output", output);
-//        // TODO needs to save to file
-//        std::string path = output_directory_ / outputFileName(center);
-//        std::cout << "Writing image " << ++output_counter_
-//                  << " to " << path << " ... ";
-//        cv::imwrite(path, output);
-//        std::cout << "done." <<std::endl;
-        
+                
         writeOneOutputImage(output, center);
     }
     
-    // TODO 20220126 modularize for 3 disk vesion
     void writeOneOutputImage(const cv::Mat& output, Vec2 center)
     {
         // Display and save the new training image.
@@ -819,9 +758,6 @@ public:
             {
                 cv::resize(photo, photo,
                            cv::Size(), background_scale_, background_scale_,
-                           // 20220127 I think this is better for scaling down:
-//                           cv::INTER_CUBIC);
-//                           cv::INTER_LANCZOS4);
                            cv::INTER_AREA);
             }
             // If the adjusted size is large enough
@@ -907,54 +843,8 @@ public:
         return Texture::getCvMatRect(random_position, size_in_pixels, photo);
     }
     
-//    // Generate a random TexSyn texture from a random LazyPredator GpTree.
-//    cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
-//    {
-//        std::cout << "Making texture (" << size_in_pixels.x() << "x"
-//                  << size_in_pixels.y() << ")..." << std::flush;
-//        Timer t("done,");
-//        // TODO 20220125 does making this bigger produce fewer Uniforms?
-////        int max_init_tree_size = 40;
-//        int max_init_tree_size = tree_size_;
-//        const FunctionSet& function_set = GP::fs();
-//        GpTree tree;
-//        function_set.makeRandomTree(max_init_tree_size, tree);
-//        Individual individual(tree);
-//        Texture* texture = GP::textureFromIndividual(&individual);
-//        texture->rasterizeToImageCache(size_in_pixels.x(), false);
-//        return texture->getCvMat();
-//    }
-
-//    // TODO 20220127
-//    // Generate a random TexSyn texture from a random LazyPredator GpTree.
-//    cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
-//    {
-////        bool boring_uniform_texture = true;
-//        while (true) {
-//            std::cout << "Making texture (" << size_in_pixels.x() << "x"
-//                      << size_in_pixels.y() << ")..." << std::flush;
-//            Timer t("done,");
-//            int max_init_tree_size = tree_size_;
-//            const FunctionSet& function_set = GP::fs();
-//            GpTree tree;
-//            function_set.makeRandomTree(max_init_tree_size, tree);
-//            Individual individual(tree);
-//            Texture* texture = GP::textureFromIndividual(&individual);
-//            texture->rasterizeToImageCache(size_in_pixels.x(), false);
-//
-//            cv::Mat cv_mat = texture->getCvMat();
-//            float uniformity = Texture::matUniformity(cv_mat);
-////            boring_uniform_texture = ;
-//
-//            if (uniformity == 1)
-//                { std::cout << " ...rejecting uniform texture... "; }
-//            else
-//                { return cv_mat; }
-//        }
-//    }
-
-    // TODO 20220127
     // Generate a random TexSyn texture from a random LazyPredator GpTree.
+    // Changed to loop until the texture is not boringly uniform. (20220127)
     cv::Mat fcdMakeRandomTexture(Vec2 size_in_pixels)
     {
         while (true)
@@ -970,19 +860,8 @@ public:
             Texture* texture = GP::textureFromIndividual(&individual);
             texture->rasterizeToImageCache(size_in_pixels.x(), false);
             cv::Mat cv_mat = texture->getCvMat();
-//            float uniformity = Texture::matUniformity(cv_mat);
-//            if (uniformity == 1)
-//                { std::cout << " ...rejecting uniform texture... "; }
-//            else
-//                { return cv_mat; }
-            if (Texture::matUniformity(cv_mat) == 1)
-            {
-                std::cout << "reject uniform texture...";
-            }
-            else
-            {
-                return cv_mat;
-            }
+            if (Texture::matUniformity(cv_mat) < 0.9) { return cv_mat; }
+            std::cout << "reject uniform texture...";
         }
     }
     
@@ -1178,35 +1057,6 @@ public:
     {
         return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
     }
-
-    // Wait until other agent's file for given step appears.
-//    void waitForReply(int step, fs::path directory)
-    
-//    // Wait until Python side's response file for given step appears. Parse that
-//    // file into 2 float values, an x and y of the prediction in image-relative
-//    // coordinates (each on [0, 1]), return as Vec2.
-//    Vec2 waitForReply(int step, fs::path directory)
-//    {
-//        Timer t("Elapsed time");
-//        std::cout << "start waiting for " << makeOtherPathname(step, directory) << std::endl;
-//        while (!isFilePresent(makeOtherPathname(step, directory)))
-//        {
-//            std::this_thread::sleep_for(std::chrono::seconds(2));  // wait 2 sec
-//        }
-//        std::cout << "done waiting for  " << makeOtherPathname(step, directory) << std::endl;
-//
-//
-//        std::ifstream input_file(makeOtherPathname(step, directory));
-//
-//
-//        float x, y;
-//        input_file >> x;
-//        input_file >> y;
-//        input_file.close();
-//        Vec2 position(x, y);
-//        debugPrint(position);
-//        return position;
-//    }
 
     // Wait until Python side's response file for given step appears. Parse that
     // file into 2 float values, an x and y of the prediction in image-relative

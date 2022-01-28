@@ -6142,34 +6142,7 @@ int main(int argc, const char * argv[])
 //    // Too many of these are "uniform" should I reject those?
 //
 //    // Returns a measure of non-unifornity, a float on [0, 1].
-//    // TODO Didn't I write this before somewhere?
-//    // TODO Assumes image is "24 bit RGB" (well BGR since it is OpenCV).
-//    auto nonuniformity = [](cv::Mat image)
-//    {
-//        float r_max = 0;
-//        float g_max = 0;
-//        float b_max = 0;
-//        float r_min = 1;
-//        float g_min = 1;
-//        float b_min = 1;
-//        for (int y = 0; y < image.rows; y++)
-//        {
-//            for (int x = 0; x < image.cols; x++)
-//            {
-//                cv::Vec3b p = image.at<cv::Vec3b>(cv::Point(x, y));
-//                float r = p[2] / 255.0f;
-//                float g = p[1] / 255.0f;
-//                float b = p[0] / 255.0f;
-//                r_max = std::max(r, r_max);
-//                r_min = std::min(r, r_min);
-//                g_max = std::max(g, g_max);
-//                g_min = std::min(g, g_min);
-//                b_max = std::max(b, b_max);
-//                b_min = std::min(b, b_min);
-//            }
-//        }
-//        return std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
-//    };
+//    // TODO if needed, use Texture::matUniformity() instead
 //
 //    // Generate and write one instance of a f3d_texsyn_image. Skips completely
 //    // uniform textures.
