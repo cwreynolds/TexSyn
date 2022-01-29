@@ -752,14 +752,12 @@ public:
         {
             // Read photo's image file into an OpenCV image.
             cv::Mat photo = cv::imread(pathname);
-            // For "non small" images, adjust by background_scale_
-            if (std::min(photo.rows, photo.cols) >=
-                (outputSize().x() / background_scale_))
-            {
-                cv::resize(photo, photo,
-                           cv::Size(), background_scale_, background_scale_,
-                           cv::INTER_AREA);
-            }
+            // For "non small" images, adjust by background_scale_.
+            // (The buggy special case is for the fungus photos. Revisit?)
+            int min_dim = std::min(photo.rows, photo.cols);
+            bool big_enough = min_dim >= (outputSize().x() / background_scale_);
+            float scale = background_scale_ * (big_enough ? 1 : 2);
+            cv::resize(photo, photo, cv::Size(), scale, scale, cv::INTER_AREA);
             // If the adjusted size is large enough
             std::cout << "    ";
             if (std::min(photo.rows, photo.cols) >= outputSize().x())
