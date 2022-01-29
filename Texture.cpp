@@ -949,3 +949,24 @@ float Texture::matUniformity(const cv::Mat& cv_mat, int samples)
     }
     return 1 - std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
 };
+
+
+// Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
+// Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
+Color Texture::matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos)
+{
+    cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
+    cv::Vec3b cv_vec3b = cv_mat.at<cv::Vec3b>(cv_point);
+    Color color(cv_vec3b[2], cv_vec3b[1], cv_vec3b[0]);
+    return color / 255;
+}
+
+// Static utility function to write a pixel to a cv::Mat from a Color.
+// Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
+void Texture::matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color)
+{
+    cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
+    color *= 255;
+    cv::Vec3b cv_vec3b(color.b(), color.g(), color.r());
+    cv_mat.at<cv::Vec3b>(cv_point) = cv_vec3b;
+}

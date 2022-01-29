@@ -294,6 +294,11 @@ public:
     static float matUniformity(const cv::Mat& cv_mat)
         { return matUniformity(cv_mat, 0); }
     static float matUniformity(const cv::Mat& cv_mat, int samples);
+    
+    // Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
+    static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos);
+    // Static utility function to write a pixel to a cv::Mat from a Color.
+    static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
 
 private:
     static inline const int validity_key_ = 1234567890;

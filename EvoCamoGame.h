@@ -908,75 +908,96 @@ class GenerateTrainingSetForFind3Disks :
     public GenerateTrainingSetForFindConspicuousDisks
 {
 public:
-    // Constructor to get parameters from pre-parsed "unix style" command line.
-    
+    // Use constructor from base class (pre-parsed "unix style" command line).
     GenerateTrainingSetForFind3Disks(const CommandLine& cmd) :
-        GenerateTrainingSetForFindConspicuousDisks(cmd)
-    {
-        
-    }
-    
-    // Customize this for the 3 disk case.
+        GenerateTrainingSetForFindConspicuousDisks(cmd) {}
+
+    // Select a random background (as in the base class) and then overlay THREE
+    // disks (each selected as before). Because these are being rendered at very
+    // low 128x128 resolution, we draw the disks as "soft edged spots" with the
+    // outer 15% of radius used to blend into the background texture. Training
+    // examples are LABELED with the center position of disk 0, the one rendered
+    // fully opaque (except for edges). The other two disks are drawn in a way
+    // intended to reduce their "conspicuousness". Disk 1 is drawn with at least
+    // 50% transparency. Transparency of disk 2 is modulated by confetti noise.
     void generateOneOutputImage() override
     {
         cv::Mat output = selectRandomBackgroundImage().clone();
-        
-        Vec2 center;
-        
+        // Render style for the three disks:
+        //  0: opaque (its center is the deep learning "label" for this example)
+        //  1: 50% transparent (distracter).
+        //  2: confettii transparency (distracter).
         std::vector<Vec2> centers = find3RandomDiskCenters();
-        
-//        debugPrint(vec_to_string(centers));
-
-
-//        for(int i = 0; i < 3; i++)
-        for (auto c : centers)
+        for (int i = 0; i < centers.size(); i++)
         {
             cv::Mat disk = selectRandomDiskImage();
-//                Vec2 diff = outputSize() - diskSize();
-//                Vec2 position(diff.x() * LPRS().frandom01(),
-//                              diff.y() * LPRS().frandom01());
-//    //            Vec2 center = position + diskSize() / 2;
-//                center = position + diskSize() / 2;
-            center = c;
-            Vec2 position = center - diskSize() / 2;
-
-
+            Vec2 position = centers.at(i) - diskSize() / 2;
             // Matte disk texture over random position in output texture.
             cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
-            Texture::matteImageCacheDiskOverBG(disk, target);
+            float radius = diskSize().x() * 0.5;
+            matteSoftDiskOverBG(radius * 0.85,
+                                radius,
+                                (i == 1 ? 0.5 : 1),  // matte_opacity
+                                i == 2,              // matte_randomize
+                                disk,
+                                target);
         }
-        writeOneOutputImage(output, center);
+        // Write texture to image file, first centerpoint encoded in filename.
+        writeOneOutputImage(output, centers.at(0));
     }
 
-    // Rewritten from Find_3_Disks.ipynb
+    // Used to blend each of the three disks into the background image. In the
+    // base class this is done with Texture::matteImageCacheDiskOverBG(). This
+    // version draws disks as "soft edged spots" and allows separate controls
+    // for overall opacity and multiplying by midrange confetti noise.
+    void matteSoftDiskOverBG(float inner_radius,
+                             float outer_radius,
+                             float matte_opacity,
+                             bool matte_randomize,
+                             const cv::Mat& disk,
+                             cv::Mat& bg)
+    {
+        // Expect two square Mats, of same size, and type CV_8UC3.
+        assert(bg.rows == bg.cols);
+        assert(bg.rows == disk.rows);
+        assert(disk.rows == disk.cols);
+        assert(bg.type() == CV_8UC3);
+        assert(disk.type() == CV_8UC3);
+        // Diameter of disk.
+        int diameter = disk.rows;
+        // Centerpoint of disk (as float, independent of pixel boundaries).
+        Vec2 cp(diameter / 2.0, diameter / 2.0);
+        // Loop over all pixel coordinates (xi,yi) with center of pixel (xf,yf).
+        for (int xi = 0; xi < diameter; xi++)
+        {
+            for (int yi = 0; yi < diameter; yi++)
+            {
+                // Position of pixel center.
+                Vec2 pos(xi + 0.5, yi + 0.5);
+                float spot = spot_utility(pos, cp, inner_radius, outer_radius);
+                // When inside the spot (when spot opacity is not zero).
+                if (spot > 0)
+                {
+                    // Adjust by "matte_opacity" and "matte_randomize" params.
+                    float matte = spot * matte_opacity;
+                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
+                    // Blend disk and background colors, according to "matte".
+                    Color color = interpolate(matte,
+                                              Texture::matPixelRead(bg, pos),
+                                              Texture::matPixelRead(disk, pos));
+                    Texture::matPixelWrite(bg, pos, color);
+                }
+            }
+        }
+    }
+
     // Find 3 non-overlapping disk positions inside image.
-
-    //    # Find 3 non-overlapping disk positions inside image.
-    //    def random_center():
-    //        s = image_size - (2 * disk_radius)
-    //        return (np.random.random_sample(2) * s) + disk_radius
-    //    centers = [random_center()]
-    //    min_dist = 3 * disk_radius
-    //    while len(centers) < 3:
-    //        c = random_center()
-    //        all_ok = True
-    //        for o in centers:
-    //            if (df.dist2d(c, o) < min_dist):
-    //                all_ok = False
-    //        if (all_ok):
-    //            centers.append(c)
-
+    // Uses simple greedy approach, assuming that the 3 disks will easily fit.
+    // (Rewritten from Find_3_Disks.ipynb.)
     std::vector<Vec2> find3RandomDiskCenters()
     {
         auto random_center = [&]()
         {
-//            Vec2 excess = outputSize() - diskSize();
-//            return (diskSize() / 2 +
-//                    Vec2(LPRS().frandom01() * excess.x(),
-//                         LPRS().frandom01() * excess.y()));
-            
-            // bigger margins:
-            
             Vec2 excess = outputSize() - (diskSize() * 1.5);
             return (diskSize() * 0.75 +
                     Vec2(LPRS().frandom01() * excess.x(),
@@ -996,7 +1017,6 @@ public:
         }
         return centers;
     }
-
 };
 
 // PythonComms protype experiments (was EvoCamoVsStaticFCD)
