@@ -6207,29 +6207,42 @@ int main(int argc, const char * argv[])
 //    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // Prototyping training set for "find 3 disks".
-    std::cout << "January 25, 2022" << std::endl;
+    
+//    // Prototyping training set for "find 3 disks".
+//    std::cout << "January 25, 2022" << std::endl;
+//
+//    //    CommandLine cmd
+//    //    ({
+//    //        "GenerateTrainingSetForFind3Disks",
+//    //        "20",                                         // how_many_
+//    //        "/Users/cwr/Desktop/TexSyn_temp/f3d_test",    // output_directory_
+//    //        "/Users/cwr/Pictures/camouflage_backgrounds", // input_photo_dir_
+//    //        "20220125",                                   // random_seed_
+//    //        "0.5",                                        // background_scale_
+//    //        "128",                                        // output_size_
+//    //        "25",                                         // disk_size_
+//    //        "100"                                         // tree_size_
+//    //    });
+//    //    GenerateTrainingSetForFind3Disks f3d(cmd);
+//    //    f3d.run();
+//
+//    GenerateTrainingSetForFind3Disks(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn 5000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220129 0.5 128 25 100
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Retry “Rube Goldberg” hookup to Colab with “find 3 disks” model.
+    // Using 20220202_1211_Find_3_Disks_complex
+    //     in /Volumes/GoogleDrive/My Drive/PredatorEye/saved_models
+    std::cout << "February 3, 2022" << std::endl;
 
-    //    CommandLine cmd
-    //    ({
-    //        "GenerateTrainingSetForFind3Disks",
-    //        "20",                                         // how_many_
-    //        "/Users/cwr/Desktop/TexSyn_temp/f3d_test",    // output_directory_
-    //        "/Users/cwr/Pictures/camouflage_backgrounds", // input_photo_dir_
-    //        "20220125",                                   // random_seed_
-    //        "0.5",                                        // background_scale_
-    //        "128",                                        // output_size_
-    //        "25",                                         // disk_size_
-    //        "100"                                         // tree_size_
-    //    });
-    //    GenerateTrainingSetForFind3Disks f3d(cmd);
-    //    f3d.run();
-
-    GenerateTrainingSetForFind3Disks(CommandLine(argc, argv)).run();
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
     
     // command line:
-    // texsyn 5000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220129 0.5 128 25 100
-    
+    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.5 20220203 128 128
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();
