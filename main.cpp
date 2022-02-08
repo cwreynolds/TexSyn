@@ -6233,15 +6233,23 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Retry “Rube Goldberg” hookup to Colab with “find 3 disks” model.
-    // Using 20220202_1211_Find_3_Disks_complex
-    //     in /Volumes/GoogleDrive/My Drive/PredatorEye/saved_models
-    std::cout << "February 3, 2022" << std::endl;
+//    // Retry “Rube Goldberg” hookup to Colab with “find 3 disks” model.
+//    // Using 20220202_1211_Find_3_Disks_complex
+//    //     in /Volumes/GoogleDrive/My Drive/PredatorEye/saved_models
+//    std::cout << "February 3, 2022" << std::endl;
+//
+//    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.5 20220203 128 128
 
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Quit out of tournament if predator's selection misses all prey.
+    std::cout << "February 7, 2022" << std::endl;
+    EvoCamoGame(CommandLine(argc, argv)).run();
     
-    // command line:
-    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.5 20220203 128 128
+    // texsyn ~/Pictures/camouflage_backgrounds/unused/maple_leaf_litter  ~/Desktop/TexSyn_temp/ 0.25 20220207 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
