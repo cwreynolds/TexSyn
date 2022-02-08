@@ -272,8 +272,29 @@ public:
         // Note time user took to respond. Ignored in logging of time per frame.
         getPopulation()->setIdleTime(TimeClock::now() - time_start_waiting);
         // Designate selected Texture's Individual as worst of TournamentGroup.
-        Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220208
+//        Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
+        Vec2 get_last_mouse_click = getLastMouseClick();
+        Individual* worst = selectIndividualFromMouseClick(get_last_mouse_click);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         tg.designateWorstIndividual(worst);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220208
+        
+        // Mark returned TournamentGroup as invalid if predator failed to locate
+        // a prey. That is, if either: the user's mouse click or the xy position
+        // returned from the "predator vision neural net--is not inside any of
+        // the three disks.
+        if (worst == nullptr)
+        {
+            tg.setValid(false);
+            std::cout << "Invalid tournament: no prey selected." << std::endl;
+            
+            // TODO temp for debugging:
+            debugPrint(get_last_mouse_click)
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Clear GUI, return updated TournamentGroup.
         gui().clear();
         gui().refresh();
@@ -1042,7 +1063,7 @@ public:
     }
     Vec2 performStep(int step, const cv::Mat& cv_mat, fs::path directory)
     {
-        std::cout << "Write file " << step << std::endl;
+        std::cout << "    Write file " << step << std::endl;
         writeMyFile(step, directory, cv_mat);
         deleteMyFile(step - 1, directory);
         return waitForReply(step, directory);
@@ -1054,7 +1075,7 @@ public:
         auto pathname = makeMyPathname(step, directory);
         bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
         assert(image_written_to_file_ok);
-        std::cout << "wrote test file   " << pathname << std::endl;
+        std::cout << "    wrote test file   " << pathname << std::endl;
         
     }
 
@@ -1081,9 +1102,10 @@ public:
     // coordinates (each on [0, 1]), return as Vec2.
     Vec2 waitForReply(int step, fs::path directory)
     {
-        Timer t("Elapsed time");
+//        Timer t("Elapsed time");
+        Timer t("waitForReply");
         auto opn = makeOtherPathname(step, directory);
-        std::cout << "start waiting for " << opn << std::endl;
+        std::cout << "    start waiting for " << opn << std::endl;
         // Wait until response file appears.
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
@@ -1091,7 +1113,7 @@ public:
             // so that the OpenCV window responds to select/hide commands.
             for (int i = 0; i < 8; i++) { cv::waitKey(250); }
         }
-        std::cout << "done waiting for  " << opn << std::endl;
+        std::cout << "    done waiting for  " << opn << std::endl;
         
         // Parse two floats, x and y, from response file.
         std::ifstream input_file(opn);
@@ -1100,7 +1122,8 @@ public:
         input_file >> y;
         input_file.close();
         Vec2 position(x, y);
-        debugPrint(position);
+//        debugPrint(position);
+        std::cout << "    ";
         return position;
     }
 
@@ -1204,6 +1227,35 @@ public:
         setTextureSize(getTextureSize() / 8);
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220208
+
+//    // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
+//    // user's selection of the "worst" camouflage. This also "listens" for and
+//    // executes single character commands: "t" and "Q".
+//    // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
+//    void waitForUserInput() override
+//    {
+//        int step = getPopulation()->getStepCount();
+//        Vec2 prediction = getComms().performStep(step, gui().getCvMat());
+//        setLastMouseClick(prediction);
+//
+//        int image_size = gui().getSize().x();
+//
+//        debugPrint(textureSize() * 0.55)
+//        debugPrint(prediction * image_size)
+//
+////        gui().drawCircle(textureSize() * 0.55,
+////                         prediction * 1024, Color(1));
+//        gui().drawCircle(textureSize() * 0.55,
+//                         prediction * image_size,
+//                         Color(1));
+//        gui().refresh();
+//
+//        // TODO very temp
+//        std::this_thread::sleep_for(std::chrono::seconds(5));
+//    }
+    
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
     // user's selection of the "worst" camouflage. This also "listens" for and
     // executes single character commands: "t" and "Q".
@@ -1212,23 +1264,30 @@ public:
     {
         int step = getPopulation()->getStepCount();
         Vec2 prediction = getComms().performStep(step, gui().getCvMat());
-        setLastMouseClick(prediction);
+//        setLastMouseClick(prediction);
+//        int image_size = gui().getSize().x();
         
-        int image_size = gui().getSize().x();
+        Vec2 prediction_in_pixels = prediction * gui().getSize().x();
+        setLastMouseClick(prediction_in_pixels);
 
-        debugPrint(textureSize() * 0.55)
-        debugPrint(prediction * image_size)
+//        int image_size = gui().getSize().x();
+
+//        debugPrint(textureSize() * 0.55)
+//        debugPrint(prediction * image_size)
         
 //        gui().drawCircle(textureSize() * 0.55,
-//                         prediction * 1024, Color(1));
+//                         prediction * image_size,
+//                         Color(1));
         gui().drawCircle(textureSize() * 0.55,
-                         prediction * image_size,
+                         prediction_in_pixels,
                          Color(1));
         gui().refresh();
         
         // TODO very temp
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;

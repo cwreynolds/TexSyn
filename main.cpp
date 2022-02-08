@@ -6245,11 +6245,22 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Quit out of tournament if predator's selection misses all prey.
-    std::cout << "February 7, 2022" << std::endl;
-    EvoCamoGame(CommandLine(argc, argv)).run();
+//    // Quit out of tournament if predator's selection misses all prey.
+//    std::cout << "February 7, 2022" << std::endl;
+//    EvoCamoGame(CommandLine(argc, argv)).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // texsyn ~/Pictures/camouflage_backgrounds/unused/maple_leaf_litter  ~/Desktop/TexSyn_temp/ 0.25 20220207 512 512
+    // Second test run of whole advarsarial camouflage
+    //     Using TournamentGroup invalid flag for predator fail.
+    //     Using background_scale 0.0625 (0.5÷8) to adjust for 128×128 output
+    //     Using 20220202_1211_Find_3_Disks_complex
+    std::cout << "February 8, 2022" << std::endl;
+
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+
+    // command line:
+    // texsyn ~/Pictures/camouflage_backgrounds/maple_leaf_litter ~/Desktop/TexSyn_temp/ 0.0625 20220208 128 128
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
