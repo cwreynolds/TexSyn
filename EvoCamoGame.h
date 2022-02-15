@@ -1227,133 +1227,24 @@ public:
         setTextureSize(getTextureSize() / 8);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220208
-
-//    // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
-//    // user's selection of the "worst" camouflage. This also "listens" for and
-//    // executes single character commands: "t" and "Q".
-//    // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
-//    void waitForUserInput() override
-//    {
-//        int step = getPopulation()->getStepCount();
-//        Vec2 prediction = getComms().performStep(step, gui().getCvMat());
-//        setLastMouseClick(prediction);
-//
-//        int image_size = gui().getSize().x();
-//
-//        debugPrint(textureSize() * 0.55)
-//        debugPrint(prediction * image_size)
-//
-////        gui().drawCircle(textureSize() * 0.55,
-////                         prediction * 1024, Color(1));
-//        gui().drawCircle(textureSize() * 0.55,
-//                         prediction * image_size,
-//                         Color(1));
-//        gui().refresh();
-//
-//        // TODO very temp
-//        std::this_thread::sleep_for(std::chrono::seconds(5));
-//    }
-    
-    // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
-    // user's selection of the "worst" camouflage. This also "listens" for and
-    // executes single character commands: "t" and "Q".
-    // (20211230 make virtual so can be overridden, eg by EvoCamoVsStaticFCD)
+    // Ad hoc idle loop, sends request (as an image) to the "predator server"
+    // then wait for its response. The predator's response is used the same way
+    // as the user's mouse click is used in interactive version of simulation.
     void waitForUserInput() override
     {
-        // TODO very temp
-        drawDashedCircle(Vec2(64, 64), 120);
-
-        
-        
+        gui().refresh();
+        // Wait for prediction from "predator server".
         int step = getPopulation()->getStepCount();
         Vec2 prediction = getComms().performStep(step, gui().getCvMat());
-//        setLastMouseClick(prediction);
-//        int image_size = gui().getSize().x();
-        
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
+        // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
-
-//        int image_size = gui().getSize().x();
-
-//        debugPrint(textureSize() * 0.55)
-//        debugPrint(prediction * image_size)
-        
-//        gui().drawCircle(textureSize() * 0.55,
-//                         prediction * image_size,
-//                         Color(1));
-        
-//        gui().drawCircle(textureSize() * 0.55,
-//                         prediction_in_pixels,
-//                         Color(1));
-        
-        drawDashedCircle(prediction_in_pixels, textureSize() * 0.55);
-
+        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
         gui().refresh();
-        
         // TODO very temp
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     
-    // TODO 20220214 copied from DiskFind.py
-    // TODO 20220214 cf GUI::drawCircle()
-
-    // Draw a circle on the GUI, dashed black and white, with given xy "center"
-    // and "diameter" both specified in pixel units.
-    
-    void drawDashedCircle(Vec2 center, float diameter)
-    {
-//        center = np.array(center)
-        float r = diameter / 2;
-        
-        cv::Mat mat = GUI().getCvMat();
-
-//        color = 'black'
-        Color black(0);
-        Color white(1);
-        Color color;
-//        prev_angle = 0
-        float prev_angle = 0;
-//        steps = 24
-        int steps = 24;
-//        for i in range(steps):
-        for (int i = 0; i < steps; i++)
-        {
-//            next_angle = (i + 1) * 2 * math.pi / steps
-            float next_angle = (i + 1) * 2 * pi / steps;
-//            prev_point = np.array((math.sin(prev_angle), math.cos(prev_angle)))
-//            next_point = np.array((math.sin(next_angle), math.cos(next_angle)))
-            Vec2 prev_point(std::sin(prev_angle), std::cos(prev_angle));
-            Vec2 next_point(std::sin(next_angle), std::cos(next_angle));
-
-//            draw_line(center + prev_point * r, center + next_point * r, color)
-            
-            cv::line(mat,
-                     GUI::vec2ToCvPoint(center + prev_point * r),
-                     GUI::vec2ToCvPoint(center + next_point * r),
-                     GUI::colorToCvScalar(color));
-            
-            
-//            if color == 'black':
-//                color = 'white'
-//            else:
-//                color = 'black'
-//            if (color == black)
-//            {
-//                color = white;
-//            }
-//            else
-//            {
-//                color = black;
-//            }
-            
-            color = (color == black) ? white : black;
-            prev_angle = next_angle;
-        }
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;

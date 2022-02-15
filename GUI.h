@@ -161,6 +161,40 @@ public:
         cv::circle(image_, vec2ToCvPoint(center), radius, colorToCvScalar(color));
     }
     
+    // Draw a circle as a dashed line on the GUI, with given xy "center" and
+    // "diameter", both specified in pixel units. Optionally specify number of
+    // steps, and the alternating colors of the dashes.
+    void drawDashedCircle(Vec2 center, float diameter)
+    {
+        drawDashedCircle(center, diameter, 24, Color(0), Color(1));
+    }
+    void drawDashedCircle(Vec2 center,
+                          float diameter,
+                          int steps,
+                          Color color0,
+                          Color color1)
+    {
+        Color color = color0;
+        float prev_angle = 0;
+        float radius = diameter / 2;
+        for (int i = 0; i < steps; i++)
+        {
+            float next_angle = (i + 1) * 2 * pi / steps;
+            Vec2 prev_point(std::sin(prev_angle), std::cos(prev_angle));
+            Vec2 next_point(std::sin(next_angle), std::cos(next_angle));
+            cv::line(getCvMat(),
+                     vec2ToCvPoint(center + (prev_point * radius)),
+                     vec2ToCvPoint(center + (next_point * radius)),
+                     colorToCvScalar(color),
+                     1,             // Line thickness
+                     cv::LINE_AA);  // Line type: antialiased
+            // Set color and angle for next line segment.
+            color = (color == color0) ? color1 : color0;
+            prev_angle = next_angle;
+        }
+    }
+
+    
     // Return the entire cv::Mat for this GUI. (See also getCvMatRect())
     cv::Mat getCvMat() { return image_; }
 
