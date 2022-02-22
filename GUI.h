@@ -186,7 +186,8 @@ public:
                      vec2ToCvPoint(center + (prev_point * radius)),
                      vec2ToCvPoint(center + (next_point * radius)),
                      colorToCvScalar(color),
-                     1,             // Line thickness
+//                     1,             // Line thickness
+                     2,             // Line thickness
                      cv::LINE_AA);  // Line type: antialiased
             // Set color and angle for next line segment.
             color = (color == color0) ? color1 : color0;
