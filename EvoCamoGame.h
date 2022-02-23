@@ -284,7 +284,7 @@ public:
         
         // Mark returned TournamentGroup as invalid if predator failed to locate
         // a prey. That is, if either: the user's mouse click or the xy position
-        // returned from the "predator vision neural net--is not inside any of
+        // returned from the "predator vision" neural net--is not inside any of
         // the three disks.
         if (worst == nullptr)
         {
@@ -1063,8 +1063,21 @@ public:
     }
     Vec2 performStep(int step, const cv::Mat& cv_mat, fs::path directory)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220223
+        // Force image to be size expected by Python DNN side, allowing c++
+        // TexSyn side to run at higher resolution for visual quality.
+        int expected_size = 128;
+        cv::Mat resized;
+        cv::Size expected(expected_size, expected_size);
+        cv::resize(cv_mat, resized, expected, 0, 0, cv::INTER_AREA);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "    Write file " << step << std::endl;
-        writeMyFile(step, directory, cv_mat);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220223
+//        writeMyFile(step, directory, cv_mat);
+        writeMyFile(step, directory, resized);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         deleteMyFile(step - 1, directory);
         return waitForReply(step, directory);
     }
@@ -1224,7 +1237,13 @@ public:
         // TODO for prototyping, rethink implementation.
         // Adjust texture/disk size to be 1/8 as large
         // setTextureSize(getTextureSize() * backgroundScale() * 2);
-        setTextureSize(getTextureSize() / 8);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220223
+        //     ad hoc fix to use 256x256 on TexSyn side
+        //     should be computing correct value based on GUI size.
+        // setTextureSize(getTextureSize() / 8);
+        setTextureSize(getTextureSize() / 4);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Ad hoc idle loop, sends request (as an image) to the "predator server"
@@ -1241,6 +1260,10 @@ public:
         setLastMouseClick(prediction_in_pixels);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
         gui().refresh();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220223
+        if (step % 100 == 0) { writeTournamentImageToFile(); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO very temp
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
