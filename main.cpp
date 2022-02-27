@@ -6251,16 +6251,26 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Second test run of whole advarsarial camouflage
-    //     Using TournamentGroup invalid flag for predator fail.
-    //     Using background_scale 0.0625 (0.5÷8) to adjust for 128×128 output
-    //     Using 20220202_1211_Find_3_Disks_complex
-    std::cout << "February 8, 2022" << std::endl;
+//    // Second test run of whole advarsarial camouflage
+//    //     Using TournamentGroup invalid flag for predator fail.
+//    //     Using background_scale 0.0625 (0.5÷8) to adjust for 128×128 output
+//    //     Using 20220202_1211_Find_3_Disks_complex
+//    std::cout << "February 8, 2022" << std::endl;
+//
+//    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn ~/Pictures/camouflage_backgrounds/maple_leaf_litter ~/Desktop/TexSyn_temp/ 0.0625 20220208 128 128
 
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // "find 3 disks" training set version 2: PNG files, stronger distractors.
+    std::cout << "February 26, 2022" << std::endl;
+
+    GenerateTrainingSetForFind3Disks(CommandLine(argc, argv)).run();
 
     // command line:
-    // texsyn ~/Pictures/camouflage_backgrounds/maple_leaf_litter ~/Desktop/TexSyn_temp/ 0.0625 20220208 128 128
+    // texsyn 10000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220226 0.5 128 25 100
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -884,14 +884,34 @@ public:
         }
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220226 make these less subtle for "F3D2"
+
     // Random UUID-like string plus pixel x and y of disk center.
     std::string outputFileName(Vec2 center)
     {
         return (n_letters(10, LPRS()) +
                 "_" + std::to_string(int(center.x())) +
                 "_" + std::to_string(int(center.y())) +
-                ".jpeg");
+//                ".jpeg");
+                getOutputFilenameExtension());
     }
+    
+    std::string getOutputFilenameExtension() const
+    {
+        return output_filename_extension_;
+    }
+    
+    void setOutputFilenameExtension(std::string extension)
+    {
+        output_filename_extension_ = extension;
+    }
+
+private:
+    std::string output_filename_extension_ = ".jpeg";
+public:
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Vec2 diskSize() const { return Vec2(disk_size_, disk_size_); }
     Vec2 outputSize() const { return Vec2(output_size_, output_size_); }
@@ -929,7 +949,14 @@ class GenerateTrainingSetForFind3Disks :
 public:
     // Use constructor from base class (pre-parsed "unix style" command line).
     GenerateTrainingSetForFind3Disks(const CommandLine& cmd) :
-        GenerateTrainingSetForFindConspicuousDisks(cmd) {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220226 make these less subtle for "F3D2"
+//        GenerateTrainingSetForFindConspicuousDisks(cmd) {}
+        GenerateTrainingSetForFindConspicuousDisks(cmd)
+    {
+        setOutputFilenameExtension(".png");
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Select a random background (as in the base class) and then overlay THREE
     // disks (each selected as before). Because these are being rendered at very
@@ -997,9 +1024,14 @@ public:
                 // When inside the spot (when spot opacity is not zero).
                 if (spot > 0)
                 {
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    // TODO 20220226 make these less subtle for "F3D2"
                     // Adjust by "matte_opacity" and "matte_randomize" params.
-                    float matte = spot * matte_opacity;
-                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
+//                    float matte = spot * matte_opacity;
+//                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
+                    float matte = spot * interpolate(0.5f, matte_opacity, 1.0f);
+                    if (matte_randomize) { matte *= LPRS().random2(0.6f, 0.8f);}
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // Blend disk and background colors, according to "matte".
                     Color color = interpolate(matte,
                                               Texture::matPixelRead(bg, pos),
