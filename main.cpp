@@ -6264,16 +6264,27 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // "find 3 disks" training set version 2: PNG files, stronger distractors.
-    std::cout << "February 26, 2022" << std::endl;
-
-    GenerateTrainingSetForFind3Disks(CommandLine(argc, argv)).run();
-
-    // command line:
-    // texsyn 10000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220226 0.5 128 25 100
+//    // "find 3 disks" training set version 2: PNG files, stronger distractors.
+//    std::cout << "February 26, 2022" << std::endl;
+//
+//    GenerateTrainingSetForFind3Disks(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn 10000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220226 0.5 128 25 100
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    // Fourth test run of whole advarsarial camouflage
+    //     Using 20220227_0746_F3D2_a
+    std::cout << "February 27, 2022" << std::endl;
+
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+
+    // command line:
+    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.125 20220227 256 256
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
     Texture::invalidInstanceReport();
     Texture::leakCheck();
     Individual::leakCheck();

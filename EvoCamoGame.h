@@ -1290,11 +1290,14 @@ public:
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
-        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
+//        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
+        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20220223
-        if (step % 100 == 0) { writeTournamentImageToFile(); }
+//        if (step % 100 == 0) { writeTournamentImageToFile(); }
+        // TODO 20220227 ok, wanted more images, so make 100, 2000 / 100 = 20
+        if (step % 20 == 0) { writeTournamentImageToFile(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO very temp
         std::this_thread::sleep_for(std::chrono::seconds(5));
