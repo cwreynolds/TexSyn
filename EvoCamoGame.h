@@ -916,6 +916,9 @@ public:
     Vec2 diskSize() const { return Vec2(disk_size_, disk_size_); }
     Vec2 outputSize() const { return Vec2(output_size_, output_size_); }
     int treeSize() const { return tree_size_; }
+    
+    // TODO 20220302 add accessor to make visibe from derived classes.
+    int outputCounter() const { return output_counter_; }
 
 private:
     // How many training examples to generate.
@@ -939,10 +942,10 @@ private:
     // Collection of all input photos, as cv::Mats, in all_photo_pathnames_
     std::vector<cv::Mat> all_photos_;
     // Used only for logging.
+    // (OK, as of 20220302, also used for cycling through types.)
     int output_counter_ = 0;
 };
 
-// TODO QQQ
 class GenerateTrainingSetForFind3Disks :
     public GenerateTrainingSetForFindConspicuousDisks
 {
@@ -1069,6 +1072,46 @@ public:
         return centers;
     }
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO QQQ
+
+// FCD1: original [date?] with one prey per example
+// FCD2: F3D-simple [date?] 3 prey but they and background are Uniform
+// FCD3: F3D-complex [date?] 3 prey, each (and background) are photo or TexSyn,
+//       1 prey corresponds to label, other two distractors are less conspicuous
+// FCD4: like FCD3 but distractors are less conspicuous, but not as much less
+// FCD5: mixture of three types of prey
+
+// Make a new "FCD5" dataset which has three types of examples:
+//     1: like FCD: one random textured prey on a random textured background
+//     2: like F3D-complex: 3 prey, the labeled one is full strength, another is
+//        half blended into the background, another is noise-matted
+//     3: new one where 1 prey is used, but blended in at full and two partial
+//        opacities, perhaps randomized for each example
+
+
+class GenerateDataSetFCD5 : public GenerateTrainingSetForFind3Disks
+{
+public:
+    // Use constructor from base class (pre-parsed "unix style" command line).
+    GenerateDataSetFCD5(const CommandLine& cmd) :
+        GenerateTrainingSetForFind3Disks(cmd) {}
+
+    void generateOneOutputImage() override
+    {
+        int option = outputCounter() % 3;
+        if (option == 0) { singlePrey(); }
+        if (option == 1) { threeUniquePreyTwoMuted(); }
+        if (option == 2) { threeCopiedPreyTwoMuted(); }
+    }
+    
+    void singlePrey() {}
+    void threeUniquePreyTwoMuted() {}
+    void threeCopiedPreyTwoMuted() {}
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // PythonComms protype experiments (was EvoCamoVsStaticFCD)
 //
