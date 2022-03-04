@@ -6273,16 +6273,26 @@ int main(int argc, const char * argv[])
 //    // texsyn 10000 ~/Desktop/TexSyn_temp/f3d_test ~/Pictures/camouflage_backgrounds 20220226 0.5 128 25 100
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+//    // Fourth test run of whole advarsarial camouflage
+//    //     Using 20220227_0746_F3D2_a
+//    std::cout << "February 27, 2022" << std::endl;
+//
+//    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.125 20220227 256 256
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // "find 3 disks" training set version 2: PNG files, stronger distractors.
+    std::cout << "March 3, 2022" << std::endl;
 
-    // Fourth test run of whole advarsarial camouflage
-    //     Using 20220227_0746_F3D2_a
-    std::cout << "February 27, 2022" << std::endl;
-
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+    GenerateDatasetFCD5(CommandLine(argc, argv)).run();
 
     // command line:
-    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.125 20220227 256 256
-    
+    // texsyn 20000 ~/Desktop/TexSyn_temp/fcd_test ~/Pictures/camouflage_backgrounds 20220303 0.5 128 25 100
+
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     Texture::invalidInstanceReport();

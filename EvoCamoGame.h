@@ -731,7 +731,8 @@ public:
     {
         LPRS().setSeed(random_seed_);
         readAllInputPhotos();
-        while (output_counter_ < how_many_) { generateOneOutputImage(); }
+//        while (output_counter_ < how_many_) { generateOneOutputImage(); }
+        while (outputCounter() < how_many_) { generateOneOutputImage(); }
     }
     
     virtual void generateOneOutputImage()
@@ -756,7 +757,10 @@ public:
         cv::imshow("output", output);
         // TODO needs to save to file
         std::string path = output_directory_ / outputFileName(center);
-        std::cout << "Writing image " << ++output_counter_
+//        std::cout << "Writing image " << ++output_counter_
+//                  << " to " << path << " ... ";
+        incrementOutputCounter();
+        std::cout << "Writing image " << outputCounter()
                   << " to " << path << " ... ";
         cv::imwrite(path, output);
         std::cout << "done." <<std::endl;
@@ -786,6 +790,14 @@ public:
                 // Add to collection of background images.
                 std::cout << "Adding " << pathname << std::endl;
                 all_photos_.push_back(photo);
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                if (all_photos_.size() > 10)
+//                {
+//                    std::cout << "TODO early exit while reading BG images"
+//                    << std::endl;
+//                    return;
+//                }
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
             else
             {
@@ -919,6 +931,7 @@ public:
     
     // TODO 20220302 add accessor to make visibe from derived classes.
     int outputCounter() const { return output_counter_; }
+    void incrementOutputCounter() { output_counter_++; }
 
 private:
     // How many training examples to generate.
@@ -1032,8 +1045,11 @@ public:
                     // Adjust by "matte_opacity" and "matte_randomize" params.
 //                    float matte = spot * matte_opacity;
 //                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
-                    float matte = spot * interpolate(0.5f, matte_opacity, 1.0f);
-                    if (matte_randomize) { matte *= LPRS().random2(0.6f, 0.8f);}
+//                    float matte = spot * interpolate(0.5f, matte_opacity, 1.0f);
+//                    if (matte_randomize) { matte *= LPRS().random2(0.6f, 0.8f);}
+                    // TODO 20220303 changing back for FCD5.
+                    float matte = spot * matte_opacity;
+                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
                     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // Blend disk and background colors, according to "matte".
                     Color color = interpolate(matte,
@@ -1076,11 +1092,12 @@ public:
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO QQQ
 
-// FCD1: original [date?] with one prey per example
+// FCD1: original [date?] with one prey per example, 1kx1k!!
 // FCD2: F3D-simple [date?] 3 prey but they and background are Uniform
 // FCD3: F3D-complex [date?] 3 prey, each (and background) are photo or TexSyn,
 //       1 prey corresponds to label, other two distractors are less conspicuous
-// FCD4: like FCD3 but distractors are less conspicuous, but not as much less
+// FCD4: like FCD3 but distractors are less conspicuous, but not as much less,
+//       switched to using PNG files.
 // FCD5: mixture of three types of prey
 
 // Make a new "FCD5" dataset which has three types of examples:
@@ -1090,13 +1107,15 @@ public:
 //     3: new one where 1 prey is used, but blended in at full and two partial
 //        opacities, perhaps randomized for each example
 
+// TODO this replaces the generateOneOutputImage() method in two classes:
+// GenerateTrainingSetForFindConspicuousDisks, GenerateTrainingSetForFind3Disks.
+// They could be collapsed together once I decide what kind of dataset is best.
 
-class GenerateDataSetFCD5 : public GenerateTrainingSetForFind3Disks
+class GenerateDatasetFCD5 : public GenerateTrainingSetForFind3Disks
 {
 public:
-    // Use constructor from base class (pre-parsed "unix style" command line).
-    GenerateDataSetFCD5(const CommandLine& cmd) :
-        GenerateTrainingSetForFind3Disks(cmd) {}
+    GenerateDatasetFCD5(const CommandLine& cmd)
+      : GenerateTrainingSetForFind3Disks(cmd) {}
 
     void generateOneOutputImage() override
     {
@@ -1106,14 +1125,84 @@ public:
         if (option == 2) { threeCopiedPreyTwoMuted(); }
     }
     
-    void singlePrey() {}
-    void threeUniquePreyTwoMuted() {}
-    void threeCopiedPreyTwoMuted() {}
+    void singlePrey() { generaterPrototype(); }
+    void threeUniquePreyTwoMuted() { tuptmPrototype(); }
+    void threeCopiedPreyTwoMuted() { tcptmPrototype(); }
+    
+    // TODO some kind of superset of all options?
+    void generaterPrototype()
+    {
+        cv::Mat output = selectRandomBackgroundImage().clone();
+        cv::Mat disk = selectRandomDiskImage();
+        Vec2 center = find3RandomDiskCenters().at(0);
+        Vec2 ul_corner = center - diskSize() / 2;
+        // Matte disk texture over random position in output texture.
+        cv::Mat target = Texture::getCvMatRect(ul_corner, diskSize(), output);
+        Texture::matteImageCacheDiskOverBG(disk, target);
+        writeOneOutputImage(output, center);
+    }
+    
+    
+    // threeUniquePreyTwoMuted case
+    void tuptmPrototype()
+    {
+        cv::Mat output = selectRandomBackgroundImage().clone();
+        // Render style for the three disks:
+        //  0: opaque (its center is the deep learning "label" for this example)
+        //  1: 50% transparent (distracter).
+        //  2: confettii transparency (distracter).
+        std::vector<Vec2> centers = find3RandomDiskCenters();
+        for (int i = 0; i < centers.size(); i++)
+        {
+            cv::Mat disk = selectRandomDiskImage();
+            Vec2 position = centers.at(i) - diskSize() / 2;
+            // Matte disk texture over random position in output texture.
+            cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
+            float radius = diskSize().x() * 0.5;
+            matteSoftDiskOverBG(radius * 0.85,
+                                radius,
+                                (i == 1 ? 0.5 : 1),  // matte_opacity
+                                i == 2,              // matte_randomize
+                                disk,
+                                target);
+        }
+        // Write texture to image file, first centerpoint encoded in filename.
+        writeOneOutputImage(output, centers.at(0));
+    }
+    
+    // threeCopiedPreyTwoMuted case
+    void tcptmPrototype()
+    {
+        cv::Mat output = selectRandomBackgroundImage().clone();
+        cv::Mat disk = selectRandomDiskImage();
+        std::vector<Vec2> centers = find3RandomDiskCenters();
+        for (int i = 0; i < centers.size(); i++)
+        {
+//            cv::Mat disk = selectRandomDiskImage();
+            Vec2 position = centers.at(i) - diskSize() / 2;
+            // Matte disk texture over random position in output texture.
+            cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
+            float radius = diskSize().x() * 0.5;
+            matteSoftDiskOverBG(radius * 0.85,
+                                radius,
+//                                (i == 1 ? 0.5 : 1),  // matte_opacity
+//                                1 - (i * 0.33),  // matte_opacity
+                                1 - (i * 0.25),  // matte_opacity (1, .75, .5)
+//                                i == 2,              // matte_randomize
+                                false,              // matte_randomize
+                                disk,
+                                target);
+        }
+        // Write texture to image file, first centerpoint encoded in filename.
+        writeOneOutputImage(output, centers.at(0));
+    }
+
+
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-// PythonComms protype experiments (was EvoCamoVsStaticFCD)
+// PythonComms prototype experiments (was EvoCamoVsStaticFCD)
 //
 // TODO 20211227 maybe "shared_directory_" should be a member variable.
 //      Don't see a need to pass it around between all member functions.
