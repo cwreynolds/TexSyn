@@ -1236,7 +1236,10 @@ public:
         cv::Size expected(expected_size, expected_size);
         cv::resize(cv_mat, resized, expected, 0, 0, cv::INTER_AREA);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        std::cout << "    Write file " << step << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220305
+//        std::cout << "    Write file " << step << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20220223
 //        writeMyFile(step, directory, cv_mat);
@@ -1252,8 +1255,12 @@ public:
         auto pathname = makeMyPathname(step, directory);
         bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
         assert(image_written_to_file_ok);
-        std::cout << "    wrote test file   " << pathname << std::endl;
-        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220305
+//        std::cout << "    wrote test file   " << pathname << std::endl;
+//        std::cout << "    write " << pathname.stem();
+        std::cout << "    write " << pathname.filename() << std::flush;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Delete the given file, presumably after having written the next one.
@@ -1279,19 +1286,40 @@ public:
     // coordinates (each on [0, 1]), return as Vec2.
     Vec2 waitForReply(int step, fs::path directory)
     {
-//        Timer t("Elapsed time");
-        Timer t("waitForReply");
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220305
+//        Timer t("waitForReply");
         auto opn = makeOtherPathname(step, directory);
-        std::cout << "    start waiting for " << opn << std::endl;
+//        std::cout << "    start waiting for " << opn << std::endl;
+//        std::cout << ", wait for " << opn.stem();
+        std::cout << ", wait for " << opn.filename() << std::flush;
         // Wait until response file appears.
+        int seconds_waiting = 0;
         while (!isFilePresent(makeOtherPathname(step, directory)))
         {
-            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
+//            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
+//            // so that the OpenCV window responds to select/hide commands.
+//            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
+            // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
             // so that the OpenCV window responds to select/hide commands.
-            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
+            for (int i = 0; i < 4; i++) { cv::waitKey(250); }
+            seconds_waiting++;
+            int count_down = previous_cycle_seconds_ - seconds_waiting;
+//            if (seconds_waiting % 5 == 0)
+            if (count_down % 5 == 0)
+            {
+//                std::cout << ", " << seconds_waiting << std::flush;
+                std::cout << ", " << count_down << std::flush;
+            }
         }
-        std::cout << "    done waiting for  " << opn << std::endl;
         
+        previous_cycle_seconds_ = seconds_waiting;
+        
+//        std::cout << ", done waiting for  " << opn << std::endl;
+//        std::cout << ", done." << std::endl;
+        std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         // Parse two floats, x and y, from response file.
         std::ifstream input_file(opn);
         float x, y;
@@ -1300,7 +1328,7 @@ public:
         input_file.close();
         Vec2 position(x, y);
 //        debugPrint(position);
-        std::cout << "    ";
+//        std::cout << "    ";
         return position;
     }
 
@@ -1371,8 +1399,16 @@ private:
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
-    std::string my_suffix_ = ".jpeg";
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220305
+//    std::string my_suffix_ = ".jpeg";
+    std::string my_suffix_ = ".png";
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string other_suffix_ = ".txt";
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220305
+    int previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 

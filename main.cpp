@@ -6285,14 +6285,25 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // "find 3 disks" training set version 2: PNG files, stronger distractors.
-    std::cout << "March 3, 2022" << std::endl;
+//    // "find 3 disks" training set version 2: PNG files, stronger distractors.
+//    std::cout << "March 3, 2022" << std::endl;
+//
+//    GenerateDatasetFCD5(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn 20000 ~/Desktop/TexSyn_temp/fcd_test ~/Pictures/camouflage_backgrounds 20220303 0.5 128 25 100
 
-    GenerateDatasetFCD5(CommandLine(argc, argv)).run();
-
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Fifth test run of whole advarsarial camouflage
+    //     Using 20220304_1135_FCD5_a
+    std::cout << "March 5, 2022" << std::endl;
+    
+    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+    
     // command line:
-    // texsyn 20000 ~/Desktop/TexSyn_temp/fcd_test ~/Pictures/camouflage_backgrounds 20220303 0.5 128 25 100
-
+    // texsyn ~/Pictures/camouflage_backgrounds/orange_pyracantha/ ~/Desktop/TexSyn_temp/ 0.125 20220305 256 256
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     Texture::invalidInstanceReport();
