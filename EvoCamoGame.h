@@ -288,11 +288,13 @@ public:
         // the three disks.
         if (worst == nullptr)
         {
+//            tg.setValid(false);
+//            std::cout << "Invalid tournament: no prey selected." << std::endl;
+//
+//            // TODO temp for debugging:
+//            debugPrint(get_last_mouse_click)
             tg.setValid(false);
-            std::cout << "Invalid tournament: no prey selected." << std::endl;
-            
-            // TODO temp for debugging:
-            debugPrint(get_last_mouse_click)
+            std::cout << "    Pedator fooled: no prey selected." << std::endl;
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Clear GUI, return updated TournamentGroup.
@@ -1259,7 +1261,8 @@ public:
         // TODO 20220305
 //        std::cout << "    wrote test file   " << pathname << std::endl;
 //        std::cout << "    write " << pathname.stem();
-        std::cout << "    write " << pathname.filename() << std::flush;
+//        std::cout << "    write " << pathname.filename() << std::flush;
+        std::cout << "    Wrote " << pathname.filename() << std::flush;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
@@ -1281,55 +1284,99 @@ public:
         return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
     }
 
+//        // Wait until Python side's response file for given step appears. Parse that
+//        // file into 2 float values, an x and y of the prediction in image-relative
+//        // coordinates (each on [0, 1]), return as Vec2.
+//        Vec2 waitForReply(int step, fs::path directory)
+//        {
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO 20220305
+//    //        Timer t("waitForReply");
+//            auto opn = makeOtherPathname(step, directory);
+//    //        std::cout << "    start waiting for " << opn << std::endl;
+//    //        std::cout << ", wait for " << opn.stem();
+//            std::cout << ", wait for " << opn.filename() << std::flush;
+//            // Wait until response file appears.
+//            int seconds_waiting = 0;
+//            while (!isFilePresent(makeOtherPathname(step, directory)))
+//            {
+//    //            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
+//    //            // so that the OpenCV window responds to select/hide commands.
+//    //            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
+//                // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
+//                // so that the OpenCV window responds to select/hide commands.
+//                for (int i = 0; i < 4; i++) { cv::waitKey(250); }
+//                seconds_waiting++;
+//                int count_down = previous_cycle_seconds_ - seconds_waiting;
+//    //            if (seconds_waiting % 5 == 0)
+//                if (count_down % 5 == 0)
+//                {
+//    //                std::cout << ", " << seconds_waiting << std::flush;
+//                    std::cout << ", " << count_down << std::flush;
+//                }
+//            }
+//
+//            previous_cycle_seconds_ = seconds_waiting;
+//
+//    //        std::cout << ", done waiting for  " << opn << std::endl;
+//    //        std::cout << ", done." << std::endl;
+//            std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//            // Parse two floats, x and y, from response file.
+//            std::ifstream input_file(opn);
+//            float x, y;
+//            input_file >> x;
+//            input_file >> y;
+//            input_file.close();
+//            Vec2 position(x, y);
+//    //        debugPrint(position);
+//    //        std::cout << "    ";
+//            return position;
+//        }
+
     // Wait until Python side's response file for given step appears. Parse that
     // file into 2 float values, an x and y of the prediction in image-relative
     // coordinates (each on [0, 1]), return as Vec2.
     Vec2 waitForReply(int step, fs::path directory)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220305
-//        Timer t("waitForReply");
-        auto opn = makeOtherPathname(step, directory);
-//        std::cout << "    start waiting for " << opn << std::endl;
-//        std::cout << ", wait for " << opn.stem();
-        std::cout << ", wait for " << opn.filename() << std::flush;
+//        auto opn = makeOtherPathname(step, directory);
+        auto others_pathname = makeOtherPathname(step, directory);
+//        std::cout << ", wait for " << opn.filename() << std::flush;
+//        std::cout << ", wait for " << others_pathname.filename() << std::flush;
+        std::cout << ", waiting for " << others_pathname.filename()
+                  << " (" << std::flush;
         // Wait until response file appears.
         int seconds_waiting = 0;
-        while (!isFilePresent(makeOtherPathname(step, directory)))
+//        while (!isFilePresent(makeOtherPathname(step, directory)))
+        while (!isFilePresent(others_pathname))
         {
-//            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
-//            // so that the OpenCV window responds to select/hide commands.
-//            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
             // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
             // so that the OpenCV window responds to select/hide commands.
             for (int i = 0; i < 4; i++) { cv::waitKey(250); }
             seconds_waiting++;
             int count_down = previous_cycle_seconds_ - seconds_waiting;
-//            if (seconds_waiting % 5 == 0)
             if (count_down % 5 == 0)
             {
-//                std::cout << ", " << seconds_waiting << std::flush;
-                std::cout << ", " << count_down << std::flush;
+                if (seconds_waiting > 1) { std::cout << ", "; }
+//                std::cout << ", " << count_down << std::flush;
+                std::cout << count_down << std::flush;
             }
         }
-        
+        // Remember for next cycle.
         previous_cycle_seconds_ = seconds_waiting;
-        
-//        std::cout << ", done waiting for  " << opn << std::endl;
-//        std::cout << ", done." << std::endl;
-        std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+//        std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
+        std::cout << ") waited " << seconds_waiting << " seconds." << std::endl;
         // Parse two floats, x and y, from response file.
-        std::ifstream input_file(opn);
         float x, y;
+//        std::ifstream input_file(opn);
+        std::ifstream input_file(others_pathname);
         input_file >> x;
         input_file >> y;
         input_file.close();
-        Vec2 position(x, y);
-//        debugPrint(position);
-//        std::cout << "    ";
-        return position;
+//        Vec2 position(x, y);
+//        return position;
+        return {x, y};
     }
 
     // Like fs::exists() but for unknown reasons, that does not
