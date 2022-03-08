@@ -294,7 +294,8 @@ public:
 //            // TODO temp for debugging:
 //            debugPrint(get_last_mouse_click)
             tg.setValid(false);
-            std::cout << "    Pedator fooled: no prey selected." << std::endl;
+            incrementPredatorFails();
+            std::cout << "    Predator fooled: no prey selected." << std::endl;
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Clear GUI, return updated TournamentGroup.
@@ -303,6 +304,13 @@ public:
         return tg;
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+    int predator_fails_ = 0;
+    int getPredatorFails() const { return predator_fails_; }
+    void incrementPredatorFails() { predator_fails_++; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Draw Textures of TournamentGroup over current background in GUI.
     void drawTournamentGroupOverBackground(const TournamentGroup& tg)
     {
@@ -619,6 +627,11 @@ public:
     bool getRunningState() const { return running_; }
     void setRunningState(bool running_state) { running_ = running_state; }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+    std::string outputDirectoryThisRun() const
+        { return output_directory_this_run_; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
@@ -1262,7 +1275,8 @@ public:
 //        std::cout << "    wrote test file   " << pathname << std::endl;
 //        std::cout << "    write " << pathname.stem();
 //        std::cout << "    write " << pathname.filename() << std::flush;
-        std::cout << "    Wrote " << pathname.filename() << std::flush;
+//        std::cout << "    Wrote " << pathname.filename() << std::flush;
+        std::cout << "    Wrote " << pathname.filename().string() << std::flush;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
@@ -1344,10 +1358,12 @@ public:
         auto others_pathname = makeOtherPathname(step, directory);
 //        std::cout << ", wait for " << opn.filename() << std::flush;
 //        std::cout << ", wait for " << others_pathname.filename() << std::flush;
-        std::cout << ", waiting for " << others_pathname.filename()
+//        std::cout << ", waiting for " << others_pathname.filename()
+        std::cout << ", waiting for " << others_pathname.filename().string()
                   << " (" << std::flush;
         // Wait until response file appears.
         int seconds_waiting = 0;
+        bool comma = false;
 //        while (!isFilePresent(makeOtherPathname(step, directory)))
         while (!isFilePresent(others_pathname))
         {
@@ -1358,7 +1374,8 @@ public:
             int count_down = previous_cycle_seconds_ - seconds_waiting;
             if (count_down % 5 == 0)
             {
-                if (seconds_waiting > 1) { std::cout << ", "; }
+//                if (seconds_waiting > 1) { std::cout << ", "; }
+                if (comma) { std::cout << ", "; } else { comma = true; }
 //                std::cout << ", " << count_down << std::flush;
                 std::cout << count_down << std::flush;
             }
@@ -1369,13 +1386,10 @@ public:
         std::cout << ") waited " << seconds_waiting << " seconds." << std::endl;
         // Parse two floats, x and y, from response file.
         float x, y;
-//        std::ifstream input_file(opn);
         std::ifstream input_file(others_pathname);
         input_file >> x;
         input_file >> y;
         input_file.close();
-//        Vec2 position(x, y);
-//        return position;
         return {x, y};
     }
 
@@ -1514,6 +1528,31 @@ public:
         // TODO 20220227 ok, wanted more images, so make 100, 2000 / 100 = 20
         if (step % 20 == 0) { writeTournamentImageToFile(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+        // TODO should this be in a named function?
+        if ((step % 10) == 0)
+        {
+            // Open output stream to file in append mode.
+            fs::path out = outputDirectoryThisRun();
+            std::ofstream outfile;
+//            outfile.open(out / "predator_fails.txt", std::ios::app);
+            outfile.open(out / "predator_fails.csv", std::ios::app);
+            // Column headings for csv file.
+            if (step == 0)
+            {
+                std::cout << "    " << "steps,fails" << std::endl;
+                outfile << "steps,fails" << std::endl;
+            }
+            int fails = getPredatorFails();
+            std::cout << "    " << step << "," << fails << std::endl;
+            outfile << step << "," << fails << std::endl;
+        }
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        
         // TODO very temp
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }

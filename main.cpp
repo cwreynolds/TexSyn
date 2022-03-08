@@ -6303,6 +6303,7 @@ int main(int argc, const char * argv[])
     
     // command line:
     // texsyn ~/Pictures/camouflage_backgrounds/orange_pyracantha/ ~/Desktop/TexSyn_temp/ 0.125 20220305 256 256
+    // texsyn ~/Pictures/camouflage_backgrounds/bean_soup_mix/ ~/Desktop/TexSyn_temp/ 0.125 20220307 256 256
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
