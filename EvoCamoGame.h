@@ -1507,6 +1507,60 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
+//    // Ad hoc idle loop, sends request (as an image) to the "predator server"
+//    // then wait for its response. The predator's response is used the same way
+//    // as the user's mouse click is used in interactive version of simulation.
+//    void waitForUserInput() override
+//    {
+//        gui().refresh();
+//        // Wait for prediction from "predator server".
+//        int step = getPopulation()->getStepCount();
+//        Vec2 prediction = getComms().performStep(step, gui().getCvMat());
+//        Vec2 prediction_in_pixels = prediction * gui().getSize().x();
+//        // Record predator's response and display on GUI.
+//        setLastMouseClick(prediction_in_pixels);
+////        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
+//        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
+//        gui().refresh();
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20220223
+////        if (step % 100 == 0) { writeTournamentImageToFile(); }
+//        // TODO 20220227 ok, wanted more images, so make 100, 2000 / 100 = 20
+////        if (step % 20 == 0) { writeTournamentImageToFile(); }
+//        // TODO 20220308 indent the message it prints
+//        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+//        // TODO should this be in a named function?
+//        if ((step % 10) == 0)
+//        {
+//            // Open output stream to file in append mode.
+//            fs::path out = outputDirectoryThisRun();
+//            std::ofstream outfile;
+////            outfile.open(out / "predator_fails.txt", std::ios::app);
+//            outfile.open(out / "predator_fails.csv", std::ios::app);
+//            // Column headings for csv file.
+//            if (step == 0)
+//            {
+//                std::cout << "    " << "steps,fails" << std::endl;
+//                outfile << "steps,fails" << std::endl;
+//            }
+//            int fails = getPredatorFails();
+//            std::cout << "    " << step << "," << fails << std::endl;
+//            outfile << step << "," << fails << std::endl;
+//        }
+//
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//
+//        // TODO very temp
+//        std::this_thread::sleep_for(std::chrono::seconds(5));
+//    }
+    
+    // TODO 20220308 break off recordPredatorFailTimeSeriesData()
+
     // Ad hoc idle loop, sends request (as an image) to the "predator server"
     // then wait for its response. The predator's response is used the same way
     // as the user's mouse click is used in interactive version of simulation.
@@ -1519,25 +1573,29 @@ public:
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
-//        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220223
-//        if (step % 100 == 0) { writeTournamentImageToFile(); }
-        // TODO 20220227 ok, wanted more images, so make 100, 2000 / 100 = 20
-        if (step % 20 == 0) { writeTournamentImageToFile(); }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Save an annotated tournament image every 20 steps.
+        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
         
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
-        // TODO should this be in a named function?
+        // TODO 20220308 break off recordPredatorFailTimeSeriesData()
+        recordPredatorFailTimeSeriesData();
+
+        // TODO 20220308 OK to remove this?
+//        // TODO very temp
+//        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+
+    // TODO 20220308 break off recordPredatorFailTimeSeriesData()
+    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+    void recordPredatorFailTimeSeriesData()
+    {
+        int step = getPopulation()->getStepCount();
         if ((step % 10) == 0)
         {
             // Open output stream to file in append mode.
             fs::path out = outputDirectoryThisRun();
             std::ofstream outfile;
-//            outfile.open(out / "predator_fails.txt", std::ios::app);
             outfile.open(out / "predator_fails.csv", std::ios::app);
             // Column headings for csv file.
             if (step == 0)
@@ -1549,12 +1607,6 @@ public:
             std::cout << "    " << step << "," << fails << std::endl;
             outfile << step << "," << fails << std::endl;
         }
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        
-        // TODO very temp
-        std::this_thread::sleep_for(std::chrono::seconds(5));
     }
     
     PythonComms& getComms() { return comms_; }
