@@ -1242,24 +1242,13 @@ public:
     }
     Vec2 performStep(int step, const cv::Mat& cv_mat, fs::path directory)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220223
         // Force image to be size expected by Python DNN side, allowing c++
         // TexSyn side to run at higher resolution for visual quality.
         int expected_size = 128;
         cv::Mat resized;
         cv::Size expected(expected_size, expected_size);
         cv::resize(cv_mat, resized, expected, 0, 0, cv::INTER_AREA);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220305
-//        std::cout << "    Write file " << step << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220223
-//        writeMyFile(step, directory, cv_mat);
         writeMyFile(step, directory, resized);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         deleteMyFile(step - 1, directory);
         return waitForReply(step, directory);
     }
@@ -1270,14 +1259,6 @@ public:
         auto pathname = makeMyPathname(step, directory);
         bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
         assert(image_written_to_file_ok);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220305
-//        std::cout << "    wrote test file   " << pathname << std::endl;
-//        std::cout << "    write " << pathname.stem();
-//        std::cout << "    write " << pathname.filename() << std::flush;
-//        std::cout << "    Wrote " << pathname.filename() << std::flush;
-        std::cout << "    Wrote " << pathname.filename().string() << std::flush;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Delete the given file, presumably after having written the next one.
@@ -1298,73 +1279,23 @@ public:
         return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
     }
 
-//        // Wait until Python side's response file for given step appears. Parse that
-//        // file into 2 float values, an x and y of the prediction in image-relative
-//        // coordinates (each on [0, 1]), return as Vec2.
-//        Vec2 waitForReply(int step, fs::path directory)
-//        {
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // TODO 20220305
-//    //        Timer t("waitForReply");
-//            auto opn = makeOtherPathname(step, directory);
-//    //        std::cout << "    start waiting for " << opn << std::endl;
-//    //        std::cout << ", wait for " << opn.stem();
-//            std::cout << ", wait for " << opn.filename() << std::flush;
-//            // Wait until response file appears.
-//            int seconds_waiting = 0;
-//            while (!isFilePresent(makeOtherPathname(step, directory)))
-//            {
-//    //            // Wait 2 seconds (8 * 1/4 second (250/1000)). Use cv::waitKey
-//    //            // so that the OpenCV window responds to select/hide commands.
-//    //            for (int i = 0; i < 8; i++) { cv::waitKey(250); }
-//                // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
-//                // so that the OpenCV window responds to select/hide commands.
-//                for (int i = 0; i < 4; i++) { cv::waitKey(250); }
-//                seconds_waiting++;
-//                int count_down = previous_cycle_seconds_ - seconds_waiting;
-//    //            if (seconds_waiting % 5 == 0)
-//                if (count_down % 5 == 0)
-//                {
-//    //                std::cout << ", " << seconds_waiting << std::flush;
-//                    std::cout << ", " << count_down << std::flush;
-//                }
-//            }
-//
-//            previous_cycle_seconds_ = seconds_waiting;
-//
-//    //        std::cout << ", done waiting for  " << opn << std::endl;
-//    //        std::cout << ", done." << std::endl;
-//            std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//            // Parse two floats, x and y, from response file.
-//            std::ifstream input_file(opn);
-//            float x, y;
-//            input_file >> x;
-//            input_file >> y;
-//            input_file.close();
-//            Vec2 position(x, y);
-//    //        debugPrint(position);
-//    //        std::cout << "    ";
-//            return position;
-//        }
-
     // Wait until Python side's response file for given step appears. Parse that
     // file into 2 float values, an x and y of the prediction in image-relative
     // coordinates (each on [0, 1]), return as Vec2.
     Vec2 waitForReply(int step, fs::path directory)
     {
-//        auto opn = makeOtherPathname(step, directory);
+        auto my_pathname = makeMyPathname(step, directory);
         auto others_pathname = makeOtherPathname(step, directory);
-//        std::cout << ", wait for " << opn.filename() << std::flush;
-//        std::cout << ", wait for " << others_pathname.filename() << std::flush;
-//        std::cout << ", waiting for " << others_pathname.filename()
-        std::cout << ", waiting for " << others_pathname.filename().string()
-                  << " (" << std::flush;
+        std::string status_line = ("    Wrote " +
+                                   my_pathname.filename().string() +
+                                   ", waiting for " +
+                                   others_pathname.filename().string());
+        std::cout << status_line << std::flush;
         // Wait until response file appears.
         int seconds_waiting = 0;
-        bool comma = false;
-//        while (!isFilePresent(makeOtherPathname(step, directory)))
+        std::string temp_part;
+        auto erase_temp_text = [](std::string s)
+            { for (int i = 0; i < s.size(); i++) { std::cout << "\b \b"; }  };
         while (!isFilePresent(others_pathname))
         {
             // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
@@ -1372,18 +1303,14 @@ public:
             for (int i = 0; i < 4; i++) { cv::waitKey(250); }
             seconds_waiting++;
             int count_down = previous_cycle_seconds_ - seconds_waiting;
-            if (count_down % 5 == 0)
-            {
-//                if (seconds_waiting > 1) { std::cout << ", "; }
-                if (comma) { std::cout << ", "; } else { comma = true; }
-//                std::cout << ", " << count_down << std::flush;
-                std::cout << count_down << std::flush;
-            }
+            erase_temp_text(temp_part);
+            temp_part = (", expected in: " + std::to_string(count_down));
+            std::cout << temp_part << std::flush;
         }
         // Remember for next cycle.
         previous_cycle_seconds_ = seconds_waiting;
-//        std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
-        std::cout << ") waited " << seconds_waiting << " seconds." << std::endl;
+        erase_temp_text(temp_part);
+        std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
         // Parse two floats, x and y, from response file.
         float x, y;
         std::ifstream input_file(others_pathname);
@@ -1460,16 +1387,9 @@ private:
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220305
-//    std::string my_suffix_ = ".jpeg";
     std::string my_suffix_ = ".png";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string other_suffix_ = ".txt";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220305
     int previous_cycle_seconds_ = 35;  // Initialize to typical value.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1507,60 +1427,6 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
-//    // Ad hoc idle loop, sends request (as an image) to the "predator server"
-//    // then wait for its response. The predator's response is used the same way
-//    // as the user's mouse click is used in interactive version of simulation.
-//    void waitForUserInput() override
-//    {
-//        gui().refresh();
-//        // Wait for prediction from "predator server".
-//        int step = getPopulation()->getStepCount();
-//        Vec2 prediction = getComms().performStep(step, gui().getCvMat());
-//        Vec2 prediction_in_pixels = prediction * gui().getSize().x();
-//        // Record predator's response and display on GUI.
-//        setLastMouseClick(prediction_in_pixels);
-////        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1);
-//        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
-//        gui().refresh();
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20220223
-////        if (step % 100 == 0) { writeTournamentImageToFile(); }
-//        // TODO 20220227 ok, wanted more images, so make 100, 2000 / 100 = 20
-////        if (step % 20 == 0) { writeTournamentImageToFile(); }
-//        // TODO 20220308 indent the message it prints
-//        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
-//        // TODO should this be in a named function?
-//        if ((step % 10) == 0)
-//        {
-//            // Open output stream to file in append mode.
-//            fs::path out = outputDirectoryThisRun();
-//            std::ofstream outfile;
-////            outfile.open(out / "predator_fails.txt", std::ios::app);
-//            outfile.open(out / "predator_fails.csv", std::ios::app);
-//            // Column headings for csv file.
-//            if (step == 0)
-//            {
-//                std::cout << "    " << "steps,fails" << std::endl;
-//                outfile << "steps,fails" << std::endl;
-//            }
-//            int fails = getPredatorFails();
-//            std::cout << "    " << step << "," << fails << std::endl;
-//            outfile << step << "," << fails << std::endl;
-//        }
-//
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//
-//        // TODO very temp
-//        std::this_thread::sleep_for(std::chrono::seconds(5));
-//    }
-    
-    // TODO 20220308 break off recordPredatorFailTimeSeriesData()
-
     // Ad hoc idle loop, sends request (as an image) to the "predator server"
     // then wait for its response. The predator's response is used the same way
     // as the user's mouse click is used in interactive version of simulation.
@@ -1581,9 +1447,8 @@ public:
         // TODO 20220308 break off recordPredatorFailTimeSeriesData()
         recordPredatorFailTimeSeriesData();
 
-        // TODO 20220308 OK to remove this?
-//        // TODO very temp
-//        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // Wait a couple of seconds to see response on GUI.
+        cv::waitKey(2000);
     }
 
     // TODO 20220308 break off recordPredatorFailTimeSeriesData()
