@@ -1307,8 +1307,15 @@ public:
             temp_part = (", expected in: " + std::to_string(count_down));
             std::cout << temp_part << std::flush;
         }
-        // Remember for next cycle.
-        previous_cycle_seconds_ = seconds_waiting;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220311 keep previous step duration as weighted average.
+//        // Remember for next cycle.
+//        previous_cycle_seconds_ = seconds_waiting;
+        // Blend this cycle time into accumlator as estimate for next cycle.
+        previous_cycle_seconds_ = interpolate(0.3,
+                                              float(seconds_waiting),
+                                              previous_cycle_seconds_);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         erase_temp_text(temp_part);
         std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
         // Parse two floats, x and y, from response file.
@@ -1389,7 +1396,11 @@ private:
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
     std::string other_suffix_ = ".txt";
-    int previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220311 keep previous step duration as weighted average.
+//    int previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    float previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1441,14 +1452,24 @@ public:
         setLastMouseClick(prediction_in_pixels);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220311 maintain second window of previous step outcome.
+        cv::imshow("previous step", gui().getCvMat());
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         // Save an annotated tournament image every 20 steps.
         if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
         
         // TODO 20220308 break off recordPredatorFailTimeSeriesData()
         recordPredatorFailTimeSeriesData();
 
-        // Wait a couple of seconds to see response on GUI.
-        cv::waitKey(2000);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220311 maintain second window of previous step outcome.
+        // TODO no longer needed with second window?
+//        // Wait a couple of seconds to see response on GUI.
+//        cv::waitKey(2000);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // TODO 20220308 break off recordPredatorFailTimeSeriesData()
