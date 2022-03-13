@@ -185,7 +185,11 @@ public:
                                                    GP::fs()));
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
-        fs::path out = output_directory_this_run_;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220312 accessor for benefit of derived classes.
+//        fs::path out = output_directory_this_run_;
+        fs::path out = outputDirectoryThisRun();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create output directory for this run: ";
         std::cout << out << std::endl;
         fs::create_directory(out);
@@ -416,7 +420,11 @@ public:
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-        fs::path path = output_directory_this_run_;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220312 accessor for benefit of derived classes.
+//        fs::path path = output_directory_this_run_;
+        fs::path path = outputDirectoryThisRun();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= "step_" + getStepAsString() + ".png";
         writeTournamentImageToFile(path);
     }
@@ -448,7 +456,11 @@ public:
         std::string suffix = suffixes.at(index);
         std::string step = getStepAsString();
         // Construct pathname for file.
-        fs::path path = output_directory_this_run_;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220312 accessor for benefit of derived classes.
+//        fs::path path = output_directory_this_run_;
+        fs::path path = outputDirectoryThisRun();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= ("thumbnail_" + step + suffix + ".png");
         // Write image file.
         std::cout << "Writing thumbnail image to file " << path << std::endl;
@@ -461,7 +473,11 @@ public:
     void writeSourceCodeToFile(Individual* individual, std::string filename)
     {
         // Construct pathname for file.
-        fs::path path = output_directory_this_run_;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220312 accessor for benefit of derived classes.
+//        fs::path path = output_directory_this_run_;
+        fs::path path = outputDirectoryThisRun();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= filename;
         std::cout << "Writing source code to file " << path << std::endl;
         // Open stream to file.
@@ -587,7 +603,11 @@ public:
         if ((getPopulation()->getStepCount() % n) == 0)
         {
             // Construct path for training set directory, create if needed.
-            fs::path directory = output_directory_this_run_;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20220312 accessor for benefit of derived classes.
+//            fs::path directory = output_directory_this_run_;
+            fs::path directory = outputDirectoryThisRun();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             directory /= "training_set";
             fs::create_directory(directory);
             // Construct pathname image, write to file.
@@ -628,7 +648,7 @@ public:
     void setRunningState(bool running_state) { running_ = running_state; }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+    // TODO 20220307 accessor for benefit of derived classes.
     std::string outputDirectoryThisRun() const
         { return output_directory_this_run_; }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
