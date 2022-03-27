@@ -6305,6 +6305,8 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/orange_pyracantha/ ~/Desktop/TexSyn_temp/ 0.125 20220305 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/bean_soup_mix/ ~/Desktop/TexSyn_temp/ 0.125 20220307 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.125 20220310 256 256
+    
+    // Using 20220321_1711_FCD6_rc4:
     // texsyn ~/Pictures/camouflage_backgrounds/oxalis_sprouts/ ~/Desktop/TexSyn_temp/ 0.125 20220322 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/tree_leaf_blossom_sky/ ~/Desktop/TexSyn_temp/ 0.125 20220323 256 256
     
