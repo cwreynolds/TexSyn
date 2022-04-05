@@ -6295,45 +6295,26 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Fifth test run of whole advarsarial camouflage
-    //     Using 20220304_1135_FCD5_a
-    std::cout << "March 5, 2022" << std::endl;
-
-    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
-
-    // command line:
-    // texsyn ~/Pictures/camouflage_backgrounds/orange_pyracantha/ ~/Desktop/TexSyn_temp/ 0.125 20220305 256 256
-    // texsyn ~/Pictures/camouflage_backgrounds/bean_soup_mix/ ~/Desktop/TexSyn_temp/ 0.125 20220307 256 256
-    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.125 20220310 256 256
-    
-    // Using 20220321_1711_FCD6_rc4:
-    // texsyn ~/Pictures/camouflage_backgrounds/oxalis_sprouts/ ~/Desktop/TexSyn_temp/ 0.125 20220322 256 256
-    // texsyn ~/Pictures/camouflage_backgrounds/tree_leaf_blossom_sky/ ~/Desktop/TexSyn_temp/ 0.125 20220323 256 256
+//    // Fifth test run of whole advarsarial camouflage
+//    //     Using 20220304_1135_FCD5_a
+//    std::cout << "March 5, 2022" << std::endl;
+//
+//    EvoCamoVsStaticFCD(CommandLine(argc, argv)).run();
+//
+//    // command line:
+//    // texsyn ~/Pictures/camouflage_backgrounds/orange_pyracantha/ ~/Desktop/TexSyn_temp/ 0.125 20220305 256 256
+//    // texsyn ~/Pictures/camouflage_backgrounds/bean_soup_mix/ ~/Desktop/TexSyn_temp/ 0.125 20220307 256 256
+//    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.125 20220310 256 256
+//
+//    // Using 20220321_1711_FCD6_rc4:
+//    // texsyn ~/Pictures/camouflage_backgrounds/oxalis_sprouts/ ~/Desktop/TexSyn_temp/ 0.125 20220322 256 256
+//    // texsyn ~/Pictures/camouflage_backgrounds/tree_leaf_blossom_sky/ ~/Desktop/TexSyn_temp/ 0.125 20220323 256 256
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-//        std::cout << std::endl;
-//        std::cout << std::endl;
-//
-//        std::cout << "Here is some text." << std::flush;
-//        std::this_thread::sleep_for(std::chrono::seconds(1));
-//
-//    //    std::cout << " Here is some more." << std::flush;
-//        std::cout << "\rHere is some more." << std::flush;
-//        std::this_thread::sleep_for(std::chrono::seconds(1));
-//
-//    //    std::cout << std::string(width+6, '\b');
-//
-//        for (int i = 0; i < 5; i++)
-//        {
-//            std::cout << '\b';
-//            std::cout << i;
-//            std::cout << std::flush;
-//            std::this_thread::sleep_for(std::chrono::seconds(1));
-//        }
-//
-//        std::cout << std::endl;
-//        std::cout << std::endl;
+    // Working on EvoCamoVsLearningPredator
+    std::cout << "April 4, 2022" << std::endl;
+    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

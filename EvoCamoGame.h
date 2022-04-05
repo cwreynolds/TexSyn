@@ -245,18 +245,18 @@ public:
         Vec2 rect_max = guiSize() - rect_min;
         // Find non-overlapping positions for the Textures in TournamentGroup.
         float margin = radius;
-        auto overlap_viz = [&](const std::vector<Disk>& disks)
-        {
-            //testdraw(tg, disks, rect_min, rect_max, textureSize() + margin);
-        };
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
         background_image_ = selectRandomBackgroundForWindow();
-        disks_ = Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
-                                                            margin,
-                                                            rect_min, rect_max,
-                                                            LPRS(),
-                                                            overlap_viz);
+        auto prey_placement = [&]()
+        {
+            auto overlap_viz = [&](const std::vector<Disk>& disks)
+            { /*testdraw(tg,disks,rect_min,rect_max,textureSize()+margin);*/ };
+            return Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
+                              margin, rect_min, rect_max, LPRS(), overlap_viz);
+        };
+        // Generate and store random non-overlapping prey disks in gui window.
+        setPreyDisks(prey_placement());
         // Draw the randomly selected background, then the 3 textures on top.
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
@@ -301,7 +301,7 @@ public:
             Texture* texture = GP::textureFromIndividual(tgm.individual);
             texture->rasterizeToImageCache(size, true);
             Vec2 center_to_ul = Vec2(1, 1) * size / 2;
-            Vec2 position = disks_.at(p++).position - center_to_ul;
+            Vec2 position = getPreyCenter(p++) - center_to_ul;
             prey_texture_positions.push_back(position);
             cv::Mat target = gui().getCvMatRect(position, Vec2(size, size));
             texture->matteImageCacheDiskOverBG(size, target);
@@ -385,13 +385,13 @@ public:
         Individual* selected = nullptr;
         for (auto& tgm : tournament_group_.members())
         {
-            Vec2 texture_center = disks_.at(p++).position;
-            float distance = (texture_center - mouse_click_position).length();
+            Vec2 offset = getPreyCenter(p++) - mouse_click_position;
+            float distance = offset.length();
             if (distance <= (textureSize() / 2)) { selected = tgm.individual; }
         }
         return selected;
     }
-    
+
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
@@ -414,7 +414,7 @@ public:
         int index = individualToTournamentIndex(individual);
         // Construct reference to thumbnail-sized square of current background.
         Vec2 size2(textureSize(), textureSize());
-        Vec2 center = disks_.at(index).position;
+        Vec2 center = getPreyCenter(index);
         cv::Mat cropped_bg =
             Texture::getCvMatRect(center - size2, size2 * 2, background_image_);
         // Construct image with Texture matted over cloned (cropped) background.
@@ -609,6 +609,12 @@ public:
     // Accessor for command line argument used by derived classes.
     std::string outputDirectoryThisRun() const
         { return output_directory_this_run_; }
+    
+    // Get/set collection of prey Disks within GUI window.
+    std::vector<Disk> getPreyDisks() const { return disks_; }
+    void setPreyDisks(const std::vector<Disk>& disks) { disks_ = disks; }
+    // Get center position of i-th prey disk.
+    Vec2 getPreyCenter(int i) const { return disks_.at(i).position; }
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
@@ -1386,15 +1392,13 @@ public:
         gui().refresh();
         // Maintain a second window showing previous step outcome.
         cv::imshow("previous step", gui().getCvMat());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // Save an annotated tournament image every 20 steps.
-//        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops).
         if (step % 19 == 0) {std::cout << "    "; writeTournamentImageToFile();}
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
+        // Short wait (0.1 second) allowing the OpenCV windows to refresh.
+        Texture::waitKey(100);
     }
 
     // Count and record "invalid tournaments" -- aka "predator fails"
@@ -1422,4 +1426,31 @@ public:
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;
+};
+
+//class EvoCamoVsStaticFCD : public EvoCamoGame
+class EvoCamoVsLearningPredator : public EvoCamoVsStaticFCD
+{
+public:
+//    EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd)
+//    {
+//        // TODO for prototyping, rethink implementation.
+//        // Adjust texture/disk size to be 1/8 as large
+//        // setTextureSize(getTextureSize() * backgroundScale() * 2);
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20220223
+//        //     ad hoc fix to use 256x256 on TexSyn side
+//        //     should be computing correct value based on GUI size.
+//        // setTextureSize(getTextureSize() / 8);
+//        setTextureSize(getTextureSize() / 4);
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    }
+    EvoCamoVsLearningPredator(const CommandLine& cmd) : EvoCamoVsStaticFCD(cmd)
+    {
+    }
+    
+    
+    // TODO OK I need to write a file to comms directory with the 3 prey
+    //      positions. Use new getPreyDisks() for that.
+    
 };
