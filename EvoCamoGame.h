@@ -40,14 +40,10 @@ public:
         individuals_(cmd.positionalArgument(7, 120)),
         subpops_(cmd.positionalArgument(8, 6)),
         max_init_tree_size_(cmd.positionalArgument(9, 100)),
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        min_crossover_tree_size_(max_init_tree_size_ * 0.5),
-//        max_crossover_tree_size_(max_init_tree_size_ * 1.5),
         min_crossover_tree_size_
             (cmd.positionalArgument(10, max_init_tree_size_ * 0.5f)),
         max_crossover_tree_size_
             (cmd.positionalArgument(11, max_init_tree_size_ * 1.5f))
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         if ((backgroundScale() > 10000) || (backgroundScale() <  0.0001))
         {
@@ -185,11 +181,7 @@ public:
                                                    GP::fs()));
         // Read specified background image files, save as cv::Mats.
         collectBackgroundImages();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220312 accessor for benefit of derived classes.
-//        fs::path out = output_directory_this_run_;
         fs::path out = outputDirectoryThisRun();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::cout << "Create output directory for this run: ";
         std::cout << out << std::endl;
         fs::create_directory(out);
@@ -276,44 +268,27 @@ public:
         // Note time user took to respond. Ignored in logging of time per frame.
         getPopulation()->setIdleTime(TimeClock::now() - time_start_waiting);
         // Designate selected Texture's Individual as worst of TournamentGroup.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220208
-//        Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
-        Vec2 get_last_mouse_click = getLastMouseClick();
-        Individual* worst = selectIndividualFromMouseClick(get_last_mouse_click);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
         tg.designateWorstIndividual(worst);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220208
-        
         // Mark returned TournamentGroup as invalid if predator failed to locate
         // a prey. That is, if either: the user's mouse click or the xy position
         // returned from the "predator vision" neural net--is not inside any of
         // the three disks.
         if (worst == nullptr)
         {
-//            tg.setValid(false);
-//            std::cout << "Invalid tournament: no prey selected." << std::endl;
-//
-//            // TODO temp for debugging:
-//            debugPrint(get_last_mouse_click)
             tg.setValid(false);
             incrementPredatorFails();
             std::cout << "    Predator fooled: no prey selected." << std::endl;
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Clear GUI, return updated TournamentGroup.
         gui().clear();
         gui().refresh();
         return tg;
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
-    int predator_fails_ = 0;
+    // Count "invalid tournaments" -- aka "predator fails"
     int getPredatorFails() const { return predator_fails_; }
     void incrementPredatorFails() { predator_fails_++; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Draw Textures of TournamentGroup over current background in GUI.
     void drawTournamentGroupOverBackground(const TournamentGroup& tg)
@@ -420,11 +395,7 @@ public:
     // Write the entire "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220312 accessor for benefit of derived classes.
-//        fs::path path = output_directory_this_run_;
         fs::path path = outputDirectoryThisRun();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= "step_" + getStepAsString() + ".png";
         writeTournamentImageToFile(path);
     }
@@ -456,11 +427,7 @@ public:
         std::string suffix = suffixes.at(index);
         std::string step = getStepAsString();
         // Construct pathname for file.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220312 accessor for benefit of derived classes.
-//        fs::path path = output_directory_this_run_;
         fs::path path = outputDirectoryThisRun();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= ("thumbnail_" + step + suffix + ".png");
         // Write image file.
         std::cout << "Writing thumbnail image to file " << path << std::endl;
@@ -473,11 +440,7 @@ public:
     void writeSourceCodeToFile(Individual* individual, std::string filename)
     {
         // Construct pathname for file.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220312 accessor for benefit of derived classes.
-//        fs::path path = output_directory_this_run_;
         fs::path path = outputDirectoryThisRun();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         path /= filename;
         std::cout << "Writing source code to file " << path << std::endl;
         // Open stream to file.
@@ -603,11 +566,7 @@ public:
         if ((getPopulation()->getStepCount() % n) == 0)
         {
             // Construct path for training set directory, create if needed.
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20220312 accessor for benefit of derived classes.
-//            fs::path directory = output_directory_this_run_;
             fs::path directory = outputDirectoryThisRun();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             directory /= "training_set";
             fs::create_directory(directory);
             // Construct pathname image, write to file.
@@ -647,11 +606,9 @@ public:
     bool getRunningState() const { return running_; }
     void setRunningState(bool running_state) { running_ = running_state; }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220307 accessor for benefit of derived classes.
+    // Accessor for command line argument used by derived classes.
     std::string outputDirectoryThisRun() const
         { return output_directory_this_run_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
@@ -681,6 +638,9 @@ private:
     
     // For logging GpFunction usage over evolutionary time.
     CountFunctionUsage cfu_;
+    
+    // Count "invalid tournaments" -- aka "predator fails"
+    int predator_fails_ = 0;
     
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     // Note: the six variables below communicate "global" state with the mouse
@@ -825,14 +785,6 @@ public:
                 // Add to collection of background images.
                 std::cout << "Adding " << pathname << std::endl;
                 all_photos_.push_back(photo);
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                if (all_photos_.size() > 10)
-//                {
-//                    std::cout << "TODO early exit while reading BG images"
-//                    << std::endl;
-//                    return;
-//                }
-                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
             else
             {
@@ -931,34 +883,24 @@ public:
         }
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220226 make these less subtle for "F3D2"
-
     // Random UUID-like string plus pixel x and y of disk center.
     std::string outputFileName(Vec2 center)
     {
         return (n_letters(10, LPRS()) +
                 "_" + std::to_string(int(center.x())) +
                 "_" + std::to_string(int(center.y())) +
-//                ".jpeg");
                 getOutputFilenameExtension());
     }
     
+    // Get/set image file format for output, specified by pathname extension.
     std::string getOutputFilenameExtension() const
     {
         return output_filename_extension_;
     }
-    
     void setOutputFilenameExtension(std::string extension)
     {
         output_filename_extension_ = extension;
     }
-
-private:
-    std::string output_filename_extension_ = ".jpeg";
-public:
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Vec2 diskSize() const { return Vec2(disk_size_, disk_size_); }
     Vec2 outputSize() const { return Vec2(output_size_, output_size_); }
@@ -992,6 +934,8 @@ private:
     // Used only for logging.
     // (OK, as of 20220302, also used for cycling through types.)
     int output_counter_ = 0;
+    // Type of image file format for output, specified by pathname extension.
+    std::string output_filename_extension_ = ".jpeg";
 };
 
 class GenerateTrainingSetForFind3Disks :
@@ -1000,14 +944,10 @@ class GenerateTrainingSetForFind3Disks :
 public:
     // Use constructor from base class (pre-parsed "unix style" command line).
     GenerateTrainingSetForFind3Disks(const CommandLine& cmd) :
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220226 make these less subtle for "F3D2"
-//        GenerateTrainingSetForFindConspicuousDisks(cmd) {}
         GenerateTrainingSetForFindConspicuousDisks(cmd)
     {
         setOutputFilenameExtension(".png");
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Select a random background (as in the base class) and then overlay THREE
     // disks (each selected as before). Because these are being rendered at very
@@ -1075,17 +1015,9 @@ public:
                 // When inside the spot (when spot opacity is not zero).
                 if (spot > 0)
                 {
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    // TODO 20220226 make these less subtle for "F3D2"
                     // Adjust by "matte_opacity" and "matte_randomize" params.
-//                    float matte = spot * matte_opacity;
-//                    if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
-//                    float matte = spot * interpolate(0.5f, matte_opacity, 1.0f);
-//                    if (matte_randomize) { matte *= LPRS().random2(0.6f, 0.8f);}
-                    // TODO 20220303 changing back for FCD5.
                     float matte = spot * matte_opacity;
                     if (matte_randomize) { matte *= LPRS().random2(0.3f, 0.7f);}
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     // Blend disk and background colors, according to "matte".
                     Color color = interpolate(matte,
                                               Texture::matPixelRead(bg, pos),
@@ -1124,9 +1056,6 @@ public:
     }
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO QQQ
-
 // FCD1: original [date?] with one prey per example, 1kx1k!!
 // FCD2: F3D-simple [date?] 3 prey but they and background are Uniform
 // FCD3: F3D-complex [date?] 3 prey, each (and background) are photo or TexSyn,
@@ -1134,14 +1063,14 @@ public:
 // FCD4: like FCD3 but distractors are less conspicuous, but not as much less,
 //       switched to using PNG files.
 // FCD5: mixture of three types of prey
-
+//
 // Make a new "FCD5" dataset which has three types of examples:
 //     1: like FCD: one random textured prey on a random textured background
 //     2: like F3D-complex: 3 prey, the labeled one is full strength, another is
 //        half blended into the background, another is noise-matted
 //     3: new one where 1 prey is used, but blended in at full and two partial
 //        opacities, perhaps randomized for each example
-
+//
 // TODO this replaces the generateOneOutputImage() method in two classes:
 // GenerateTrainingSetForFindConspicuousDisks, GenerateTrainingSetForFind3Disks.
 // They could be collapsed together once I decide what kind of dataset is best.
@@ -1213,29 +1142,21 @@ public:
         std::vector<Vec2> centers = find3RandomDiskCenters();
         for (int i = 0; i < centers.size(); i++)
         {
-//            cv::Mat disk = selectRandomDiskImage();
             Vec2 position = centers.at(i) - diskSize() / 2;
             // Matte disk texture over random position in output texture.
             cv::Mat target = Texture::getCvMatRect(position, diskSize(), output);
             float radius = diskSize().x() * 0.5;
             matteSoftDiskOverBG(radius * 0.85,
                                 radius,
-//                                (i == 1 ? 0.5 : 1),  // matte_opacity
-//                                1 - (i * 0.33),  // matte_opacity
                                 1 - (i * 0.25),  // matte_opacity (1, .75, .5)
-//                                i == 2,              // matte_randomize
-                                false,              // matte_randomize
+                                false,           // matte_randomize
                                 disk,
                                 target);
         }
         // Write texture to image file, first centerpoint encoded in filename.
         writeOneOutputImage(output, centers.at(0));
     }
-
-
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // PythonComms prototype experiments (was EvoCamoVsStaticFCD)
 //
@@ -1327,15 +1248,10 @@ public:
             temp_part = (", expected in: " + std::to_string(count_down));
             std::cout << temp_part << std::flush;
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220311 keep previous step duration as weighted average.
-//        // Remember for next cycle.
-//        previous_cycle_seconds_ = seconds_waiting;
         // Blend this cycle time into accumlator as estimate for next cycle.
         previous_cycle_seconds_ = interpolate(0.3,
                                               float(seconds_waiting),
                                               previous_cycle_seconds_);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         erase_temp_text(temp_part);
         std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
         // Parse two floats, x and y, from response file.
@@ -1416,11 +1332,7 @@ private:
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
     std::string other_suffix_ = ".txt";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220311 keep previous step duration as weighted average.
-//    int previous_cycle_seconds_ = 35;  // Initialize to typical value.
     float previous_cycle_seconds_ = 35;  // Initialize to typical value.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1472,28 +1384,20 @@ public:
         setLastMouseClick(prediction_in_pixels);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220311 maintain second window of previous step outcome.
+        // Maintain a second window showing previous step outcome.
         cv::imshow("previous step", gui().getCvMat());
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        // Save an annotated tournament image every 20 steps.
-        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
-        
-        // TODO 20220308 break off recordPredatorFailTimeSeriesData()
+//        // Save an annotated tournament image every 20 steps.
+//        if (step % 20 == 0) {std::cout << "    "; writeTournamentImageToFile();}
+        // Save an annotated tournament image every 19 steps (chosen to be
+        // relatively prime to subpops, so we see results from all subpops).
+        if (step % 19 == 0) {std::cout << "    "; writeTournamentImageToFile();}
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220311 maintain second window of previous step outcome.
-        // TODO no longer needed with second window?
-//        // Wait a couple of seconds to see response on GUI.
-//        cv::waitKey(2000);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
-    // TODO 20220308 break off recordPredatorFailTimeSeriesData()
-    // TODO 20220307 count "invalid tournaments" -- aka "predator fails"
+    // Count and record "invalid tournaments" -- aka "predator fails"
     void recordPredatorFailTimeSeriesData()
     {
         int step = getPopulation()->getStepCount();
