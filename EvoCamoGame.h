@@ -1164,75 +1164,60 @@ public:
     }
 };
 
-// PythonComms prototype experiments (was EvoCamoVsStaticFCD)
-//
-// TODO 20211227 maybe "shared_directory_" should be a member variable.
-//      Don't see a need to pass it around between all member functions.
-//      Could make same argument for "step".
-//
+// PythonComms helper class. Mediates communication between local c++ code on my
+// laptop with Python/Keras/TensorFlow code on Colab cloud.
 class PythonComms
 {
 public:
     PythonComms(){}
 
     // Perform one step of communication with the Python side.
-    //     Arg "step" is required
-    //     Arg "cv_mat" is normally used but default to dummy file for testing.
-    //     Arg "directory" normally not used, default to "shared_directory_".
-    Vec2 performStep(int step)
-    {
-        return performStep(step, cv::Mat(1, 1, CV_8UC3, cv::Scalar(0, 0, 0)));
-    }
     Vec2 performStep(int step, const cv::Mat& cv_mat)
     {
-        return performStep(step, cv_mat, shared_directory_);
-    }
-    Vec2 performStep(int step, const cv::Mat& cv_mat, fs::path directory)
-    {
-        // Force image to be size expected by Python DNN side, allowing c++
-        // TexSyn side to run at higher resolution for visual quality.
-        int expected_size = 128;
-        cv::Mat resized;
-        cv::Size expected(expected_size, expected_size);
-        cv::resize(cv_mat, resized, expected, 0, 0, cv::INTER_AREA);
-        writeMyFile(step, directory, resized);
-        deleteMyFile(step - 1, directory);
-        return waitForReply(step, directory);
+        writeMyFile(step, resizeImage(cv_mat));
+        deleteMyFile(step - 1);
+        return waitForReply(step);
     }
 
     // Write given image to file for given step.
-    void writeMyFile(int step, fs::path directory, const cv::Mat& cv_mat)
+    void writeMyFile(int step, const cv::Mat& cv_mat)
     {
-        auto pathname = makeMyPathname(step, directory);
-        bool image_written_to_file_ok = cv::imwrite(pathname, cv_mat);
-        assert(image_written_to_file_ok);
+        bool image_file_written_ok = cv::imwrite(makeMyPathname(step), cv_mat);
+        assert(image_file_written_ok);
     }
 
-    // Delete the given file, presumably after having written the next one.
-    void deleteMyFile(int step, fs::path directory)
+    // Delete file for given step, presumably after having written the next one.
+    void deleteMyFile(int step)
     {
-        fs::remove(makeMyPathname(step, directory));
+        fs::remove(makeMyPathname(step));
     }
 
     // Form pathname for file of given step number from the "other" agent.
-    fs::path makeOtherPathname(int step, fs::path directory)
+    fs::path makeOtherPathname(int step)
     {
-        return directory / (other_prefix_ + std::to_string(step) + other_suffix_);
-    }
-    
-    // Form pathname for file of given step number from "this" agent.
-    fs::path makeMyPathname(int step, fs::path directory)
-    {
-        return directory / (my_prefix_ + std::to_string(step) + my_suffix_);
+        return makePathname(step, other_prefix_, other_suffix_);
     }
 
+    // Form pathname for file of given step number from "this" agent.
+    fs::path makeMyPathname(int step)
+    {
+        return makePathname(step, my_prefix_, my_suffix_);
+    }
+    
+    // Generic make pathname helper.
+    fs::path makePathname(int step, std::string prefix, std::string suffix)
+    {
+        return sharedDirectory() / (prefix + std::to_string(step) + suffix);
+    }
+
+    
     // Wait until Python side's response file for given step appears. Parse that
     // file into 2 float values, an x and y of the prediction in image-relative
     // coordinates (each on [0, 1]), return as Vec2.
-    Vec2 waitForReply(int step, fs::path directory)
+    Vec2 waitForReply(int step)
     {
-        auto my_pathname = makeMyPathname(step, directory);
-        auto others_pathname = makeOtherPathname(step, directory);
+        auto my_pathname = makeMyPathname(step);
+        auto others_pathname = makeOtherPathname(step);
         std::string status_line = ("    Wrote " +
                                    my_pathname.filename().string() +
                                    ", waiting for " +
@@ -1288,57 +1273,32 @@ public:
         return result;
     }
 
-    // TODO prototype for testing, just writes dummy files.
-    void run_test()
+    // Force image to be size expected by Python DNN side, allowing c++ TexSyn
+    // side to run at higher resolution for visual quality.
+    cv::Mat resizeImage(const cv::Mat& cv_mat)
     {
-        fs::path directory = shared_directory_;
-        std::cout << "Start run in " << directory << std::endl;
-        testListGDriveFiles(directory);
-        auto list = listMyFiles(directory);
-        if (!list.empty())
-        {
-            std::cout << "Unexpected files: " << vec_to_string(list) << std::endl;
-        }
-        for (int step = 0; ; step++) { performStep(step); }
+        cv::Mat resized;
+        cv::Size expected(expectedImageSize(), expectedImageSize());
+        cv::resize(cv_mat, resized, expected, 0, 0, cv::INTER_AREA);
+        return resized;
     }
     
-    // TODO prototype for testing.
-    void testListGDriveFiles(fs::path directory)
-    {
-        std::cout << "Initial contents of dir:" << std::endl;
-        // For each item within the given top level directory.
-        for (const auto& i : fs::directory_iterator(directory))
-        {
-            fs::path item = i;
-            std::cout << "    ";
-            debugPrint(item)
-        }
-    }
-    
-    // TODO prototype for testing.
-    // Returns a collection of strings, each the name of one of "my files" in
-    // the given directory. Names have had file's path and extension removed.
-    std::vector<std::string> listMyFiles(fs::path directory)
-    {
-        std::vector<std::string> strings;
-        for (const auto& i : fs::directory_iterator(directory))
-        {
-            std::string stem_string(fs::path(i).stem());
-            std::string stem_prefix = stem_string.substr(0, my_prefix_.size());
-            if (stem_prefix == my_prefix_) { strings.push_back(stem_string); }
-        }
-        return strings;
-    }
+    // Size of square image expected by DNN side.
+    int expectedImageSize() const { return expected_image_size_; }
+
+    // Pathname of shared "comms" directory (on Google Drive thus far)
+    fs::path sharedDirectory() const { return shared_directory_; }
 
 private:
     // Shared "communication" directory on Drive.
-    std::string shared_directory_ =
+    fs::path shared_directory_ =
         "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
     std::string other_suffix_ = ".txt";
     float previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    int expected_image_size_ = 128;
 };
 
 
@@ -1453,4 +1413,40 @@ public:
     // TODO OK I need to write a file to comms directory with the 3 prey
     //      positions. Use new getPreyDisks() for that.
     
+    
+//    void waitForUserInput() override
+//    {
+//        std::cout << "→ In EvoCamoVsLearningPredator::waitForUserInput()" << std::endl;
+//        std::cout << "→ Calling EvoCamoVsStaticFCD::waitForUserInput()" << std::endl;
+//        EvoCamoVsStaticFCD::waitForUserInput();
+//        std::cout << "→ Back from EvoCamoVsStaticFCD::waitForUserInput()" << std::endl;
+//    }
+
+    void waitForUserInput() override
+    {
+        // TODO maybe I need to get shared_directory_ from PythonComms?
+//        getComms().writePreyPositionsFile()performStep(step, gui().getCvMat());
+        
+        // TODO but then why do we pass it around everywhere inside PythonComms?
+        
+
+//        std::cout << "→ In EvoCamoVsLearningPredator::waitForUserInput()";
+//        std::cout << ", getPreyDisks() = " << vec_to_string(getPreyDisks());
+//        std::cout << std::endl;
+        
+        // TODO should I add generic makePathname() deleteFile() etc to PythonComms
+        
+        // TODO note that the "find.txt" files are in floating point format.
+
+        std::cout << "→ ";
+        for (auto disk : getPreyDisks())
+        {
+            std::cout << disk.position.x() << " ";
+            std::cout << disk.position.y() << " ";
+        }
+        std::cout << std::endl;
+
+        EvoCamoVsStaticFCD::waitForUserInput();
+    }
+
 };
