@@ -1388,65 +1388,35 @@ private:
     PythonComms comms_;
 };
 
-//class EvoCamoVsStaticFCD : public EvoCamoGame
+// This is the version to support a "learning predator" which requires sending a
+// file with 3 xy pairs (for the ground truth location of prey centers) used in
+// fine-tuning/specializing the predator. The prey centers as given as floating
+// point xy in relative image coordinates. (So always in [0, 1].)
+//
 class EvoCamoVsLearningPredator : public EvoCamoVsStaticFCD
 {
 public:
-//    EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd)
-//    {
-//        // TODO for prototyping, rethink implementation.
-//        // Adjust texture/disk size to be 1/8 as large
-//        // setTextureSize(getTextureSize() * backgroundScale() * 2);
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20220223
-//        //     ad hoc fix to use 256x256 on TexSyn side
-//        //     should be computing correct value based on GUI size.
-//        // setTextureSize(getTextureSize() / 8);
-//        setTextureSize(getTextureSize() / 4);
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    }
     EvoCamoVsLearningPredator(const CommandLine& cmd) : EvoCamoVsStaticFCD(cmd)
     {
     }
-    
-    
-    // TODO OK I need to write a file to comms directory with the 3 prey
-    //      positions. Use new getPreyDisks() for that.
-    
-    
-//    void waitForUserInput() override
-//    {
-//        std::cout << "→ In EvoCamoVsLearningPredator::waitForUserInput()" << std::endl;
-//        std::cout << "→ Calling EvoCamoVsStaticFCD::waitForUserInput()" << std::endl;
-//        EvoCamoVsStaticFCD::waitForUserInput();
-//        std::cout << "→ Back from EvoCamoVsStaticFCD::waitForUserInput()" << std::endl;
-//    }
 
     void waitForUserInput() override
     {
-        // TODO maybe I need to get shared_directory_ from PythonComms?
-//        getComms().writePreyPositionsFile()performStep(step, gui().getCvMat());
-        
-        // TODO but then why do we pass it around everywhere inside PythonComms?
-        
-
-//        std::cout << "→ In EvoCamoVsLearningPredator::waitForUserInput()";
-//        std::cout << ", getPreyDisks() = " << vec_to_string(getPreyDisks());
-//        std::cout << std::endl;
-        
-        // TODO should I add generic makePathname() deleteFile() etc to PythonComms
-        
-        // TODO note that the "find.txt" files are in floating point format.
-
-        std::cout << "→ ";
+        float image_size = gui().getCvMat().rows;
+        int step = getPopulation()->getStepCount();
+        auto make_pathname = [&](int step)
+        {
+            return getComms().makePathname(step, "prey_", ".txt");
+        };
+        std::ofstream output_file(make_pathname(step));
         for (auto disk : getPreyDisks())
         {
-            std::cout << disk.position.x() << " ";
-            std::cout << disk.position.y() << " ";
+            output_file << disk.position.x() / image_size << " ";
+            output_file << disk.position.y() / image_size << " ";
         }
-        std::cout << std::endl;
-
+        output_file << std::endl;
+        output_file.close();
+        if (step > 0) { fs::remove(make_pathname(step - 1)); }
         EvoCamoVsStaticFCD::waitForUserInput();
     }
-
 };
