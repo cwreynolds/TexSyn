@@ -6313,11 +6313,14 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     // Working on EvoCamoVsLearningPredator
-    std::cout << "April 4, 2022" << std::endl;
+    std::cout << "April 10, 2022" << std::endl;
     EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
     // April 5 tests:
     // texsyn ~/Pictures/camouflage_backgrounds/unused/blue_pavement/ ~/Desktop/TexSyn_temp/ 0.125 20220405 256 256
+    
+    // April 10 tests:
+    // texsyn ~/Pictures/camouflage_backgrounds/tree_leaf_blossom_sky/ ~/Desktop/TexSyn_temp/ 0.125 20220410 256 256
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
