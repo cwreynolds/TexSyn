@@ -1182,6 +1182,7 @@ public:
     // Write given image to file for given step.
     void writeMyFile(int step, const cv::Mat& cv_mat)
     {
+        verifyCommsDirectoryReachable();
         bool image_file_written_ok = cv::imwrite(makeMyPathname(step), cv_mat);
         assert(image_file_written_ok);
     }
@@ -1189,6 +1190,7 @@ public:
     // Delete file for given step, presumably after having written the next one.
     void deleteMyFile(int step)
     {
+        verifyCommsDirectoryReachable();
         fs::remove(makeMyPathname(step));
     }
 
@@ -1254,23 +1256,28 @@ public:
         return {x, y};
     }
 
-    // Like fs::exists() but for unknown reasons, that does not
-    // seem to work for newly created files on G Drive.
-    //
-    // TODO Why? This version works on G Drive, but it seems simply
-    //      calling fs::exists() should be enough.
-    //
+    // Like fs::exists() but will wait, and complain to the log, if the "comms"
+    // directory on Google Drive is inaccessible.
     bool isFilePresent(fs::path file)
     {
-        bool result = false;
-        fs::path directory = file.parent_path();
-        std::string filename = file.filename();
-        for (const auto& i : fs::directory_iterator(directory))
+        verifyCommsDirectoryReachable();
+        return fs::exists(file);
+    }
+    
+    // Just wait in retry loop if shared "comms" directory become unreachable.
+    // Probably will return shortly, better to wait than signal a file error.
+    void verifyCommsDirectoryReachable()
+    {
+        int seconds = 0;
+        auto sd = sharedDirectory();
+        while (!fs::exists(sd))
         {
-            std::string dir_item_name(fs::path(i).filename());
-            if (filename == dir_item_name) { result = true; }
+            std::cout << "Shared “comms” directory " << sd.string();
+            std::cout << " has been inaccessible for " << seconds;
+            std::cout << " seconds" << std::endl;
+            cv::waitKey(1000);
+            seconds++;
         }
-        return result;
     }
 
     // Force image to be size expected by Python DNN side, allowing c++ TexSyn
@@ -1408,6 +1415,7 @@ public:
         {
             return getComms().makePathname(step, "prey_", ".txt");
         };
+        getComms().verifyCommsDirectoryReachable();
         std::ofstream output_file(make_pathname(step));
         for (auto disk : getPreyDisks())
         {
