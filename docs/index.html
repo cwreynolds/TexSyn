@@ -132,11 +132,13 @@
         images, and the specific evolutionary history of camouflage in
         the prey population.<br>
       </p>
-      <p>This is the second attempt. The first, on <a
-          moz-do-not-send="true" href="#20220411">April 11</a>, failed
-        to converge to effective camouflage. I would judge the quality
-        this this run as “just OK” but good enough that I am convinced
-        the simulation is working as intended. <i>Finally!</i><br>
+      <p>The first attempt, on <a moz-do-not-send="true"
+          href="#20220411">April 11</a>, failed to converge to effective
+        camouflage. This is the second attempt. I maintain a training
+        set consisting of the most recent 200 steps. I do one epoch of
+        training for each simulation step. The quality of this run
+        strikes me as “just OK” but good enough that I am convinced the
+        simulation is working as intended. <i>Finally!</i><br>
       </p>
       <p>To recap, this adversarial model has gone through several
         architectures. Initially, predator behavior was provided by a
@@ -210,14 +212,15 @@
         alt="20220417_step_1995" title="20220417_step_1995"
         class="img_flow" height="256" width="256">
       <p>In this 2000 step run, there were 816 steps where the predator
-        chooses a location which is not inside any prey disk. When these
-        predator failures occur all three prey survive the tournament.
-        Normally the predator's chosen prey is “eaten“, removed from the
-        population, and replaced by an offspring of the other two prey
-        in the tournament. In this run, the rate of predator failure is
-        <b>41%</b> which is the lowest found so far on this background
-        set. This may suggest, as hoped, that the adaptive predator is
-        functioning better that the static pre-trained predator.<br>
+        chooses a location which is <b>not</b> inside any prey disk.
+        When these predator failures occur all three prey survive the
+        tournament. Normally the predator's chosen prey is “eaten“,
+        removed from the population, and replaced by an offspring of the
+        other two prey in the tournament. In this run, the rate of
+        predator failure is <b>41%</b> which is the lowest found so far
+        on this background set. This may suggest, as hoped, that the
+        adaptive predator is functioning better that the static
+        pre-trained predator.<br>
         <br>
       </p>
     </div>
