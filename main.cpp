@@ -6321,6 +6321,9 @@ int main(int argc, const char * argv[])
     
     // April 10 tests:
     // texsyn ~/Pictures/camouflage_backgrounds/tree_leaf_blossom_sky/ ~/Desktop/TexSyn_temp/ 0.125 20220410 256 256
+    
+    // April 18-21 tests:
+    // texsyn ~/Pictures/camouflage_backgrounds/bean_soup_mix/ ~/Desktop/TexSyn_temp/ 0.125 20220418 256 256
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
