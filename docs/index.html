@@ -135,28 +135,30 @@
     <div class="post" id="20220425"> <a href="#20220425" class="date">April
 
         25, 2022</a>
-      <h1>Total recall</h1>
+      <h1>Total recall: use <i>entire</i> history for fine tuning<br>
+      </h1>
       <p>Recent posts (<a href="#20220421">April 21</a>, <a
           href="#20220424">April 24</a>) have discussed the <b>size</b>
-        of a training set used for fine-tuning a predator model each
-        simulation step. This fine-tuning adapts a predator to a
-        specific environment and its evolved population of prey. Data in
-        the training set comes from previous simulation steps —
-        essentially the “life experience” of the predator. Originally I
-        thought I would use just the current step for fine tuning, then
-        I tried using the “last <i>n</i>” steps for training, trying
-        different values for <i>n</i> (100 vs. 200). Finally in this
-        run I set <i>n</i> to ∞. (In the code, this is the variable <code>max_training_set_size</code>.)
+        of a training set used for fine-tuning the predator model on
+        each step of a simulation. This fine-tuning adapts a predator to
+        a specific environment and its evolved population of prey. Data
+        in the training set comes from previous simulation steps —
+        essentially the “memories” of the predator's experience during
+        its lifetime. Originally I thought I would use just the current
+        step for fine tuning, then I tried using the “last <i>n</i>”
+        steps for training, trying different values for <i>n</i> (100
+        vs. 200). Finally in this run I set <i>n</i> to infinity. (In
+        the code, this variable is: <code>max_training_set_size</code>.)
 
         So here, the training set used for fine-turning consists of <b>all</b>
-        previous steps. In all other regards, this run (<font size="-1">ID
-
-
+        previous steps. Otherwise, this run (<font size="-1">ID
           maple_leaf_litter_20220424_1144</font>) is identical to the
-        run described on <a href="#20220424">April 24</a>, except that
-        this one got interrupted around step 1900. I think the
-        late-in-run camouflage here is better than the previous one with
-        a <code>max_training_set_size</code> of 200.<br>
+        runs described on <a
+          href="file:///Users/cwr/Documents/code/TexSyn/docs/index.html#20220421">April
+          21</a> and <a href="#20220424">April 24</a>, except that this
+        one got interrupted around step 1900. I think the late-in-run
+        camouflage here is better than those previous runs with <code>max_training_set_size</code>
+        set to 100 or 200.<br>
       </p>
       <img src="images/20220425_step_95.png" alt="20220425_step_95"
         title="20220425_step_95" class="img_flow" height="256"
