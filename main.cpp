@@ -6327,6 +6327,10 @@ int main(int argc, const char * argv[])
     
     // April 22-24 tests:
     // texsyn ~/Pictures/camouflage_backgrounds/maple_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.125 20220422 256 256
+    
+    // May 1-3 "update fine-tuning dataset" tests:
+    // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220501 256 256
+    // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220502 256 256
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
