@@ -6331,6 +6331,7 @@ int main(int argc, const char * argv[])
     // May 1-3 "update fine-tuning dataset" tests:
     // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220501 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220502 256 256
+    // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220503 256 256
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
