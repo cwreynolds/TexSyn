@@ -1240,6 +1240,10 @@ public:
             erase_temp_text(temp_part);
             temp_part = (", expected in: " + std::to_string(count_down));
             std::cout << temp_part << std::flush;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO 20220504
+//            pingCommsDirectory(step);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Blend this cycle time into accumlator as estimate for next cycle.
         previous_cycle_seconds_ = interpolate(0.3,
@@ -1255,6 +1259,17 @@ public:
         input_file.close();
         return {x, y};
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220504
+    // Experiment to see if more constant Drive activity speeds up cycle time.
+    void pingCommsDirectory(int step)
+    {
+        std::ofstream outfile;
+        outfile.open(sharedDirectory() / "earth_ping.txt", std::ios::out);
+        outfile << step;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Like fs::exists() but will wait, and complain to the log, if the "comms"
     // directory on Google Drive is inaccessible.
