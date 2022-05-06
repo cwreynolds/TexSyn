@@ -6333,6 +6333,9 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220502 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220503 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/yellow_flower_on_green/ ~/Desktop/TexSyn_temp/ 0.125 20220504 256 256
+    
+    // May 5 (note changing backgound from 0.125 to 0.2 -- I think there is still a problem with bg scale handling)
+    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.2 20220504 256 256
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
