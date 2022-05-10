@@ -308,6 +308,13 @@ public:
         }
         // TODO 20211010 turn this off. If needed later add global enable flag.
         // writeTrainingSetData(prey_texture_positions);
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20220510
+//        std::cout << std::endl << "#### DEBUGGING FILE WRITE ###  ";
+//        writeTournamentImageToFile();
+//        std::cout << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
@@ -1240,10 +1247,6 @@ public:
             erase_temp_text(temp_part);
             temp_part = (", expected in: " + std::to_string(count_down));
             std::cout << temp_part << std::flush;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // TODO 20220504
-//            pingCommsDirectory(step);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Blend this cycle time into accumlator as estimate for next cycle.
         previous_cycle_seconds_ = interpolate(0.3,
@@ -1260,17 +1263,6 @@ public:
         return {x, y};
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220504
-    // Experiment to see if more constant Drive activity speeds up cycle time.
-    void pingCommsDirectory(int step)
-    {
-        std::ofstream outfile;
-        outfile.open(sharedDirectory() / "earth_ping.txt", std::ios::out);
-        outfile << step;
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     // Like fs::exists() but will wait, and complain to the log, if the "comms"
     // directory on Google Drive is inaccessible.
     bool isFilePresent(fs::path file)
@@ -1350,11 +1342,28 @@ public:
         // Adjust texture/disk size to be 1/8 as large
         // setTextureSize(getTextureSize() * backgroundScale() * 2);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220223
-        //     ad hoc fix to use 256x256 on TexSyn side
-        //     should be computing correct value based on GUI size.
-        // setTextureSize(getTextureSize() / 8);
-        setTextureSize(getTextureSize() / 4);
+        // // TODO 20220223
+        // //     ad hoc fix to use 256x256 on TexSyn side
+        // //     should be computing correct value based on GUI size.
+        // // setTextureSize(getTextureSize() / 8);
+        // setTextureSize(getTextureSize() / 4);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220510
+        // Adjust "texture size" (prey diameter) to match GUI size.
+        float canonical_gui_size = 1024;
+        float canonical_texture_size = 201;
+        float texture_to_gui_ratio = canonical_texture_size / canonical_gui_size;
+        float gui_size = gui().getSize().x();
+
+        std::cout << std::endl;
+        debugPrint(gui_size);
+        debugPrint(getTextureSize() / 4);
+        debugPrint(int(texture_to_gui_ratio * gui_size));
+        std::cout << std::endl;
+
+        setTextureSize(int(texture_to_gui_ratio * gui_size));
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 

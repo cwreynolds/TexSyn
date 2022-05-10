@@ -6337,6 +6337,9 @@ int main(int argc, const char * argv[])
     // May 5 (note changing backgound from 0.125 to 0.2 -- I think there is still a problem with bg scale handling)
     // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.2 20220504 256 256
     // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.2 20220507 256 256
+    
+    // May 10, after fiddling with prey size scaling.
+    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.8 20220507 1024 1024
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
