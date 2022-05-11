@@ -6339,7 +6339,7 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.2 20220507 256 256
     
     // May 10, after fiddling with prey size scaling.
-    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.8 20220507 1024 1024
+    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.4 20220507 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
