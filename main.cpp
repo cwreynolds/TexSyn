@@ -6340,6 +6340,8 @@ int main(int argc, const char * argv[])
     
     // May 10, after fiddling with prey size scaling.
     // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.4 20220507 512 512
+    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220511 512 512
+    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220512 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
