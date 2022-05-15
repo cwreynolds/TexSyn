@@ -6342,6 +6342,13 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel/ ~/Desktop/TexSyn_temp/ 0.4 20220507 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220511 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220512 512 512
+    // May 13, this was surprisingly bad, mostly unifrom textures for whole run.
+    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220513 512 512
+    // May 14, retry this seed which seemed to be doing well before death (by race condition?).
+    // texsyn ~/Pictures/camouflage_backgrounds/huntington_hedge/ ~/Desktop/TexSyn_temp/ 0.2 20220511 512 512
+    
+    // May 15:
+    // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220515 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
