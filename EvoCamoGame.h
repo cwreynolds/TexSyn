@@ -137,6 +137,13 @@ public:
         float s = backgroundScale();
         int s_min_x = s * min_x;
         int s_min_y = s * min_y;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220516
+        std::cout << std::endl;
+        std::cout << "Width of GUI:  " << guiSize().x() << ", of scaled bg images:" << s_min_x << ", ratio: " << s_min_x / guiSize().x() << std::endl;
+        std::cout << "Height of GUI: " << guiSize().y() << ", of scaled bg images:" << s_min_y << ", ratio: " << s_min_y / guiSize().y() << std::endl;
+        std::cout << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((s_min_x < guiSize().x()) || (s_min_y < guiSize().y()))
         {
             std::cout << std::endl
