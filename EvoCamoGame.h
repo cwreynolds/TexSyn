@@ -140,8 +140,10 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20220516
         std::cout << std::endl;
-        std::cout << "Width of GUI:  " << guiSize().x() << ", of scaled bg images:" << s_min_x << ", ratio: " << s_min_x / guiSize().x() << std::endl;
-        std::cout << "Height of GUI: " << guiSize().y() << ", of scaled bg images:" << s_min_y << ", ratio: " << s_min_y / guiSize().y() << std::endl;
+        std::cout <<"Width of GUI:  "<<guiSize().x()<<", of scaled bg images: "
+            << s_min_x << ", ratio: " << s_min_x / guiSize().x() << std::endl;
+        std::cout <<"Height of GUI: "<<guiSize().y()<<", of scaled bg images: "
+            << s_min_y << ", ratio: " << s_min_y / guiSize().y() << std::endl;
         std::cout << std::endl;
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((s_min_x < guiSize().x()) || (s_min_y < guiSize().y()))

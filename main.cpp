@@ -6350,6 +6350,7 @@ int main(int argc, const char * argv[])
     // May 15:
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220515 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 202205160 512 512
+    // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220517 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
