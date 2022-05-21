@@ -6351,6 +6351,12 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220515 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 202205160 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220517 512 512
+    // May 18-19 run two tests of “avoid center for fine-tuning”: one in
+    //    EvoCamoVsLearningPredator class here and one on the Python/cloud side.
+    // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220518 512 512
+    // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220519 512 512
+    // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220520 512 512
+
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

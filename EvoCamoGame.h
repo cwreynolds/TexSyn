@@ -257,15 +257,11 @@ public:
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
         background_image_ = selectRandomBackgroundForWindow();
-        auto prey_placement = [&]()
-        {
-            auto overlap_viz = [&](const std::vector<Disk>& disks)
-            { /*testdraw(tg,disks,rect_min,rect_max,textureSize()+margin);*/ };
-            return Disk::randomNonOverlappingDisksInRectangle(3, radius, radius,
-                              margin, rect_min, rect_max, LPRS(), overlap_viz);
-        };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220518
         // Generate and store random non-overlapping prey disks in gui window.
-        setPreyDisks(prey_placement());
+        generatePreyPlacement(radius, margin, rect_min, rect_max);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Draw the randomly selected background, then the 3 textures on top.
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
@@ -295,6 +291,27 @@ public:
         return tg;
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220518
+    
+    // TODO should refactor this so all these parameters are computed inside
+    //      this function rather than be computed in called and passed in.
+    
+    // Generate and store random non-overlapping prey disks in gui window.
+    virtual void generatePreyPlacement(float radius,
+                                       float margin,
+                                       Vec2 rect_min,
+                                       Vec2 rect_max)
+    {
+        // TODO dummy function, should be cleaned up (removed).
+        auto overlap_viz = [&](const std::vector<Disk>& disks)
+        { /*testdraw(tg,disks,rect_min,rect_max,textureSize()+margin);*/ };
+        setPreyDisks(Disk::randomNonOverlappingDisksInRectangle(3, radius,
+                     radius, margin, rect_min, rect_max, LPRS(), overlap_viz));
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
     // Count "invalid tournaments" -- aka "predator fails"
     int getPredatorFails() const { return predator_fails_; }
     void incrementPredatorFails() { predator_fails_++; }
@@ -1256,6 +1273,10 @@ public:
             erase_temp_text(temp_part);
             temp_part = (", expected in: " + std::to_string(count_down));
             std::cout << temp_part << std::flush;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20220520
+            if (seconds_waiting % 60 == 0) writePingFile(seconds_waiting, step);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Blend this cycle time into accumlator as estimate for next cycle.
         previous_cycle_seconds_ = interpolate(0.3,
@@ -1271,6 +1292,18 @@ public:
         input_file.close();
         return {x, y};
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220520
+    // Used to ping the comms directory when it seems hung.
+    void writePingFile(int count, int step)
+    {
+        verifyCommsDirectoryReachable();
+        std::ofstream output_file(makePathname(step, "ping_earth_", ".txt"));
+        output_file << count;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220512
@@ -1474,4 +1507,41 @@ public:
         if (step > 0) { fs::remove(make_pathname(step - 1)); }
         EvoCamoVsStaticFCD::waitForUserInput();
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220518 very temporary implementation intending to avoid placing
+    //               any prey disks near the window center.
+    
+    // Generate and store random non-overlapping prey disks in gui window.
+    void generatePreyPlacement(float radius,
+                               float margin,
+                               Vec2 rect_min,
+                               Vec2 rect_max) override
+    {
+        // TODO dummy function, should be cleaned up (removed).
+        auto overlap_viz = [&](const std::vector<Disk>& disks) {};
+        std::vector<Disk> disks;
+        // Retry up to 200 times.
+        for (int i = 0; i < 200; i++)
+        {
+            disks = Disk::randomNonOverlappingDisksInRectangle(3, radius,
+                        radius, margin, rect_min, rect_max, LPRS(), overlap_viz);
+            bool all_clear = true;
+            // TODO changed this on 20220520:
+//            float min_dist = radius * 3;
+            float min_dist = radius * 2;
+            Vec2 center = guiSize() / 2;
+            for (auto& d : disks)
+            {
+                Vec2 p = d.position;
+                if ((p - center).length() < min_dist) {all_clear = false;}
+            }
+            // Break if all disks avoid center zone.
+            if (all_clear) { break; }
+        }
+        setPreyDisks(disks);
+    }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 };
