@@ -11,6 +11,10 @@
 #include "Color.h"
 #include "Utilities.h"
 #include <vector>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220522 add experimental texture render timeout
+#include <limits>
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 namespace cv {class Mat;}
 
 // Nickname for the type of PixelFunction used for rasterization.
@@ -300,6 +304,20 @@ public:
     // Static utility function to write a pixel to a cv::Mat from a Color.
     static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220522 add experimental texture render timeout
+    // Get/set max time, in seconds allowed for texture render.
+    static float getRenderMaxTime() { return render_max_time_; }
+    static void setRenderMaxTime(float max_time) { render_max_time_ = max_time; }
+    // Time in seconds since render began.
+    static float elapsedRenderTime()
+    {
+        return time_diff_in_seconds(render_start_time_, TimeClock::now());
+    }
+    // Has max render time been exceeded?
+    static bool renderTimeOut() {return elapsedRenderTime()>getRenderMaxTime();}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
@@ -318,6 +336,16 @@ private:
     static inline bool render_thread_per_row_ = true;
     // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
     static int default_opencv_mat_type_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220522 add experimental texture render timeout
+    // Max time, in seconds allowed for texture render, return black if exceeded.
+    static inline float render_max_time_ = std::numeric_limits<float>::infinity();
+    // TODO 20220522 this render start time SHOULD be per-instance, but stupidly
+    // rasterizeToImageCache() is const.
+    static inline TimePoint render_start_time_;
+    // Start render timer.
+    static void startRenderTimer() { render_start_time_ = TimeClock::now(); }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Global switch should subclassed textures that use RandomSequence objects
     // seed them from consturctor args, or from a constant "random" value. The
     // latter case is used only in SimpleImageMatch ("to avoid huge differences

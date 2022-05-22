@@ -1275,7 +1275,7 @@ public:
             std::cout << temp_part << std::flush;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // TODO 20220520
-            if (seconds_waiting % 60 == 0) writePingFile(seconds_waiting, step);
+            if (seconds_waiting % 100 == 0) writePingFile(seconds_waiting, step);
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Blend this cycle time into accumlator as estimate for next cycle.
@@ -1299,23 +1299,14 @@ public:
     void writePingFile(int count, int step)
     {
         verifyCommsDirectoryReachable();
-        std::ofstream output_file(makePathname(step, "ping_earth_", ".txt"));
+//        std::ofstream output_file(makePathname(step, "ping_earth_", ".txt"));
+        auto pathname = makePathname(step, "ping_earth_", ".txt");
+        std::ofstream output_file(pathname);
         output_file << count;
+        std::cout << "Ping comms: " << count << " " << pathname << std::endl;
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220512
-
-//    // Like fs::exists() but will wait, and complain to the log, if the "comms"
-//    // directory on Google Drive is inaccessible.
-//    bool isFilePresent(fs::path file)
-//    {
-//        verifyCommsDirectoryReachable();
-//        return fs::exists(file);
-//    }
-    
     // Like fs::exists() but will wait, and complain to the log, if the "comms"
     // directory on Google Drive is inaccessible.
     bool isFilePresent(fs::path file)
@@ -1324,8 +1315,6 @@ public:
         std::error_code error_code_to_prevent_exceptions;
         return fs::exists(file, error_code_to_prevent_exceptions);
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Just wait in retry loop if shared "comms" directory become unreachable.
     // Probably will return shortly, better to wait than signal a file error.
@@ -1485,6 +1474,10 @@ class EvoCamoVsLearningPredator : public EvoCamoVsStaticFCD
 public:
     EvoCamoVsLearningPredator(const CommandLine& cmd) : EvoCamoVsStaticFCD(cmd)
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220522 add experimental texture render timeout
+        Texture::setRenderMaxTime(5);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     void waitForUserInput() override

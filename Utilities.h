@@ -251,6 +251,24 @@ typedef std::chrono::high_resolution_clock TimeClock;
 typedef std::chrono::time_point<TimeClock> TimePoint;
 typedef std::chrono::duration<double> TimeDuration;
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220522 add experimental texture render timeout
+
+// TimeDuration to seconds as float.
+inline float time_duration_in_seconds(TimeDuration time_duration)
+{
+    return time_duration.count();
+}
+
+// TimePoint difference in seconds.
+inline float time_diff_in_seconds(TimePoint start, TimePoint end)
+{
+    TimeDuration dt = end - start;
+    return time_duration_in_seconds(dt);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 // Simple tool for inline timing sections of code. For example:
 //    void foo()
 //    {
