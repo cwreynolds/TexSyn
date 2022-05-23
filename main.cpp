@@ -6356,6 +6356,9 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220518 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220519 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/kitchen_granite/ ~/Desktop/TexSyn_temp/ 0.2 20220520 512 512
+    
+    // May 22
+    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220522 512 512
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
