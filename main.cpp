@@ -6361,6 +6361,8 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220522 512 512
     //     doubled scale of backgrounds:
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.4 20220523 512 512
+    //     repeat both scales for publication quality results
+    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220524 512 512
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

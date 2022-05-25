@@ -1263,15 +1263,55 @@ public:
         std::string temp_part;
         auto erase_temp_text = [](std::string s)
             { for (int i = 0; i < s.size(); i++) { std::cout << "\b \b"; }  };
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+        t_was_typed = false;
+        std::string extra_temp_msg;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         while (!isFilePresent(others_pathname))
         {
             // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
             // so that the OpenCV window responds to select/hide commands.
-            for (int i = 0; i < 4; i++) { cv::waitKey(250); }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+//            for (int i = 0; i < 4; i++) { cv::waitKey(250); }
+            for (int i = 0; i < 4; i++)
+            {
+//                int key = cv::waitKey(250);
+//                if (key == 't')
+//                {
+//                    t_was_typed = true;
+//                    erase_temp_text(temp_part);
+//                    temp_part = " Image will be saved after predator responds.";
+//                    std::cout << temp_part << std::flush;
+//                }
+                int key = cv::waitKey(250);
+                if (key == 't')
+                {
+                    t_was_typed = true;
+                    extra_temp_msg = (", image for step " +
+                                      std::to_string(step) +
+                                      " will be saved after predator responds");
+                }
+            }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             seconds_waiting++;
             int count_down = previous_cycle_seconds_ - seconds_waiting;
             erase_temp_text(temp_part);
-            temp_part = (", expected in: " + std::to_string(count_down));
+            
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+//            temp_part = (", expected in: " + std::to_string(count_down));
+//            temp_part = (t_was_typed?
+//                         ", Image will be saved after predator responds." :
+//                         ", expected in: " + std::to_string(count_down));
+//            temp_part = (", expected in: " +
+//                         std::to_string(count_down) +
+//                         extra_temp_msg);
+            temp_part = (extra_temp_msg + ", expected in: " +
+                         std::to_string(count_down) + "...");
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
             std::cout << temp_part << std::flush;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             // TODO 20220520
@@ -1347,6 +1387,12 @@ public:
 
     // Pathname of shared "comms" directory (on Google Drive thus far)
     fs::path sharedDirectory() const { return shared_directory_; }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+    bool tWasTyped() const { return t_was_typed; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 private:
     // Shared "communication" directory on Drive.
@@ -1358,6 +1404,10 @@ private:
     std::string other_suffix_ = ".txt";
     float previous_cycle_seconds_ = 35;  // Initialize to typical value.
     int expected_image_size_ = 128;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+    bool t_was_typed = false;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1428,9 +1478,19 @@ public:
         gui().refresh();
         // Maintain a second window showing previous step outcome.
         cv::imshow("previous step", gui().getCvMat());
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220524 -- tWasTyped -- very temp, special purpose API
+
+//        // Save an annotated tournament image every 19 steps (chosen to be
+//        // relatively prime to subpops, so we see results from all subpops).
+//        if (step % 19 == 0) {std::cout << "    "; writeTournamentImageToFile();}
+
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops).
-        if (step % 19 == 0) {std::cout << "    "; writeTournamentImageToFile();}
+        bool save_file = getComms().tWasTyped() || (step % 19 == 0);
+        if (save_file) {std::cout << "    "; writeTournamentImageToFile();}
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
