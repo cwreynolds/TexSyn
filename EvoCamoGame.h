@@ -548,12 +548,29 @@ public:
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
     }
-        
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220526
+
+//    // Returns, as a string, current Population evolution "step" number.
+//    std::string getStepAsString() const
+//    {
+//        return std::to_string(getPopulation()->getStepCount());
+//    }
+    
     // Returns, as a string, current Population evolution "step" number.
     std::string getStepAsString() const
     {
-        return std::to_string(getPopulation()->getStepCount());
+        return getStepAsString(0);
     }
+    
+    // Returns, as a string, current Population "step" number plus signed offset.
+    std::string getStepAsString(int offset) const
+    {
+        return std::to_string(offset + getPopulation()->getStepCount());
+    }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Get/set a shared_ptr to this run's current Population.
     std::shared_ptr<Population> getPopulation() { return population_; };
@@ -1476,9 +1493,21 @@ public:
         setLastMouseClick(prediction_in_pixels);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
-        // Maintain a second window showing previous step outcome.
-        cv::imshow("previous step", gui().getCvMat());
         
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220526
+
+//        // Maintain a second window showing previous step outcome.
+//        cv::imshow("previous step", gui().getCvMat());
+
+        // Maintain a second window showing previous step outcome.
+        previous_step_image_ = gui().getCvMat().clone();
+        cv::imshow("previous step", previous_step_image_);
+        
+        // TODO--Oh, but the use of this saved image is right here in this
+        //       function, so I guess it does not need to be a member variable.
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20220524 -- tWasTyped -- very temp, special purpose API
 
@@ -1491,6 +1520,11 @@ public:
         bool save_file = getComms().tWasTyped() || (step % 19 == 0);
         if (save_file) {std::cout << "    "; writeTournamentImageToFile();}
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20220526
+//        // SUPER TEMP -- JUST TO TEST THE FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        if (save_file) {std::cout << "    "; writePreviousStepImageToFile();}
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
@@ -1519,9 +1553,29 @@ public:
         }
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220526
+
+    // Like writeTournamentImageToFile() but save "previous step" image to file.
+    void writePreviousStepImageToFile()
+    {
+        fs::path path = outputDirectoryThisRun();
+        path /= "step_" + getStepAsString(-1) + ".png";
+        std::cout << "Writing tournament image to file " << path << std::endl;
+        cv::imwrite(path, previous_step_image_);
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+
+    
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220526
+    // Store the tournament image from previous frame, for display and save.
+    cv::Mat previous_step_image_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // This is the version to support a "learning predator" which requires sending a
