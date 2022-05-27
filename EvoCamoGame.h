@@ -137,15 +137,12 @@ public:
         float s = backgroundScale();
         int s_min_x = s * min_x;
         int s_min_y = s * min_y;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220516
         std::cout << std::endl;
         std::cout <<"Width of GUI:  "<<guiSize().x()<<", of scaled bg images: "
             << s_min_x << ", ratio: " << s_min_x / guiSize().x() << std::endl;
         std::cout <<"Height of GUI: "<<guiSize().y()<<", of scaled bg images: "
             << s_min_y << ", ratio: " << s_min_y / guiSize().y() << std::endl;
         std::cout << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((s_min_x < guiSize().x()) || (s_min_y < guiSize().y()))
         {
             std::cout << std::endl
@@ -257,11 +254,8 @@ public:
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
         background_image_ = selectRandomBackgroundForWindow();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220518
         // Generate and store random non-overlapping prey disks in gui window.
         generatePreyPlacement(radius, margin, rect_min, rect_max);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Draw the randomly selected background, then the 3 textures on top.
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
@@ -293,10 +287,9 @@ public:
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220518
-    
     // TODO should refactor this so all these parameters are computed inside
     //      this function rather than be computed in called and passed in.
-    
+    //
     // Generate and store random non-overlapping prey disks in gui window.
     virtual void generatePreyPlacement(float radius,
                                        float margin,
@@ -334,13 +327,6 @@ public:
         }
         // TODO 20211010 turn this off. If needed later add global enable flag.
         // writeTrainingSetData(prey_texture_positions);
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20220510
-//        std::cout << std::endl << "#### DEBUGGING FILE WRITE ###  ";
-//        writeTournamentImageToFile();
-//        std::cout << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Ad hoc idle loop, waiting for user input. Exits on left mouse click, the
@@ -548,16 +534,7 @@ public:
         run_output_dir /= (run_name_ + "_" + date_hours_minutes());
         return run_output_dir;
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220526
-
-//    // Returns, as a string, current Population evolution "step" number.
-//    std::string getStepAsString() const
-//    {
-//        return std::to_string(getPopulation()->getStepCount());
-//    }
-    
+        
     // Returns, as a string, current Population evolution "step" number.
     std::string getStepAsString() const
     {
@@ -569,8 +546,6 @@ public:
     {
         return std::to_string(offset + getPopulation()->getStepCount());
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Get/set a shared_ptr to this run's current Population.
     std::shared_ptr<Population> getPopulation() { return population_; };
@@ -1280,60 +1255,42 @@ public:
         std::string temp_part;
         auto erase_temp_text = [](std::string s)
             { for (int i = 0; i < s.size(); i++) { std::cout << "\b \b"; }  };
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-        t_was_typed = false;
+        key_typed_1_ = false;
+        key_typed_2_ = false;
         std::string extra_temp_msg;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         while (!isFilePresent(others_pathname))
         {
             // Wait 1 second (4 * 1/4 second (250/1000)). Use cv::waitKey
             // so that the OpenCV window responds to select/hide commands.
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-//            for (int i = 0; i < 4; i++) { cv::waitKey(250); }
             for (int i = 0; i < 4; i++)
             {
-//                int key = cv::waitKey(250);
-//                if (key == 't')
-//                {
-//                    t_was_typed = true;
-//                    erase_temp_text(temp_part);
-//                    temp_part = " Image will be saved after predator responds.";
-//                    std::cout << temp_part << std::flush;
-//                }
                 int key = cv::waitKey(250);
-                if (key == 't')
-                {
-                    t_was_typed = true;
-                    extra_temp_msg = (", image for step " +
-                                      std::to_string(step) +
-                                      " will be saved after predator responds");
+                std::string queued = ", queued save image for step ";
+                switch (key) {
+                    case -1:
+                        break;
+                    case '1':
+                        key_typed_1_ = true;
+                        extra_temp_msg = queued + std::to_string(step);
+                        break;
+
+                    case '2':
+                        key_typed_2_ = true;
+                        extra_temp_msg = queued + std::to_string(step - 1);
+                        break;
+                    default:
+                        extra_temp_msg = ", unknown key command: ";
+                        extra_temp_msg += char(key);
                 }
+                
             }
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             seconds_waiting++;
             int count_down = previous_cycle_seconds_ - seconds_waiting;
             erase_temp_text(temp_part);
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-//            temp_part = (", expected in: " + std::to_string(count_down));
-//            temp_part = (t_was_typed?
-//                         ", Image will be saved after predator responds." :
-//                         ", expected in: " + std::to_string(count_down));
-//            temp_part = (", expected in: " +
-//                         std::to_string(count_down) +
-//                         extra_temp_msg);
             temp_part = (extra_temp_msg + ", expected in: " +
                          std::to_string(count_down) + "...");
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
             std::cout << temp_part << std::flush;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20220520
             if (seconds_waiting % 100 == 0) writePingFile(seconds_waiting, step);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Blend this cycle time into accumlator as estimate for next cycle.
         previous_cycle_seconds_ = interpolate(0.3,
@@ -1350,19 +1307,15 @@ public:
         return {x, y};
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220520
     // Used to ping the comms directory when it seems hung.
     void writePingFile(int count, int step)
     {
         verifyCommsDirectoryReachable();
-//        std::ofstream output_file(makePathname(step, "ping_earth_", ".txt"));
         auto pathname = makePathname(step, "ping_earth_", ".txt");
         std::ofstream output_file(pathname);
         output_file << count;
         std::cout << "Ping comms: " << count << " " << pathname << std::endl;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Like fs::exists() but will wait, and complain to the log, if the "comms"
     // directory on Google Drive is inaccessible.
@@ -1405,11 +1358,9 @@ public:
     // Pathname of shared "comms" directory (on Google Drive thus far)
     fs::path sharedDirectory() const { return shared_directory_; }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-    bool tWasTyped() const { return t_was_typed; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    // Was a given key typed during the previous waitForReply()?
+    bool keyTyped1() const { return key_typed_1_; }
+    bool keyTyped2() const { return key_typed_2_; }
 
 private:
     // Shared "communication" directory on Drive.
@@ -1421,62 +1372,28 @@ private:
     std::string other_suffix_ = ".txt";
     float previous_cycle_seconds_ = 35;  // Initialize to typical value.
     int expected_image_size_ = 128;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-    bool t_was_typed = false;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    bool key_typed_1_ = false;
+    bool key_typed_2_ = false;
 };
 
 
-// TODO 20211229 — make a new class derived from EvoCamoGame
-//     The parts that need to be changed
-//        waitForUserInput() — needs to be conditionalized or overridden
-//        setLastMouseClick() — need to call with result from Colab
-//     Relevant to changes:
-//        tournamentFunction()
-//        setMouseCallbackForTournamentFunction() —
-//            can stay the same but functionality need to be replaced
-//
-
-// Run at 1/8 full resolution:
-//     texsyn ~/Pictures/camouflage_backgrounds/unused/orange_pyracantha/
-//            /Users/cwr/Desktop/TexSyn_temp
-//            0.0625 # 0.5 / 8
-//            20211231
-//            128 128 # 1024 / 8
-
+// New class derived from EvoCamoGame to test pre-trained FCD predator
 class EvoCamoVsStaticFCD : public EvoCamoGame
 {
 public:
     EvoCamoVsStaticFCD(const CommandLine& cmd) : EvoCamoGame(cmd)
     {
-        // TODO for prototyping, rethink implementation.
-        // Adjust texture/disk size to be 1/8 as large
-        // setTextureSize(getTextureSize() * backgroundScale() * 2);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // // TODO 20220223
-        // //     ad hoc fix to use 256x256 on TexSyn side
-        // //     should be computing correct value based on GUI size.
-        // // setTextureSize(getTextureSize() / 8);
-        // setTextureSize(getTextureSize() / 4);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220510
         // Adjust "texture size" (prey diameter) to match GUI size.
         float canonical_gui_size = 1024;
         float canonical_texture_size = 201;
         float texture_to_gui_ratio = canonical_texture_size / canonical_gui_size;
         float gui_size = gui().getSize().x();
-
         std::cout << std::endl;
         debugPrint(gui_size);
         debugPrint(getTextureSize() / 4);
         debugPrint(int(texture_to_gui_ratio * gui_size));
         std::cout << std::endl;
-
         setTextureSize(int(texture_to_gui_ratio * gui_size));
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Ad hoc idle loop, sends request (as an image) to the "predator server"
@@ -1493,38 +1410,18 @@ public:
         setLastMouseClick(prediction_in_pixels);
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
         gui().refresh();
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220526
-
-//        // Maintain a second window showing previous step outcome.
-//        cv::imshow("previous step", gui().getCvMat());
-
+        // Save an annotated tournament image every 19 steps (chosen to be
+        // relatively prime to subpops, so we see results from all subpops)
+        // or if requested with key command.
+        if (getComms().keyTyped1() || (step % 19 == 0))
+            { std::cout << "    "; writeTournamentImageToFile(); }
+        if (getComms().keyTyped2())
+            { std::cout << "    "; writePreviousStepImageToFile(); }
         // Maintain a second window showing previous step outcome.
+        std::string ps = "previous step";
         previous_step_image_ = gui().getCvMat().clone();
         cv::imshow("previous step", previous_step_image_);
-        
-        // TODO--Oh, but the use of this saved image is right here in this
-        //       function, so I guess it does not need to be a member variable.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220524 -- tWasTyped -- very temp, special purpose API
-
-//        // Save an annotated tournament image every 19 steps (chosen to be
-//        // relatively prime to subpops, so we see results from all subpops).
-//        if (step % 19 == 0) {std::cout << "    "; writeTournamentImageToFile();}
-
-        // Save an annotated tournament image every 19 steps (chosen to be
-        // relatively prime to subpops, so we see results from all subpops).
-        bool save_file = getComms().tWasTyped() || (step % 19 == 0);
-        if (save_file) {std::cout << "    "; writeTournamentImageToFile();}
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20220526
-//        // SUPER TEMP -- JUST TO TEST THE FUNCTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        if (save_file) {std::cout << "    "; writePreviousStepImageToFile();}
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        cv::setWindowTitle(ps, ps + " (" + getStepAsString() + ")");
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
@@ -1553,9 +1450,6 @@ public:
         }
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220526
-
     // Like writeTournamentImageToFile() but save "previous step" image to file.
     void writePreviousStepImageToFile()
     {
@@ -1564,18 +1458,11 @@ public:
         std::cout << "Writing tournament image to file " << path << std::endl;
         cv::imwrite(path, previous_step_image_);
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-
     
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220526
-    // Store the tournament image from previous frame, for display and save.
     cv::Mat previous_step_image_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 // This is the version to support a "learning predator" which requires sending a
@@ -1588,10 +1475,8 @@ class EvoCamoVsLearningPredator : public EvoCamoVsStaticFCD
 public:
     EvoCamoVsLearningPredator(const CommandLine& cmd) : EvoCamoVsStaticFCD(cmd)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220522 add experimental texture render timeout
+        // Enable texture render timeout of 5 seconds.
         Texture::setRenderMaxTime(5);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     void waitForUserInput() override
@@ -1614,11 +1499,7 @@ public:
         if (step > 0) { fs::remove(make_pathname(step - 1)); }
         EvoCamoVsStaticFCD::waitForUserInput();
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220518 very temporary implementation intending to avoid placing
-    //               any prey disks near the window center.
-    
+        
     // Generate and store random non-overlapping prey disks in gui window.
     void generatePreyPlacement(float radius,
                                float margin,
@@ -1634,8 +1515,6 @@ public:
             disks = Disk::randomNonOverlappingDisksInRectangle(3, radius,
                         radius, margin, rect_min, rect_max, LPRS(), overlap_viz);
             bool all_clear = true;
-            // TODO changed this on 20220520:
-//            float min_dist = radius * 3;
             float min_dist = radius * 2;
             Vec2 center = guiSize() / 2;
             for (auto& d : disks)
@@ -1648,7 +1527,4 @@ public:
         }
         setPreyDisks(disks);
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 };
