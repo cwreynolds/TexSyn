@@ -6365,6 +6365,8 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220524 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.4 20220525 512 512
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220527 512 512
+    //     one more time, then I have to move on
+    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220528 512 512
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
