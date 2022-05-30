@@ -6367,6 +6367,9 @@ int main(int argc, const char * argv[])
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220527 512 512
     //     one more time, then I have to move on
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220528 512 512
+    //     Famous last words. Retrying after I changed the python side to:
+    //     "skip fine-tuning until dataset is large enough (10% of max size)."
+    // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220529 512 512
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

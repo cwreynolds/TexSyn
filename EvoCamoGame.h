@@ -1413,10 +1413,10 @@ public:
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops)
         // or if requested with key command.
-        if (getComms().keyTyped1() || (step % 19 == 0))
-            { std::cout << "    "; writeTournamentImageToFile(); }
         if (getComms().keyTyped2())
             { std::cout << "    "; writePreviousStepImageToFile(); }
+        if (getComms().keyTyped1() || (step % 19 == 0))
+            { std::cout << "    "; writeTournamentImageToFile(); }
         // Maintain a second window showing previous step outcome.
         std::string ps = "previous step";
         previous_step_image_ = gui().getCvMat().clone();

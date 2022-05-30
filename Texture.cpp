@@ -224,7 +224,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // TODO 20220522 add experimental texture render timeout
         if (renderTimeOut())
         {
-            std::cout << "RENDER TIME OUT: return black texture." << std::endl;
+            std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
             *raster_ = cv::Scalar::all(0);
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
