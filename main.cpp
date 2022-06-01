@@ -6370,6 +6370,9 @@ int main(int argc, const char * argv[])
     //     Famous last words. Retrying after I changed the python side to:
     //     "skip fine-tuning until dataset is large enough (10% of max size)."
     // texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter/ ~/Desktop/TexSyn_temp/ 0.2 20220529 512 512
+    
+    // May 30
+    // texsyn ~/Pictures/camouflage_backgrounds/oxalis_sprouts/ ~/Desktop/TexSyn_temp/ 0.2 20220530 512 512
 
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
