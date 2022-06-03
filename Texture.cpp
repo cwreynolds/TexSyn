@@ -78,10 +78,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     {
         // Reset our OpenCV Mat to be (size, size) at default depth.
         raster_->create(size, size, getDefaultOpencvMatType());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220522 add experimental texture render timeout
         startRenderTimer();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 //        // TODO Code assumes disk center at window center, so size must be odd.
 //        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
@@ -220,14 +217,11 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220522 add experimental texture render timeout
         if (renderTimeOut())
         {
             std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
             *raster_ = cv::Scalar::all(0);
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 }
 
@@ -285,10 +279,7 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
 //    for (int i = -x_limit; i <= x_limit; i++)
     for (int i = rh.first_pixel_index; i <= rh.last_pixel_index; i++)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220522 add experimental texture render timeout
         if ((i == rh.first_pixel_index) && renderTimeOut()) { break; }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //        std::cout << "(" << i << "," << j << ") "; ///////////////////////////
         
