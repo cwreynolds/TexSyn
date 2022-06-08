@@ -6312,9 +6312,9 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Working on EvoCamoVsLearningPredator
-    std::cout << "April 10, 2022" << std::endl;
-    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//    // Working on EvoCamoVsLearningPredator
+//    std::cout << "April 10, 2022" << std::endl;
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
     // April 5 tests:
     // texsyn ~/Pictures/camouflage_backgrounds/unused/blue_pavement/ ~/Desktop/TexSyn_temp/ 0.125 20220405 256 256
@@ -6374,6 +6374,20 @@ int main(int argc, const char * argv[])
     // May 30
     // texsyn ~/Pictures/camouflage_backgrounds/oxalis_sprouts/ ~/Desktop/TexSyn_temp/ 0.2 20220530 512 512
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Starting to port over to my new M1 MacBook Pro
+    std::cout << "June 8, 2022" << std::endl;
+    {
+        Timer t("test render");
+        ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+        NoiseWarp nw(5, 0.5, 0.5, cn);
+        Texture::setDefaultRenderSize(512);
+        Texture::setDefaultRenderAsDisk(false);
+        // This takes 0.653668 seconds at 512x512 square shape.
+        Texture::displayAndFile(nw);
+    }
+    Texture::waitKey();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
