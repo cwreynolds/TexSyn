@@ -6376,16 +6376,42 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Starting to port over to my new M1 MacBook Pro
+    // Starting to port over to my new M1 MacBook Pro. This is meant to be a
+    // slow render for texting relative speed. Also want to look at switching
+    // from "no nesting of convolution operators" to timeout.
+    // [TODO -- But I'm not seeing the "no nesting"?]
+    //
     std::cout << "June 8, 2022" << std::endl;
     {
-        Timer t("test render");
         ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
         NoiseWarp nw(5, 0.5, 0.5, cn);
         Texture::setDefaultRenderSize(512);
         Texture::setDefaultRenderAsDisk(false);
         // This takes 0.653668 seconds at 512x512 square shape.
-        Texture::displayAndFile(nw);
+        {
+            Timer t("test render nw");
+            Texture::displayAndFile(nw);
+        }
+        Uniform gray(0.4);
+        Grating grate(Vec2(), cn, Vec2(0.25, 0.15), gray, 0.2, 0.4);
+        NoiseWarp nwg(5, 0.5, 0.5, grate);
+        {
+            Timer t("test render nwg");
+            Texture::displayAndFile(nwg);
+        }
+        Blur b1(0.05, nwg);
+        Spot s1(Vec2(), 0.8, b1, 1.0, nwg);
+
+        {
+            Timer t("test render s1");
+            Texture::displayAndFile(s1);
+        }
+        EdgeEnhance ee(0.1, 2, b1);
+        Spot s2(Vec2(), 0.4, ee, 0.6, s1);
+        {
+            Timer t("test render s2");
+            Texture::displayAndFile(s2);
+        }
     }
     Texture::waitKey();
 
