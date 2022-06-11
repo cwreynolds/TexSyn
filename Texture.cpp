@@ -287,7 +287,11 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
         // Read TexSyn Color from Texture at (i, j).
 //        Color color(0, 0, 0);
         Vec2 pixel_center = Vec2(i, j) / half;
-        expensive_to_nest = 0;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
+//        expensive_to_nest = 0;
+        resetExpensiveToNest();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //        if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
 //        {
 //            float pixel_radius = 2.0 / size;
@@ -454,7 +458,11 @@ Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // Read TexSyn Color from Texture at (i, j).
     Color color(0, 0, 0);
-    expensive_to_nest = 0;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
+//    expensive_to_nest = 0;
+    resetExpensiveToNest();
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
     {
         float pixel_radius = 2.0 / size;

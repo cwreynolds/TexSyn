@@ -182,7 +182,23 @@ public:
     // Get/set global switch for "parallel render": one thread per row.
     static int getParallelRender() { return render_thread_per_row_; }
     static void setParallelRender(bool p) { render_thread_per_row_ = p; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
+//    thread_local static inline int expensive_to_nest = 0;
+private:
     thread_local static inline int expensive_to_nest = 0;
+    static inline int max_expensive_nest = 0;
+public:
+//    static bool tooExpensiveToNest() { return (expensive_to_nest >
+//                                               max_expensive_nest); }
+    static bool tooExpensiveToNest(){return expensive_to_nest>max_expensive_nest;}
+    static void resetExpensiveToNest() { expensive_to_nest = 0; }
+    static void incrementExpensiveToNest() { expensive_to_nest++; }
+    static void decrementExpensiveToNest() { expensive_to_nest--; }
+//    static int maxExpensiveNest() { return max_expensive_nest; }
+    
+    static void setMaxExpensiveNest(int m) { max_expensive_nest = m; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Score a Texture on how much "high" frequency it has.
     // TODO temp? Similar in intent to wiggliness() in GP.h
     void fft_test();
