@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,6 +34,7 @@
 		84172B4323BBA26E00B866B6 /* Operators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Operators.cpp; sourceTree = "<group>"; };
 		84172B4423BBA26E00B866B6 /* Operators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operators.h; sourceTree = "<group>"; };
 		8422C74924980277006D4A50 /* COTS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COTS.h; sourceTree = "<group>"; };
+		84261A802857ADC000003F15 /* texsyn.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = texsyn.entitlements; sourceTree = "<group>"; };
 		843C02FE268CE72E00ABCB4A /* SimpleImageMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleImageMatch.h; sourceTree = "<group>"; };
 		843D95BF2452653A00741263 /* Disk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Disk.cpp; sourceTree = "<group>"; };
 		843D95C02452653A00741263 /* Disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
@@ -67,6 +68,7 @@
 		849FF56A23A70EC2008B4326 = {
 			isa = PBXGroup;
 			children = (
+				84261A802857ADC000003F15 /* texsyn.entitlements */,
 				84FE3C7123A71E8100600F2A /* Color.h */,
 				8422C74924980277006D4A50 /* COTS.h */,
 				843D95C02452653A00741263 /* Disk.h */,
@@ -135,7 +137,7 @@
 				};
 			};
 			buildConfigurationList = 849FF56E23A70EC2008B4326 /* Build configuration list for PBXProject "TexSyn" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -220,7 +222,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -272,8 +274,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -281,31 +284,36 @@
 		849FF57B23A70EC2008B4326 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = texsyn.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/opt/opencv/include/opencv4/;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/opt/opencv/lib;
+				ENABLE_HARDENED_RUNTIME = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/homebrew/opt/opencv/include/opencv4/;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-I/usr/local/opt/opencv/include/opencv4/opencv",
-					"-I/usr/local/opt/opencv/include/opencv4",
-					"-L/usr/local/opt/opencv/lib",
+					"-I/opt/homebrew/opt/opencv/include/opencv4",
+					"-L/opt/homebrew/opt/opencv/lib",
 					"-lopencv_gapi",
 					"-lopencv_stitching",
+					"-lopencv_alphamat",
 					"-lopencv_aruco",
+					"-lopencv_barcode",
 					"-lopencv_bgsegm",
 					"-lopencv_bioinspired",
 					"-lopencv_ccalib",
 					"-lopencv_dnn_objdetect",
 					"-lopencv_dnn_superres",
 					"-lopencv_dpm",
-					"-lopencv_highgui",
 					"-lopencv_face",
 					"-lopencv_freetype",
 					"-lopencv_fuzzy",
 					"-lopencv_hfs",
 					"-lopencv_img_hash",
+					"-lopencv_intensity_transform",
 					"-lopencv_line_descriptor",
+					"-lopencv_mcc",
 					"-lopencv_quality",
+					"-lopencv_rapid",
 					"-lopencv_reg",
 					"-lopencv_rgbd",
 					"-lopencv_saliency",
@@ -317,22 +325,25 @@
 					"-lopencv_optflow",
 					"-lopencv_surface_matching",
 					"-lopencv_tracking",
+					"-lopencv_highgui",
 					"-lopencv_datasets",
 					"-lopencv_text",
-					"-lopencv_dnn",
 					"-lopencv_plot",
 					"-lopencv_videostab",
-					"-lopencv_video",
 					"-lopencv_videoio",
+					"-lopencv_viz",
+					"-lopencv_wechat_qrcode",
 					"-lopencv_xfeatures2d",
 					"-lopencv_shape",
 					"-lopencv_ml",
 					"-lopencv_ximgproc",
+					"-lopencv_video",
 					"-lopencv_xobjdetect",
 					"-lopencv_objdetect",
 					"-lopencv_calib3d",
 					"-lopencv_imgcodecs",
 					"-lopencv_features2d",
+					"-lopencv_dnn",
 					"-lopencv_flann",
 					"-lopencv_xphoto",
 					"-lopencv_photo",
@@ -346,32 +357,37 @@
 		849FF57C23A70EC2008B4326 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = texsyn.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/opt/opencv/include/opencv4/;
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/opt/opencv/lib;
+				ENABLE_HARDENED_RUNTIME = YES;
+				"HEADER_SEARCH_PATHS[arch=*]" = /opt/homebrew/opt/opencv/include/opencv4/;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_LDFLAGS[arch=*]" = (
-					"-I/usr/local/opt/opencv/include/opencv4/opencv",
-					"-I/usr/local/opt/opencv/include/opencv4",
-					"-L/usr/local/opt/opencv/lib",
+					"-I/opt/homebrew/opt/opencv/include/opencv4",
+					"-L/opt/homebrew/opt/opencv/lib",
 					"-lopencv_gapi",
 					"-lopencv_stitching",
+					"-lopencv_alphamat",
 					"-lopencv_aruco",
+					"-lopencv_barcode",
 					"-lopencv_bgsegm",
 					"-lopencv_bioinspired",
 					"-lopencv_ccalib",
 					"-lopencv_dnn_objdetect",
 					"-lopencv_dnn_superres",
 					"-lopencv_dpm",
-					"-lopencv_highgui",
 					"-lopencv_face",
 					"-lopencv_freetype",
 					"-lopencv_fuzzy",
 					"-lopencv_hfs",
 					"-lopencv_img_hash",
+					"-lopencv_intensity_transform",
 					"-lopencv_line_descriptor",
+					"-lopencv_mcc",
 					"-lopencv_quality",
+					"-lopencv_rapid",
 					"-lopencv_reg",
 					"-lopencv_rgbd",
 					"-lopencv_saliency",
@@ -383,22 +399,25 @@
 					"-lopencv_optflow",
 					"-lopencv_surface_matching",
 					"-lopencv_tracking",
+					"-lopencv_highgui",
 					"-lopencv_datasets",
 					"-lopencv_text",
-					"-lopencv_dnn",
 					"-lopencv_plot",
 					"-lopencv_videostab",
-					"-lopencv_video",
 					"-lopencv_videoio",
+					"-lopencv_viz",
+					"-lopencv_wechat_qrcode",
 					"-lopencv_xfeatures2d",
 					"-lopencv_shape",
 					"-lopencv_ml",
 					"-lopencv_ximgproc",
+					"-lopencv_video",
 					"-lopencv_xobjdetect",
 					"-lopencv_objdetect",
 					"-lopencv_calib3d",
 					"-lopencv_imgcodecs",
 					"-lopencv_features2d",
+					"-lopencv_dnn",
 					"-lopencv_flann",
 					"-lopencv_xphoto",
 					"-lopencv_photo",
