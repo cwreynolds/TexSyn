@@ -6412,12 +6412,12 @@ int main(int argc, const char * argv[])
             Timer t("test render s2");
             Texture::displayAndFile(s2);
         }
-        Texture::setMaxExpensiveNest(1);
-        Spot s3(Vec2(), 0.4, ee, 0.6, s1);
-        {
-            Timer t("test render s3");
-            Texture::displayAndFile(s3);
-        }
+//        Texture::setMaxExpensiveNest(1);
+//        Spot s3(Vec2(), 0.4, ee, 0.6, s1);
+//        {
+//            Timer t("test render s3");
+//            Texture::displayAndFile(s3);
+//        }
     }
     Texture::waitKey();
 
