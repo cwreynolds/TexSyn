@@ -6383,6 +6383,7 @@ int main(int argc, const char * argv[])
     //
     std::cout << "June 8, 2022" << std::endl;
     {
+        Timer t0("entire test suite");
         ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
         NoiseWarp nw(5, 0.5, 0.5, cn);
         Texture::setDefaultRenderSize(512);
@@ -6412,12 +6413,12 @@ int main(int argc, const char * argv[])
             Timer t("test render s2");
             Texture::displayAndFile(s2);
         }
-//        Texture::setMaxExpensiveNest(1);
-//        Spot s3(Vec2(), 0.4, ee, 0.6, s1);
-//        {
-//            Timer t("test render s3");
-//            Texture::displayAndFile(s3);
-//        }
+        //Texture::setMaxExpensiveNest(1);
+        //Spot s3(Vec2(), 0.4, ee, 0.6, s1);
+        //{
+        //    Timer t("test render s3");
+        //    Texture::displayAndFile(s3);
+        //}
     }
     Texture::waitKey();
 
