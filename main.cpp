@@ -6382,7 +6382,12 @@ int main(int argc, const char * argv[])
     // [TODO -- But I'm not seeing the "no nesting"?]
     //
     std::cout << "June 8, 2022" << std::endl;
+    
+    for (bool b : {true, false})
     {
+        Texture::setParallelRender(b);
+        debugPrint(Texture::getParallelRender())
+
         Timer t0("entire test suite");
         ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
         NoiseWarp nw(5, 0.5, 0.5, cn);
