@@ -79,64 +79,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // Reset our OpenCV Mat to be (size, size) at default depth.
         raster_->create(size, size, getDefaultOpencvMatType());
         startRenderTimer();
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        // TODO Code assumes disk center at window center, so size must be odd.
-//        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Synchronizes access to opencv_image by multiple row threads.
         std::mutex ocv_image_mutex;
         // Collection of all row threads.
         std::vector<std::thread> all_threads;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         int row_counter = 0;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//        for (int j = -(size / 2); j <= (size / 2); j++)
-            
-        
-//        bool odd_size = size % 2;
-//        int last_j = size / 2;
-//        int first_j = -last_j + (odd_size ? 0 : 1);
-//        for (int j = first_j; j <= last_j; j++)
-            
-        // TODO more fiddling 20211107:
-
         RasterizeHelper rh(size, disk);
         for (int j = rh.top_j; j <= rh.bot_j; j++)
-
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // This requires some unpacking. It creates a thread which is pushed
-//            // (using && move semantics, I think) onto the back of std::vector
-//            // all_row_threads. Because the initial/toplevel thread function is
-//            // member function of this instance, it is specified as two values,
-//            // a function pointer AND an instance pointer. The other four values
-//            // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).
-//            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
-//                                              j, size, disk,
-//                                              std::ref(*raster_),
-//                                              std::ref(ocv_image_mutex)));
-            // This requires some unpacking. It creates a thread which is pushed
-            // (using && move semantics, I think) onto the back of std::vector
-            // all_row_threads. Because the initial/toplevel thread function is
-            // member function of this instance, it is specified as two values,
-            // a function pointer AND an instance pointer. The other four values
-            // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).
-            
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-            
-//            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,
-//                                              j, size, disk,
-//                                              std::ref(*raster_),
-//                                              std::ref(row_counter),
-//                                              std::ref(ocv_image_mutex)));
-
-//            if (render_thread_per_row)
             if (getParallelRender())
             {
+                // This requires some unpacking. It creates a thread which is
+                // pushed (using && move semantics, I think) onto the back of
+                // std::vector all_row_threads. Because the initial/toplevel
+                // thread function is member function of this instance, it is
+                // specified as two values, a function pointer AND an instance
+                // pointer. The other four values are args to
+                // rasterizeRowOfDisk(row, size, disk, image, mutex).
                 all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
                                                   this,
                                                   j, size, disk,
@@ -150,73 +111,14 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                                    row_counter, ocv_image_mutex);
                 checkForUserInput();
             }
-            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Wait for all row threads to finish.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO very experimental, for SimpleImageMatch, Aug 7, 2021
-        
-//        for (auto& t : all_threads)
-//        {
-//            t.join();
-//            yield();
-//            occasional_sleep.sleepIfNeeded();
-//            Texture::waitKey(1);
-//        }
-
-        
-        
-//        for (int i = 0; i < 100; i++)
-//        {
-//            for (auto& t : all_threads)
-//            {
-//                std::cout << i << " ";
-//                debugPrint(t.joinable());
-//            }
-//            std::this_thread::sleep_for(std::chrono::seconds(1));
-//        }
-//        for (auto& t : all_threads) t.join();
-        
-        
-        // Maybe I should use std::future ?
-        // https://en.cppreference.com/w/cpp/thread/future
-        // https://www.cppstories.com/2014/01/tasks-with-stdfuture-and-stdasync/
-        
-//        for (auto& t : all_threads)
-//        {
-//            debugPrint(row_counter);
-//            t.join();
-//        }
-        
-        
-//        debugPrint(row_counter);
-//        debugPrint(all_threads.size());
-        
-
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        
-//        while (row_counter < all_threads.size())
-//        {
-//            checkForUserInput();
-//        }
-//
-//        for (auto& t : all_threads) t.join();
-
-//        if (render_thread_per_row)
         if (getParallelRender())
         {
             while (row_counter < all_threads.size()) { checkForUserInput(); }
             for (auto& t : all_threads) t.join();
         }
-//        else
-//        {
-//        }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+        // Return a uniform black texture if optional render timeout is exceded.
         if (renderTimeOut())
         {
             std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
@@ -757,99 +659,16 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
                             size_in_pixels.y()));
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Perform occasional checks for user input (such as clicks, key presses,
+// command keys, such as to hide or unhide a GUI window). Does this via OpenCV's
+// waitKey() but takes care not to do too frequently. But if it does not call
+// cv::waitKey() it will at least do a yield().
+//
 // TODO
 //     maybe move this to Utilities.h ?
 //     perhaps have global hook which Texture can specialize for OpenCV ?
-
 TimePoint time_of_last_user_input_check = TimeClock::now();
-
-//    void Texture::checkForUserInput()
-//    {
-//        using namespace std::chrono_literals;
-//
-//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-//        if (since_last > TimeDuration(150ms))
-//        {
-//            // Pause for 1/1000 second (1 millisecond) return key pressed.
-//            int key = cv::waitKey(1);;
-//            if (key > 0) { setLastKeyPushed(key); }
-//            if (key > 0) { debugPrint(key); }  // TODO TEMP
-//            time_of_last_user_input_check = TimeClock::now();
-//        }
-//        else
-//        {
-//            yield();
-//        }
-//    }
-
-//    std::mutex check_user_input_mutex;
-//
-//    void Texture::checkForUserInput()
-//    {
-//        const std::lock_guard<std::mutex> lock(check_user_input_mutex);
-//
-//        using namespace std::chrono_literals;
-//
-//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-//        TimeDuration target_delay(150ms);
-//        if (since_last > target_delay)
-//        {
-//    //        // Pause for 1/1000 second (1 millisecond) return key pressed.
-//    //        int key = cv::waitKey(1);
-//
-//            // xxx
-//    //        int key = cv::waitKey(1000 * since_last.count());
-//            int key = cv::waitKey(100);
-//
-//
-//
-//            if (key > 0) { setLastKeyPushed(key); }
-//            if (key > 0) { debugPrint(key); }  // TODO TEMP
-//            time_of_last_user_input_check = TimeClock::now();
-//        }
-//        else
-//        {
-//            yield();
-//
-//
-//    //        float seconds_left = since_last.count();
-//    //        int ms_left = 1000 * seconds_left;
-//
-//
-//
-//        }
-//    }
-
-
 std::mutex check_user_input_mutex;
-
-//    void Texture::checkForUserInput()
-//    {
-//        const std::lock_guard<std::mutex> lock(check_user_input_mutex);
-//
-//        using namespace std::chrono_literals;
-//
-//        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-//    //    TimeDuration target_delay(150ms);
-//        TimeDuration target_delay(250ms);
-//        if (since_last > target_delay)
-//    //    if (since_last > TimeDuration(10ms))
-//        {
-//            // Pause for 1/1000 second (1 millisecond) return key pressed.
-//            int key = cv::waitKey(1);
-//    //        // xxx
-//    //        int key = cv::waitKey(240);
-//
-//            if (key > 0) { setLastKeyPushed(key); }
-//            if (key > 0) { debugPrint(key); }  // TODO TEMP
-//            time_of_last_user_input_check = TimeClock::now();
-//        }
-//        else
-//        {
-//            yield();
-//        }
-//    }
 
 void Texture::checkForUserInput()
 {
@@ -870,65 +689,6 @@ void Texture::checkForUserInput()
         yield();
     }
 }
-
-//void Texture::checkForUserInput()
-//{
-//    yield();
-//}
-
-//void Texture::checkForUserInput()
-//{
-//    // Pause for 1/1000 second (1 millisecond) return key pressed.
-//    int key = cv::waitKey(1);
-//    if (key > 0) { setLastKeyPushed(key); }
-//    if (key > 0) { debugPrint(key); }  // TODO TEMP
-//}
-
-//    void Texture::checkForUserInput()
-//    {
-//    //    const std::lock_guard<std::mutex> lock(check_user_input_mutex);
-//        // Pause for 1/10 second (100 millisecond) return key pressed.
-//        int key = cv::waitKey(100);
-//        if (key > 0) { setLastKeyPushed(key); }
-//        if (key > 0) { debugPrint(key); }  // TODO TEMP
-//    //    yield();
-//    }
-
-
-/*
- 
- // WITHOUT calls to Texture::checkForUserInput()
- 
- 1: t=9.37e+05, pop ave size=81 fit=0.000783486, pop best (0.06 0.034 0 0 0 0 0 0 0 0)
- 2: t=1.13, pop ave size=81 fit=0.00128124, pop best (0.06 0.052 0.034 0.0078 0 0 0 0 0 0)
- 3: t=5.91, pop ave size=81 fit=0.00178439, pop best (0.06 0.052 0.034 0.031 0.03 0.0078 0 0 0 0)
- 4: t=12.4, pop ave size=81 fit=0.00202186, pop best (0.06 0.052 0.034 0.031 0.03 0.015 0.013 0.0078 0 0)
- 5: t=12.7, pop ave size=81 fit=0.00250596, pop best (0.06 0.052 0.034 0.034 0.031 0.03 0.024 0.015 0.013 0.0078)
- 6: t=59.5, pop ave size=81 fit=0.00333497, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
- 7: t=37.4, pop ave size=81 fit=0.00341107, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
- 8: t=0.887, pop ave size=82 fit=0.00412081, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
- 9: t=0.962, pop ave size=82 fit=0.00417767, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
- 10: t=17, pop ave size=82 fit=0.00466689, pop best (0.072 0.069 0.06 0.052 0.044 0.034 0.034 0.031 0.03 0.028)
-
- // WITH calls to Texture::checkForUserInput()
- 
- 1: t=9.37e+05, pop ave size=81 fit=0.000783486, pop best (0.06 0.034 0 0 0 0 0 0 0 0)
- 2: t=1.1, pop ave size=81 fit=0.00128124, pop best (0.06 0.052 0.034 0.0078 0 0 0 0 0 0)
- 3: t=5.93, pop ave size=81 fit=0.00178439, pop best (0.06 0.052 0.034 0.031 0.03 0.0078 0 0 0 0)
- 4: t=12.5, pop ave size=81 fit=0.00202186, pop best (0.06 0.052 0.034 0.031 0.03 0.015 0.013 0.0078 0 0)
- 5: t=12.8, pop ave size=81 fit=0.00250596, pop best (0.06 0.052 0.034 0.034 0.031 0.03 0.024 0.015 0.013 0.0078)
- 6: t=58.9, pop ave size=81 fit=0.00333497, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
- 7: t=37.2, pop ave size=81 fit=0.00341107, pop best (0.072 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024 0.015)
- 8: t=0.864, pop ave size=82 fit=0.00412081, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
- 9: t=0.948, pop ave size=82 fit=0.00417767, pop best (0.072 0.069 0.06 0.052 0.034 0.034 0.031 0.03 0.027 0.024)
- 10: t=16.7, pop ave size=82 fit=0.00466689, pop best (0.072 0.069 0.06 0.052 0.044 0.034 0.034 0.031 0.03 0.028)
-
- */
-
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Static utility function to measure the "uniformity" of a cv::Mat.
 // Returns a float between 1 (when every pixel is identical) and 0 (when the
