@@ -97,7 +97,7 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                 // thread function is member function of this instance, it is
                 // specified as two values, a function pointer AND an instance
                 // pointer. The other four values are args to
-                // rasterizeRowOfDisk(row, size, disk, image, mutex).
+                // rasterizeRowOfDisk(row, size, disk, image, count, mutex).
                 all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
                                                   this,
                                                   j, size, disk,
@@ -129,94 +129,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                  cv::Mat& opencv_image,
                                  int& row_counter,
                                  std::mutex& ocv_image_mutex) const
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
     // Half the rendering's size corresponds to the disk's center.
     int half = size / 2;
-    
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    // TODO 20211101 testing new RasterizeRow helper class
-    
-
-//    debugPrint(half);
     RasterizeHelper rh(j, size, disk);
-
-
-    // TODO investigating the "crash for even render size" bug
-    // TODO this is the wrong solution, but at least indicates where it happens.
-    // TODO does this "fix" work for render-as-disk?
-    // TODO does this work when Texture::render_thread_per_row is true?
-    
-//    debugPrint(j);
-//    debugPrint(half);
-//    debugPrint(half - j);
-//    debugPrint(size);
-
-//    if (half - j == size)
-//    {
-//        std::cout << "aha!" << std::endl;
-//        row_counter++;
-//        return;
-//    }
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    // TODO 20211101 switching over to using RasterizeRowHelper
-    // First and last pixels on j-th row of time
-//    int x_limit = disk ? std::sqrt(sq(half) - sq(j)) : half;
-    
-//    debugPrint(x_limit);
-    
-//    if ((size % 2 == 0) && (x_limit == 0)) return;
-    
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    // Create temp cv::Mat to accumulate pixels for this row.
     cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
     cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
-    // TODO 20211101 switching over to using RasterizeRowHelper
-//    for (int i = -x_limit; i <= x_limit; i++)
     for (int i = rh.first_pixel_index; i <= rh.last_pixel_index; i++)
     {
         if ((i == rh.first_pixel_index) && renderTimeOut()) { break; }
-
-//        std::cout << "(" << i << "," << j << ") "; ///////////////////////////
-        
-        
         // Read TexSyn Color from Texture at (i, j).
-//        Color color(0, 0, 0);
         Vec2 pixel_center = Vec2(i, j) / half;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//        expensive_to_nest = 0;
         resetExpensiveToNest();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        if (sqrt_of_aa_subsample_count > 1) // anti-alaising?
-//        {
-//            float pixel_radius = 2.0 / size;
-//            std::vector<Vec2> offsets;
-//            RandomSequence rs(pixel_center.hash());
-//            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
-//                                        pixel_radius * 2, rs, offsets);
-//            for (Vec2 offset : offsets)
-//                color += getColorClipped(pixel_center + offset);
-//            color = color / sq(sqrt_of_aa_subsample_count);
-//        }
-//        else
-//        {
-//            color = getColorClipped(pixel_center);
-//        }
+        // Render one pixel to produce a color value.
         Color color = getColorClippedAntialiased(pixel_center, size);
-        
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        // TODO 20211104 super temp debugging grid
-        // if ((i + j) % 2) color *= 0.6;
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-
-        
         // Adjust for display gamma.
         color = color.gamma(1 / defaultGamma());
         // Make OpenCV color, with reversed component order.
@@ -224,51 +155,22 @@ void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
                                color.g() * 255,
                                color.r() * 255);
         // Write OpenCV color to corresponding pixel on row image:
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        // TODO 20211031 ok, this fails for even sized textures
-//        assert((half + i) < size);
-        
         row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
-//        if ((half + i) < size)
-//        {
-//            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
-//        }
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // (TODO on 20220619 wondering why yield() vs checkForUserInput()?)
         if (i == 0) { yield(); }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
     
-//    std::cout << std::endl; /////////////////////////////////////////////////
 
     
     // Define a new image which is a "pointer" to j-th row of opencv_image.
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//    debugPrint(size);
-//    debugPrint(half - j);
-//    debugPrint(cv::Rect(0, half - j, size, 1))
-//    debugPrint(std::to_string(size) + " " + std::to_string(half - j));
-//    assert("(half - j) > 0" && (half - j) > 0);
-    
-
-//    {
-//        grabPrintLock();
-//        cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
-//    }
-    
-    
     cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
-    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     // Wait to grab lock for access to image. (Lock released at end of block)
     const std::lock_guard<std::mutex> lock(ocv_image_mutex);
     // Copy line_image into the j-th row of opencv_image.
     row_image.copyTo(row_in_full_image);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     row_counter++;
-//    debugPrint(row_counter);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 // Copies disk-shaped portion of image cache onto given background cv::Mat.
