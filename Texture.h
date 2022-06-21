@@ -62,6 +62,16 @@ public:
                             cv::Mat& opencv_image,
                             int& row_counter,
                             std::mutex& ocv_image_mutex) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220620 experimenting with more than one ("N") row per thread.
+    void rasterizeStripeOfDisk(int j,
+                               int n_rows,
+                               int size,
+                               bool disk,
+                               cv::Mat& opencv_image,
+                               int& row_counter,
+                               std::mutex& ocv_image_mutex) const;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
     void matteImageCacheDiskOverBG(int size, cv::Mat& bg);

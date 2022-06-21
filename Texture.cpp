@@ -87,10 +87,17 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // Loop all image rows, bottom to top. For each, launch a thread running
         // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
         RasterizeHelper rh(size, disk);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220620 experimenting with more than one ("N") row per thread.
+        int qqq = 0;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         for (int j = rh.top_j; j <= rh.bot_j; j++)
         {
             if (getParallelRender())
             {
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                // TODO 20220620 experimenting with more than one ("N") row per thread.
+
                 // This requires some unpacking. It creates a thread which is
                 // pushed (using && move semantics, I think) onto the back of
                 // std::vector all_row_threads. Because the initial/toplevel
@@ -104,6 +111,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                                                   std::ref(*raster_),
                                                   std::ref(row_counter),
                                                   std::ref(ocv_image_mutex)));
+
+//                    int stripe_size = 10;
+//    //                int stripe_size = 50;
+//    //                if ((j % stripe_size) == 0)
+//                    if ((qqq % stripe_size) == 0)
+//                    {
+//                        all_threads.push_back
+//                            (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
+//                                         this,
+//                                         j,
+//                                         stripe_size, // !!!!!!
+//                                         size,
+//                                         disk,
+//                                         std::ref(*raster_),
+//                                         std::ref(row_counter),
+//                                         std::ref(ocv_image_mutex)));
+//                    }
+//                    qqq++;
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
             else
             {
@@ -126,6 +152,48 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         }
     }
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220620 experimenting with more than one ("N") row per thread.
+//
+// what to call this?
+//     rasterizeRowOfDisk() -- just add an "N" argument
+//     rasterizeRowsOfDisk() -- Rows plural
+//     rasterizeNRowsOfDisk() -- N rows
+//     rasterizeNRowsOfDisk() -- N rows
+//        band
+//        strip
+//        belt
+//        ribbon
+//        stripe ?
+//        bar
+//        swathe
+//
+// Also weird that this is called a "disk" when it might be square.
+
+void Texture::rasterizeStripeOfDisk(int j,
+                                    int n_rows,
+                                    int size,
+                                    bool disk,
+                                    cv::Mat& opencv_image,
+                                    int& row_counter,
+                                    std::mutex& ocv_image_mutex) const
+{
+    for (int row_index = j; row_index < (j + n_rows); row_index++)
+    {
+        int half = size / 2;
+        if (between(row_index, -half, half))
+        {
+            Texture::rasterizeRowOfDisk(row_index,
+                                        size,
+                                        disk,
+                                        opencv_image,
+                                        row_counter,
+                                        ocv_image_mutex);
+        }
+    }
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.
