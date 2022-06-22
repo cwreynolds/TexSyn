@@ -71,6 +71,11 @@ public:
                                cv::Mat& opencv_image,
                                int& row_counter,
                                std::mutex& ocv_image_mutex) const;
+    
+    // TODO 20220621 gathering data
+    // TODO How tall are the per-thread "stripes"? On Intel laptop it was 1.
+    // On M1 seems to provide almost no benefit. Collecting data to diagnose.
+    static inline int rows_per_render_thread = 1;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.

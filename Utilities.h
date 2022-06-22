@@ -300,12 +300,18 @@ public:
     {
         if (print_enable_)
         {
-            auto finish_time = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = finish_time - start_time_;
-            std::cout << description_ << elasped_time_ << elapsed.count();
+            std::cout << description_ << elasped_time_ << elapsedSeconds();
             std::cout << " seconds" << std::endl;
         }
     }
+    // Elapsed time since construction, in seconds.
+    float elapsedSeconds() const
+    {
+        auto finish_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = finish_time - start_time_;
+        return elapsed.count();
+    }
+    // Used to turn off the default logging.
     void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
     const std::string description_;

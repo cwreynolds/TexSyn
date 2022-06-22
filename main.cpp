@@ -6381,51 +6381,67 @@ int main(int argc, const char * argv[])
     // from "no nesting of convolution operators" to timeout.
     // [TODO -- But I'm not seeing the "no nesting"?]
     //
-    std::cout << "June 8, 2022" << std::endl;
-    
-    for (bool b : {true, false})
+    //std::cout << "June 8, 2022" << std::endl;
+    //for (bool b : {true, false})
+    //{
+    //    Texture::setParallelRender(b);
+    //    debugPrint(Texture::getParallelRender())
+    //
+    //    Timer t0("entire test suite");
+    //    ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+    //    NoiseWarp nw(5, 0.5, 0.5, cn);
+    //    Texture::setDefaultRenderSize(512);
+    //    Texture::setDefaultRenderAsDisk(false);
+    //    // This takes 0.653668 seconds at 512x512 square shape.
+    //    {
+    //        Timer t("test render nw");
+    //        Texture::displayAndFile(nw);
+    //    }
+    //    Uniform gray(0.4);
+    //    Grating grate(Vec2(), cn, Vec2(0.25, 0.15), gray, 0.2, 0.4);
+    //    NoiseWarp nwg(5, 0.5, 0.5, grate);
+    //    {
+    //        Timer t("test render nwg");
+    //        Texture::displayAndFile(nwg);
+    //    }
+    //    Blur b1(0.05, nwg);
+    //    Spot s1(Vec2(), 0.8, b1, 1.0, nwg);
+    //
+    //    {
+    //        Timer t("test render s1");
+    //        Texture::displayAndFile(s1);
+    //    }
+    //    EdgeEnhance ee(0.1, 2, b1);
+    //    Spot s2(Vec2(), 0.4, ee, 0.6, s1);
+    //    {
+    //        Timer t("test render s2");
+    //        Texture::displayAndFile(s2);
+    //    }
+    //    //Texture::setMaxExpensiveNest(1);
+    //    //Spot s3(Vec2(), 0.4, ee, 0.6, s1);
+    //    //{
+    //    //    Timer t("test render s3");
+    //    //    Texture::displayAndFile(s3);
+    //    //}
+    //}
+    //Texture::waitKey();
+
+    std::cout << "June 21, 2022" << std::endl;
+    for (int rows = 1; rows < 50; rows++)
     {
-        Texture::setParallelRender(b);
-        debugPrint(Texture::getParallelRender())
-
-        Timer t0("entire test suite");
-        ColorNoise cn(Vec2(1, 2), Vec2(3, 0.1), 0.95);
-        NoiseWarp nw(5, 0.5, 0.5, cn);
-        Texture::setDefaultRenderSize(512);
+        std::cout << "for rows = " << rows << ", " << std::flush;
+        Texture::rows_per_render_thread = rows;
         Texture::setDefaultRenderAsDisk(false);
-        // This takes 0.653668 seconds at 512x512 square shape.
-        {
-            Timer t("test render nw");
-            Texture::displayAndFile(nw);
-        }
-        Uniform gray(0.4);
-        Grating grate(Vec2(), cn, Vec2(0.25, 0.15), gray, 0.2, 0.4);
-        NoiseWarp nwg(5, 0.5, 0.5, grate);
-        {
-            Timer t("test render nwg");
-            Texture::displayAndFile(nwg);
-        }
-        Blur b1(0.05, nwg);
-        Spot s1(Vec2(), 0.8, b1, 1.0, nwg);
-
-        {
-            Timer t("test render s1");
-            Texture::displayAndFile(s1);
-        }
-        EdgeEnhance ee(0.1, 2, b1);
-        Spot s2(Vec2(), 0.4, ee, 0.6, s1);
-        {
-            Timer t("test render s2");
-            Texture::displayAndFile(s2);
-        }
-        //Texture::setMaxExpensiveNest(1);
-        //Spot s3(Vec2(), 0.4, ee, 0.6, s1);
-        //{
-        //    Timer t("test render s3");
-        //    Texture::displayAndFile(s3);
-        //}
+        Texture::setDefaultRenderSize(512);
+        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+        Blur blurred(0.05, warped_color_noise);
+        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+        Timer t("render");
+        Texture::displayAndFile(spot);
     }
     Texture::waitKey();
+    
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

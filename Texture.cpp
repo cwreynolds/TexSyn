@@ -98,19 +98,19 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 // TODO 20220620 experimenting with more than one ("N") row per thread.
 
-                // This requires some unpacking. It creates a thread which is
-                // pushed (using && move semantics, I think) onto the back of
-                // std::vector all_row_threads. Because the initial/toplevel
-                // thread function is member function of this instance, it is
-                // specified as two values, a function pointer AND an instance
-                // pointer. The other four values are args to
-                // rasterizeRowOfDisk(row, size, disk, image, count, mutex).
-                all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
-                                                  this,
-                                                  j, size, disk,
-                                                  std::ref(*raster_),
-                                                  std::ref(row_counter),
-                                                  std::ref(ocv_image_mutex)));
+//                // This requires some unpacking. It creates a thread which is
+//                // pushed (using && move semantics, I think) onto the back of
+//                // std::vector all_row_threads. Because the initial/toplevel
+//                // thread function is member function of this instance, it is
+//                // specified as two values, a function pointer AND an instance
+//                // pointer. The other four values are args to
+//                // rasterizeRowOfDisk(row, size, disk, image, count, mutex).
+//                all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
+//                                                  this,
+//                                                  j, size, disk,
+//                                                  std::ref(*raster_),
+//                                                  std::ref(row_counter),
+//                                                  std::ref(ocv_image_mutex)));
 
 //                    int stripe_size = 10;
 //    //                int stripe_size = 50;
@@ -129,6 +129,25 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //                                         std::ref(ocv_image_mutex)));
 //                    }
 //                    qqq++;
+                
+                // static inline int rows_per_render_thread = 1;
+//                int stripe_size = 10;
+//                if ((qqq % stripe_size) == 0)
+                if ((qqq % rows_per_render_thread) == 0)
+                {
+                    all_threads.push_back
+                    (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
+                                 this,
+                                 j,
+                                 rows_per_render_thread, // !!!!!!
+                                 size,
+                                 disk,
+                                 std::ref(*raster_),
+                                 std::ref(row_counter),
+                                 std::ref(ocv_image_mutex)));
+                }
+                qqq++;
+
                 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             }
             else
