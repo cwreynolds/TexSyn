@@ -289,13 +289,14 @@ class Timer
 {
 public:
     Timer(const std::string& description)
-      : description_(description),
-        elasped_time_(" elapsed time: "),
-        start_time_(std::chrono::high_resolution_clock::now()) {}
+    {
+        description_ = description;
+        start_time_ = std::chrono::high_resolution_clock::now();
+    }
     Timer(const std::string& description, const std::string& elasped_time)
-      : description_(description),
-        elasped_time_(elasped_time),
-        start_time_(std::chrono::high_resolution_clock::now()) {}
+        : Timer(description) { elasped_time_ = elasped_time; }
+    Timer(const std::string& description, bool print_enable)
+        : Timer(description) { print_enable_ = print_enable; }
     ~Timer()
     {
         if (print_enable_)
@@ -314,9 +315,9 @@ public:
     // Used to turn off the default logging.
     void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
-    const std::string description_;
-    const std::string elasped_time_;
-    const std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+    std::string description_;
+    std::string elasped_time_ = " elapsed time: ";
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
     bool print_enable_ = true;
 };
 

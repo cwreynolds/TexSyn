@@ -6427,9 +6427,9 @@ int main(int argc, const char * argv[])
     //Texture::waitKey();
 
     std::cout << "June 21, 2022" << std::endl;
-    for (int rows = 1; rows < 50; rows++)
+    std::cout  << std::endl << "rows,seconds" << std::endl;
+    for (int rows = 1; rows < 512; rows += 8)
     {
-        std::cout << "for rows = " << rows << ", " << std::flush;
         Texture::rows_per_render_thread = rows;
         Texture::setDefaultRenderAsDisk(false);
         Texture::setDefaultRenderSize(512);
@@ -6437,11 +6437,11 @@ int main(int argc, const char * argv[])
         NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
         Blur blurred(0.05, warped_color_noise);
         Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
-        Timer t("render");
+        Timer t("render", false);
         Texture::displayAndFile(spot);
+        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
     }
     Texture::waitKey();
-    
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
