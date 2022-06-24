@@ -6426,20 +6426,48 @@ int main(int argc, const char * argv[])
     //}
     //Texture::waitKey();
 
+//    std::cout << "June 21, 2022" << std::endl;
+//    std::cout  << std::endl << "rows,seconds" << std::endl;
+//    for (int rows = 1; rows < 512; rows += 8)
+//    {
+//        Texture::rows_per_render_thread = rows;
+//        Texture::setDefaultRenderAsDisk(false);
+//        Texture::setDefaultRenderSize(512);
+//        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+//        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+//        Blur blurred(0.05, warped_color_noise);
+//        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+//        Timer t("render", false);
+//        Texture::displayAndFile(spot);
+//        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+//    }
+//    Texture::waitKey();
+
     std::cout << "June 21, 2022" << std::endl;
-    std::cout  << std::endl << "rows,seconds" << std::endl;
-    for (int rows = 1; rows < 512; rows += 8)
+    Texture::setDefaultRenderAsDisk(false);
+//    int render_size = 512;
+    int render_size = 100;
+    Texture::setDefaultRenderSize(render_size);
+    for (int run = 0; run < 5; run++)
     {
-        Texture::rows_per_render_thread = rows;
-        Texture::setDefaultRenderAsDisk(false);
-        Texture::setDefaultRenderSize(512);
-        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
-        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
-        Blur blurred(0.05, warped_color_noise);
-        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
-        Timer t("render", false);
-        Texture::displayAndFile(spot);
-        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+        std::cout << std::endl;
+        debugPrint(run);
+        std::cout << std::endl << "rows,seconds" << std::endl;
+//        for (int rows = 1; rows < 512; rows += 8)
+        for (int rows = 1; rows < (render_size + 1); rows++)
+        {
+            Texture::rows_per_render_thread = rows;
+//            Texture::setDefaultRenderAsDisk(false);
+//            Texture::setDefaultRenderSize(512);
+            ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+            NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+            Blur blurred(0.05, warped_color_noise);
+            Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+            Timer t("render", false);
+//            Texture::displayAndFile(spot);
+            spot.rasterizeToImageCache(render_size, false);
+            std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+        }
     }
     Texture::waitKey();
 
