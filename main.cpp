@@ -6467,45 +6467,70 @@ int main(int argc, const char * argv[])
 //    }
 //    Texture::waitKey();
 
-    std::cout << "June 24, 2022" << std::endl;
-    //int render_size = 512;
-    int render_size = 100;
-    Texture::setDefaultRenderSize(render_size);
-    Texture::setDefaultRenderAsDisk(false);
-    auto one_test_render = [&](int rows)
-    {
-        Texture::rows_per_render_thread = rows;
-        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
-        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
-        Blur blurred(0.05, warped_color_noise);
-        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
-        Timer t("render", false);
-        spot.rasterizeToImageCache(render_size, false);
-        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
-    };
-    
-    {
-        Timer t("Single thread, total time for 20 renders");
-        std::cout << std::endl;
-        for (int i = 0; i < 20; i++) { one_test_render(render_size); }
-    }
-    {
-        Timer t("16 threads, total time for 20 renders");
-        std::cout << std::endl;
-        for (int i = 0; i < 20; i++) { one_test_render(16); }
-    }
+//    std::cout << "June 24, 2022" << std::endl;
+//    //int render_size = 512;
+//    int render_size = 100;
+//    Texture::setDefaultRenderSize(render_size);
+//    Texture::setDefaultRenderAsDisk(false);
+//    auto one_test_render = [&](int rows)
+//    {
+//        Texture::rows_per_render_thread = rows;
+//        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+//        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+//        Blur blurred(0.05, warped_color_noise);
+//        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+//        Timer t("render", false);
+//        spot.rasterizeToImageCache(render_size, false);
+//        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+//    };
+//
+//    {
+//        Timer t("Single thread, total time for 20 renders");
+//        std::cout << std::endl;
+//        for (int i = 0; i < 20; i++) { one_test_render(render_size); }
+//    }
+//    {
+//        Timer t("16 threads, total time for 20 renders");
+//        std::cout << std::endl;
+//        for (int i = 0; i < 20; i++) { one_test_render(16); }
+//    }
+//
+//    for (int run = 0; run < 5; run++)
+//    {
+//        std::cout << std::endl;
+//        debugPrint(run);
+//        std::cout << std::endl << "rows,seconds" << std::endl;
+//        for (int rows = 1; rows < (render_size + 1); rows++)
+//        {
+//            one_test_render(rows);
+//        }
+//    }
+//    Texture::waitKey();
 
-    for (int run = 0; run < 5; run++)
-    {
-        std::cout << std::endl;
-        debugPrint(run);
-        std::cout << std::endl << "rows,seconds" << std::endl;
-        for (int rows = 1; rows < (render_size + 1); rows++)
-        {
-            one_test_render(rows);
-        }
-    }
-    Texture::waitKey();
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Shakedown cruise: make sure still things work in "Rube Goldberg" mode
+    // before moving Python side to run locally.
+    std::cout << "June 26, 2022" << std::endl;
+    
+    std::cout << "hello?" << std::endl;
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+    
+    CommandLine cmd
+    ({
+        "texsyn",
+        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
+        "/Users/cwr/Desktop/TexSyn_temp/",
+        "0.2",
+        "20220626",
+        "512",
+        "512",
+    });
+    EvoCamoVsLearningPredator(cmd).run();
+
+    
+    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220626 512 512
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -130,9 +130,14 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //                    }
 //                    qqq++;
                 
-                // static inline int rows_per_render_thread = 1;
-//                int stripe_size = 10;
-//                if ((qqq % stripe_size) == 0)
+                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+                // TODO 20220626 still very ad hoc, needs better way to set this
+                // up. rows_per_render_thread should be proportional to texture
+                // size. For now just calculate that here. Should be conditional
+                // on CPU type.
+                rows_per_render_thread = size * 0.16;
+                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
                 if ((qqq % rows_per_render_thread) == 0)
                 {
                     all_threads.push_back

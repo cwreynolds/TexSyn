@@ -1364,8 +1364,14 @@ public:
 
 private:
     // Shared "communication" directory on Drive.
-    fs::path shared_directory_ =
-        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220626 macOS cahnges to things like Google Drive "file providor"?
+//    fs::path shared_directory_ =
+//        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
+    fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
+                                  "GoogleDrive-craig.w.reynolds@gmail.com/"
+                                  "My Drive/PredatorEye/evo_camo_vs_static_fcd");
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
