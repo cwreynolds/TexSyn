@@ -243,19 +243,11 @@ public:
     // TournamentFunction for "Interactive Evolution of Camouflage".
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
-        // Restrict Texture disks to be completely inside a rectangle inset
-        // from the window edge a Texture's radius. Rectangle defined by two
-        // diagonally opposite corners.
-        float radius = textureSize() / 2;
-        Vec2 rect_min = Vec2(radius + 1, radius + 1);
-        Vec2 rect_max = guiSize() - rect_min;
-        // Find non-overlapping positions for the Textures in TournamentGroup.
-        float margin = radius;
         // Initialize "global variables" used by mouse callback handler.
         tournament_group_ = tg;
         background_image_ = selectRandomBackgroundForWindow();
         // Generate and store random non-overlapping prey disks in gui window.
-        generatePreyPlacement(radius, margin, rect_min, rect_max);
+        generatePreyPlacement();
         // Draw the randomly selected background, then the 3 textures on top.
         gui().drawMat(background_image_, Vec2());
         drawTournamentGroupOverBackground(tg);
@@ -285,25 +277,23 @@ public:
         return tg;
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220518
-    // TODO should refactor this so all these parameters are computed inside
-    //      this function rather than be computed in called and passed in.
-    //
     // Generate and store random non-overlapping prey disks in gui window.
-    virtual void generatePreyPlacement(float radius,
-                                       float margin,
-                                       Vec2 rect_min,
-                                       Vec2 rect_max)
+    virtual void generatePreyPlacement()
     {
+        // Restrict Texture disks to be completely inside a rectangle inset
+        // from the window edge a Texture's radius. Rectangle defined by two
+        // diagonally opposite corners.
+        float radius = textureSize() / 2;
+        Vec2 rect_min = Vec2(radius + 1, radius + 1);
+        Vec2 rect_max = guiSize() - rect_min;
+        // Find non-overlapping positions for the Textures in TournamentGroup.
+        float margin = radius;
         // TODO dummy function, should be cleaned up (removed).
         auto overlap_viz = [&](const std::vector<Disk>& disks)
-        { /*testdraw(tg,disks,rect_min,rect_max,textureSize()+margin);*/ };
+            { /*testdraw(tg,disks,rect_min,rect_max,textureSize()+margin);*/ };
         setPreyDisks(Disk::randomNonOverlappingDisksInRectangle(3, radius,
                      radius, margin, rect_min, rect_max, LPRS(), overlap_viz));
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
     // Count "invalid tournaments" -- aka "predator fails"
     int getPredatorFails() const { return predator_fails_; }
@@ -1364,14 +1354,12 @@ public:
 
 private:
     // Shared "communication" directory on Drive.
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220626 macOS cahnges to things like Google Drive "file providor"?
-//    fs::path shared_directory_ =
-//        "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
+    // TODO 20220626 macOS changes to things like Google Drive "file providor"?
+    //fs::path shared_directory_ =
+    //    "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
     fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
                                   "GoogleDrive-craig.w.reynolds@gmail.com/"
                                   "My Drive/PredatorEye/evo_camo_vs_static_fcd");
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
@@ -1505,32 +1493,29 @@ public:
         if (step > 0) { fs::remove(make_pathname(step - 1)); }
         EvoCamoVsStaticFCD::waitForUserInput();
     }
-        
+    
     // Generate and store random non-overlapping prey disks in gui window.
-    void generatePreyPlacement(float radius,
-                               float margin,
-                               Vec2 rect_min,
-                               Vec2 rect_max) override
+    // Use EvoCamoGame::generatePreyPlacement() to generate a placement,
+    // reject those that violate "avoid placement near center" constraint.
+    void generatePreyPlacement() override
     {
-        // TODO dummy function, should be cleaned up (removed).
-        auto overlap_viz = [&](const std::vector<Disk>& disks) {};
-        std::vector<Disk> disks;
-        // Retry up to 200 times.
-        for (int i = 0; i < 200; i++)
+        // Retry up to 200 times to fine one that meets the center constraint.
+        int max_retries = 200;
+        Vec2 center = guiSize() / 2;
+        float min_dist = textureSize();
+        for (int retry = 0; retry < max_retries; retry++)
         {
-            disks = Disk::randomNonOverlappingDisksInRectangle(3, radius,
-                        radius, margin, rect_min, rect_max, LPRS(), overlap_viz);
-            bool all_clear = true;
-            float min_dist = radius * 2;
-            Vec2 center = guiSize() / 2;
-            for (auto& d : disks)
+            // Use method from base class to make a candidate placement.
+            EvoCamoGame::generatePreyPlacement();
+            // Does this placement satisfy the "avoid center" constraint?
+            bool all_avoid_center = true;
+            for (auto& prey_disk : getPreyDisks())
             {
-                Vec2 p = d.position;
-                if ((p - center).length() < min_dist) {all_clear = false;}
+                float distance = (prey_disk.position - center).length();
+                if (distance < min_dist) { all_avoid_center = false; }
             }
-            // Break if all disks avoid center zone.
-            if (all_clear) { break; }
+            // Exit retry loop if all disks avoid center zone.
+            if (all_avoid_center) { break; }
         }
-        setPreyDisks(disks);
     }
 };
