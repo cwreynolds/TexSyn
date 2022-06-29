@@ -29,10 +29,7 @@
 class GUI
 {
 public:
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    GUI() : GUI(Vec2(), Vec2(), "") {}
     GUI() : GUI(Vec2(), Vec2(), "gui") {}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Note that OpenCV's coordinate system has zero in upper left
     GUI(Vec2 size_in_pixels,
         Vec2 upper_left_init_position,
@@ -225,7 +222,6 @@ public:
     
     // Get current size (in pixels of the cv::Mat underlying the GUI).
     Vec2 getSize() const { return Vec2(image_.cols, image_.rows); }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Reset size (in pixels of the cv::Mat underlying the GUI).
     void setSize(Vec2 size_in_pixels)
     {
@@ -235,19 +231,6 @@ public:
                          backgroundGray());
     }
     
-    // TODO This does not seem to work on macOS Big Sur. The getWindowProperty()
-    // calls return -1, which seems like an error (or "not implemented"?) code.
-    // TODO note: I think I am using OpenCV released version 4.5.1, released
-    // December 22, 2020. The newest version is 4.5.3 on July 19, 2021.
-    void makeTopmost() const
-    {
-//        debugPrint(getWindowName());
-//        debugPrint(cv::getWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE));
-        cv::setWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE, 1);
-//        debugPrint(cv::getWindowProperty(getWindowName(), cv::WND_PROP_VISIBLE));
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     static cv::Scalar backgroundGray() { return cv::Scalar::all(127); }
     static cv::Scalar colorToCvScalar(const Color& c)
         { return CV_RGB(255 * c.r(), 255 * c.g(), 255 * c.b()); }
