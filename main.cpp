@@ -6515,23 +6515,49 @@ int main(int argc, const char * argv[])
     std::cout << "June 26, 2022" << std::endl;
     
     std::cout << "hello?" << std::endl;
-//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
-    CommandLine cmd
-    ({
-        "texsyn",
-        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
-        "/Users/cwr/Desktop/TexSyn_temp/",
-        "0.2",
-        "20220626",
-        "512",
-        "512",
-    });
-    EvoCamoVsLearningPredator(cmd).run();
+    //    CommandLine cmd
+    //    ({
+    //        "texsyn",
+    //        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
+    //        "/Users/cwr/Desktop/TexSyn_temp/",
+    //        "0.2",
+    //        "20220626",
+    //        "512",
+    //        "512",
+    //    });
+    //    EvoCamoVsLearningPredator(cmd).run();
 
     
     // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220626 512 512
+    // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220701 512 512
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //
+    // Putting this note here because I worry that by the time I need this info
+    // I will have forgotten about the details.
+    //
+    // Since moving to my M1 PowerBook in June 2022 I have been bumping my head
+    // against code signing issues. I can run texsyn from inside Xcode, but not
+    // Terminal (See e.g.: https://discussions.apple.com/thread/254010763  This
+    // first came up when tryingto share a texsyn execuatable with Rebecca Allen
+    // in early 2021.)
+    //
+    // For some reason, the original texsyn executable down in Xcode's obscurely
+    // named project build directory works fine from Terminal's shell. While the
+    // one Xcode copies to /usr/local/bin/texsyn, and supposedly code signs,
+    // does NOT work in Terminal. So maybe the easiest thing is to simply use
+    // that long name for the purpose of running in Terminal? I list it here for
+    // future reference:
+    //
+    // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn
+    //
+    // Maybe run it from there?
+    //
+    // cd /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release
+    // ./Texsyn ...
+    //
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     Texture::invalidInstanceReport();

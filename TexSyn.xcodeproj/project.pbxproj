@@ -11,7 +11,7 @@
 		843D95C12452653A00741263 /* Disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843D95BF2452653A00741263 /* Disk.cpp */; };
 		849FF57723A70EC2008B4326 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57623A70EC2008B4326 /* main.cpp */; };
 		849FF57F23A70F93008B4326 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57D23A70F93008B4326 /* Texture.cpp */; };
-		84BC108C25B7B4410095F83B /* texsyn in CopyFiles */ = {isa = PBXBuildFile; fileRef = 849FF57323A70EC2008B4326 /* texsyn */; };
+		84BC108C25B7B4410095F83B /* texsyn in CopyFiles */ = {isa = PBXBuildFile; fileRef = 849FF57323A70EC2008B4326 /* texsyn */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3C23A85C1F00911365 /* UnitTests.cpp */; };
 		84F6BB4123A85E0A00911365 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84F6BB3F23A85E0A00911365 /* Utilities.cpp */; };
 /* End PBXBuildFile section */
@@ -206,6 +206,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -264,6 +265,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
