@@ -6510,28 +6510,48 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Shakedown cruise: make sure still things work in "Rube Goldberg" mode
-    // before moving Python side to run locally.
-    std::cout << "June 26, 2022" << std::endl;
-    
-    std::cout << "hello?" << std::endl;
-    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
-    
-    //    CommandLine cmd
-    //    ({
-    //        "texsyn",
-    //        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
-    //        "/Users/cwr/Desktop/TexSyn_temp/",
-    //        "0.2",
-    //        "20220626",
-    //        "512",
-    //        "512",
-    //    });
-    //    EvoCamoVsLearningPredator(cmd).run();
+//    // Shakedown cruise: make sure still things work in "Rube Goldberg" mode
+//    // before moving Python side to run locally.
+//    std::cout << "June 26, 2022" << std::endl;
+//
+//    std::cout << "hello?" << std::endl;
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//
+//    //    CommandLine cmd
+//    //    ({
+//    //        "texsyn",
+//    //        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
+//    //        "/Users/cwr/Desktop/TexSyn_temp/",
+//    //        "0.2",
+//    //        "20220626",
+//    //        "512",
+//    //        "512",
+//    //    });
+//    //    EvoCamoVsLearningPredator(cmd).run();
+//
+//
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220626 512 512
+//    // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220701 512 512
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220626 512 512
-    // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220701 512 512
+    // Update/refactor the Timer class.
+    std::cout << "July 3, 2022" << std::endl;
+    auto dummy_task = []()
+    {
+        int n = 100000000;  // 100 million, takes about 0.715 seconds.
+        float sum = 0;
+        for (int i = 0; i < n; i++) { sum += frandom01(); }
+        return sum;
+    };
+    //{
+    //    TimerOld t("Old timer test");
+    //    dummy_task();
+    //}
+    {
+        Timer t("New timer test");
+        dummy_task();
+    }
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //

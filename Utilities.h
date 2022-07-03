@@ -247,12 +247,10 @@ typedef std::complex<float> Complex;
 Complex inverse_mobius_transform(Complex z,
                                  Complex a, Complex b, Complex c, Complex d);
 
+// Short names
 typedef std::chrono::high_resolution_clock TimeClock;
 typedef std::chrono::time_point<TimeClock> TimePoint;
 typedef std::chrono::duration<double> TimeDuration;
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20220522 add experimental texture render timeout
 
 // TimeDuration to seconds as float.
 inline float time_duration_in_seconds(TimeDuration time_duration)
@@ -266,8 +264,6 @@ inline float time_diff_in_seconds(TimePoint start, TimePoint end)
     TimeDuration dt = end - start;
     return time_duration_in_seconds(dt);
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 // Simple tool for inline timing sections of code. For example:
 //    void foo()
@@ -289,10 +285,7 @@ class Timer
 {
 public:
     Timer(const std::string& description)
-    {
-        description_ = description;
-        start_time_ = std::chrono::high_resolution_clock::now();
-    }
+        : description_(description), start_time_(TimeClock::now()) {}
     Timer(const std::string& description, const std::string& elasped_time)
         : Timer(description) { elasped_time_ = elasped_time; }
     Timer(const std::string& description, bool print_enable)
@@ -301,23 +294,17 @@ public:
     {
         if (print_enable_)
         {
-            std::cout << description_ << elasped_time_ << elapsedSeconds();
-            std::cout << " seconds" << std::endl;
+            std::cout << description_ << elasped_time_
+                      << time_diff_in_seconds(start_time_, TimeClock::now())
+                      << " seconds" << std::endl;
         }
-    }
-    // Elapsed time since construction, in seconds.
-    float elapsedSeconds() const
-    {
-        auto finish_time = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed = finish_time - start_time_;
-        return elapsed.count();
     }
     // Used to turn off the default logging.
     void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
     std::string description_;
     std::string elasped_time_ = " elapsed time: ";
-    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+    TimePoint start_time_;
     bool print_enable_ = true;
 };
 
