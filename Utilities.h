@@ -640,6 +640,11 @@ public:
       : nap_time_(nap_time), busy_time_(busy_time) {}
     void sleepIfNeeded()
     {
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
+        //     Seems to ignore user input (eg cmd-H during texture render)
+        return;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // Wait to grab lock for sleep timer. (Lock released at end of block)
         const std::lock_guard<std::mutex> lock(mutex_for_occasional_sleep);
 
@@ -664,9 +669,6 @@ public:
     TimePoint last_run_time_started_;
 };
 
-//inline static OccasionalSleep occasional_sleep(1, 10);
-//inline static OccasionalSleep occasional_sleep(0.05, 1);
-//inline static OccasionalSleep occasional_sleep(0.1, 10);
 inline static OccasionalSleep occasional_sleep(0.01, 1);
 
 

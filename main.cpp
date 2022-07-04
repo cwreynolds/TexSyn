@@ -8,10 +8,8 @@
 
 #include "TexSyn.h"
 #include "GP.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #include "EvoCamoGame.h"
 #include "SimpleImageMatch.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
 
@@ -6535,23 +6533,29 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Update/refactor the Timer class.
+//    // Update/refactor the Timer class.
+//    std::cout << "July 3, 2022" << std::endl;
+//    auto dummy_task = []()
+//    {
+//        int n = 100000000;  // 100 million, takes about 0.715 seconds.
+//        float sum = 0;
+//        for (int i = 0; i < n; i++) { sum += frandom01(); }
+//        return sum;
+//    };
+//    //{
+//    //    TimerOld t("Old timer test");
+//    //    dummy_task();
+//    //}
+//    {
+//        Timer t("New timer test");
+//        dummy_task();
+//    }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
     std::cout << "July 3, 2022" << std::endl;
-    auto dummy_task = []()
-    {
-        int n = 100000000;  // 100 million, takes about 0.715 seconds.
-        float sum = 0;
-        for (int i = 0; i < n; i++) { sum += frandom01(); }
-        return sum;
-    };
-    //{
-    //    TimerOld t("Old timer test");
-    //    dummy_task();
-    //}
-    {
-        Timer t("New timer test");
-        dummy_task();
-    }
+    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //
