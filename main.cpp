@@ -6554,7 +6554,7 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-    std::cout << "July 3, 2022" << std::endl;
+    std::cout << "July 4, 2022" << std::endl;
     EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

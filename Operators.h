@@ -813,8 +813,11 @@ public:
     static Color single(Vec2 position, float width, const Texture& texture)
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
         yield();
         occasional_sleep.sleepIfNeeded();
+
+//        Texture::checkForUserInput();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         float radius = width / 2;
         std::vector<Vec2> offsets;

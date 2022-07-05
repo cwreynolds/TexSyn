@@ -294,11 +294,14 @@ public:
     {
         if (print_enable_)
         {
-            std::cout << description_ << elasped_time_
-                      << time_diff_in_seconds(start_time_, TimeClock::now())
+            std::cout << description_ << elasped_time_ << elapsedSeconds()
                       << " seconds" << std::endl;
         }
     }
+    float elapsedSeconds() const
+     {
+         return time_diff_in_seconds(start_time_, TimeClock::now());
+     }
     // Used to turn off the default logging.
     void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
