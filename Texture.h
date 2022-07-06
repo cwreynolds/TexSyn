@@ -240,6 +240,13 @@ public:
                                 const cv::Mat cv_mat);
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static void checkForUserInput();
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
+    static void checkForUserInput(bool read_cv_events);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    
     static inline int last_key_read_;
     static int getLastKeyPushed() { return last_key_read_; }
     static void setLastKeyPushed(int key) { last_key_read_ = key; }

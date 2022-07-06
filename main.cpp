@@ -6554,9 +6554,37 @@ int main(int argc, const char * argv[])
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-    std::cout << "July 4, 2022" << std::endl;
-    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+    std::cout << "July 5, 2022" << std::endl;
+    
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+    
+    CommandLine cmd
+    ({
+        "texsyn",
+        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
+        "/Users/cwr/Desktop/TexSyn_temp/",
+        "0.5",
+        "20220704",
+        "1024",
+        "1024",
+    });
+    EvoCamoVsLearningPredator(cmd).run();
+    
+//    looks like checkForUserInput() is NOT being called in:
+//        while (row_counter < all_threads.size()) { checkForUserInput(); }
 
+    
+//    huh Texture::rasterizeRowOfDisk  does a yield() rather than checkForUserInput()
+//
+//    —————————————————————————
+//
+//    WIP: not responding to user input during long Blur operation.
+//
+//    Hmm, calls Texture::checkForUserInput() in Texture::rasterizeToImageCache()
+//    Cannot call Texture::checkForUserInput() inside Blur::single(), gets thread error.
+//    Restored Timer::elapsedSeconds().
+
+    
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //
     // Putting this note here because I worry that by the time I need this info
