@@ -814,12 +814,12 @@ public:
     {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//        yield();
-//        occasional_sleep.sleepIfNeeded();
+        yield();
+        occasional_sleep.sleepIfNeeded();
 
 //        Texture::checkForUserInput();
         
-        Texture::checkForUserInput(false);
+//        Texture::checkForUserInput(false);
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         float radius = width / 2;
         std::vector<Vec2> offsets;

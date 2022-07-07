@@ -177,10 +177,21 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
             while (row_counter < all_threads.size())
             {
                 checkForUserInput();
-                std::cout << "row_counter < all_threads.size()" << std::endl;
+//                std::cout << "row_counter < all_threads.size()" << std::endl;
+            }
+            std::cout << "all thread's work completed" << std::endl;
+
+//            for (auto& t : all_threads) { t.join(); }
+            {
+                Timer t("join all threads");
+                for (auto& t : all_threads)
+                {
+                    checkForUserInput();
+                    t.join();
+                    std::cout << "join thread" << std::endl;
+                }
             }
             //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            for (auto& t : all_threads) t.join();
         }
         // Return a uniform black texture if optional render timeout is exceded.
         if (renderTimeOut())
@@ -219,6 +230,10 @@ void Texture::rasterizeStripeOfDisk(int j,
 {
     for (int row_index = j; row_index < (j + n_rows); row_index++)
     {
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
+        if (renderTimeOut()) { break; }
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         int half = size / 2;
         if (between(row_index, -half, half))
         {
@@ -231,6 +246,8 @@ void Texture::rasterizeStripeOfDisk(int j,
         }
     }
 }
+
+// timeout
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
@@ -729,7 +746,8 @@ void Texture::checkForUserInput(bool read_cv_events)
         else
         {
 //            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-            std::this_thread::sleep_for(1ms);
+//            std::this_thread::sleep_for(1ms);
+            std::this_thread::sleep_for(100ms);
         }
 //        time_of_last_user_input_check = TimeClock::now();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
