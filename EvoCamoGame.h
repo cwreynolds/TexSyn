@@ -307,6 +307,10 @@ public:
         for (auto& tgm : tg.members())
         {
             int size = textureSize();
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20220709
+            debugPrint(textureSize());
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             Texture* texture = GP::textureFromIndividual(tgm.individual);
             texture->rasterizeToImageCache(size, true);
             Vec2 center_to_ul = Vec2(1, 1) * size / 2;
