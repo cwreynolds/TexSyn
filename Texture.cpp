@@ -350,9 +350,10 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
 //                debugPrint(size);
 //                debugPrint(row_counter < size);
                 
-                std::cout << "row_counter=" << row_counter;
-                std::cout << " size=" << size;
-                std::cout << " row_counter<size=" << (row_counter<size) << std::endl;
+//                std::cout << "row_counter=" << row_counter;
+//                std::cout << " size=" << size;
+//                std::cout << " row_counter<size=" << (row_counter<size) << std::endl;
+
                 checkForUserInput();
             }
             std::cout << "all thread's work completed" << std::endl;
@@ -405,8 +406,8 @@ void Texture::rasterizeStripeOfDisk(int j,
     for (int row_index = j; row_index < (j + n_rows); row_index++)
     {
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-        if (renderTimeOut()) { break; }
+//        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
+//        if (renderTimeOut()) { break; }
         //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         int half = size / 2;
         if (between(row_index, -half, half))
