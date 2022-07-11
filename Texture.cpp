@@ -136,57 +136,29 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     }
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20220620 experimenting with more than one ("N") row per thread.
-//
-// what to call this?
-//     rasterizeRowOfDisk() -- just add an "N" argument
-//     rasterizeRowsOfDisk() -- Rows plural
-//     rasterizeNRowsOfDisk() -- N rows
-//     rasterizeNRowsOfDisk() -- N rows
-//        band
-//        strip
-//        belt
-//        ribbon
-//        stripe ?
-//        bar
-//        swathe
-//
-// Also weird that this is called a "disk" when it might be square.
-
-void Texture::rasterizeStripeOfDisk(int j,
-                                    int n_rows,
-                                    int size,
-                                    bool disk,
+// Rasterizes (renders) a horizontal "stripe", a range of adjacent pixel rows.
+// Calls rasterizeRowOfDisk() on each row to renders its pixels.
+void Texture::rasterizeStripeOfDisk(int j,            // starting row index
+                                    int n_rows,       // number of row in stripe
+                                    int size,         // total texture size
+                                    bool disk,        // disk or square?
                                     cv::Mat& opencv_image,
                                     int& row_counter,
                                     std::mutex& ocv_image_mutex) const
 {
     for (int row_index = j; row_index < (j + n_rows); row_index++)
     {
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//        if (renderTimeOut()) { break; }
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        int half = size / 2;
-        if (between(row_index, -half, half))
-        {
-            Texture::rasterizeRowOfDisk(row_index,
-                                        size,
-                                        disk,
-                                        opencv_image,
-                                        row_counter,
-                                        ocv_image_mutex);
-        }
+        rasterizeRowOfDisk(row_index, size, disk, opencv_image,
+                           row_counter, ocv_image_mutex);
     }
 }
 
-// timeout
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
 // to run in its own thread, uses mutex to synchonize access to the image.
-void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
+//void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
+void Texture::rasterizeRowOfDisk(int j,                    // starting row index
+                                 int size,                 // total texture size
+                                 bool disk,                // disk or square?
                                  cv::Mat& opencv_image,
                                  int& row_counter,
                                  std::mutex& ocv_image_mutex) const
