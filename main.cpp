@@ -6556,19 +6556,19 @@ int main(int argc, const char * argv[])
     // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
     std::cout << "July 5, 2022" << std::endl;
     
-//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
-    CommandLine cmd
-    ({
-        "texsyn",
-        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
-        "/Users/cwr/Desktop/TexSyn_temp/",
-        "0.5",
-        "20220704",
-        "1024",
-        "1024",
-    });
-    EvoCamoVsLearningPredator(cmd).run();
+//    CommandLine cmd
+//    ({
+//        "texsyn",
+//        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
+//        "/Users/cwr/Desktop/TexSyn_temp/",
+//        "0.5",
+//        "20220704",
+//        "1024",
+//        "1024",
+//    });
+//    EvoCamoVsLearningPredator(cmd).run();
     
 //    looks like checkForUserInput() is NOT being called in:
 //        while (row_counter < all_threads.size()) { checkForUserInput(); }

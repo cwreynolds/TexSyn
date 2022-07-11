@@ -67,167 +67,6 @@ void Texture::windowPlacementTool(cv::Mat& mat)
     if ((window_counter % 15) == 0) window_y =0 ;
 }
 
-//    // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
-//    // draw a round image, otherwise a square. Run parallel threads for speed.
-//    void Texture::rasterizeToImageCache(int size, bool disk) const
-//    {
-//        //Timer t("rasterizeToImageCache");
-//        // If size changed, including from initial value of 0x0, generate raster.
-//        // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
-//        if ((size != raster_->rows) || (size != raster_->cols))
-//        {
-//            // Reset our OpenCV Mat to be (size, size) at default depth.
-//            raster_->create(size, size, getDefaultOpencvMatType());
-//            startRenderTimer();
-//            // Synchronizes access to opencv_image by multiple row threads.
-//            std::mutex ocv_image_mutex;
-//            // Collection of all row threads.
-//            std::vector<std::thread> all_threads;
-//            int row_counter = 0;
-//            // Loop all image rows, bottom to top. For each, launch a thread running
-//            // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
-//            RasterizeHelper rh(size, disk);
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // TODO 20220620 experimenting with more than one ("N") row per thread.
-//            int qqq = 0;
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//            // TODO 20220626 still very ad hoc, needs better way to set this
-//            // up. rows_per_render_thread should be proportional to texture
-//            // size. For now just calculate that here. Should be conditional
-//            // on CPU type.
-//            rows_per_render_thread = size * 0.16;
-//            //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//
-//            for (int j = rh.top_j; j <= rh.bot_j; j++)
-//            {
-//                if (getParallelRender())
-//                {
-//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                    // TODO 20220620 experimenting with more than one ("N") row per thread.
-//
-//    //                // This requires some unpacking. It creates a thread which is
-//    //                // pushed (using && move semantics, I think) onto the back of
-//    //                // std::vector all_row_threads. Because the initial/toplevel
-//    //                // thread function is member function of this instance, it is
-//    //                // specified as two values, a function pointer AND an instance
-//    //                // pointer. The other four values are args to
-//    //                // rasterizeRowOfDisk(row, size, disk, image, count, mutex).
-//    //                all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk,
-//    //                                                  this,
-//    //                                                  j, size, disk,
-//    //                                                  std::ref(*raster_),
-//    //                                                  std::ref(row_counter),
-//    //                                                  std::ref(ocv_image_mutex)));
-//
-//    //                    int stripe_size = 10;
-//    //    //                int stripe_size = 50;
-//    //    //                if ((j % stripe_size) == 0)
-//    //                    if ((qqq % stripe_size) == 0)
-//    //                    {
-//    //                        all_threads.push_back
-//    //                            (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
-//    //                                         this,
-//    //                                         j,
-//    //                                         stripe_size, // !!!!!!
-//    //                                         size,
-//    //                                         disk,
-//    //                                         std::ref(*raster_),
-//    //                                         std::ref(row_counter),
-//    //                                         std::ref(ocv_image_mutex)));
-//    //                    }
-//    //                    qqq++;
-//
-//    //                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//    //                // TODO 20220626 still very ad hoc, needs better way to set this
-//    //                // up. rows_per_render_thread should be proportional to texture
-//    //                // size. For now just calculate that here. Should be conditional
-//    //                // on CPU type.
-//    //                rows_per_render_thread = size * 0.16;
-//    //                //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-//
-//
-//                    if ((qqq % rows_per_render_thread) == 0)
-//                    {
-//                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//    //                    Timer t("create thread");
-//                        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//
-//                        all_threads.push_back
-//                        (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
-//                                     this,
-//                                     j,
-//                                     rows_per_render_thread, // !!!!!!
-//                                     size,
-//                                     disk,
-//                                     std::ref(*raster_),
-//                                     std::ref(row_counter),
-//                                     std::ref(ocv_image_mutex)));
-//    //                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//    //                    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//    //                    std::cout << "create thread" << std::endl;
-//    //                    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//
-//                    }
-//                    qqq++;
-//
-//
-//                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                }
-//                else
-//                {
-//                    rasterizeRowOfDisk(j, size, disk, *raster_,
-//                                       row_counter, ocv_image_mutex);
-//                    checkForUserInput();
-//                }
-//            }
-//
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//            debugPrint(rows_per_render_thread);
-//            debugPrint(all_threads.size());
-//            debugPrint(rows_per_render_thread * all_threads.size());
-//            debugPrint(size);
-//            //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//
-//
-//
-//            // Wait for all row threads to finish.
-//            if (getParallelRender())
-//            {
-//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//                // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-//    //            while (row_counter < all_threads.size()) { checkForUserInput(); }
-//                while (row_counter < all_threads.size())
-//                {
-//                    checkForUserInput();
-//    //                std::cout << "row_counter < all_threads.size()" << std::endl;
-//                }
-//                std::cout << "all thread's work completed" << std::endl;
-//
-//    //            for (auto& t : all_threads) { t.join(); }
-//                {
-//                    Timer t("join ALL threads");
-//                    for (auto& t : all_threads)
-//                    {
-//                        checkForUserInput();
-//                        Timer timer("join thread");
-//                        t.join();
-//    //                    std::cout << "join thread" << std::endl;
-//                    }
-//                }
-//                //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-//            }
-//            // Return a uniform black texture if optional render timeout is exceded.
-//            if (renderTimeOut())
-//            {
-//                std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
-//                *raster_ = cv::Scalar::all(0);
-//            }
-//        }
-//    }
-
 // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
 // draw a round image, otherwise a square. Run parallel threads for speed.
 void Texture::rasterizeToImageCache(int size, bool disk) const
@@ -240,135 +79,55 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
         // Reset our OpenCV Mat to be (size, size) at default depth.
         raster_->create(size, size, getDefaultOpencvMatType());
         startRenderTimer();
-        // Synchronizes access to opencv_image by multiple row threads.
+        // Synchronizes access to opencv_image to allow multiple render threads.
         std::mutex ocv_image_mutex;
-        // Collection of all row threads.
-        std::vector<std::thread> all_threads;
-        int row_counter = 0;
-        // Loop all image rows, bottom to top. For each, launch a thread running
-        // rasterizeRowOfDisk() to compute pixels, write to image via mutex.
         RasterizeHelper rh(size, disk);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220620 experimenting with more than one ("N") row per thread.
-//        int qqq = 0;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        // TODO 20220626 still very ad hoc, needs better way to set this
-        // up. rows_per_render_thread should be proportional to texture
-        // size. For now just calculate that here. Should be conditional
-        // on CPU type.
-//        rows_per_render_thread = size * 0.16;
-        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        for (int j = rh.top_j; j <= rh.bot_j; j++)
-//        {
-//            if (getParallelRender())
-//            {
-//                if ((qqq % rows_per_render_thread) == 0)
-//                {
-//                    all_threads.push_back
-//                    (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
-//                                 this,
-//                                 j,
-//                                 rows_per_render_thread, // !!!!!!
-//                                 size,
-//                                 disk,
-//                                 std::ref(*raster_),
-//                                 std::ref(row_counter),
-//                                 std::ref(ocv_image_mutex)));
-//                }
-//                qqq++;
-//            }
-//            else
-//            {
-//                rasterizeRowOfDisk(j, size, disk, *raster_,
-//                                   row_counter, ocv_image_mutex);
-//                checkForUserInput();
-//            }
-//        }
-
-        int number_of_threads = 6;
-        int rows_per_thread = size / number_of_threads;
-        int rows_left_over = size % number_of_threads;
-        
-        debugPrint(size);
-        debugPrint(number_of_threads);
-        debugPrint(rows_per_thread);
-        debugPrint(rows_left_over);
-
-        int stripe_top = rh.top_j;
-        int stripe_bot = stripe_top + rows_per_thread + rows_left_over;
-        
         if (getParallelRender())
         {
+            // Make helper threads, each to work on a horizontal "stripe" of the
+            // texture in parallel. The goal is roughly one thread per hardware
+            // processor but that is just hardcoded inline. (So "TODO 20220710")
+            int number_of_threads = 6;
+            int rows_per_thread = size / number_of_threads;
+            int rows_left_over = size % number_of_threads;
+            // Collection of all row threads.
+            std::vector<std::thread> all_threads;
+            // Threads increment "row_counter" when a row of pixels is finished.
+            int row_counter = 0;
+            // Veritcal (y/j) bounds for each stripe. First is bigger if needed.
+            // These value updated in the loop below.
+            int stripe_top = rh.top_j;
+            int stripe_bot = stripe_top + rows_per_thread + rows_left_over;
             for (int s = 0; s < number_of_threads; s++)
             {
-                debugPrint(stripe_top);
-                debugPrint(stripe_bot);
-
-                all_threads.push_back
-                (std::thread(&Texture::rasterizeStripeOfDisk, // !!!!!!
-                             this,
-                             
-//                             j,
-//                             rows_per_render_thread, // !!!!!!
-                             stripe_top,
-                             stripe_bot - stripe_top,
-                             
-                             size,
-                             disk,
-                             std::ref(*raster_),
-                             std::ref(row_counter),
-                             std::ref(ocv_image_mutex)));
-                
+                all_threads.push_back(std::thread
+                                              (&Texture::rasterizeStripeOfDisk,
+                                               this,
+                                               stripe_top,
+                                               stripe_bot - stripe_top,
+                                               size,
+                                               disk,
+                                               std::ref(*raster_),
+                                               std::ref(row_counter),
+                                               std::ref(ocv_image_mutex)));
                 stripe_top = stripe_bot;
                 stripe_bot = stripe_top + rows_per_thread;
-//                stripe_bot = std::min(size, stripe_top + rows_per_thread);
             }
+            // Wait for helper threads to finish, join them with this thread.
+            while (row_counter < size) { checkForUserInput(); }
+            for (auto& t : all_threads) { t.join(); }
         }
         else
         {
+            // Sequential case, single threaded. Loop over all image rows.
+            int i = 0;  // Counter whose value is ignore in single thread case.
             for (int j = rh.top_j; j <= rh.bot_j; j++)
             {
-                rasterizeRowOfDisk(j, size, disk, *raster_,
-                                   row_counter, ocv_image_mutex);
+                rasterizeRowOfDisk(j, size, disk, *raster_, i, ocv_image_mutex);
                 checkForUserInput();
             }
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-        // Wait for all row threads to finish.
-        if (getParallelRender())
-        {
-//            while (row_counter < all_threads.size())
-            while (row_counter < size)
-//            while (row_counter < rh.bot_j)
-            {
-//                debugPrint(row_counter);
-//                debugPrint(size);
-//                debugPrint(row_counter < size);
-                
-//                std::cout << "row_counter=" << row_counter;
-//                std::cout << " size=" << size;
-//                std::cout << " row_counter<size=" << (row_counter<size) << std::endl;
-
-                checkForUserInput();
-            }
-            std::cout << "all thread's work completed" << std::endl;
-
-            {
-                Timer t("join ALL threads");
-                for (auto& t : all_threads)
-                {
-                    checkForUserInput();
-                    Timer timer("join thread");
-                    t.join();
-                }
-            }
-        }
-        // Return a uniform black texture if optional render timeout is exceded.
+        // If optional render timeout was reached, return uniform black texture.
         if (renderTimeOut())
         {
             std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
