@@ -238,21 +238,12 @@ public:
     static cv::Mat getCvMatRect(const Vec2& upper_left_position,
                                 const Vec2& size_in_pixels,
                                 const cv::Mat cv_mat);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     static void checkForUserInput();
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-    static void checkForUserInput(bool read_cv_events);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    
     static inline int last_key_read_;
     static int getLastKeyPushed() { return last_key_read_; }
     static void setLastKeyPushed(int key) { last_key_read_ = key; }
     // TODO maybe there should be a hook, a void() std::function, to handle
     // per-app key commands?
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     // Global switch: should subclassed textures that use RandomSequence objects
     // seed them from consturctor args, or from a constant "random" value. The

@@ -187,8 +187,6 @@ void Texture::rasterizeRowOfDisk(int j,                    // starting row index
         row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
         // Near midpoint of rendering this Texture row, yield to other threads,
         // to avoid locking up the whole machine during a lengthy render run.
-        // (TODO on 20220619 wondering why yield() vs checkForUserInput()?
-        //     Aha, because cv::waitKey() can only be alled from main thread.)
         if (i == 0) { yield(); }
     }
     
@@ -599,37 +597,7 @@ cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
 //     perhaps have global hook which Texture can specialize for OpenCV ?
 TimePoint time_of_last_user_input_check = TimeClock::now();
 std::mutex check_user_input_mutex;
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-
-//void Texture::checkForUserInput()
-//{
-//    const std::lock_guard<std::mutex> lock(check_user_input_mutex);
-//    using namespace std::chrono_literals;
-//    TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
-//    TimeDuration target_delay(250ms);
-//    if (since_last > target_delay)
-//    {
-//        // Pause for 1/1000 second (1 millisecond) return key pressed.
-//        int key = cv::waitKey(1);
-//        if (key > 0) { setLastKeyPushed(key); }
-//        if (key > 0) { debugPrint(key); }  // TODO TEMP
-//        time_of_last_user_input_check = TimeClock::now();
-//    }
-//    else
-//    {
-//        yield();
-//    }
-//}
-
-//void Texture::checkForUserInput()
 void Texture::checkForUserInput()
-{
-    checkForUserInput(true);
-}
-
-void Texture::checkForUserInput(bool read_cv_events)
 {
     const std::lock_guard<std::mutex> lock(check_user_input_mutex);
     using namespace std::chrono_literals;
@@ -637,39 +605,17 @@ void Texture::checkForUserInput(bool read_cv_events)
     TimeDuration target_delay(250ms);
     if (since_last > target_delay)
     {
-//        // Pause for 1/1000 second (1 millisecond) return key pressed.
-//        int key = cv::waitKey(1);
-//        if (key > 0) { setLastKeyPushed(key); }
-//        if (key > 0) { debugPrint(key); }  // TODO TEMP
-        if (read_cv_events)
-        {
-            // Pause for 1/1000 second (1 millisecond) return key pressed.
-            int key = cv::waitKey(1);
-            if (key > 0) { setLastKeyPushed(key); }
-            if (key > 0) { debugPrint(key); }  // TODO TEMP
-            time_of_last_user_input_check = TimeClock::now();
-       }
-        else
-        {
-//            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-//            std::this_thread::sleep_for(1ms);
-            std::this_thread::sleep_for(100ms);
-        }
-//        time_of_last_user_input_check = TimeClock::now();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-        static int i = 0;
-        debugPrint(i);
-        i++;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Pause for 1/1000 second (1 millisecond) return key pressed.
+        int key = cv::waitKey(1);
+        if (key > 0) { setLastKeyPushed(key); }
+        if (key > 0) { debugPrint(key); }  // TODO TEMP
+        time_of_last_user_input_check = TimeClock::now();
     }
     else
     {
         yield();
     }
 }
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Static utility function to measure the "uniformity" of a cv::Mat.
 // Returns a float between 1 (when every pixel is identical) and 0 (when the

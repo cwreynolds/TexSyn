@@ -9,10 +9,7 @@
 //
 
 #include "Disk.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO temp for access to Texture::checkForUserInput() needs cleaner solution
 #include "Texture.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Relaxation process that attempts to reduce the overlaps in an arbitrary
 // collection of Disks. Overlapping Disks are pushed away from each other
@@ -27,15 +24,6 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                           float move_scale,
                                           std::vector<Disk>& disks)
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    std::cout << "enter DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
-//    debugPrint(retries);
-//    debugPrint(disks.size());
-//    float max_radius = 0;
-//    for (auto& d : disks) { max_radius = std::max(d.radius, max_radius); }
-//    debugPrint(max_radius);
-//    Timer t("DiskOccupancyGrid::reduceDiskOverlap() ");
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Repeat relaxation process "retries" times, or until no overlaps remain.
     for (int i = 0; i < retries; i++)
     {
@@ -68,14 +56,8 @@ void DiskOccupancyGrid::reduceDiskOverlap(int retries,
                                                 first_disk_index,
                                                 disk_count,
                                                 std::ref(disks)); });
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        yield();
-//        occasional_sleep.sleepIfNeeded();
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        yield();  // To better support multi-threading.
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//    std::cout << "exit DiskOccupancyGrid::reduceDiskOverlap" << std::endl;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

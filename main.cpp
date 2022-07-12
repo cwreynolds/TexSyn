@@ -6558,32 +6558,11 @@ int main(int argc, const char * argv[])
     
     EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
-//    CommandLine cmd
-//    ({
-//        "texsyn",
-//        "/Users/cwr/Pictures/camouflage_backgrounds/tiger_eye_beans",
-//        "/Users/cwr/Desktop/TexSyn_temp/",
-//        "0.5",
-//        "20220704",
-//        "1024",
-//        "1024",
-//    });
-//    EvoCamoVsLearningPredator(cmd).run();
-    
-//    looks like checkForUserInput() is NOT being called in:
-//        while (row_counter < all_threads.size()) { checkForUserInput(); }
-
-    
-//    huh Texture::rasterizeRowOfDisk  does a yield() rather than checkForUserInput()
-//
-//    —————————————————————————
-//
-//    WIP: not responding to user input during long Blur operation.
-//
-//    Hmm, calls Texture::checkForUserInput() in Texture::rasterizeToImageCache()
-//    Cannot call Texture::checkForUserInput() inside Blur::single(), gets thread error.
-//    Restored Timer::elapsedSeconds().
-
+    // large size test case (1020x1024):
+    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.5 20220704 1024 1024
+    //
+    // regular size test case (512x512):
+    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //
@@ -6609,6 +6588,11 @@ int main(int argc, const char * argv[])
     //
     // cd /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release
     // ./Texsyn ...
+    //
+    //
+    // Note that on 20220711 I put that Xcode build directory on my search PATH
+    // (via my newly updated .zshrc). I can go back to using just "texsyn" not:
+    // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn
     //
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -628,55 +628,6 @@ inline int nearest_power_of_2(int v)
     return (v < midpoint) ? prev : next;
 }
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO tried this experiment, hoping to make the SimpleImageMatch window more
-// responsive to selection and hiding. As near as I can tell, it has no effect.
-// I'll leave it here or the next batch run, but maybe it should be removed.
-
-inline static std::mutex mutex_for_occasional_sleep;
-
-// Forces this thread to sleep for nap_time after busy_time of computation.
-class OccasionalSleep
-{
-public:
-    OccasionalSleep(float nap_time, float busy_time)
-      : nap_time_(nap_time), busy_time_(busy_time) {}
-    void sleepIfNeeded()
-    {
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-        //     Seems to ignore user input (eg cmd-H during texture render)
-        return;
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // Wait to grab lock for sleep timer. (Lock released at end of block)
-        const std::lock_guard<std::mutex> lock(mutex_for_occasional_sleep);
-
-        // TODO maybe the call to yield() should be here?
-        if (!initialized_)
-        {
-            last_run_time_started_ = TimeClock::now();
-            initialized_ = true;
-        }
-        TimeDuration elapsed_time = TimeClock::now() - last_run_time_started_;
-        if (elapsed_time.count() > busy_time_)
-        {
-            int ms = nap_time_ * 1000;
-            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-            last_run_time_started_ = TimeClock::now();
-//            std::cout << "zzz..." << std::endl;
-        }
-    }
-    float nap_time_;
-    float busy_time_;
-    bool initialized_ = false;
-    TimePoint last_run_time_started_;
-};
-
-inline static OccasionalSleep occasional_sleep(0.01, 1);
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 inline std::string n_letters(int n, RandomSequence& rs)
 {
     std::string result;

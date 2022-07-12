@@ -812,31 +812,15 @@ public:
     }
     static Color single(Vec2 position, float width, const Texture& texture)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-        yield();
-        occasional_sleep.sleepIfNeeded();
-
-//        Texture::checkForUserInput();
-        
-//        Texture::checkForUserInput(false);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        yield();  // To better support multi-threading.
         float radius = width / 2;
         std::vector<Vec2> offsets;
         RandomSequence rs(position.hash());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//        int n = (expensive_to_nest > 0) ? 1 : sqrt_of_subsample_count;
         int n = tooExpensiveToNest() ? 1 : sqrt_of_subsample_count;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         jittered_grid_NxN_in_square(n, width, rs, offsets);
         Color sum_of_weighted_colors(0, 0, 0);
         float sum_of_weights = 0;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//        expensive_to_nest++;
         incrementExpensiveToNest();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         for (Vec2 offset : offsets)
         {
             float length = offset.length();
@@ -848,11 +832,7 @@ public:
                 sum_of_weights += weight;
             }
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//        expensive_to_nest--;
         decrementExpensiveToNest();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         return sum_of_weighted_colors / sum_of_weights;
     }
     // Each Blur::getColor() uses an NxN jiggled grid of subsamples, where N is:
