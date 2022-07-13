@@ -7,9 +7,6 @@
 //
 
 #include "Texture.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//#include <thread>
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
@@ -136,8 +133,8 @@ void Texture::rasterizeToImageCache(int size, bool disk) const
     }
 }
 
-// Rasterizes (renders) a horizontal "stripe", a range of adjacent pixel rows.
-// Calls rasterizeRowOfDisk() on each row to renders its pixels.
+// Rasterizes (renders) a horizontal "stripe" -- a range of vertically
+// adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
 void Texture::rasterizeStripeOfDisk(int j,            // starting row index
                                     int n_rows,       // number of row in stripe
                                     int size,         // total texture size
@@ -288,11 +285,7 @@ Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
     // Read TexSyn Color from Texture at (i, j).
     Color color(0, 0, 0);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//    expensive_to_nest = 0;
     resetExpensiveToNest();
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
     {
         float pixel_radius = 2.0 / size;

@@ -62,8 +62,8 @@ public:
                             cv::Mat& opencv_image,
                             int& row_counter,
                             std::mutex& ocv_image_mutex) const;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220620 experimenting with more than one ("N") row per thread.
+    // Rasterizes (renders) a horizontal "stripe" -- a range of vertically
+    // adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
     void rasterizeStripeOfDisk(int j,
                                int n_rows,
                                int size,
@@ -72,11 +72,13 @@ public:
                                int& row_counter,
                                std::mutex& ocv_image_mutex) const;
     
-    // TODO 20220621 gathering data
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220621 gathering data -- should this be kept?
     // TODO How tall are the per-thread "stripes"? On Intel laptop it was 1.
     // On M1 seems to provide almost no benefit. Collecting data to diagnose.
     static inline int rows_per_render_thread = 1;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
     void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
@@ -197,23 +199,15 @@ public:
     // Get/set global switch for "parallel render": one thread per row.
     static int getParallelRender() { return render_thread_per_row_; }
     static void setParallelRender(bool p) { render_thread_per_row_ = p; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220610 testing expensive_to_nest, perhaps to remove it?
-//    thread_local static inline int expensive_to_nest = 0;
-private:
-    thread_local static inline int expensive_to_nest = 0;
-    static inline int max_expensive_nest = 0;
-public:
-//    static bool tooExpensiveToNest() { return (expensive_to_nest >
-//                                               max_expensive_nest); }
-    static bool tooExpensiveToNest(){return expensive_to_nest>max_expensive_nest;}
-    static void resetExpensiveToNest() { expensive_to_nest = 0; }
-    static void incrementExpensiveToNest() { expensive_to_nest++; }
-    static void decrementExpensiveToNest() { expensive_to_nest--; }
-//    static int maxExpensiveNest() { return max_expensive_nest; }
     
-    static void setMaxExpensiveNest(int m) { max_expensive_nest = m; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Count nesting of certain "expensive_to_nest" convolution operators.
+    static void resetExpensiveToNest() { expensive_to_nest_ = 0; }
+    static void incrementExpensiveToNest() { expensive_to_nest_++; }
+    static void decrementExpensiveToNest() { expensive_to_nest_--; }
+    static void setMaxExpensiveNest(int m) { max_expensive_nest_ = m; }
+    static bool tooExpensiveToNest() { return (expensive_to_nest_ >
+                                               max_expensive_nest_); }
+
     // Score a Texture on how much "high" frequency it has.
     // TODO temp? Similar in intent to wiggliness() in GP.h
     void fft_test();
@@ -330,19 +324,16 @@ public:
     // Static utility function to write a pixel to a cv::Mat from a Color.
     static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220522 add experimental texture render timeout
-    // Get/set max time, in seconds allowed for texture render.
+    // Optional texture render timeout. Defaults to infinite.
+    // Get/set max time, in seconds allowed for any texture render.
     static float getRenderMaxTime() { return render_max_time_; }
     static void setRenderMaxTime(float max_time) { render_max_time_ = max_time; }
     // Time in seconds since render began.
     static float elapsedRenderTime()
-    {
-        return time_diff_in_seconds(render_start_time_, TimeClock::now());
-    }
+        { return time_diff_in_seconds(render_start_time_, TimeClock::now()); }
     // Has max render time been exceeded?
-    static bool renderTimeOut() {return elapsedRenderTime()>getRenderMaxTime();}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static bool renderTimeOut()
+        { return elapsedRenderTime() > getRenderMaxTime(); }
 
 private:
     static inline const int validity_key_ = 1234567890;
@@ -373,6 +364,10 @@ private:
     // seed them from consturctor args, or from a constant "random" value. The
     // latter case is used only in SimpleImageMatch ("to avoid huge differences
     // for tiny parameter mutation.").
+    // Count nesting of certain "expensive_to_nest" convolution operators.
+    thread_local static inline int expensive_to_nest_ = 0;
+    static inline int max_expensive_nest_ = 0;
+
     static inline bool seed_from_hashed_args_ = true;
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
