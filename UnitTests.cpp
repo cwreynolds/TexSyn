@@ -647,7 +647,7 @@ bool UnitTests::allTestsOK() { return allTestsOK(1); }
 //           2: print report for each test like previous behavior.
 bool UnitTests::allTestsOK(int verbosity)
 {
-    Timer timer("Run time for unit test suite: ", "");
+    Timer timer;
     assert(between(verbosity, 0, 2));
     bool all_tests_passed = true;
     logAndTally(utilities);
@@ -680,7 +680,11 @@ bool UnitTests::allTestsOK(int verbosity)
                       "Some unit tests FAIL.") << " ";
     }
     if (verbosity == 2) { std::cout << std::endl << std::endl; }
-    timer.setPrintEnable(!all_tests_passed || (verbosity > 0));
+    if (!all_tests_passed || (verbosity > 0))
+    {
+        std::cout << "Run time for unit test suite: " << timer.elapsedSeconds();
+        std::cout << std::endl;
+    }
     return all_tests_passed;
 }
 

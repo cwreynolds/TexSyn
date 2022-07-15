@@ -274,41 +274,34 @@ inline float time_diff_in_seconds(TimePoint start, TimePoint end)
 //    }
 // After the block containing the Timer construction it prints:
 //    foo elapsed time: 1.86984 seconds
-// Added parameter to customize " elapsed time: " to any string including none:
-//        Timer timer("Run time for unit test suite: ", "");
-// prints:
-//    Run time for unit test suite: 0.0301787 seconds
-//
-// TODO: perhaps customize message with a message_printing function pointer?
-//
+// Can also be used without default logging, via Timer::elapsedSeconds() as in:
+//    void foo()
+//    {
+//        Timer foo_timer;
+//        bar();
+//        zap();
+//        if (foo_timer.elapsedSeconds() > 1.2) too_slow();
+//    }
 class Timer
 {
 public:
-    Timer(const std::string& description)
-        : description_(description), start_time_(TimeClock::now()) {}
-    Timer(const std::string& description, const std::string& elasped_time)
-        : Timer(description) { elasped_time_ = elasped_time; }
-    Timer(const std::string& description, bool print_enable)
-        : Timer(description) { print_enable_ = print_enable; }
+    Timer() : start_time_(TimeClock::now()) {}
+    Timer(const std::string& description) : Timer() {description_= description;}
     ~Timer()
     {
-        if (print_enable_)
+        if (!description_.empty())
         {
-            std::cout << description_ << elasped_time_ << elapsedSeconds()
-                      << " seconds" << std::endl;
+            std::cout << description_ << " elapsed time: "
+                      << elapsedSeconds() << " seconds" << std::endl;
         }
     }
     float elapsedSeconds() const
      {
          return time_diff_in_seconds(start_time_, TimeClock::now());
      }
-    // Used to turn off the default logging.
-    void setPrintEnable(bool enable) { print_enable_ = enable; }
 private:
     std::string description_;
-    std::string elasped_time_ = " elapsed time: ";
     TimePoint start_time_;
-    bool print_enable_ = true;
 };
 
 // Hash a float to a 32 bit value.
