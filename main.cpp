@@ -6551,19 +6551,27 @@ int main(int argc, const char * argv[])
 //        dummy_task();
 //    }
 
+//    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
+//    std::cout << "July 5, 2022" << std::endl;
+//
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//
+//    // large size test case (1020x1024):
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.5 20220704 1024 1024
+//    //
+//    // regular size test case (512x512):
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
+//
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // TODO 20220704 does OccasionalSleep / occasional_sleep actually do anything?
-    std::cout << "July 5, 2022" << std::endl;
     
+    // TODO 20220716 -- work toward "local" version on M1 laptop (no GPU yet)
+    std::cout << "July 16, 2022" << std::endl;
     EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
     
-    // large size test case (1020x1024):
-    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.5 20220704 1024 1024
-    //
-    // regular size test case (512x512):
     // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
-    
+        
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //
     // Putting this note here because I worry that by the time I need this info
