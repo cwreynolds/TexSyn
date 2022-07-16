@@ -505,13 +505,16 @@ public:
 
     // Get default run name from background_image_directory_.
     // (Provides consistent behavior with and without trailing "/".)
+    // ((Provides "no_name" as ultimate fall back for empty command line.))
     std::string runNameDefault(const CommandLine& command_line)
     {
         fs::path path = command_line.positionalArgument(1);
         std::string fn = path.filename();
-        return (fn != "") ? fn : std::string(path.parent_path().filename());
+        if (fn.empty()) { fn = std::string(path.parent_path().filename()); }
+        if (fn.empty()) { fn = "no_name"; }
+        return fn;
     }
-    
+
     // A subdirectory under output_directory_ for results from this run.
     std::string runOutputDirectory()
     {
