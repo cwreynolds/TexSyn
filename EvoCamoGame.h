@@ -1365,7 +1365,8 @@ private:
     //                              "My Drive/PredatorEye/evo_camo_vs_static_fcd");
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220716--work toward "local" version on M1 laptop (no GPU yet)
-    fs::path shared_directory_ = "/Users/cwr/comms/";
+//    fs::path shared_directory_ = "/Users/cwr/comms/";
+    fs::path shared_directory_ = "/Users/cwr/camo_data/comms/";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
