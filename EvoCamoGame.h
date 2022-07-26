@@ -1366,7 +1366,14 @@ private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220716--work toward "local" version on M1 laptop (no GPU yet)
 //    fs::path shared_directory_ = "/Users/cwr/comms/";
-    fs::path shared_directory_ = "/Users/cwr/camo_data/comms/";
+//    fs::path shared_directory_ = "/Users/cwr/camo_data/comms/";
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220722 now switching back, so make "Rube Goldberg" mode conditional
+
+    fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
+                                  "GoogleDrive-craig.w.reynolds@gmail.com/"
+                                  "My Drive/PredatorEye/evo_camo_vs_static_fcd");
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
