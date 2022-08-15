@@ -10,6 +10,23 @@
 #pragma once
 #include "Operators.h"
 #include "UnitTests.h"
-static std::string texsyn_version_string =
-//    "TexSyn version 0.9.7 (alpha macOS-x86_64)";
-    "TexSyn version 2.0.0 (alpha macOS-arm64)";
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220814 working on CMake build -- version numbers
+
+//    static std::string texsyn_version_string =
+//    //    "TexSyn version 0.9.7 (alpha macOS-x86_64)";
+//        "TexSyn version 2.0.0 (alpha macOS-arm64)";
+
+#include "Version.h"
+
+// Now (20220814) leans on CMake for version number, but still
+// fragile because OS and architecture are specified inline below.
+static std::string
+    texsyn_version_string = (std::string("TexSyn version ") +
+                             std::to_string(texsyn_VERSION_MAJOR) + "." +
+                             std::to_string(texsyn_VERSION_MINOR) + " " +
+                             // "macOS-x86_64"
+                             "macOS-arm64");
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -11,6 +11,17 @@
 #include "EvoCamoGame.h"
 #include "SimpleImageMatch.h"
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220814 working on CMake build -- replace whole of file
+#if 1  // TODO 20220814 working on CMake build -- replace whole of file
+int main(int argc, const char * argv[])
+{
+    std::cout << texsyn_version_string << std::endl;
+    std::cout << "Early exit for testing CMake build." << std::endl;
+}
+#else  // TODO 20220814 working on CMake build -- replace whole of file
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 bool run_unit_tests = true;
 
 int main(int argc, const char * argv[])
@@ -6610,3 +6621,6 @@ int main(int argc, const char * argv[])
     abnormal_value_report();
     return EXIT_SUCCESS;
 }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#endif // TODO 20220814 working on CMake build -- replace whole of file
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

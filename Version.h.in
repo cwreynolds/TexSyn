@@ -1,0 +1,12 @@
+//  WARNING: Version.h gets overwritten by CMake, using Version.h.in
+//  as a template, according to configure_file() in CMakeLists.txt.
+//
+//  Version.h
+//  TexSyn
+//
+//  Created by Craig Reynolds on 8/14/22.
+//  Copyright © 2022 Craig Reynolds. All rights reserved.
+//
+
+#define texsyn_VERSION_MAJOR @texsyn_VERSION_MAJOR@
+#define texsyn_VERSION_MINOR @texsyn_VERSION_MINOR@

@@ -45,6 +45,7 @@
 		849FF57E23A70F93008B4326 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		84BC108E25B916B20095F83B /* EvoCamoGame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EvoCamoGame.h; sourceTree = "<group>"; };
 		84D98A8928A80C8E0027F4AA /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		84D98A8A28A9C2520027F4AA /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		84DE15B024D1C1A9005DCCE4 /* TwoPointTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoPointTransform.h; sourceTree = "<group>"; };
 		84DE15B224D9CA5F005DCCE4 /* TexSyn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TexSyn.h; sourceTree = "<group>"; };
 		84F6BB3C23A85C1F00911365 /* UnitTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnitTests.cpp; sourceTree = "<group>"; };
@@ -91,6 +92,7 @@
 				84F6BB4023A85E0A00911365 /* Utilities.h */,
 				84F6BB3F23A85E0A00911365 /* Utilities.cpp */,
 				84F6BB4323AC6AF800911365 /* Vec2.h */,
+				84D98A8A28A9C2520027F4AA /* Version.h */,
 				849FF57423A70EC2008B4326 /* Products */,
 			);
 			sourceTree = "<group>";
