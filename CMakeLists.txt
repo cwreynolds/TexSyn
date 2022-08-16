@@ -12,3 +12,10 @@ configure_file(Version.h.in Version.h)
 
 # add the executable
 add_executable(texsyn main.cpp)
+
+# Configured Version.h file will be written into the binary tree, so add that
+# directory to the list of paths to search for include files.
+# (TODO Does this mean we end up with two copies of Version.h?)
+target_include_directories(texsyn PUBLIC
+                           "${PROJECT_BINARY_DIR}"
+                           )
