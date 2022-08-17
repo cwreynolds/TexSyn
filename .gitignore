@@ -54,4 +54,9 @@ xcuserdata/
 ## Gcc Patch
 /*.gcno
 
+#---------------------------------------------------------------------- TexSyn
+
+# For CMake: ignore build subdirectory and all contents.
+build/
+
 #---------------------------------------------------------------------- end

@@ -7,7 +7,7 @@ project(texsyn VERSION 2.0) # TODO needs to sync with texsyn_version_string
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-// Rewrite Version.h using Version.h.in as a template.
+# Rewrite Version.h using Version.h.in as a template.
 configure_file(Version.h.in Version.h)
 
 # add the executable

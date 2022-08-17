@@ -7,9 +7,13 @@
 //
 
 #include "TexSyn.h"
-#include "GP.h"
-#include "EvoCamoGame.h"
-#include "SimpleImageMatch.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20220816 working on CMake build -- very temp avoid includes
+
+//#include "GP.h"
+//#include "EvoCamoGame.h"
+//#include "SimpleImageMatch.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20220814 working on CMake build -- replace whole of file
