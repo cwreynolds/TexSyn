@@ -10,9 +10,14 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20220816 working on CMake build -- very temp avoid includes
 
+#include "GP.h"
+#include "EvoCamoGame.h"
+#include "SimpleImageMatch.h"
+
 //#include "GP.h"
 //#include "EvoCamoGame.h"
 //#include "SimpleImageMatch.h"
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

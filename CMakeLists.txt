@@ -19,3 +19,10 @@ add_executable(texsyn main.cpp)
 target_include_directories(texsyn PUBLIC
                            "${PROJECT_BINARY_DIR}"
                            )
+
+# TODO 20220817 use hardcoded pathname for OpenCV headers.
+target_include_directories(texsyn PUBLIC
+                           "/opt/homebrew/opt/opencv/include/opencv4/")
+
+# TODO 20220817 use hardcoded pathname for OpenCV compiled libs.
+target_link_libraries(texsyn PUBLIC "/opt/homebrew/opt/opencv/lib")
