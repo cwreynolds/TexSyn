@@ -22,12 +22,16 @@
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // TODO 20220814 working on CMake build -- replace whole of file
-#if 1  // TODO 20220814 working on CMake build -- replace whole of file
+
+// #if 1  // TODO 20220814 working on CMake build -- replace whole of file
+#if 0  // TODO 20220819 working on CMake build -- back to while file.
+
 int main(int argc, const char * argv[])
 {
     std::cout << texsyn_version_string << std::endl;
     std::cout << "Early exit for testing CMake build." << std::endl;
 }
+
 #else  // TODO 20220814 working on CMake build -- replace whole of file
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -6586,13 +6590,38 @@ int main(int argc, const char * argv[])
 //
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // TODO 20220716 -- work toward "local" version on M1 laptop (no GPU yet)
-    std::cout << "July 16, 2022" << std::endl;
-    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//    // TODO 20220716 -- work toward "local" version on M1 laptop (no GPU yet)
+//    std::cout << "July 16, 2022" << std::endl;
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
     
-    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
-        
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // TODO 20220819 -- testing CMake build
+    std::cout << "August 19, 2022" << std::endl;
+    
+    
+    int render_size = 512;
+//    int render_size = 100;
+    Texture::setDefaultRenderSize(render_size);
+    Texture::setDefaultRenderAsDisk(false);
+    auto one_test_render = [&](int rows)
+    {
+        Texture::rows_per_render_thread = rows;
+        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+        Blur blurred(0.05, warped_color_noise);
+        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+        Timer t("render");
+        Texture::displayAndFile(spot);
+        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+    };
+    one_test_render(render_size);
+    Texture::waitKey();
+
+    
+    //--------------------------------------------------------------------------
     //
     // Putting this note here because I worry that by the time I need this info
     // I will have forgotten about the details.
@@ -6622,7 +6651,7 @@ int main(int argc, const char * argv[])
     // (via my newly updated .zshrc). I can go back to using just "texsyn" not:
     // /Users/cwr/Library/Developer/Xcode/DerivedData/TexSyn-gfzhwwjftbwzeiedmqmlvlrtrirm/Build/Products/Release/texsyn
     //
-    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //--------------------------------------------------------------------------
 
     Texture::invalidInstanceReport();
     Texture::leakCheck();
