@@ -6598,28 +6598,35 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // TODO 20220819 -- testing CMake build
-    std::cout << "August 19, 2022" << std::endl;
-    
-    
-    int render_size = 512;
-//    int render_size = 100;
-    Texture::setDefaultRenderSize(render_size);
-    Texture::setDefaultRenderAsDisk(false);
-    auto one_test_render = [&](int rows)
-    {
-        Texture::rows_per_render_thread = rows;
-        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
-        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
-        Blur blurred(0.05, warped_color_noise);
-        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
-        Timer t("render");
-        Texture::displayAndFile(spot);
-        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
-    };
-    one_test_render(render_size);
-    Texture::waitKey();
+//    // TODO 20220819 -- testing CMake build
+//    std::cout << "August 19, 2022" << std::endl;
+//
+//    int render_size = 512;
+//    // int render_size = 100;
+//    Texture::setDefaultRenderSize(render_size);
+//    Texture::setDefaultRenderAsDisk(false);
+//    auto one_test_render = [&](int rows)
+//    {
+//        Texture::rows_per_render_thread = rows;
+//        ColorNoise color_noise(Vec2(1, 2), Vec2(3, 0.1), 0.95);
+//        NoiseWarp warped_color_noise(5, 0.5, 0.5, color_noise);
+//        Blur blurred(0.05, warped_color_noise);
+//        Spot spot(Vec2(), 0.5, blurred, 0.7, warped_color_noise);
+//        Timer t("render");
+//        Texture::displayAndFile(spot);
+//        std::cout << rows << "," << t.elapsedSeconds() << std::endl;
+//    };
+//    one_test_render(render_size);
+//    Texture::waitKey();
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Experiment in response to this comment on Colab bug report:
+    // https://github.com/googlecolab/colabtools/issues/2965#issuecomment-1221191215
+    std::cout << "August 20, 2022" << std::endl;
+    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+
+    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
     
     //--------------------------------------------------------------------------
     //
@@ -6629,7 +6636,7 @@ int main(int argc, const char * argv[])
     // Since moving to my M1 PowerBook in June 2022 I have been bumping my head
     // against code signing issues. I can run texsyn from inside Xcode, but not
     // Terminal (See e.g.: https://discussions.apple.com/thread/254010763  This
-    // first came up when tryingto share a texsyn execuatable with Rebecca Allen
+    // first came up when trying to share a texsyn executable with Rebecca Allen
     // in early 2021.)
     //
     // For some reason, the original texsyn executable down in Xcode's obscurely
