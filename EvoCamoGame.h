@@ -1370,9 +1370,18 @@ private:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220722 now switching back, so make "Rube Goldberg" mode conditional
 
-    fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
-                                  "GoogleDrive-craig.w.reynolds@gmail.com/"
-                                  "My Drive/PredatorEye/evo_camo_vs_static_fcd");
+//    fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
+//                                  "GoogleDrive-craig.w.reynolds@gmail.com/"
+//                                  "My Drive/PredatorEye/evo_camo_vs_static_fcd");
+
+    
+    // TODO 20220822
+    bool rube_goldberg_mode_ = false;
+    fs::path shared_directory_ = (rube_goldberg_mode_ ?
+                                  ("/Users/cwr/Library/CloudStorage/"
+                                   "GoogleDrive-craig.w.reynolds@gmail.com/"
+                                   "My Drive/PredatorEye/evo_camo_vs_static_fcd") :
+                                  "/Users/cwr/camo_data/comms/");
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
@@ -1505,7 +1514,21 @@ public:
         }
         output_file << std::endl;
         output_file.close();
-        if (step > 0) { fs::remove(make_pathname(step - 1)); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220822
+        
+        std::cout << "wrote " << make_pathname(step) << std::endl;
+
+//        Texture::waitKey(5 * 1000);
+
+//        if (step > 0) { fs::remove(make_pathname(step - 1)); }
+        if (step > 0)
+        {
+            auto pn = make_pathname(step - 1);
+            fs::remove(pn);
+            std::cout << "deleted " << pn << std::endl;
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         EvoCamoVsStaticFCD::waitForUserInput();
     }
     
