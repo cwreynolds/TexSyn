@@ -1522,14 +1522,18 @@ public:
 //        Texture::waitKey(5 * 1000);
 
 //        if (step > 0) { fs::remove(make_pathname(step - 1)); }
+
+        EvoCamoVsStaticFCD::waitForUserInput();
+
         if (step > 0)
         {
             auto pn = make_pathname(step - 1);
             fs::remove(pn);
             std::cout << "deleted " << pn << std::endl;
         }
+
+//        EvoCamoVsStaticFCD::waitForUserInput();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        EvoCamoVsStaticFCD::waitForUserInput();
     }
     
     // Generate and store random non-overlapping prey disks in gui window.
