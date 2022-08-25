@@ -1356,39 +1356,25 @@ public:
     bool keyTyped2() const { return key_typed_2_; }
 
 private:
-    // Shared "communication" directory on Drive.
-    // TODO 20220626 macOS changes to things like Google Drive "file providor"?
-    //fs::path shared_directory_ =
-    //    "/Volumes/GoogleDrive/My Drive/PredatorEye/evo_camo_vs_static_fcd/";
-    //fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
-    //                              "GoogleDrive-craig.w.reynolds@gmail.com/"
-    //                              "My Drive/PredatorEye/evo_camo_vs_static_fcd");
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220716--work toward "local" version on M1 laptop (no GPU yet)
-//    fs::path shared_directory_ = "/Users/cwr/comms/";
-//    fs::path shared_directory_ = "/Users/cwr/camo_data/comms/";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220722 now switching back, so make "Rube Goldberg" mode conditional
-
-//    fs::path shared_directory_ = ("/Users/cwr/Library/CloudStorage/"
-//                                  "GoogleDrive-craig.w.reynolds@gmail.com/"
-//                                  "My Drive/PredatorEye/evo_camo_vs_static_fcd");
-
-    
-    // TODO 20220822
+    // Shared "communication" directory for passing per-step files between
+    // TexSyn and PredatorEye. (Conditionalize for "Rube Goldberg" mode in
+    // which the comms dir is on Google Drive mounted via "Google Drive for
+    // Desktop". No longer used.)
     bool rube_goldberg_mode_ = false;
+    fs::path local_comms_ = "/Users/cwr/camo_data/comms/";
+    fs::path g_drive_comms_ = ("/Users/cwr/Library/CloudStorage/"
+                               "GoogleDrive-craig.w.reynolds@gmail.com/"
+                               "My Drive/PredatorEye/evo_camo_vs_static_fcd");
     fs::path shared_directory_ = (rube_goldberg_mode_ ?
-                                  ("/Users/cwr/Library/CloudStorage/"
-                                   "GoogleDrive-craig.w.reynolds@gmail.com/"
-                                   "My Drive/PredatorEye/evo_camo_vs_static_fcd") :
-                                  "/Users/cwr/camo_data/comms/");
+                                  g_drive_comms_ :
+                                  local_comms_);
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::string my_prefix_ = "camo_";
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
     std::string other_suffix_ = ".txt";
-    float previous_cycle_seconds_ = 35;  // Initialize to typical value.
+//    float previous_cycle_seconds_ = 35;  // Initialize to typical value.
+    float previous_cycle_seconds_ = 10;  // Initialize to typical value.
     int expected_image_size_ = 128;
     bool key_typed_1_ = false;
     bool key_typed_2_ = false;
@@ -1497,6 +1483,8 @@ public:
         Texture::setRenderMaxTime(5);
     }
 
+    // Write prey_n.txt file with three disk center positions ("xy3"), wait for
+    // response, delete previous prey_n.txt file.
     void waitForUserInput() override
     {
         float image_size = gui().getCvMat().rows;
@@ -1514,26 +1502,12 @@ public:
         }
         output_file << std::endl;
         output_file.close();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220822
-        
-        std::cout << "wrote " << make_pathname(step) << std::endl;
 
-//        Texture::waitKey(5 * 1000);
-
-//        if (step > 0) { fs::remove(make_pathname(step - 1)); }
-
+        // Wait for response.
         EvoCamoVsStaticFCD::waitForUserInput();
-
-        if (step > 0)
-        {
-            auto pn = make_pathname(step - 1);
-            fs::remove(pn);
-            std::cout << "deleted " << pn << std::endl;
-        }
-
-//        EvoCamoVsStaticFCD::waitForUserInput();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        // Delete prey_n.txt file from previous step.
+        if (step > 0) { fs::remove(make_pathname(step - 1)); }
     }
     
     // Generate and store random non-overlapping prey disks in gui window.

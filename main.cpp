@@ -7,33 +7,9 @@
 //
 
 #include "TexSyn.h"
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20220816 working on CMake build -- very temp avoid includes
-
 #include "GP.h"
 #include "EvoCamoGame.h"
 #include "SimpleImageMatch.h"
-
-//#include "GP.h"
-//#include "EvoCamoGame.h"
-//#include "SimpleImageMatch.h"
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO 20220814 working on CMake build -- replace whole of file
-
-// #if 1  // TODO 20220814 working on CMake build -- replace whole of file
-#if 0  // TODO 20220819 working on CMake build -- back to while file.
-
-int main(int argc, const char * argv[])
-{
-    std::cout << texsyn_version_string << std::endl;
-    std::cout << "Early exit for testing CMake build." << std::endl;
-}
-
-#else  // TODO 20220814 working on CMake build -- replace whole of file
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 bool run_unit_tests = true;
 
@@ -6666,6 +6642,3 @@ int main(int argc, const char * argv[])
     abnormal_value_report();
     return EXIT_SUCCESS;
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#endif // TODO 20220814 working on CMake build -- replace whole of file
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
