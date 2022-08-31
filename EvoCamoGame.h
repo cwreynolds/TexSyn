@@ -1291,14 +1291,43 @@ public:
                                               previous_cycle_seconds_);
         erase_temp_text(temp_part);
         std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
-        // Parse two floats, x and y, from response file.
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220830 read and store as many xy responses as predator provides.
+
+//        // Parse two floats, x and y, from response file.
+//        float x, y;
+//        std::ifstream input_file(others_pathname);
+//        input_file >> x;
+//        input_file >> y;
+//        input_file.close();
+//        return {x, y};
+        
         float x, y;
+        predator_responses_.clear();
         std::ifstream input_file(others_pathname);
-        input_file >> x;
-        input_file >> y;
+        while ((input_file >> x) && (input_file >> y))
+        {
+            predator_responses_.push_back(Vec2(x, y));
+        }
         input_file.close();
-        return {x, y};
+        
+        // TODO 20220830 remove before flight.
+        debugPrint(vec_to_string(predator_responses_));
+        debugPrint(predator_responses_.front());
+
+        input_file.close();
+        return predator_responses_.front();
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220830 read and store as many xy responses as predator provides.
+    
+    std::vector<Vec2> allResponses() const { return predator_responses_; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     // Used to ping the comms directory when it seems hung.
     void writePingFile(int count, int step)
@@ -1378,6 +1407,10 @@ private:
     int expected_image_size_ = 128;
     bool key_typed_1_ = false;
     bool key_typed_2_ = false;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220830 read and store as many xy responses as predator provides.
+    std::vector<Vec2> predator_responses_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1412,7 +1445,24 @@ public:
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20220830 read and store as many xy responses as predator provides.
+        // TODO          this need to be fixed to work for any number of replies,
+        //               especially incluidoing 1.
+
         gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
+        Vec2 p2 = getComms().allResponses().at(1) * gui().getSize().x();
+        Vec2 p3 = getComms().allResponses().at(2) * gui().getSize().x();
+        gui().drawDashedCircle(p2,textureSize() * 1.1, 24,
+                               Color(0, 0, 1), Color(1, 1, 0), true);
+        gui().drawDashedCircle(p3, textureSize() * 1.1, 24,
+                               Color(0.5, 0.5, 0), Color(0, 1, 0), true);
+
+//        drawDashedCircle(center, diameter, 24, Color(0), Color(1), draw_cross);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        
         gui().refresh();
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops)
@@ -1534,4 +1584,15 @@ public:
             if (all_avoid_center) { break; }
         }
     }
+};
+
+
+// New EvoCamoVsLearnPredPop corresponding to EvoCamoVsLearnPredPop.ipynb in
+// system PredatorEye.
+class EvoCamoVsLearnPredPop : public EvoCamoVsLearningPredator
+{
+public:
+    EvoCamoVsLearnPredPop(const CommandLine& cmd)
+        : EvoCamoVsLearningPredator(cmd) {}
+
 };

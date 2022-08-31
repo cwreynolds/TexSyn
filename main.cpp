@@ -6597,10 +6597,41 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Experiment in response to this comment on Colab bug report:
-    // https://github.com/googlecolab/colabtools/issues/2965#issuecomment-1221191215
-    std::cout << "August 20, 2022" << std::endl;
-    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//    // Experiment in response to this comment on Colab bug report:
+//    // https://github.com/googlecolab/colabtools/issues/2965#issuecomment-1221191215
+//    std::cout << "August 20, 2022" << std::endl;
+//    EvoCamoVsLearningPredator(CommandLine(argc, argv)).run();
+//
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
+    
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Working to display 3 (well multiple) predator predictions. Also switch to
+    // new EvoCamoVsLearnPredPop corresponding to EvoCamoVsLearnPredPop.ipynb
+    std::cout << "August 30, 2022" << std::endl;
+    
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20220830 read and store as many xy responses as predator provides.
+//    std::vector<Vec2> predator_responses_;
+//    
+//    float x, y;
+//    predator_responses_.clear();
+//    std::ifstream input_file("/Users/cwr/Desktop/xy3.txt");
+//    while ((input_file >> x) && (input_file >> y))
+//    {
+//        predator_responses_.push_back(Vec2(x, y));
+//    }
+//    input_file.close();
+//    debugPrint(vec_to_string(predator_responses_));
+//    debugPrint(predator_responses_.front());
+//    
+//    std::exit(EXIT_SUCCESS);
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    
+    
+    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
 
     // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
     
