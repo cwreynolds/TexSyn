@@ -1445,24 +1445,7 @@ public:
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220830 read and store as many xy responses as predator provides.
-        // TODO          this need to be fixed to work for any number of replies,
-        //               especially incluidoing 1.
-
-        gui().drawDashedCircle(prediction_in_pixels, textureSize() * 1.1, true);
-        Vec2 p2 = getComms().allResponses().at(1) * gui().getSize().x();
-        Vec2 p3 = getComms().allResponses().at(2) * gui().getSize().x();
-        gui().drawDashedCircle(p2,textureSize() * 1.1, 24,
-                               Color(0, 0, 1), Color(1, 1, 0), true);
-        gui().drawDashedCircle(p3, textureSize() * 1.1, 24,
-                               Color(0.5, 0.5, 0), Color(0, 1, 0), true);
-
-//        drawDashedCircle(center, diameter, 24, Color(0), Color(1), draw_cross);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        
+        drawCrosshairAnnotation();
         gui().refresh();
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops)
@@ -1480,6 +1463,34 @@ public:
         recordPredatorFailTimeSeriesData();
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
         Texture::waitKey(100);
+    }
+    
+    // Draws a circle-and-crosshair for each response position returned by the
+    // predator side. The first one is colored B&W as before, then six other
+    // colors (WGRBYCM). These seven colors are repeated as needed.
+    void drawCrosshairAnnotation()
+    {
+        Color white(1);
+        Color black(0);
+        std::vector<Color> colors { white,
+                                    Color(0, 1, 0),
+                                    Color(1, 0, 0),
+                                    Color(0, 0, 1),
+                                    Color(1, 1, 0),
+                                    Color(0, 1, 1),
+                                    Color(1, 0, 1) };
+        int i = 0;
+        float pixel_size = gui().getSize().x();
+        for (auto predator_response : getComms().allResponses())
+        {
+            Color color = colors.at(i++ % colors.size());
+            gui().drawDashedCircle(predator_response * pixel_size,
+                                   textureSize() * 1.1,
+                                   24,
+                                   black,
+                                   interpolate(0.5, color, white),
+                                   true);
+        }
     }
 
     // Count and record "invalid tournaments" -- aka "predator fails"
