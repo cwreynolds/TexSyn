@@ -1291,18 +1291,21 @@ public:
                                               previous_cycle_seconds_);
         erase_temp_text(temp_part);
         std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20220830 read and store as many xy responses as predator provides.
-
-//        // Parse two floats, x and y, from response file.
-//        float x, y;
-//        std::ifstream input_file(others_pathname);
-//        input_file >> x;
-//        input_file >> y;
-//        input_file.close();
-//        return {x, y};
-        
+        // Read and store the contents of the predator's response file.
+        saveResponsesFile(others_pathname);
+        return allResponses().front();
+    }
+    
+    // Returns (a copy of) “all predator responses” from the most recent call to
+    // PythonComms::waitForReply() this is a vector of Vec2 representing the xy
+    // position (image normalized coordinates) each representing the output
+    // (prediction / estimate) of a predator’s CNN. Before 20220831 there was
+    // only one of these, now there can be any number, but typically three. They
+    // are sorted according to a quality metric so the first one is “best.”
+    std::vector<Vec2> allResponses() const { return predator_responses_; }
+    
+    void saveResponsesFile(fs::path others_pathname)
+    {
         float x, y;
         predator_responses_.clear();
         std::ifstream input_file(others_pathname);
@@ -1311,23 +1314,7 @@ public:
             predator_responses_.push_back(Vec2(x, y));
         }
         input_file.close();
-        
-        // TODO 20220830 remove before flight.
-        debugPrint(vec_to_string(predator_responses_));
-        debugPrint(predator_responses_.front());
-
-        input_file.close();
-        return predator_responses_.front();
-
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220830 read and store as many xy responses as predator provides.
-    
-    std::vector<Vec2> allResponses() const { return predator_responses_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     // Used to ping the comms directory when it seems hung.
     void writePingFile(int count, int step)
@@ -1402,15 +1389,12 @@ private:
     std::string other_prefix_ = "find_";
     std::string my_suffix_ = ".png";
     std::string other_suffix_ = ".txt";
-//    float previous_cycle_seconds_ = 35;  // Initialize to typical value.
     float previous_cycle_seconds_ = 10;  // Initialize to typical value.
     int expected_image_size_ = 128;
     bool key_typed_1_ = false;
     bool key_typed_2_ = false;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220830 read and store as many xy responses as predator provides.
+    // All predator responses from most recent PythonComms::waitForReply() call.
     std::vector<Vec2> predator_responses_;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
