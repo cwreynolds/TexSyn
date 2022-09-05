@@ -1456,18 +1456,22 @@ public:
     {
         Color white(1);
         Color black(0);
-        std::vector<Color> colors { white,
-                                    Color(0, 1, 0),
-                                    Color(1, 0, 0),
-                                    Color(0, 0, 1),
-                                    Color(1, 1, 0),
-                                    Color(0, 1, 1),
-                                    Color(1, 0, 1) };
-        int i = 0;
-        float pixel_size = gui().getSize().x();
-        for (auto predator_response : getComms().allResponses())
+        std::vector<Color> colors
         {
-            Color color = colors.at(i++ % colors.size());
+            white,
+            Color(0, 1, 0),
+            Color(1, 0, 0),
+            Color(0, 0, 1),
+            Color(1, 1, 0),
+            Color(0, 1, 1),
+            Color(1, 0, 1)
+        };
+        float pixel_size = gui().getSize().x();
+        std::vector<Vec2> responses = getComms().allResponses();
+        for (int i = int(responses.size() - 1); i >= 0; i--)
+        {
+            Vec2 predator_response = responses.at(i);
+            Color color = colors.at(i % colors.size());
             gui().drawDashedCircle(predator_response * pixel_size,
                                    textureSize() * 1.1,
                                    24,
