@@ -1,6 +1,12 @@
 % \documentclass[sigconf,anonymous,review]{acmart}
 \documentclass[sigconf]{acmart}
 
+% cwr includes
+% \usepackage{subfigure}
+% \usepackage{caption}
+% \usepackage{subcaption}
+
+
 %% Rights management information.  This information is sent to you
 %% when you complete the rights form.  These commands have SAMPLE
 %% values in them; it is your responsibility as an author to replace
@@ -92,16 +98,24 @@
 \ccsdesc[500]{Computing methodologies~Genetic programming}
 
 %% Keywords
-\keywords{camouflage, evolution, coevolution, nature, biology, predator, prey, }
+\keywords{camouflage, coevolution, nature, biology, predator, prey, vision, texture synthesis}
 
 %% Teaser figure that appears on the top of the article.
 %% Uncomment the includegraphics line to include an actual teaser image.
 %% Make sure to fill out a description for accessibility
+
+
 \begin{teaserfigure}
-  %\includegraphics[width=\textwidth]{yourgraphic}
-  \caption{Teaser figure}
-  \Description{This is the teaser figure for the article.}
-  \label{fig:teaser}
+    \includegraphics[scale=0.24]{20220930_step_6093}
+    \hfill
+    \includegraphics[scale=0.24]{20220930_step_6093}
+    \hfill
+    \includegraphics[scale=0.24]{20220930_step_6093}
+    \hfill
+    \includegraphics[scale=0.24]{20220930_step_6093}
+    \caption{Teaser figure}
+    \Description{This is the teaser figure for the article.}
+    \label{fig:teaser}
 \end{teaserfigure}
 
 \maketitle
@@ -113,6 +127,8 @@
 
 \section{Related work}
 [... xxx ...]
+
+[... TexSyn is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP varients \cite{Mckay_2010}. ...]
 
 %% Acknowledgements
 \begin{acks}
