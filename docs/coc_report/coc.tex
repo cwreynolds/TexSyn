@@ -1,12 +1,6 @@
 % \documentclass[sigconf,anonymous,review]{acmart}
 \documentclass[sigconf]{acmart}
 
-% cwr includes
-% \usepackage{subfigure}
-% \usepackage{caption}
-% \usepackage{subcaption}
-
-
 %% Rights management information.  This information is sent to you
 %% when you complete the rights form.  These commands have SAMPLE
 %% values in them; it is your responsibility as an author to replace
@@ -56,7 +50,7 @@
   \country{USA}
 }
 
-\renewcommand{\shortauthors}{Firstauthor et al.}
+\renewcommand{\shortauthors}{Craig Reynolds}
 
 \begin{abstract}
   [... super preliminary ... an abstract model of the evolution of camouflage in nature through adversarial interaction between predator and prey ... model contains representation of populations of predator and prey ...]
@@ -101,52 +95,68 @@
 \keywords{camouflage, coevolution, nature, biology, predator, prey, vision, texture synthesis}
 
 %% Teaser figure that appears on the top of the article.
-%% Uncomment the includegraphics line to include an actual teaser image.
-%% Make sure to fill out a description for accessibility
-
-
 \begin{teaserfigure}
-    \includegraphics[scale=0.24]{20220930_step_6093}
+    %% TODO note that these are all the same image, and for this figure I probably
+    %% want to use images without the “predator prediction crosshairs”.
+    \includegraphics[scale=0.24]{images/20220926_step_6143.png}
     \hfill
-    \includegraphics[scale=0.24]{20220930_step_6093}
+    \includegraphics[scale=0.24]{images/20220918_step_7372.png}
     \hfill
-    \includegraphics[scale=0.24]{20220930_step_6093}
+    \includegraphics[scale=0.24]{images/20220930_step_6093.png}
     \hfill
-    \includegraphics[scale=0.24]{20220930_step_6093}
-    \caption{Teaser figure}
-    \Description{This is the teaser figure for the article.}
+    \includegraphics[scale=0.24]{images/20221003_step_3667.png}
+    \caption{Circular \textit{prey} each with an evolved camouflage patterns, overlaid on photographs of real world textures. Each image contains three prey.}
+    \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
+    \vspace{5mm} %5mm vertical space
 \end{teaserfigure}
 
+%% I guess this lays out the single column “top matter” defined above.
 \maketitle
 
-%% The actual document with your content starts here
-
 \section{Introduction}
+This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction, the coevolution, of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} — hard to see — against the background images. The predators evolve and learn to hunt the prey by locating their position within the environment.
+
+Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize this complex natural systems.
+
 [... introduction ... following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved against negative selection by a predator which prefers the most conspicuous prey against a given background. ...]
 
 \section{Related work}
 [... xxx ...]
 
-[... TexSyn is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP varients \cite{Mckay_2010}. ...]
+[... TexSyn is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. ...]
 
 %% Acknowledgements
 \begin{acks}
-Acknowledgements
+[... Many thanks to all who helped me with this work: my supportive family, Andrew Glassner for teaching me everything I know about deep learning, Ken Perlin for, lots but especially [An Image Synthesizer?] Pat Hanrahan for helpful career advice (“just do the research”). ...]
+
+[maybe just names: 
+Ken Perlin
+Pat Hanrahan
+Karl Sims
+Andrew Glassner
+Richard Dawkins
+Peter Angeline 
+Jordan Pollack
+]
 \end{acks}
 
 %% Bibliography.
-%% Uncomment the bibliography line and link to an actual bib file
 \bibliographystyle{ACM-Reference-Format}
-% \bibliography{bibliography.bib}
 \bibliography{coc.bib}
-
 
 %% Appendix
 \appendix
 
 \section{Additional Section}
-
 Text
+
+% Note (from https://s2022.siggraph.org/technical-papers-submissions-faq/): 
+% The Conference Paper track encourages submissions for high-quality, 
+% ground-breaking research that fits within a strict 7-page limit (plus 
+% additional pages for references), and may be more appropriate for
+% research that is less-polished but still potentially-impactful. Journal 
+% papers do not have a page limit, and may include more thorough experiments
+% and derivations within the main paper. 
 
 \end{document}
