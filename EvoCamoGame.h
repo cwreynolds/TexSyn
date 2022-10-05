@@ -1304,18 +1304,56 @@ public:
     // are sorted according to a quality metric so the first one is “best.”
     std::vector<Vec2> allResponses() const { return predator_responses_; }
     
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    
+    
+    
+//    void saveResponsesFile(fs::path others_pathname)
+//    {
+//        float x, y;
+//        predator_responses_.clear();
+//        std::ifstream input_file(others_pathname);
+//        while ((input_file >> x) && (input_file >> y))
+//        {
+//            predator_responses_.push_back(Vec2(x, y));
+//        }
+//        input_file.close();
+//    }
+    
+    // Read the response file (eg "find_2731.txt") from the Python PredatorEye
+    // side, store it in "predator_responses_". Since switching to local mode
+    // from "Rube Goldberg mode", I have seen occasional crashes (segmentation
+    // fault) at the last line of waitForReply(). (See logs in Notes app for run
+    // "oxalis_sprouts_20221003_2021" and "michaels_gravel_20221001_1748".) My
+    // theory is that while it waits until the file exists, perhaps data is
+    // still being written to it? If so, this could leave predator_responses_
+    // empty, and so allResponses().front() is undefined behavior. On 20221005
+    // I changed this to loop until it has read the expected number of responses
+    // from the file. (Maybe Rube Goldberg hid this bug with long sync delays.)
     void saveResponsesFile(fs::path others_pathname)
     {
-        float x, y;
-        predator_responses_.clear();
-        std::ifstream input_file(others_pathname);
-        while ((input_file >> x) && (input_file >> y))
+        while (true)
         {
-            predator_responses_.push_back(Vec2(x, y));
+            float x, y;
+            predator_responses_.clear();
+            std::ifstream input_file(others_pathname);
+            while ((input_file >> x) && (input_file >> y))
+            {
+                predator_responses_.push_back(Vec2(x, y));
+            }
+            input_file.close();
+            if (predator_responses_.size() == expected_response_count_) {break;}
+//            std::cout << "empty or partial response file." << std::endl;
+            std::cout << "Reread: bad format for " << others_pathname;
+            std::cout << std::endl;
         }
-        input_file.close();
     }
     
+    // TODO 20221005 should default be 1, then set to 3 by EvoCamoVsLearnPredPop?
+    int expected_response_count_ = 3;
+
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
     // Used to ping the comms directory when it seems hung.
     void writePingFile(int count, int step)
     {
