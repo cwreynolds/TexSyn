@@ -1,4 +1,4 @@
-% \documentclass[sigconf,anonymous,review]{acmart}
+% \documentclass[sigconf,anonymous,review,timestamp]{acmart}
 \documentclass[sigconf]{acmart}
 
 %% Rights management information.  This information is sent to you
@@ -20,8 +20,8 @@
 %%
 %% Submission ID.
 %% Use this when submitting an article to a sponsored event. You'll
-%% receive a unique submission ID from the organizers
-%% of the event, and this ID should be used as the parameter to this command.
+%% receive a unique submission ID from the organizers of the event,
+%% and this ID should be used as the parameter to this command.
 \acmSubmissionID{123-A56-BU3}
 
 %%
@@ -36,12 +36,16 @@
 %% the next command will enable that style.
 \citestyle{acmauthoryear}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TODO 20221010 temp
+\usepackage{todonotes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
 \title{Coevolution of Camouflage}
 
-%% Authors
+%% Author
 \author{Craig Reynolds}
 \email{cwr@red3d.com}
 \orcid{0000-0001-8203-712X}
@@ -98,14 +102,14 @@
 \begin{teaserfigure}
     %% TODO note that these are all the same image, and for this figure I probably
     %% want to use images without the “predator prediction crosshairs”.
-    \includegraphics[scale=0.24]{images/20220926_step_6143.png}
-    \hfill
     \includegraphics[scale=0.24]{images/20220918_step_7372.png}
     \hfill
-    \includegraphics[scale=0.24]{images/20220930_step_6093.png}
+    \includegraphics[scale=0.24]{images/20220926_step_6143.png}
     \hfill
     \includegraphics[scale=0.24]{images/20221003_step_3667.png}
-    \caption{Circular \textit{prey} each with an evolved camouflage patterns, overlaid on photographs of real world textures. Each image contains three prey.}
+    \hfill
+    \includegraphics[scale=0.24]{images/20220930_step_6093.png}
+    \caption{Circular \textit{prey} each with an evolved camouflage patterns, overlaid on photographs of real world textures. Each image contains three prey. [QQQ replace stand-in images]}
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
     \vspace{5mm} %5mm vertical space
@@ -121,29 +125,82 @@ Computational models of complex biological systems have several benefits. Constr
 
 [... introduction ... following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved against negative selection by a predator which prefers the most conspicuous prey against a given background. ...]
 
-\section{Related work}
-[... xxx ...]
 
-[... TexSyn is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. ...]
+\section{Related work}
+[... \textbf{closely related work:} 
+GANmouflage \cite{guo_ganmouflage_2022}
+and \cite{owens_camouflaging_2014}
+...]
+\par
+[... TexSyn \textbf{[OK to mention name?]} is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. ...]
+
+
+\section{Simulation and competition}
+\subsection{Random topics QQQ}
+This camouflage simulation is based on two adversarial \textbf{populations}: one of \textbf{predators} and one of \textbf{prey}. Individual prey and predators compete with their own kind for survival within their own population. Predators must \textbf{hunt} successfully to survive. Prey survive if inconspicuous (“cryptic”) enough to avoid being found and eaten. A prey hunted and eaten — or a predator perished from hunger — is removed from its population. It is replaced by an \textbf{offspring} of parents from the surviving population.
+\par
+Predators define the fitness of prey: being easy to spot is bad, blending in is good. Similarly prey define the fitness of predators: being fooled by camouflage is bad, spotting cryptic prey is good. From this adversarial interaction, the two populations \textbf{coevolve}. If one side has some sort of flaw, the other side has a motivation to exploit it. As a result both sides tend to improve over simulation time.
+\par
+Initial random prey have coloration likely to contrast with the background. Initial predators have a “pre-trained” ability to find conspicuous objects which may allow them to hunt the initial un-camouflaged prey.
+\par
+[... relative fitness ...] and [... negative selection ...]
+\par
+[... tournaments relative fitness in game-like competition ...]
+
+\section{Texture Synthesis}
+Textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \textbf{TexSyn} is a simple domain specific language for describing textures.
+\par
+The details of TexSyn are not central to understanding this camouflage model. A quick overview is given here. TexSyn is library, an API, with many \textbf{operators} each of which return a \textbf{Texture}. Almost all of them also take Textures as input parameters, along with simple values like colors, 2d vectors, and floating point numbers. Writing nested functional expressions of operators corresponds to trees of operator instances.
+\par
+These TexSyn style textures are represented as operators, trees, and parameters. They do not store pixel data, providing instead a function to sample the textures color at an arbitrary floating point xy location. This is similar to fragment shaders for GPU and the Pixel Stream Editor functions in \cite{perlin_image_1985}.
+\par
+\begin{figure}
+\centering
+% \missingfigure is from todonotes
+\missingfigure[figwidth=\linewidth*0.5,figcolor=white]{}
+\caption{TexSyn example}
+\end{figure}
+
+
+\section{Limitations}
+[... no objective measure of camouflage effectiveness ...]
+\par
+[... all results are hand selected, “cherry picked” ...] 
+\par
+[... cite that fast growing literature on “camouflaged object detection” ...]
+\par
+[... propose a crowd sourced user study of camouflage quality ... could be based on time to find ... like the interactive web games of \href{https://www.visual-ecology.com/2020/10/06/martin-stevens/}{Martin Stevens} nuthatch egg? ...] 
+\par
+[... in email to Ken I wrote: \textit{The aspect of my project I'm unsure how to approach is lack of rigor. My evaluations are all subjective. It comes down to “we can see that the effectiveness of the camouflage clearly increases during the simulation.”}]
+\par
+[... inherently 2d ...]
+\par
+[... texture synthesis lacks genetic or biological plausibility ...]
+
 
 %% Acknowledgements
 \begin{acks}
-[... Many thanks to all who helped me with this work: my supportive family, Andrew Glassner for teaching me everything I know about deep learning, Ken Perlin for, lots but especially [An Image Synthesizer?] Pat Hanrahan for helpful career advice (“just do the research”). ...]
-
-[maybe just names: 
-Ken Perlin
-Pat Hanrahan
-Karl Sims
-Andrew Glassner
-Richard Dawkins
-Peter Angeline 
-Jordan Pollack
+[... Many thanks to all who helped me with this work: my supportive family, Andrew Glassner for teaching me everything I know about deep learning, Ken Perlin for, lots, but especially [An Image Synthesizer?] Pat Hanrahan for helpful career advice (“just do the research”). ...]
+\par
+[maybe just names (roughly backward in time): 
+Ken Perlin,
+Andrew Glassner,
+Pat Hanrahan,
+Karl Sims,
+John Koza,
+Richard Dawkins,
+Witkin/Kass/Turk,
+Peter Angeline,
+Jordan Pollack.
+and of course, Alan Turing. [too weird/maudlin? QQQ]
 ]
 \end{acks}
+
 
 %% Bibliography.
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{coc.bib}
+
 
 %% Appendix
 \appendix
