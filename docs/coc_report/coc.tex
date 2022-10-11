@@ -128,9 +128,9 @@ Computational models of complex biological systems have several benefits. Constr
 
 \section{Related work}
 [... \textbf{closely related work:} 
-GANmouflage \cite{guo_ganmouflage_2022}
-and \cite{owens_camouflaging_2014}
-...]
+[... \cite{harrington_coevolution_2014} ...]
+and
+GANmouflage \cite{guo_ganmouflage_2022} and \cite{owens_camouflaging_2014} ...] 
 \par
 [... TexSyn \textbf{[OK to mention name?]} is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. ...]
 
@@ -154,13 +154,18 @@ The details of TexSyn are not central to understanding this camouflage model. A 
 \par
 These TexSyn style textures are represented as operators, trees, and parameters. They do not store pixel data, providing instead a function to sample the textures color at an arbitrary floating point xy location. This is similar to fragment shaders for GPU and the Pixel Stream Editor functions in \cite{perlin_image_1985}.
 \par
+%%
+%% mention here, or in Related Work?:
+%%     Karl Sims. 1991. Artificial Evolution for Computer Graphics.
+%%     Computer Graphics, 25(4):319–328.
+%%     https://www.karlsims.com/papers/siggraph91.html  [ACM DL DOI?]
+%%
 \begin{figure}
 \centering
 % \missingfigure is from todonotes
 \missingfigure[figwidth=\linewidth*0.5,figcolor=white]{}
 \caption{TexSyn example}
 \end{figure}
-
 
 \section{Limitations}
 [... no objective measure of camouflage effectiveness ...]
