@@ -1326,11 +1326,22 @@ public:
                 predator_responses_.push_back(Vec2(x, y));
             }
             input_file.close();
-            if (predator_responses_.size() == expected_response_count_) {break;}
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20221012 build out expected_response_count_ api
+//            if (predator_responses_.size() == expected_response_count_) {break;}
+            if (predator_responses_.size() >= expected_response_count_) {break;}
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             std::cout << "Reread: bad format for " << others_pathname;
             std::cout << std::endl;
         }
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 build out expected_response_count_ api
+    // Get/set the expected number of predator responses (prediction xy).
+    int getExpectedResponseCount() const { return expected_response_count_; }
+    void setExpectedResponseCount(int c) { expected_response_count_ = c; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Used to ping the comms directory when it seems hung.
     void writePingFile(int count, int step)
@@ -1411,8 +1422,12 @@ private:
     bool key_typed_2_ = false;
     // All predator responses from most recent PythonComms::waitForReply() call.
     std::vector<Vec2> predator_responses_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 build out expected_response_count_ api
     // TODO 20221005 should default be 1, set to 3 by eg EvoCamoVsLearnPredPop?
-    int expected_response_count_ = 3;
+//    int expected_response_count_ = 3;
+    int expected_response_count_ = 1;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
 
 
@@ -1447,7 +1462,11 @@ public:
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
         setLastMouseClick(prediction_in_pixels);
-        drawCrosshairAnnotation();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221012 enable draw crosshair
+//        drawCrosshairAnnotation();
+        if (enableDrawCrosshair()) { drawCrosshairAnnotation(); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().refresh();
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops)
@@ -1463,10 +1482,24 @@ public:
         cv::setWindowTitle(ps, ps + " (" + getStepAsString() + ")");
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221012 run log
+        appendStepResultsToRunLog();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
         Texture::waitKey(100);
     }
-    
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 run log
+    virtual void appendStepResultsToRunLog()
+    {
+        //int step = getPopulation()->getStepCount();
+        //std::vector<Vec2> predator_responses = getComms().allResponses();
+        //std::vector<Disk> prey_disks = getPreyDisks();
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Draws a circle-and-crosshair for each response position returned by the
     // predator side. The first one is colored B&W as before, then six other
     // colors (WGRBYCM). These seven colors are repeated as needed.
@@ -1498,6 +1531,10 @@ public:
                                    true);
         }
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 enable draw crosshair
+    bool enableDrawCrosshair() const { return false; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Count and record "invalid tournaments" -- aka "predator fails"
     void recordPredatorFailTimeSeriesData()
@@ -1609,7 +1646,39 @@ public:
 class EvoCamoVsLearnPredPop : public EvoCamoVsLearningPredator
 {
 public:
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 build out expected_response_count_ api
+    
+//    EvoCamoVsLearnPredPop(const CommandLine& cmd)
+//    : EvoCamoVsLearningPredator(cmd) {}
+
     EvoCamoVsLearnPredPop(const CommandLine& cmd)
-        : EvoCamoVsLearningPredator(cmd) {}
+        : EvoCamoVsLearningPredator(cmd)
+    {
+        // Three predators per tournament, each producing an xy prediction.
+        getComms().setExpectedResponseCount(3);
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221012 run log
+    void appendStepResultsToRunLog() override
+    {
+        int step = getPopulation()->getStepCount();
+        std::vector<Vec2> predator_responses = getComms().allResponses();
+        std::vector<Disk> prey_disks = getPreyDisks();
+        
+        
+        std::cout << "    LOG: ";
+        std::cout << step << ",";
+        std::cout << vec_to_string(predator_responses) << ",";
+        
+        for (auto& disk : prey_disks)
+        {
+            std::cout << disk.position << ",";
+        }
+        std::cout << std::endl;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 };
