@@ -559,6 +559,21 @@ public:
     {
         return fs::path(commandName()).filename();
     }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221013 actually write log to file.
+    std::string wholeCommandAsString() const
+    {
+        std::string whole_command;
+        bool space = false;
+        for (auto& token_string : cmd_line_)
+        {
+            if (space) whole_command += " ";
+            whole_command += token_string;
+            space = true;
+        }
+        return whole_command;
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 private:
     // Given traditional main() parameters argc/argv, return BY VALUE an
     // std::vector of std::strings representing the tokens of a unix-style

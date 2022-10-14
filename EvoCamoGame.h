@@ -515,6 +515,22 @@ public:
         return fn;
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221013 actually write log to file.
+    
+//    // A subdirectory under output_directory_ for results from this run.
+//    std::string runOutputDirectory()
+//    {
+//        if (!fs::exists(output_directory_))
+//        {
+//            debugPrint(output_directory_);
+//            assert(!"output_directory_ does not exist.");
+//        }
+//        fs::path run_output_dir = output_directory_;
+//        run_output_dir /= (run_name_ + "_" + date_hours_minutes());
+//        return run_output_dir;
+//    }
+
     // A subdirectory under output_directory_ for results from this run.
     std::string runOutputDirectory()
     {
@@ -524,10 +540,19 @@ public:
             assert(!"output_directory_ does not exist.");
         }
         fs::path run_output_dir = output_directory_;
-        run_output_dir /= (run_name_ + "_" + date_hours_minutes());
+        
+        run_id_ = run_name_ + "_" + date_hours_minutes();
+//        run_output_dir /= (run_name_ + "_" + date_hours_minutes());
+        run_output_dir /= run_id_;
+
         return run_output_dir;
     }
-        
+    
+    std::string getRunID() const { return run_id_; }
+
+    std::string run_id_;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     // Returns, as a string, current Population evolution "step" number.
     std::string getStepAsString() const
     {
@@ -1657,11 +1682,86 @@ public:
     {
         // Three predators per tournament, each producing an xy prediction.
         getComms().setExpectedResponseCount(3);
+        
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20221013 actually write log to file.
+//        appendLineToRunLog(getRunID());
+//        appendLineToRunLog(cmd.wholeCommandAsString());
+//        appendLineToRunLog("step, in_disk(i*3), "
+//                           "predator prediction(x,y*3), "
+//                           "prey position(x,y*3)");
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221013 actually write log to file.
+        whole_command_as_string_ = cmd.wholeCommandAsString();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
+    // TODO 20221013 actually write log to file.
+    // TODO 20221013 maybe move this to base class EvoCamoVsStaticFCD ?
+
+    std::string whole_command_as_string_;
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
+    
+//    void appendStepResultsToRunLog() override
+//    {
+//        int step = getPopulation()->getStepCount();
+//        std::vector<Vec2> predator_responses = getComms().allResponses();
+//        std::vector<Disk> prey_disks = getPreyDisks();
+//
+//
+//        std::cout << "    LOG: ";
+//        std::cout << step << ",";
+//        std::cout << vec_to_string(predator_responses) << ",";
+//
+//        for (auto& disk : prey_disks)
+//        {
+//            std::cout << disk.position << ",";
+//        }
+//        std::cout << std::endl;
+//    }
+
+    
+    // TODO 20221013 fix commas, add in_disk
+
+//    void appendStepResultsToRunLog() override
+//    {
+//        int step = getPopulation()->getStepCount();
+//        std::vector<Vec2> predator_responses = getComms().allResponses();
+//        std::vector<Disk> prey_disks = getPreyDisks();
+//
+//
+//        std::cout << "    LOG: ";
+//        std::cout << step << ",";
+//        std::cout << vec_to_string(predator_responses) << ",";
+//
+//        for (auto& disk : prey_disks)
+//        {
+//            std::cout << disk.position << ",";
+//        }
+//        std::cout << std::endl;
+//    }
+    
+    // DELETEME copy for reference:
+    
+//    // Format float to a string, as percentage with "digits" fractional digits after
+//    // the decimal point.
+//    inline std::string float_to_percent_fractional_digits(float value, int digits)
+//    {
+//        std::stringstream ss;
+//        ss << std::setprecision(2 + digits);
+//        ss << 100 * value << "%";
+//        return ss.str();
+//    }
+
+  
     void appendStepResultsToRunLog() override
     {
         int step = getPopulation()->getStepCount();
@@ -1669,16 +1769,89 @@ public:
         std::vector<Disk> prey_disks = getPreyDisks();
         
         
-        std::cout << "    LOG: ";
-        std::cout << step << ",";
-        std::cout << vec_to_string(predator_responses) << ",";
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221013 actually write log to file.
+        if (step == 0)
+        {
+            appendLineToRunLog(getRunID());
+            appendLineToRunLog(whole_command_as_string_);
+            appendLineToRunLog("step, in_disk(i*3), "
+                               "predator prediction(x,y*3), "
+                               "prey position(x,y*3)");
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        
+
+        std::stringstream ss;
+        
+        ss << step << ",";
+        ss << vec_to_string(predator_responses) << ",";
         
         for (auto& disk : prey_disks)
         {
-            std::cout << disk.position << ",";
+            ss << disk.position << ",";
         }
-        std::cout << std::endl;
+//        std::cout << std::endl;
+        
+        appendLineToRunLog(ss.str());
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    // TODO 20221013 move to EvoCamoVsStaticFCD
+    // TODO 20221013 actually write log to file.
+    // Add one line to end of run log file.
+    void appendLineToRunLog(const std::string& line_text)
+    {
+        // Pathname for log file in this run's output directory.
+//        fs::path output_pathname = outputDirectoryThisRun() + "/run_log.txt";
+        
+        fs::path output_directory = outputDirectoryThisRun();
+        fs::path output_pathname = output_directory / "run_log.txt";
+        
+        debugPrint(output_pathname);
+        
+        // Open output_stream to output_pathname in append mode.
+        std::ofstream output_stream;
+        output_stream.open(output_pathname, std::ios::app);
+        // Append the given line of text to the log file.
+        output_stream << line_text << std::endl;
+    }
+
+    
+
+    
+    // DELETEME copy for reference:
+
+//    void logFunctionUsageCounts(const fs::path& out)
+//    {
+//        int step = getPopulation()->getStepCount();
+//        if ((step % 10) == 0)
+//        {
+//            // Preserve each named counter, but set its count to zero.
+//            cfu_.zeroEachCounter();
+//            // Count total GpFunction usage over entire Population of GpTrees.
+//            cfu_.count(*getPopulation());
+//            // Open output stream to file in append mode.
+//            std::ofstream outfile;
+//            outfile.open(out / "function_counts.txt", std::ios::app);
+//            if (step == 0)
+//            {
+//                std::string names = "steps,ave_tree_size,ave_fitness,";
+//                auto func = [&](std::string s, int c) { names += s + ","; };
+//                cfu_.applyToAllCounts(func);
+//                std::cout << names << std::endl;
+//                outfile << names << std::endl;
+//            }
+//            std::string counts;
+//            auto add_count = [&](int c){ counts += std::to_string(c) + ","; };
+//            add_count(step);
+//            add_count(getPopulation()->averageTreeSize());
+//            add_count(getPopulation()->averageFitness());
+//            cfu_.applyToAllCounts([&](std::string s, int c){ add_count(c); });
+//            std::cout << counts << std::endl;
+//            outfile << counts << std::endl;
+//        }
+//    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 };
