@@ -45,6 +45,12 @@ public:
                                              std::function
                                              <void(const std::vector<Disk>&)>
                                              viz_func);
+    // Is given point inside this Disk?
+    // Puzzled by why this is not already here. Added on 20221015.
+    bool isInside(Vec2 point) const
+    {
+        return (point - position).length() <= radius;
+    }
 };
 
 // DiskOccupancyGrid -- 2d spatial data structure for collections of Disks.
