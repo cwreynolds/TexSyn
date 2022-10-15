@@ -1493,13 +1493,18 @@ public:
         if (enableDrawCrosshair()) { drawCrosshairAnnotation(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().refresh();
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221014 formalize step save stride. [this comment needs updating]
+
         // Save an annotated tournament image every 19 steps (chosen to be
         // relatively prime to subpops, so we see results from all subpops)
         // or if requested with key command.
         if (getComms().keyTyped2())
             { std::cout << "    "; writePreviousStepImageToFile(); }
-        if (getComms().keyTyped1() || (step % 19 == 0))
+//        if (getComms().keyTyped1() || (step % 19 == 0))
+        if (getComms().keyTyped1() || saveThisStep())
             { std::cout << "    "; writeTournamentImageToFile(); }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Maintain a second window showing previous step outcome.
         std::string ps = "previous step";
         previous_step_image_ = gui().getCvMat().clone();
@@ -1515,6 +1520,19 @@ public:
         Texture::waitKey(100);
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221014 formalize step save stride.
+    // Just a constant, but wrap in API so derived classes can access.
+//    int stepSaveStride() const { return 19; }
+
+    bool saveThisStep() const
+    {
+        int step = getPopulation()->getStepCount();
+        return step % step_save_stride_ == 0;
+    }
+    int step_save_stride_ = 19;
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
     virtual void appendStepResultsToRunLog()
@@ -1762,39 +1780,124 @@ public:
 //    }
 
   
+//        void appendStepResultsToRunLog() override
+//        {
+//            int step = getPopulation()->getStepCount();
+//            std::vector<Vec2> predator_responses = getComms().allResponses();
+//            std::vector<Disk> prey_disks = getPreyDisks();
+//
+//
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO 20221013 actually write log to file.
+//            if (step == 0)
+//            {
+//                appendLineToRunLog(getRunID());
+//                appendLineToRunLog(whole_command_as_string_);
+//                appendLineToRunLog("stride 19");
+//                appendLineToRunLog("diameter " + std::to_string(diskDiameter()));
+//    //            appendLineToRunLog("step, in_disk(i*3), "
+//    //                               "predator prediction(x,y*3), "
+//    //                               "prey position(x,y*3)");
+//                appendLineToRunLog("each line below: step number, "
+//                                   "3 in_disk bits, "
+//                                   "3 xy predator preditions, "
+//                                   "3 xy prey center positions");
+//                appendLineToRunLog("step, in1,in2,in3, "
+//                                   "p1x,p1y,p2x,p2y,p3x,p3y, "
+//                                   "c1x,c1y,c2x,c2y,c3x,c3y");
+//                appendLineToRunLog("data");
+//            }
+//
+//            // "step,in1,in2,in3,px1,py1,px2,py2,px3,py3,cx1,cy1,cx2,cy2,cx3,cy3"
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//
+//
+//            std::stringstream ss;
+//            std::string s = ",";
+//
+//    //        ss << step << ",";
+//    //        ss << vec_to_string(predator_responses) << ",";
+//    //
+//    //        for (auto& disk : prey_disks)
+//    //        {
+//    //            ss << disk.position << ",";
+//    //        }
+//
+//            auto log_xy = [&](Vec2 xy) { ss << s << xy.x() << s << xy.y(); };
+//
+//            ss << step;
+//            ss << s << "0" << s << "0" << s << "0";
+//            for (auto& r : predator_responses) { log_xy(r); }
+//            for (auto& disk : prey_disks) { log_xy(disk.position); }
+//            appendLineToRunLog(ss.str());
+//        }
+    
+//        // TODO 20221014 Prototype to be refined and moved to base class.
+//        // Convert a position expressed as image relative coordinates (that
+//        // is: ([0,1],[0,1])) to the equivalent position in pixel units.
+//    //    Vec2 imageRelativePositionToPixels(Vec2 v) const
+//    //    Vec2 imageNormalizedToPixels(Vec2 v) const
+//        Vec2 toPixels(Vec2 position_in_image_normalized_coordiantes ) const
+//        {
+//            return v * gui().getSize().x();
+//        }
+    
+
+
+    
+    // TODO 20221014, from EvoCamoVsStaticFCD::waitForUserInput()
+    // TODO 20221014, back-patch that.
+    //     Vec2 prediction_in_pixels = prediction * gui().getSize().x();
+    
+    // TODO 20221014 Prototype to be refined and moved to base class.
+    // Convert a position expressed as image relative coordinates (that
+    // is: ([0,1],[0,1])) to the equivalent position in pixel units.
+    //    Vec2 imageRelativePositionToPixels(Vec2 v) const
+    //    Vec2 imageNormalizedToPixels(Vec2 v) const
+    Vec2 toPixels(Vec2 position_in_image_normalized_coordinates) const
+    {
+        auto image_width = gui().getSize().x();
+        return position_in_image_normalized_coordinates * image_width;
+    }
+    
     void appendStepResultsToRunLog() override
     {
-        int step = getPopulation()->getStepCount();
-        std::vector<Vec2> predator_responses = getComms().allResponses();
-        std::vector<Disk> prey_disks = getPreyDisks();
-        
-        
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20221013 actually write log to file.
-        if (step == 0)
+        if (saveThisStep())
         {
-            appendLineToRunLog(getRunID());
-            appendLineToRunLog(whole_command_as_string_);
-            appendLineToRunLog("step, in_disk(i*3), "
-                               "predator prediction(x,y*3), "
-                               "prey position(x,y*3)");
+            int step = getPopulation()->getStepCount();
+            if (step == 0)
+            {
+                appendLineToRunLog(getRunID());
+                appendLineToRunLog(whole_command_as_string_);
+                appendLineToRunLog("stride 19");
+                appendLineToRunLog("diameter " + std::to_string(diskDiameter()));
+                appendLineToRunLog("image_size " +
+                                   std::to_string(int(gui().getSize().x())) +
+                                   " " +
+                                   std::to_string(int(gui().getSize().y())));
+                appendLineToRunLog("each line below: step number, "
+                                   "3 in_disk bits, "
+                                   "3 xy predator predictions, "
+                                   "3 xy prey center positions");
+                appendLineToRunLog("step, in1,in2,in3, "
+                                   "p1x,p1y,p2x,p2y,p3x,p3y, "
+                                   "c1x,c1y,c2x,c2y,c3x,c3y");
+                appendLineToRunLog("data");
+            }
+            std::string s = ",";
+            std::stringstream ss;
+            std::vector<Disk> prey_disks = getPreyDisks();
+            std::vector<Vec2> predator_responses = getComms().allResponses();
+            auto log_xy = [&](Vec2 xy) { ss << s << xy.x() << s << xy.y(); };
+            ss << step;
+            ss << s << "0" << s << "0" << s << "0";
+            for (auto& r : predator_responses) { log_xy(toPixels(r)); }
+            for (auto& disk : prey_disks) { log_xy(disk.position); }
+            appendLineToRunLog(ss.str());
         }
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        
-
-        std::stringstream ss;
-        
-        ss << step << ",";
-        ss << vec_to_string(predator_responses) << ",";
-        
-        for (auto& disk : prey_disks)
-        {
-            ss << disk.position << ",";
-        }
-//        std::cout << std::endl;
-        
-        appendLineToRunLog(ss.str());
+        debugPrint(getTextureSize())
+        debugPrint(diskDiameter())
     }
 
     // TODO 20221013 move to EvoCamoVsStaticFCD
@@ -1803,13 +1906,8 @@ public:
     void appendLineToRunLog(const std::string& line_text)
     {
         // Pathname for log file in this run's output directory.
-//        fs::path output_pathname = outputDirectoryThisRun() + "/run_log.txt";
-        
         fs::path output_directory = outputDirectoryThisRun();
         fs::path output_pathname = output_directory / "run_log.txt";
-        
-        debugPrint(output_pathname);
-        
         // Open output_stream to output_pathname in append mode.
         std::ofstream output_stream;
         output_stream.open(output_pathname, std::ios::app);
@@ -1854,4 +1952,12 @@ public:
 //    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20221014 mocking API which should be way down in the base class.
+    // Equivalent to getTextureSize(). Unify?
+    int diskDiameter() {return 101;}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 };
