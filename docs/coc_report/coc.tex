@@ -100,8 +100,7 @@
 
 %% Teaser figure that appears on the top of the article.
 \begin{teaserfigure}
-    %% TODO note that these are all the same image, and for this figure I probably
-    %% want to use images without the “predator prediction crosshairs”.
+    %% TODO note: use images without the “predator prediction crosshairs”.
     \includegraphics[scale=0.24]{images/20220918_step_7372.png}
     \hfill
     \includegraphics[scale=0.24]{images/20220926_step_6143.png}
@@ -109,10 +108,11 @@
     \includegraphics[scale=0.24]{images/20221003_step_3667.png}
     \hfill
     \includegraphics[scale=0.24]{images/20220930_step_6093.png}
-    \caption{Circular \textit{prey} each with an evolved camouflage patterns, overlaid on photographs of real world textures. Each image contains three prey. [QQQ replace stand-in images]}
+    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. [QQQ replace stand-in images]}
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
-    \vspace{5mm} %5mm vertical space
+    % \vspace{5mm} %5mm vertical space
+    \vspace{3mm} % 3mm vertical space
 \end{teaserfigure}
 
 %% I guess this lays out the single column “top matter” defined above.
@@ -120,11 +120,27 @@
 
 \section{Introduction}
 This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction, the coevolution, of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} — hard to see — against the background images. The predators evolve and learn to hunt the prey by locating their position within the environment.
-
+\par
 Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize this complex natural systems.
-
+\par
 [... introduction ... following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved against negative selection by a predator which prefers the most conspicuous prey against a given background. ...]
-
+\begin{figure*}
+    \includegraphics[scale=0.16]{images/20221016_step_969.png}
+    \hfill
+    \includegraphics[scale=0.16]{images/20221016_step_1710.png}
+    \hfill
+    \includegraphics[scale=0.16]{images/20221016_step_2368.png}
+    \hfill
+    \includegraphics[scale=0.16]{images/20221016_step_3420.png}
+    \hfill
+    \includegraphics[scale=0.16]{images/20221016_step_4864.png}
+    \hfill
+    \includegraphics[scale=0.16]{images/20221016_step_5564.png}
+    \caption{Evolution of the prey population over simulation time}
+    \Description{Sequence of images showing evolution of prey population over simulation time.}
+    \label{fig:time_sequence}
+    \vspace{5mm} %5mm vertical space
+\end{figure*}
 
 \section{Related work}
 [... \textbf{closely related work:} 
