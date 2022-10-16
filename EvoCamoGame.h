@@ -1490,7 +1490,7 @@ public:
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20221012 enable draw crosshair
 //        drawCrosshairAnnotation();
-        if (enableDrawCrosshair()) { drawCrosshairAnnotation(); }
+//        if (enableDrawCrosshair()) { drawCrosshairAnnotation(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         gui().refresh();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1505,11 +1505,23 @@ public:
         if (getComms().keyTyped1() || saveThisStep())
             { std::cout << "    "; writeTournamentImageToFile(); }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20221015 draw crosshair on "ps" window
+
         // Maintain a second window showing previous step outcome.
         std::string ps = "previous step";
+        // Save previous step image.
         previous_step_image_ = gui().getCvMat().clone();
-        cv::imshow("previous step", previous_step_image_);
+        // Save crosshairs on top of previous step image.
+        drawCrosshairAnnotation();
+        
+//        cv::imshow("previous step", previous_step_image_);
+//        cv::imshow(ps, previous_step_image_);
+        cv::imshow(ps, gui().getCvMat());
+
         cv::setWindowTitle(ps, ps + " (" + getStepAsString() + ")");
+
         // Count and record "invalid tournaments" -- aka "predator fails"
         recordPredatorFailTimeSeriesData();
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
