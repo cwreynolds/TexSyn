@@ -36,11 +36,6 @@
 %% the next command will enable that style.
 \citestyle{acmauthoryear}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% TODO 20221010 temp
-\usepackage{todonotes}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{document}
 
 \title{Coevolution of Camouflage}
@@ -57,8 +52,7 @@
 \renewcommand{\shortauthors}{Craig Reynolds}
 
 \begin{abstract}
-  [... super preliminary ... an abstract model of the evolution of camouflage in nature through adversarial interaction between predator and prey ... model contains representation of populations of predator and prey ...]
-  [... produces camouflage textures for given backgrounds (typically photos of the real world) based on mutual conflict between predators and prey]
+  Camouflage in nature seems to arise from competition between predators who must find prey to survive, and prey who must avoid detection to survive. This work attempts to simulate a simplified, abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learns to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, primarily of natural scenes. This simulation is based on an evolving population of predators and another of prey. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, and more significantly an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature.
 \end{abstract}
 
 %%
@@ -74,26 +68,32 @@
    <concept>
        <concept_id>10010147.10010371.10010382.10010384</concept_id>
        <concept_desc>Computing methodologies~Texturing</concept_desc>
-       <concept_significance>500</concept_significance>
+       <concept_significance>300</concept_significance>
        </concept>
    <concept>
        <concept_id>10010147.10010178.10010224</concept_id>
        <concept_desc>Computing methodologies~Computer vision</concept_desc>
-       <concept_significance>500</concept_significance>
+       <concept_significance>300</concept_significance>
        </concept>
-    
+    <concept>
+       <concept_id>10010147.10010178.10010224.10010245.10010246</concept_id>
+       <concept_desc>Computing methodologies~Interest point and salient region detections</concept_desc>
+       <concept_significance>300</concept_significance>
+       </concept>
     <concept>
         <concept_id>10010147.10010257.10010293.10011809.10011813</concept_id>
         <concept_desc>Computing methodologies~Genetic programming</concept_desc>
-        <concept_significance>500</concept_significance>
+        <concept_significance>300</concept_significance>
     </concept>
  </ccs2012>
 \end{CCSXML}
 
 \ccsdesc[500]{Computing methodologies~Artificial life}
-\ccsdesc[500]{Computing methodologies~Texturing}
-\ccsdesc[500]{Computing methodologies~Computer vision}
-\ccsdesc[500]{Computing methodologies~Genetic programming}
+\ccsdesc[300]{Computing methodologies~Texturing}
+\ccsdesc[300]{Computing methodologies~Computer vision}
+\ccsdesc[300]{Computing methodologies~Interest point and salient region detections} 
+\ccsdesc[300]{Computing methodologies~Genetic programming}
+
 
 %% Keywords
 \keywords{camouflage, coevolution, nature, biology, predator, prey, vision, texture synthesis}
@@ -108,22 +108,16 @@
     \includegraphics[scale=0.24]{images/20221003_step_3667.png}
     \hfill
     \includegraphics[scale=0.24]{images/20220930_step_6093.png}
-    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. [QQQ replace stand-in images]}
+    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version. [QQQ replace stand-in images]}
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
     % \vspace{5mm} %5mm vertical space
     \vspace{3mm} % 3mm vertical space
 \end{teaserfigure}
 
-%% I guess this lays out the single column “top matter” defined above.
+%% Lay out the single column “top matter” defined above.
 \maketitle
 
-\section{Introduction}
-This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction, the coevolution, of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} — hard to see — against the background images. The predators evolve and learn to hunt the prey by locating their position within the environment.
-\par
-Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize this complex natural systems.
-\par
-[... introduction ... following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved against negative selection by a predator which prefers the most conspicuous prey against a given background. ...]
 \begin{figure*}
     \includegraphics[scale=0.16]{images/20221016_step_969.png}
     \hfill
@@ -139,8 +133,20 @@ Computational models of complex biological systems have several benefits. Constr
     \caption{Evolution of the prey population over simulation time}
     \Description{Sequence of images showing evolution of prey population over simulation time.}
     \label{fig:time_sequence}
-    \vspace{5mm} %5mm vertical space
 \end{figure*}
+
+\section{Introduction}
+This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction — the coevolution — of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within the environment.
+\par
+Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize this complex natural systems.
+\par
+Following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved by negative selection by a predator which prefers the most conspicuous prey against a given background. In that game-like interactive simulation, the predator was a human “player.” The simulation would display a photographic background image overlaid with camouflaged prey. The human predator would select, with a mouse click, the most conspicuous five of the ten displayed prey. These “eaten” prey were removed from the population, and replaced by offspring created by \textit{crossover} between surviving prey followed by \textit{mutation}. This simulation step then repeats.
+\par
+In the work described here, the evolution of prey camouflage closely follows that earlier simulation. While here, the predation is modeled with another population of predators, each based on a deep neural network. These (CNN) networks take an image as input and produce a prediction, an estimate, of where in the image the most conspicuous prey is location. So the input to these networks is typically a 128x128x3 tensor of 49,152 floating point numbers, a small RGB image, and the output is two floats, interpreted as an XY position relative to the image. 
+\par
+(Note that the images in this paper are rendered at 512² and the prey disks have a diameter of 100 pixels. These images are downsampled to 128² for use by predator's vision CNNs.)
+\par
+A bit of explanation for the term “abstract model.” In artificial life models it is common to focus in detail on one aspect of a natural system. Here that is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or represented by a simple computation stand-in. So for example, the entire living organism that embodies these predators and prey, is simply assumed to exist, behave as animals do, and is otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs in TexSyn's language for procedural texture synthesis. \textit{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” texture through crossover and mutation. On the predator side, we ignore all of the animal's existence except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely to exist. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. The details of evolution, morphogenesis, vision, and genetic representation are all completely unlike the natural world. The assumption is that they are sufficiently similar in effect to allow a plausible simulation of the natural system, producing analogous results, which may provide insights about the natural system.
 
 \section{Related work}
 [... \textbf{closely related work:} 
@@ -153,6 +159,8 @@ GANmouflage \cite{guo_ganmouflage_2022} and \cite{owens_camouflaging_2014} ...]
 
 \section{Simulation and competition}
 \subsection{Random topics QQQ}
+[... removed from Abstract, mention here: predator vision which learn to locate camouflaged prey (sometimes called “Camouflaged object detection (COD)”)]
+\par
 This camouflage simulation is based on two adversarial \textbf{populations}: one of \textbf{predators} and one of \textbf{prey}. Individual prey and predators compete with their own kind for survival within their own population. Predators must \textbf{hunt} successfully to survive. Prey survive if inconspicuous (“cryptic”) enough to avoid being found and eaten. A prey hunted and eaten — or a predator perished from hunger — is removed from its population. It is replaced by an \textbf{offspring} of parents from the surviving population.
 \par
 Predators define the fitness of prey: being easy to spot is bad, blending in is good. Similarly prey define the fitness of predators: being fooled by camouflage is bad, spotting cryptic prey is good. From this adversarial interaction, the two populations \textbf{coevolve}. If one side has some sort of flaw, the other side has a motivation to exploit it. As a result both sides tend to improve over simulation time.
@@ -176,12 +184,15 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %%     Computer Graphics, 25(4):319–328.
 %%     https://www.karlsims.com/papers/siggraph91.html  [ACM DL DOI?]
 %%
-\begin{figure}
-\centering
-% \missingfigure is from todonotes
-\missingfigure[figwidth=\linewidth*0.5,figcolor=white]{}
-\caption{TexSyn example}
-\end{figure}
+%% maybe mode detail about GP and TexSyn in appendix? I think that does not add to page count
+
+\begin{figure*}
+    \includegraphics[width=\linewidth,height=2in]{images/middle_gray_pixel.png}
+    \caption{TexSyn example}
+    \Description{Overview of TexSyn representation of texture.}
+    \label{fig:TexSyn_example}
+\end{figure*}
+
 
 \section{Limitations}
 [... no objective measure of camouflage effectiveness ...]
@@ -202,6 +213,8 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %% Acknowledgements
 \begin{acks}
 [... Many thanks to all who helped me with this work: my supportive family, Andrew Glassner for teaching me everything I know about deep learning, Ken Perlin for, lots, but especially [An Image Synthesizer?] Pat Hanrahan for helpful career advice (“just do the research”). ...]
+\par
+[... I've been working on this on and off since 2007, based on inspirations by papers in the early 1990s (Witkin/Kass, Turk, Angeline/Pollack, Sims) ...]
 \par
 [maybe just names (roughly backward in time): 
 Ken Perlin,
