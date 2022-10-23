@@ -6606,34 +6606,84 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Working to display 3 (well multiple) predator predictions. Also switch to
-    // new EvoCamoVsLearnPredPop corresponding to EvoCamoVsLearnPredPop.ipynb
-    std::cout << "August 30, 2022" << std::endl;
+//    // Working to display 3 (well multiple) predator predictions. Also switch to
+//    // new EvoCamoVsLearnPredPop corresponding to EvoCamoVsLearnPredPop.ipynb
+//    std::cout << "August 30, 2022" << std::endl;
+//
+//
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    // TODO 20220830 read and store as many xy responses as predator provides.
+//    //    std::vector<Vec2> predator_responses_;
+//    //
+//    //    float x, y;
+//    //    predator_responses_.clear();
+//    //    std::ifstream input_file("/Users/cwr/Desktop/xy3.txt");
+//    //    while ((input_file >> x) && (input_file >> y))
+//    //    {
+//    //        predator_responses_.push_back(Vec2(x, y));
+//    //    }
+//    //    input_file.close();
+//    //    debugPrint(vec_to_string(predator_responses_));
+//    //    debugPrint(predator_responses_.front());
+//    //
+//    //    std::exit(EXIT_SUCCESS);
+//    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
+//
+//    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
     
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // Working on a “TexSyn overview” figure for coc_report.
+    std::cout << "October 22, 2022" << std::endl;
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20220830 read and store as many xy responses as predator provides.
-//    std::vector<Vec2> predator_responses_;
-//    
-//    float x, y;
-//    predator_responses_.clear();
-//    std::ifstream input_file("/Users/cwr/Desktop/xy3.txt");
-//    while ((input_file >> x) && (input_file >> y))
-//    {
-//        predator_responses_.push_back(Vec2(x, y));
-//    }
-//    input_file.close();
-//    debugPrint(vec_to_string(predator_responses_));
-//    debugPrint(predator_responses_.front());
-//    
-//    std::exit(EXIT_SUCCESS);
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Uniform black(0);
+    Uniform white(1);
+    //    Uniform gray66(0.66);
+    Uniform gray90(0.9);
+    Uniform gray50(0.5);
+    Uniform gray10(0.1);
+//    Uniform red(1, 0, 0);
+    Uniform red(0, 1, 0);
+    Uniform blue(0, 0, 1);
+    Uniform green(0, 1, 0);
+    Uniform yellow(1, 1, 0);
+    Grating grating(Vec2(), red, Vec2(0.1, 0.2), gray90, 0.3, 0.5);
+    Grating stripes(Vec2(), red, Vec2(0.1, 0.2), gray10, 0.3, 0.5);
 
     
+//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), black, yellow);
+//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), yellow, black);
+//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), green, black);
+//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), green, white);
+//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), blue, white);
+//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), red, white);
+//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), red, white);
+    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), white, red);
     
-    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
+    Noise noise(Vec2(), Vec2(0.1, 0.2), white, red);
+    SoftThreshold st(0.5, 0.6, noise);
+    
+    
+//    LotsOfSpots(<#float _spot_density#>, <#float _min_radius#>, <#float _max_radius#>, <#float _soft_edge_width#>, <#float _margin#>, <#const Texture &_spot_texture#>, <#const Texture &_background_texture#>)
+//    LotsOfSpots spots(0.7, 0.1, 0.2, 0.05, 0.05, blue, white);
+//    LotsOfSpots spots(0.9, 0.1, 0.2, 0.05, 0.02, blue, white);
+//    LotsOfSpots spots(0.9, 0.05, 0.2, 0.02, 0.02, blue, white);
+//    LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+//    const Texture& spots = LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+    LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
 
-    // texsyn ~/Pictures/camouflage_backgrounds/tiger_eye_beans ~/Desktop/TexSyn_temp/ 0.2 20220704 512 512
+
+//    Texture::displayAndFile(grating);
+//    Texture::displayAndFile(turbulence);
+//    Texture::displayAndFile(noise);
+//    Texture::displayAndFile(st);
+    Texture::displayAndFile(stripes);
+    Texture::displayAndFile(spots);
+    Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white));
+    Texture::displayAndFile(Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5));
+    Texture::waitKey();
     
     //--------------------------------------------------------------------------
     //
