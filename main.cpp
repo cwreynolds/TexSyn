@@ -6638,78 +6638,25 @@ int main(int argc, const char * argv[])
     // Working on a “TexSyn overview” figure for coc_report.
     std::cout << "October 22, 2022" << std::endl;
     
-    Uniform black(0);
     Uniform white(1);
-    //    Uniform gray66(0.66);
     Uniform gray90(0.9);
-    Uniform gray50(0.5);
     Uniform gray10(0.1);
-//    Uniform red(1, 0, 0);
-    Uniform red(0, 1, 0);
     Uniform blue(0, 0, 1);
     Uniform green(0, 1, 0);
-    Uniform yellow(1, 1, 0);
-    Grating grating(Vec2(), red, Vec2(0.1, 0.2), gray90, 0.3, 0.5);
-    Grating stripes(Vec2(), red, Vec2(0.1, 0.2), gray10, 0.3, 0.5);
-
-    
-//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), black, yellow);
-//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), yellow, black);
-//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), green, black);
-//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), green, white);
-//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), blue, white);
-//    Furbulence turbulence(Vec2(), Vec2(0.4, 0.5), red, white);
-//    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), red, white);
-    Turbulence turbulence(Vec2(), Vec2(0.4, 0.5), white, red);
-    
-    Noise noise(Vec2(), Vec2(0.1, 0.2), white, red);
-    SoftThreshold st(0.5, 0.6, noise);
-    
-    
-//    LotsOfSpots(<#float _spot_density#>, <#float _min_radius#>, <#float _max_radius#>, <#float _soft_edge_width#>, <#float _margin#>, <#const Texture &_spot_texture#>, <#const Texture &_background_texture#>)
-//    LotsOfSpots spots(0.7, 0.1, 0.2, 0.05, 0.05, blue, white);
-//    LotsOfSpots spots(0.9, 0.1, 0.2, 0.05, 0.02, blue, white);
-//    LotsOfSpots spots(0.9, 0.05, 0.2, 0.02, 0.02, blue, white);
-//    LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
-//    const Texture& spots = LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+    Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray10, 0.3, 0.5);
     LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+    NoiseWarp warp_stripes(1, 0.1, 0.5, stripes);
+    LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
+    Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
+    NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 
-
-//    //    Texture::displayAndFile(grating);
-//    //    Texture::displayAndFile(turbulence);
-//    //    Texture::displayAndFile(noise);
-//    //    Texture::displayAndFile(st);
-//        Texture::displayAndFile(stripes);
-//        Texture::displayAndFile(spots);
-//
-//        Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, stripes));
-//
-//        Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white));
-//        Texture::displayAndFile(Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5));
-//
-//    //    Texture::displayAndFile(NoiseWarp(5, 0.5, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//        Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//
-//    //    NoiseWarp(<#float noise_scale#>, <#float noise_amplitude#>, <#float which#>, <#const Texture &texture#>)
-    
-    
-    Texture::displayAndFile(stripes);
-    Texture::displayAndFile(spots);
-    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, stripes));
-    Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white));
-    Texture::displayAndFile(Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5));
-    
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.1, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.3, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.9, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-    
-    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.15, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-//    Texture::displayAndFile(NoiseWarp(1, 0.2, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
-
+    std::string p = "/Users/cwr/Desktop/TexSyn_temp/diagram/";
+    Texture::displayAndFile(spots, p + "spots");
+    Texture::displayAndFile(stripes, p + "stripes");
+    Texture::displayAndFile(warp_stripes, p + "warp_stripes");
+    Texture::displayAndFile(spots2, p + "spots2");
+    Texture::displayAndFile(stripes2, p + "stripes2");
+    Texture::displayAndFile(warp_all, p + "warp_all");
     Texture::waitKey();
     
     //--------------------------------------------------------------------------
