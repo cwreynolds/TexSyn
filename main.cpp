@@ -6675,14 +6675,41 @@ int main(int argc, const char * argv[])
     LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
 
 
-//    Texture::displayAndFile(grating);
-//    Texture::displayAndFile(turbulence);
-//    Texture::displayAndFile(noise);
-//    Texture::displayAndFile(st);
+//    //    Texture::displayAndFile(grating);
+//    //    Texture::displayAndFile(turbulence);
+//    //    Texture::displayAndFile(noise);
+//    //    Texture::displayAndFile(st);
+//        Texture::displayAndFile(stripes);
+//        Texture::displayAndFile(spots);
+//
+//        Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, stripes));
+//
+//        Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white));
+//        Texture::displayAndFile(Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5));
+//
+//    //    Texture::displayAndFile(NoiseWarp(5, 0.5, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//        Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//
+//    //    NoiseWarp(<#float noise_scale#>, <#float noise_amplitude#>, <#float which#>, <#const Texture &texture#>)
+    
+    
     Texture::displayAndFile(stripes);
     Texture::displayAndFile(spots);
+    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, stripes));
     Texture::displayAndFile(LotsOfSpots(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white));
     Texture::displayAndFile(Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5));
+    
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.1, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.3, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.5, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.9, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+    
+    Texture::displayAndFile(NoiseWarp(1, 0.1, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.15, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+//    Texture::displayAndFile(NoiseWarp(1, 0.2, 0.7, Grating(Vec2(), red, Vec2(0.1, 0.2), spots, 0.3, 0.5)));
+
     Texture::waitKey();
     
     //--------------------------------------------------------------------------
