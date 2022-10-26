@@ -38,6 +38,8 @@
 
 %% To fix a margin violation bug, apparently due to poor hyphenation.
 \hyphenation{Go-men-so-ro}
+%% For introducing terms which have a special meaning in this work.
+\newcommand{\jargon}[1]{\textit{#1}}
 
 \begin{document}
 
@@ -158,14 +160,10 @@ Closely related work on learning surface textures to camouflage 3D objects withi
 \par
 Other computer graphics work related to camouflage include detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}.
 \par
-The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation. The combination of texture synthesis under control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. [... Latham and Todd ...]
+The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation. [... maybe this should be in the section on texture synthesis? ... These textures are object-oriented so specific types are implemented as (c++) classes, with specific parameters stored in instances. The base class provides interfaces for operations such as returning a color for a given position on the (infinite) texture plane. ...] The combination of texture synthesis under control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. [... Latham and Todd ...]
 \par
-[... TexSyn \textbf{[OK to mention name?]} is based on the “strongly typed” variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. ...
-GP generally: 
-\citet{cramer_representation_1985} and
-\citet{koza_genetic_1992}
-...]
-
+Evolution is represented in this model using \jargon{genetic programming} (GP), a type of population-based evolutionary optimization algorithm, first described by \citet{cramer_representation_1985} and popularized by \citet{koza_genetic_1992}. GP is a variation of \jargon{genetic algorithms} (GA). GA traditionally uses a fixed length bit string as its genetic representation, while GP uses an arbitrarily-sized tree-shaped representation. GP trees conveniently map onto nested expressions in a domain specific language. Texture synthesis in this work is based on nested expressions of texture operators from the TexSyn library, see Figure \ref{fig:TexSyn_overview}. A prey population of these textures is optimized for camouflage effectiveness by GP using the selection pressure of a population of predators which serve to determine fitness. TexSyn is used with the \jargon{strongly typed} variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}.
+\par
 
 \section{Simulation and competition}
 \subsection{Random topics QQQ}
