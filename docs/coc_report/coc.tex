@@ -36,6 +36,9 @@
 %% the next command will enable that style.
 \citestyle{acmauthoryear}
 
+%% To fix a margin violation bug, apparently due to poor hyphenation.
+\hyphenation{Go-men-so-ro}
+
 \begin{document}
 
 \title{Coevolution of Camouflage}
@@ -185,6 +188,8 @@ The details of TexSyn are not central to understanding this camouflage model. A 
 \par
 These TexSyn style textures are represented as operators, trees, and parameters. They do not store pixel data, providing instead a function to sample the textures color at an arbitrary floating point xy location. This is similar to fragment shaders for GPU and the Pixel Stream Editor functions in \cite{perlin_image_1985}.
 \par
+[... see Figure \ref{fig:TexSyn_overview} ...]
+\par
 %%
 %% mention here, or in Related Work?:
 %%     Karl Sims. 1991. Artificial Evolution for Computer Graphics.
@@ -192,19 +197,19 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %%     https://www.karlsims.com/papers/siggraph91.html  [ACM DL DOI?]
 %%
 %% maybe mode detail about GP and TexSyn in appendix? I think that does not add to page count
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+    \caption{TexSyn expression trees and crossover between them. A simplified TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. The first two are minimal trees. The second two show \textit{crossover} between the first two trees, where one leaf is replaced with another tree. The last two show trees with the \texttt{warp} operator applied to example 2 and 4.}
+    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
+    \label{fig:TexSyn_overview}
+\end{figure*}
 
 % \begin{figure*}
-%     \includegraphics[width=0.99\textwidth,height=2in]{images/middle_gray_pixel.png}
-%     \caption{TexSyn example}
-%     \Description{Overview of TexSyn representation of texture.}
-%     \label{fig:TexSyn_example}
+%     \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+%     \caption{qqq.}
+%     \Description{Overview of TexSyn representation of texture and the idea of crossover between expression trees.}
+%     \label{fig:TexSyn_overview_qqq}
 % \end{figure*}
-\begin{figure*}
-    \includegraphics[width=0.99\textwidth,height=2in]{images/draft_texsyn_overview.png}
-    \caption{TexSyn example}
-    \Description{Overview of TexSyn representation of texture.}
-    \label{fig:TexSyn_example}
-\end{figure*}
 
 
 \section{Limitations}

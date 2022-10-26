@@ -6645,7 +6645,7 @@ int main(int argc, const char * argv[])
     Uniform green(0, 1, 0);
     Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray10, 0.3, 0.5);
     LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
-    NoiseWarp warp_stripes(1, 0.1, 0.5, stripes);
+    NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
     LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
     Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
     NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
