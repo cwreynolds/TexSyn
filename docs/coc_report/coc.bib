@@ -1,3 +1,17 @@
+@article{chen_boundary-guided_2022,
+	title = {Boundary-guided network for camouflaged object detection},
+	volume = {248},
+	issn = {0950-7051},
+	url = {https://www.sciencedirect.com/science/article/pii/S0950705122004294},
+	doi = {https://doi.org/10.1016/j.knosys.2022.108901},
+	abstract = {Compared with the traditional object segmentation/detection, camouflaged object detection is much more difficult due to the indefinable boundaries and high intrinsic similarities between the camouflaged regions and the background. Although various algorithms have been proposed to solve the issue, these methods still suffer from coarse boundaries and are not competent to identify the camouflaged objects from the background in complex scenarios. In this paper, we propose a novel boundary-guided network to address this challenging problem in a coarse-to-fine manner. Specifically, we design a locating module to infer the initial location of the camouflaged objects by exploiting local detailed cues and global contextual information. Moreover, a boundary-guided fusion module is proposed to explore the complementary relationship between the camouflaged regions and their boundaries. By leveraging the boundary feature, we can not only generate prediction maps with sharper boundaries but also effectively eliminate background noises. Equipped with the two key modules, our BgNet is capable of segmenting camouflaged regions accurately and quickly. Extensive experimental results on four widely used benchmark datasets demonstrate that the proposed BgNet runs at a real-time speed (36 FPS) on a single NVIDIA Titan XP GPU and outperforms 17 state-of-the-art competing algorithms in terms of six standard evaluation metrics. Source code will be publicly available at https://github.com/clelouch/BgNet upon paper acceptance.},
+	journal = {Knowledge-Based Systems},
+	author = {Chen, Tianyou and Xiao, Jin and Hu, Xiaoguang and Zhang, Guofeng and Wang, Shaojie},
+	year = {2022},
+	keywords = {Boundary guidance, Camouflage object detection, Coarse-to-fine refinement, Convolutional neural network},
+	pages = {108901},
+}
+
 @article{chu_camo_image_2010,
     author = {Chu, Hung-Kuo and Hsu, Wei-Hsin and Mitra, Niloy J. and Cohen-Or, Daniel and Wong, Tien-Tsin and Lee, Tong-Yee},
     title = {Camouflage Images},
@@ -45,8 +59,6 @@
 	keywords = {evolution, humanfitnessfunction},
 }
 
-
-
 @article{de_gomensoro_malheiros_leopard_2020,
 	title = {The leopard never changes its spots: realistic pigmentation pattern formation by coupling tissue growth with reaction-diffusion},
 	volume = {39},
@@ -63,6 +75,17 @@
 	year = {2020},
 	keywords = {natural phenomena, pattern formation, reaction-diffusion, texturing, turing model},
 	pages = {63:63:1--63:62:14},
+}
+
+@book{glassner_deep_2021,
+	address = {San Francisco, CA},
+	title = {Deep {Learning}: {A} {Visual} {Approach}},
+	isbn = {978-1-71850-072-3},
+	url = {https://nostarch.com/deep-learning-visual-approach},
+	publisher = {No Starch Press},
+	author = {Glassner, Andrew},
+	year = {2021},
+	keywords = {classification, deep\_learning, deeplearning, gan, learning, machinelearning, neural\_nets, optimization, regression, statistics, tutorial, visualization},
 }
 
 @misc{guo_ganmouflage_2022,
@@ -108,6 +131,17 @@
 	keywords = {evolution, gp},
 }
 
+@misc{lv_cod_2022,
+    doi = {10.48550/ARXIV.2205.11333},
+    url = {https://arxiv.org/abs/2205.11333},
+    author = {Lv, Yunqiu and Zhang, Jing and Dai, Yuchao and Li, Aixuan and Barnes, Nick and Fan, Deng-Ping},
+    keywords = {Computer Vision and Pattern Recognition (cs.CV), FOS: Computer and information sciences, FOS: Computer and information sciences},
+    title = {Towards Deeper Understanding of Camouflaged Object Detection},
+    publisher = {arXiv},
+    year = {2022},
+    copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
 @article{Mckay_2010,
     author = {Mckay, Robert I. and Hoai, Nguyen Xuan and Whigham, Peter Alexander and Shan, Yin and O'Neill, Michael},
     title = {Grammar-Based Genetic Programming: A Survey},
@@ -143,16 +177,41 @@
 }
 
 @INPROCEEDINGS{owens_camouflaging_2014,
-  author={Owens, Andrew and Barnes, Connelly and Flint, Alex and Singh, Hanumant and Freeman, William},
-  booktitle={2014 IEEE Conference on Computer Vision and Pattern Recognition}, 
-  title={Camouflaging an Object from Many Viewpoints}, 
-  year={2014},
-  volume={},
-  number={},
-  address={Columbus, OH, USA},
-  publisher = {IEEE CVPR},
-  pages={2782-2789},
-  doi={10.1109/CVPR.2014.350}}
+    author={Owens, Andrew and Barnes, Connelly and Flint, Alex and Singh, Hanumant and Freeman, William},
+    booktitle={2014 IEEE Conference on Computer Vision and Pattern Recognition}, 
+    title={Camouflaging an Object from Many Viewpoints}, 
+    year={2014},
+    volume={},
+    number={},
+    address={Columbus, OH, USA},
+    publisher = {IEEE CVPR},
+    pages={2782-2789},
+    doi={10.1109/CVPR.2014.350}
+}
+
+
+
+@inproceedings{pang_zoom_2022,
+	address = {New Orleans, LA, USA},
+	title = {Zoom {In} and {Out}: {A} {Mixed}-scale {Triplet} {Network} for {Camouflaged} {Object} {Detection}},
+	isbn = {978-1-66546-946-3},
+	shorttitle = {Zoom {In} and {Out}},
+	url = {https://ieeexplore.ieee.org/document/9878581/},
+	doi = {10.1109/CVPR52688.2022.00220},
+	abstract = {The recently proposed camouflaged object detection (COD) attempts to segment objects that are visually blended into their surroundings, which is extremely complex and difficult in real-world scenarios. Apart from high intrinsic similarity between the camouflaged objects and their background, the objects are usually diverse in scale, fuzzy in appearance, and even severely occluded. To deal with these problems, we propose a mixed-scale triplet network, ZoomNet, which mimics the behavior of humans when observing vague images, i.e., zooming in and out. Specifically, our ZoomNet employs the zoom strategy to learn the discriminative mixed-scale semantics by the designed scale integration unit and hierarchical mixed-scale unit, which fully explores imperceptible clues between the candidate objects and background surroundings. Moreover, considering the uncertainty and ambiguity derived from indistinguishable textures, we construct a simple yet effective regularization constraint, uncertainty-aware loss, to promote the model to accurately produce predictions with higher confidence in candidate regions. Without bells and whistles, our proposed highly task-friendly model consistently surpasses the existing 23 state-of-the-art methods on four public datasets. Besides, the superior performance over the recent cuttingedge models on the SOD task also verifies the effectiveness and generality of our model. The code will be available at https://github.com/lartpang/ZoomNet.},
+	language = {en},
+	urldate = {2022-10-28},
+	booktitle = {2022 {IEEE}/{CVF} {Conference} on {Computer} {Vision} and {Pattern} {Recognition} ({CVPR})},
+	publisher = {IEEE},
+	author = {Pang, Youwei and Zhao, Xiaoqi and Xiang, Tian-Zhu and Zhang, Lihe and Lu, Huchuan},
+	month = jun,
+	year = {2022},
+	pages = {2150--2160},
+	file = {Pang et al. - 2022 - Zoom In and Out A Mixed-scale Triplet Network for.pdf:/Users/cwr/Zotero/storage/99IHVM5Z/Pang et al. - 2022 - Zoom In and Out A Mixed-scale Triplet Network for.pdf:application/pdf},
+}
+
+
+
 
 @article{perlin_image_1985,
 	title = {An image synthesizer},
@@ -201,6 +260,32 @@
 	year = {1991},
 	keywords = {evolution, color, texture\_synthesis, gp, humanfitnessfunction},
 	pages = {319--328},
+}
+
+@techreport{sun_boundary-guided_2022,
+	title = {Boundary-{Guided} {Camouflaged} {Object} {Detection}},
+	url = {http://arxiv.org/abs/2207.00794},
+	abstract = {Camouflaged object detection (COD), segmenting objects that are elegantly blended into their surroundings, is a valuable yet challenging task. Existing deep-learning methods often fall into the difficulty of accurately identifying the camouflaged object with complete and fine object structure. To this end, in this paper, we propose a novel boundary-guided network (BGNet) for camouflaged object detection. Our method explores valuable and extra object-related edge semantics to guide representation learning of COD, which forces the model to generate features that highlight object structure, thereby promoting camouflaged object detection of accurate boundary localization. Extensive experiments on three challenging benchmark datasets demonstrate that our BGNet significantly outperforms the existing 18 state-of-the-art methods under four widely-used evaluation metrics. Our code is publicly available at: https://github.com/thograce/BGNet.},
+	number = {arXiv:2207.00794},
+	urldate = {2022-07-29},
+	institution = {arXiv},
+	author = {Sun, Yujia and Wang, Shuo and Chen, Chenglizhao and Xiang, Tian-Zhu},
+	month = jul,
+	year = {2022},
+	doi = {10.48550/arXiv.2207.00794},
+	note = {arXiv:2207.00794 [cs] type: article},
+	keywords = {camouflage, cocish, predator, prey, vision, detection, Computer Science - Computer Vision and Pattern Recognition, Object detection, breaking},
+	annote = {Comment: Accepted by IJCAI2022},
+	file = {arXiv Fulltext PDF:/Users/cwr/Zotero/storage/Q98WB5DY/Sun et al. - 2022 - Boundary-Guided Camouflaged Object Detection.pdf:application/pdf;arXiv.org Snapshot:/Users/cwr/Zotero/storage/VTK9VHKN/2207.html:text/html},
+}
+
+@misc{visionxiang_cod,
+    author = {visionxiang},
+    title = {Camouflaged/Concealed Object Detection},
+    url = {https://github.com/visionxiang/awesome-camouflaged-object-detection},
+    year = {2022},
+    urldate = {27.10.2022},
+    originalyear = {4.10.2016}
 }
 
 @article{Zhang_Yin_Nie_Zheng_2020,
