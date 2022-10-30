@@ -6635,30 +6635,46 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Working on a “TexSyn overview” figure for coc_report.
-    std::cout << "October 22, 2022" << std::endl;
+//    // Working on a “TexSyn overview” figure for coc_report.
+//    std::cout << "October 22, 2022" << std::endl;
+//
+//    Uniform white(1);
+//    Uniform gray(0.1);
+//    Uniform blue(0, 0, 1);
+//    Uniform green(0, 1, 0);
+//    LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02,
+//                      blue, white);
+//    Grating stripes(Vec2(), green,
+//                    Vec2(0.1, 0.2), gray,
+//                    0.3, 0.5);
+//    NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
+//    LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02,
+//                       stripes, white);
+//    Grating stripes2(Vec2(), green,
+//                     Vec2(0.1, 0.2), spots,
+//                     0.3, 0.5);
+//    NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
+//
+//    std::string p = "/Users/cwr/Desktop/TexSyn_temp/diagram/";
+//    Texture::displayAndFile(spots, p + "spots");
+//    Texture::displayAndFile(stripes, p + "stripes");
+//    Texture::displayAndFile(warp_stripes, p + "warp_stripes");
+//    Texture::displayAndFile(spots2, p + "spots2");
+//    Texture::displayAndFile(stripes2, p + "stripes2");
+//    Texture::displayAndFile(warp_all, p + "warp_all");
+//    Texture::waitKey();
     
-    Uniform white(1);
-    Uniform gray90(0.9);
-    Uniform gray10(0.1);
-    Uniform blue(0, 0, 1);
-    Uniform green(0, 1, 0);
-    Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray10, 0.3, 0.5);
-    LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
-    NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
-    LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
-    Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
-    NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    // Back to evocamo runs
+    std::cout << "October 28, 2022" << std::endl;
+    
+    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
 
-    std::string p = "/Users/cwr/Desktop/TexSyn_temp/diagram/";
-    Texture::displayAndFile(spots, p + "spots");
-    Texture::displayAndFile(stripes, p + "stripes");
-    Texture::displayAndFile(warp_stripes, p + "warp_stripes");
-    Texture::displayAndFile(spots2, p + "spots2");
-    Texture::displayAndFile(stripes2, p + "stripes2");
-    Texture::displayAndFile(warp_all, p + "warp_all");
-    Texture::waitKey();
-    
+    // trying bigger prey population: 200 as 10 subpops of 20
+    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel ~/Desktop/TexSyn_temp/ 0.5 20221019 512 512
+
+
     //--------------------------------------------------------------------------
     //
     // Putting this note here because I worry that by the time I need this info
