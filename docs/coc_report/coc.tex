@@ -154,11 +154,13 @@ In the simulation described here, evolution of prey camouflage closely follows t
 A bit of explanation for the term “abstract model.” In artificial life models it is common to focus in detail on one aspect of a natural system. In the current model, it is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computation stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs in TexSyn's language for procedural texture synthesis. \textit{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, we ignore all of the animal's existence except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely to exist. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. The details of evolution, morphogenesis, vision, and genetic representation are all completely unlike the natural world. The assumption is that they are sufficiently similar in effect to allow a plausible simulation of the natural system, producing analogous results, which may provide insights about the natural system.
 
 \section{Related work}
-This work can be seen as an extension of \citet{Reynolds2011} where the human predator there is replaced with an evolving population of procedural predators, whose hunting is based on a learning vision model. An earlier attempt at this approach, using coevolution and procedural predators was described by \citet{harrington_coevolution_2014}.
+This work builds on \citet{Reynolds2011} by replacing the human predator there with an evolving population of procedural predators. Those predators \jargon{hunt} using a learning vision model. An earlier attempt at this approach, using coevolution and procedural predators, was described by \citet{harrington_coevolution_2014}.
 \par
 Closely related work on learning surface textures to camouflage 3D objects within real 3D scenes is described for cubes using one technique in \citet{owens_camouflaging_2014} and for arbitrarily shaped 3D objects using an improved technique in \citet{guo_ganmouflage_2022}. In both cases, the 3D scene is described by a set of photos of it from various viewpoints. The textures mapped onto the object to be camouflaged must trade off being inconspicuous from all viewpoints in the scene.
 \par
-Other computer graphics work related to camouflage include detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games (similar to \citet{Reynolds2011}) to study natural biological species.
+Other computer graphics work related to camouflage include detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games (similar to \citet{Reynolds2011}) to understand evolution in real biological species.
+\par
+This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is a natural application of GANs, as in CamoGAN \cite{talas_camogan_2020}. [... QQQ -- explain why that is not the point -- ALife yada yada -- subtly refer [Reynolds 2011] to indicate earlier publication -- see several thoughts in Notes app ...]
 \par
 The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation. [... maybe this should be in the section on texture synthesis? ... These textures are object-oriented so specific types are implemented as (c++) classes, with specific parameters stored in instances. The base class provides interfaces for operations such as returning a color for a given position on the (infinite) texture plane. ...] The combination of texture synthesis under control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. [... Latham and Todd ...]
 \par
@@ -203,9 +205,16 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %     \label{fig:TexSyn_overview}
 % \end{figure*}
 
+% \begin{figure*}
+%     \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+%     \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in \textit{a} and \textit{b}. \textit{Crossover} between \textit{a} and \textit{b} is shown in \textit{c} and \textit{d}. \textit{c} is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. \textit{d} is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. \textit{e} and \textit{f} show \textit{c} and \textit{d} spliced under \texttt{warp}. (See actual TexSyn c++ code for these examples in Supplemental Materials.)}
+%     \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
+%     \label{fig:TexSyn_overview}
+% \end{figure*}
+
 \begin{figure*}
     \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-    \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in \textit{a} and \textit{b}. \textit{Crossover} between \textit{a} and \textit{b} is shown in \textit{c} and \textit{d}. \textit{c} is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. \textit{d} is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. \textit{e} and \textit{f} show \textit{c} and \textit{d} spliced under \texttt{warp}. (See actual TexSyn c++ code for these examples in Supplemental Materials.)}
+    \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) spliced under \texttt{warp}. (Actual TexSyn c++ code for these examples in Supplemental Materials.)}
     \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
     \label{fig:TexSyn_overview}
 \end{figure*}
@@ -262,57 +271,22 @@ and of course, Alan Turing. [too weird/maudlin? QQQ]
 \newpage
 \appendix
 \section{Supplemental Materials}
-
-Code for Figure \ref{fig:TexSyn_overview} in c++ using TexSyn library:
-% \texttt{Uniform white(1);}\par
-% \texttt{Uniform gray10(0.1);}\par
-% \texttt{Uniform blue(0, 0, 1);}\par
-% \texttt{Uniform green(0, 1, 0);}\par
-% \texttt{Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray10, 0.3, 0.5);}\par
-% \texttt{LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);}\par
-% \texttt{NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);}\par
-% \texttt{LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);}\par
-% \texttt{Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);}\par
-% \texttt{NoiseWarp warp_all(1, 0.1, 0.7, stripes2);}\par
-
-% QQQ
-
-% \texttt{Uniform white(1);\par}
-% \texttt{Uniform gray(0.1);\par}
-% \texttt{Uniform blue(0, 0, 1);\par}
-% \texttt{Uniform green(0, 1, 0);\par}
-% \texttt{LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02,\par}
-% \texttt{                  blue, white);\par}
-% \texttt{Grating stripes(Vec2(), green,\par}
-% \texttt{                Vec2(0.1, 0.2), gray,\par}
-% \texttt{                0.3, 0.5);\par}
-% \texttt{NoiseWarp warp\_stripes(1, 0.1, 0.7, stripes);\par}
-% \texttt{LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02,\par}
-% \texttt{                   stripes, white);\par}
-% \texttt{Grating stripes2(Vec2(), green,\par}
-% \texttt{                 Vec2(0.1, 0.2), spots,\par}
-% \texttt{                 0.3, 0.5);\par}
-% \texttt{NoiseWarp warp\_all(1, 0.1, 0.7, stripes2);\par}
-
+\subsection{TexSyn \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
+% Better to use listings package?  https://ctan.org/pkg/listings
+\begin{small}
 \begin{verbatim}
 Uniform white(1);
 Uniform gray(0.1);
 Uniform blue(0, 0, 1);
 Uniform green(0, 1, 0);
-LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02,
-                  blue, white);
-Grating stripes(Vec2(), green,
-                Vec2(0.1, 0.2), gray,
-                0.3, 0.5);
+LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray, 0.3, 0.5);
 NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
-LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02,
-                   stripes, white);
-Grating stripes2(Vec2(), green,
-                 Vec2(0.1, 0.2), spots,
-                 0.3, 0.5);
+LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
+Grating stripes2(Vec2(), green, Vec2(.1, .2), spots, 0.3, 0.5);
 NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \end{verbatim}
-
+\end{small}
 
 % Note (from https://s2022.siggraph.org/technical-papers-submissions-faq/): 
 % The Conference Paper track encourages submissions for high-quality, 
