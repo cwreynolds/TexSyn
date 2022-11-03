@@ -56,9 +56,13 @@
 
 \renewcommand{\shortauthors}{Craig Reynolds}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{abstract}
   Camouflage in nature seems to arise from competition between predators who must find prey to survive, and prey who must avoid detection to survive. This work simulates a simplified, abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learns to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This simulation is based on an evolving population of predators and another of prey. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, and more significantly an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. All code and research notes are available on GitHub.
 \end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
 %% Generate your CCSCML using http://dl.acm.org/ccs.cfm.
@@ -99,9 +103,10 @@
 \ccsdesc[300]{Computing methodologies~Interest point and salient region detections} 
 \ccsdesc[300]{Computing methodologies~Genetic programming}
 
-
 %% Keywords
 \keywords{camouflage, coevolution, nature, biology, predator, prey, vision, texture synthesis}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Teaser figure that appears on the top of the article.
 \begin{teaserfigure}
@@ -123,6 +128,7 @@
 %% Lay out the single column “top matter” defined above.
 \maketitle
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
     \includegraphics[scale=0.16]{images/20221030_1220_step_19.png}
@@ -141,6 +147,8 @@
     \label{fig:time_sequence}
 \end{figure*}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Introduction}
 This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction — the coevolution — of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within the 2D environment.
 \par
@@ -153,6 +161,8 @@ In the simulation described here, evolution of prey camouflage closely follows t
 (Note that the images in this paper are rendered at 512² pixels and the prey disks have a diameter of 100 pixels. These images are downsampled to 128² for use by predator's vision CNNs.)
 \par
 A bit of explanation for the term “abstract model.” In artificial life models it is common to focus in detail on one aspect of a natural system. In the current model, it is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computation stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs in TexSyn's language for procedural texture synthesis. \textit{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, we ignore all of the animal's existence except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely to exist. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. The details of evolution, morphogenesis, vision, and genetic representation are all completely unlike the natural world. The assumption is that they are sufficiently similar in effect to allow a plausible simulation of the natural system, producing analogous results, which may provide insights about the natural system.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Related work}
 This work builds on \citet{Reynolds2011} by replacing the human predator there with an evolving population of procedural predators. Those predators \jargon{hunt} using a learning vision model. An earlier attempt at this approach, using coevolution and procedural predators, was described by \citet{harrington_coevolution_2014}.
@@ -177,19 +187,39 @@ COD attempts \textit{a priori} camouflage “breaking” — detecting the prese
 The current work's goal is to pit camouflage evolution against vision-based hunting. In that context, determining the exact (pixel level) shape of the prey seems irrelevant, especially small differences, as between a mask that is for example, 93\% correct versus 96\% correct. The simulation described here ignores segmentation, abstracting prey as a simple disk of constant size, so it is sufficiently characterized by its center position. A real world predator can aim its attack at a prey's center without an exact segmentation. This work simulates predators learning to find prey despite evolving camouflage patterns. Thus the model described in this paper \jargon{adapts} to dynamic camouflage rather than approach COD as a static problem of generalist detection. Significantly, this work requires no hand-labeled datasets at all, using a form of \jargon{self-supervision}.
 \par
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Components of the simulation}
-\subsection{Coevolution, Populations, and Fitness}
+\subsection{Coevolution, populations, and fitness}
 This camouflage simulation is based on two adversarial \jargon{populations}: one of \jargon{predators} and one of \jargon{prey}. Individual prey compete for survival within their own population, similarly for predators. Predators must \jargon{hunt} successfully to “eat” and so survive. Prey survive if inconspicuous (“cryptic”) enough to avoid being found and eaten. A prey hunted and eaten, or a predator perished from hunger, is removed from its population. It is replaced by an \jargon{offspring} of parents from the surviving population.
 \par
 Predators define the fitness of prey: being easy to spot is bad, blending in is good. Similarly prey define the fitness of predators: being fooled by camouflage is bad, spotting cryptic prey is good. From this adversarial interaction, the two populations \jargon{coevolve}. If one side has some sort of flaw, the other side has a motivation to exploit it. As a result both sides tend to improve over simulation time.
 \par
 Initial random prey have coloration likely to contrast with the background. Initial predators have a “pre-trained” ability to find conspicuous objects which may allow them to hunt these initial un-camouflaged prey. As coevolution proceeds, prey become better camouflaged against the given background images. In parallel, predators become more attuned to hunting these prey on the given backgrounds.
 \par
-[... tournaments relative fitness in game-like competition ...] and [... negative selection ...]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Tournaments, competition, relative fitness}
+It is common in \jargon{evolutionary computation} to define \jargon{fitness} as a function that maps an \jargon{individual} (of the evolving population) into a number. That is, the function somehow evaluates the individual and assigns it a score. Typically this fitness function is \jargon{idempotent}: its value depends only on properties of the given individual. This can be seen as \jargon{absolute fitness}.
+\par
+In contrast, this simulation uses \jargon{relative fitness}, determined by \jargon{competition} between individuals, in the context of \jargon{tournaments}. A tournament is a game — a contest — between multiple individuals. 
+\par
+A simple example of relative fitness is a foot race. The winner of the race is the first to cross the finish line. The order of finishing \jargon{sorts} the racers by speed. Races have been run this way since ancient times. Today it is simple to measure each runner's speed but it is not required to determine who won the race. Now consider two people playing chess. We do not know how to measure or predicts a player's skill. But by pitting them against each other, having them play a game (or a series of games) the results provide a useful measurement of relative fitness. 
+\par
+Throughout this work, \textbf{tournaments involve three individuals}. So in overview, one simulation step consists of drawing three prey individuals out of the population to compete in a tournament. Like the foot race, or chess game, the tournament serves to sort the individual according to relative fitness, without requiring assigning absolute fitness. That relative fitness is provided by the action of adversarial predators. During the same simulation step, three predators are drawn from their population. The predators look at the same input: an image with three camouflaged prey overlaid on a background image. The predators compete with each other for accurate hunting of the prey. The prey compete with each other by hiding (avoiding being targeted) by the predators.
+\par
+[... negative selection ...]
 \par
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Texture Synthesis}
+\subsection{Offspring, crossover, and mutation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Texture synthesis}
 Textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{TexSyn} is a simple domain specific language for describing textures.
 \par
 The details of TexSyn are not central to understanding this camouflage model. A quick overview is given here. TexSyn is library, an API, with many \jargon{operators} each of which return a \jargon{Texture}. Almost all of them also take Textures as input parameters, along with simple values like colors, 2d vectors, and floating point numbers. Writing nested functional expressions of operators corresponds to trees of operator instances.
@@ -220,14 +250,20 @@ These TexSyn style textures are represented as operators, trees, and parameters.
     \label{fig:TexSyn_overview}
 \end{figure*}
 
-%% maybe mode detail about GP and TexSyn in appendix? I think that does not add to page count
+%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Limitations}
 [... no objective measure of camouflage effectiveness ...]
 [... among other things, makes it hard to evaluate adjustments to the model: is the new parameter value better? can't measure with a numeric value ...]
 [... suggest  \cite{lv_cod_2022} as a way to rank conspicuousness ...]
+\par
+[... currently a “mixed paradigm” model using both evolution and learning ... (maybe note these typically co-occur in nature  \cite{valiant_probably_2013}) ... propose an all-evolution model with evolved detectors for predators, or an all learning model, something like CamoGAN \cite{talas_camogan_2020} ...]
 \par
 [... all results are hand selected, “cherry picked” ...] 
 \par
@@ -242,7 +278,11 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 [... texture synthesis lacks genetic or biological plausibility ...]
 \par
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Future Work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Acknowledgements
 \begin{acks}
@@ -265,11 +305,13 @@ and of course, Alan Turing. [too weird/maudlin? QQQ]
 ]
 \end{acks}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Bibliography.
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{coc.bib}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Appendix
 \newpage
