@@ -150,17 +150,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
-This work aims to create a simplified and abstract 2d simulation model of the evolution of camouflage textures in nature. These camouflage patterns emerge in the interaction — the coevolution — of a population of \textit{prey} each with a candidate texture and a population of \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within the 2D environment.
+This work aims to create a simple, abstract 2d simulation model of camouflage evolution in nature. These camouflage patterns emerge from the interaction — the coevolution — of a population of simulated \textit{prey} each with a candidate texture and a population of simulated \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within that 2D environment.
 \par
 Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize complex natural systems.
 \par
-Following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved in response to negative selection by a predator seeking the prey most conspicuous against a given background. In that game-like interactive simulation, the predator was a human “player.” The simulation would display a photographic background image overlaid with camouflaged prey. The human predator would select, with a mouse click, the most conspicuous five of ten displayed prey. These “eaten” prey were removed from the population, and replaced by offspring created by genetic \textit{crossover} between surviving prey followed by \textit{mutation}. This simulation step was repeated around 2000 times.
+Following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved in response to negative selection by a predator seeking the prey which are most visually conspicuous against a given background. In that game-like interactive simulation, the predator was a human “player.” The simulation would display a photographic background image overlaid with camouflaged prey. The human predator would select, with a mouse click, the most conspicuous five out of ten displayed prey. These “eaten” prey were removed from the population, and replaced by offspring created by genetic \textit{crossover} between surviving prey followed by \textit{mutation}. This simulation step was repeated around 2000 times.
 \par
-In the simulation described here, evolution of prey camouflage closely follows that earlier work. But here, the human-in-the-loop is replaced with a second population of predators, each based on a deep neural network. These CNN networks take an image as input and produce a prediction, an estimate, of where in the image the most conspicuous prey is location. The input to these neural nets is a a small RGB image (a 128x128x3 tensor: 49,152 floating point numbers) and the output is two floats, interpreted as an XY position relative to the image. 
+In the simulation described here, evolution of prey camouflage closely follows that earlier work. But now, the human-in-the-loop is replaced with a second population, of predators, each based on a deep neural network. These CNN networks take an image as input and produce a \jargon{prediction}, an estimate, of where in the image the most conspicuous prey is located. The input to these neural nets is a a small RGB image (a 128x128x3 tensor: 49,152 floating point numbers) and the output is two floats, interpreted as an \textit{xy} position relative to the image. 
 \par
 (Note that the images in this paper are rendered at 512² pixels and the prey disks have a diameter of 100 pixels. These images are downsampled to 128² for use by predator's vision CNNs.)
 \par
-A bit of explanation for the term “abstract model.” In artificial life models it is common to focus in detail on one aspect of a natural system. In the current model, it is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computation stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs in TexSyn's language for procedural texture synthesis. \textit{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, we ignore all of the animal's existence except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely to exist. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. The details of evolution, morphogenesis, vision, and genetic representation are all completely unlike the natural world. The assumption is that they are sufficiently similar in effect to allow a plausible simulation of the natural system, producing analogous results, which may provide insights about the natural system.
+A bit of explanation for the term “abstract model.” In artificial life models it is common to focus in detail on one aspect of a natural system. In the current model, that aspect is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computation stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs (nested expressions) in TexSyn's language for procedural texture synthesis. \textit{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, we ignore all of the animal's existence except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely located. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. These details of simulated evolution, morphogenesis, vision, and genetic representation are all completely unlike the natural world. The assumption is that they are sufficiently similar in effect to allow a plausible simulation of the natural system, producing analogous results, and so may provide insights about the natural system.
+\par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -169,9 +170,9 @@ This work builds on \citet{Reynolds2011} by replacing the human predator there w
 \par
 Closely related work on learning surface textures to camouflage 3D objects within real 3D scenes is described for cubes using one technique in \citet{owens_camouflaging_2014} and for arbitrarily shaped 3D objects using an improved technique in \citet{guo_ganmouflage_2022}. In both cases, the 3D scene is described by a set of photos of it from various viewpoints. The textures mapped onto the object to be camouflaged must trade off being inconspicuous from all viewpoints in the scene.
 \par
-Other computer graphics work related to camouflage include detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games (similar to \citet{Reynolds2011}) to understand evolution in real biological species.
+Other computer graphics work related to camouflage include detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games to understand evolution in real biological species. Being web-based, such simulations can be powered by very large numbers of human volunteers — citizen scientists — an instance of \jargon{human-based computation}.
 \par
-This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is a natural application of GANs, as in CamoGAN \cite{talas_camogan_2020}. [... QQQ -- explain why that is not the point -- ALife yada yada -- subtly refer [Reynolds 2011] to indicate earlier publication -- see several thoughts in Notes app ...]
+This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is a natural application of GANs, as in CamoGAN \cite{talas_camogan_2020}. However the goal of the current work (as suggested in the Future Work section of \citet{Reynolds2011}) is to produce a simulation of a natural system, suitable for “what if” experiments which cannot be performed in the natural world. [... QQQ see several related thoughts in Notes app ...]
 \par
 The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation. [... maybe this should be in the section on texture synthesis? ... These textures are object-oriented so specific types are implemented as (c++) classes, with specific parameters stored in instances. The base class provides interfaces for operations such as returning a color for a given position on the (infinite) texture plane. ...] The combination of texture synthesis under control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. [... Latham and Todd ...]
 \par
@@ -179,12 +180,24 @@ Evolution is represented in this model using \jargon{genetic programming} (GP), 
 \par
 The biological literature on camouflage and related topics is vast. A few starting points include: [... historical survey of campoouflage in nature ... \citet{thayer_concealing-coloration_1909}, early work on mathematical models of biological patterns \citet{turing_chemical_1952}, revisiting Turing's work with modern computation ... \citet{murray_how_1988},  ...how life evolves and learns... \citet{valiant_probably_2013}, QQQ find other basic bio references from my 2010 paper? ...]
 \par
+
+
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+    \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) spliced under \texttt{warp}. (Actual TexSyn c++ code for these examples in Supplemental Materials.)}
+    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
+    \label{fig:TexSyn_overview}
+\end{figure*}
+
+%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Camouflaged object detection}
 In the last several years, there has been burst of related research on \jargon{camouflaged object detection} (COD) in computer vision. See for example this well-curated list of COD publications by \citet{visionxiang_cod}. COD is part of predator behavior: detecting the presence of a camouflaged object. But these COD systems focus on \jargon{segmenting} the camouflaged object: finding a per-pixel mask of its projection in an image. A recent example, which surveys this topic and presents its own strong solution, is \citet{Zhang2022}. Others works on COD include some based on boundaries \cite{chen_boundary-guided_2022} \cite{sun_boundary-guided_2022}, an attempt to rank camouflaged objects by “conspicuousness” \cite{lv_cod_2022}, and a mixed-scale approach \cite{pang_zoom_2022}.
 \par
 COD attempts \textit{a priori} camouflage “breaking” — detecting the presence of well camouflaged objects — without learning either the background or the typical appearance of prey camouflage found in a given environment. That is, they seek to be a \jargon{generalist} predator, effectively using a strong form of \jargon{salience}. As summarized in \citet{Zhang2022}, COD is based on several labeled datasets (CHAMELEON, CAMO, and COD10K) carefully annotated by hand at the pixel level. Incremental progress in this area is measured by the per-pixel accuracy of predicted shapes of camouflaged objects.
 \par
-The current work's goal is to pit camouflage evolution against vision-based hunting. In that context, determining the exact (pixel level) shape of the prey seems irrelevant, especially small differences, as between a mask that is for example, 93\% correct versus 96\% correct. The simulation described here ignores segmentation, abstracting prey as a simple disk of constant size, so it is sufficiently characterized by its center position. A real world predator can aim its attack at a prey's center without an exact segmentation. This work simulates predators learning to find prey despite evolving camouflage patterns. Thus the model described in this paper \jargon{adapts} to dynamic camouflage rather than approach COD as a static problem of generalist detection. Significantly, this work requires no hand-labeled datasets at all, using a form of \jargon{self-supervision}.
+In contrast, the goal of the simulation reported in this paper is to pit camouflage evolution against vision-based hunting. In that context, determining the exact (pixel level) shape of the prey is largely irrelevant, especially small differences, as between a mask that is for example, 93\% correct versus 96\% correct. The simulation described here ignores segmentation, abstracting prey as a disk of constant size, so it is sufficiently characterized by its center position. A real world predator can aim its attack at a prey's center without an exact segmentation. This work simulates predators learning to find prey despite evolving camouflage patterns. Thus this model \jargon{adapts} to dynamic camouflage rather than approach COD as a static task of generalist detection. Significantly, this work requires no hand-labeled datasets at all, using a form of \jargon{self-supervision}.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,24 +211,35 @@ Predators define the fitness of prey: being easy to spot is bad, blending in is 
 Initial random prey have coloration likely to contrast with the background. Initial predators have a “pre-trained” ability to find conspicuous objects which may allow them to hunt these initial un-camouflaged prey. As coevolution proceeds, prey become better camouflaged against the given background images. In parallel, predators become more attuned to hunting these prey on the given backgrounds.
 \par
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Tournaments, competition, relative fitness}
+\label{subsec:tournaments}
 It is common in \jargon{evolutionary computation} to define \jargon{fitness} as a function that maps an \jargon{individual} (of the evolving population) into a number. That is, the function somehow evaluates the individual and assigns it a score. Typically this fitness function is \jargon{idempotent}: its value depends only on properties of the given individual. This can be seen as \jargon{absolute fitness}.
 \par
 In contrast, this simulation uses \jargon{relative fitness}, determined by \jargon{competition} between individuals, in the context of \jargon{tournaments}. A tournament is a game — a contest — between multiple individuals. 
 \par
 A simple example of relative fitness is a foot race. The winner of the race is the first to cross the finish line. The order of finishing \jargon{sorts} the racers by speed. Races have been run this way since ancient times. Today it is simple to measure each runner's speed but it is not required to determine who won the race. Now consider two people playing chess. We do not know how to measure or predicts a player's skill. But by pitting them against each other, having them play a game (or a series of games) the results provide a useful measurement of relative fitness. 
 \par
-Throughout this work, \textbf{tournaments involve three individuals}. So in overview, one simulation step consists of drawing three prey individuals out of the population to compete in a tournament. Like the foot race, or chess game, the tournament serves to sort the individual according to relative fitness, without requiring assigning absolute fitness. That relative fitness is provided by the action of adversarial predators. During the same simulation step, three predators are drawn from their population. The predators look at the same input: an image with three camouflaged prey overlaid on a background image. The predators compete with each other for accurate hunting of the prey. The prey compete with each other by hiding (avoiding being targeted) by the predators.
-\par
-[... negative selection ...]
+Throughout this model, \textbf{tournaments involve three individuals}. (This contrasts with the work in \citet{Reynolds2011} which used tournaments of 10.) So in overview, one simulation step consists of drawing three prey individuals out of the population to compete in a tournament. Like the foot race, or chess game, the tournament serves to sort the individual according to relative fitness, without requiring assigning absolute fitness. That relative fitness is provided by the action of adversarial predators. During the same simulation step, three predators are drawn from their population. The predators look at the same input: an image with three camouflaged prey overlaid on a background image. The predators compete with each other for accurate hunting of the prey. The prey compete with each other by hiding (avoiding being targeted) by the predators.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection{Negative selection, drift, and mixability}
+
+A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and algorithms suggests evolution may act to optimize \jargon{mixability} — a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...”
+\par
+The evolutionary model used in the current work, implemented in software called \jargon{LazyPredator,} attempts to operate in this mode. Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This skews the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, LazyPredator uses \textit{negative selection} to encourage \jargon{drift}. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
+\par 
+For example, a predator looks at a scene then predicts the location of the most conspicuous of the three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant (it is arbitrary). If the predator \jargon{fails} and predicts a position outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
+\par
+In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator may then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? (Currently this is 35\% hunting success over its last 20 attempts.)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Offspring, crossover, and mutation}
+[... ...]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -229,32 +253,11 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 [... see Figure \ref{fig:TexSyn_overview} ...]
 \par
 
-% \begin{figure*}
-%     \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-%     \caption{TexSyn expression trees and crossover between them. A simplified TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four unifrom color textures. The first two are minimal trees. The second two show \textit{crossover} between the first two trees, where one leaf is replaced with another tree. The last two show trees with the \texttt{warp} operator applied to example 2 and 4.}
-%     \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
-%     \label{fig:TexSyn_overview}
-% \end{figure*}
-
-% \begin{figure*}
-%     \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-%     \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in \textit{a} and \textit{b}. \textit{Crossover} between \textit{a} and \textit{b} is shown in \textit{c} and \textit{d}. \textit{c} is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. \textit{d} is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. \textit{e} and \textit{f} show \textit{c} and \textit{d} spliced under \texttt{warp}. (See actual TexSyn c++ code for these examples in Supplemental Materials.)}
-%     \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
-%     \label{fig:TexSyn_overview}
-% \end{figure*}
-
-\begin{figure*}
-    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-    \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) spliced under \texttt{warp}. (Actual TexSyn c++ code for these examples in Supplemental Materials.)}
-    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
-    \label{fig:TexSyn_overview}
-\end{figure*}
-
-%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
+[... ...]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
