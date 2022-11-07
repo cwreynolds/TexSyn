@@ -165,6 +165,17 @@ A bit of explanation for the term “abstract model.” In artificial life model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+    \caption{TexSyn expression trees and crossover between them, using a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four solid color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) under a \texttt{warp} operator. (See Supplemental Material for actual TexSyn c++ code used for these.)}
+    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
+    \label{fig:TexSyn_overview}
+\end{figure*}
+
+%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Related work}
 This work builds on \citet{Reynolds2011} by replacing the human predator there with an evolving population of procedural predators. Those predators \jargon{hunt} using a learning vision model. An earlier attempt at this approach, using coevolution and procedural predators, was described by \citet{harrington_coevolution_2014}.
 \par
@@ -181,15 +192,6 @@ Evolution is represented in this model using \jargon{genetic programming} (GP), 
 The biological literature on camouflage and related topics is vast. A few starting points include: [... historical survey of campoouflage in nature ... \citet{thayer_concealing-coloration_1909}, early work on mathematical models of biological patterns \citet{turing_chemical_1952}, revisiting Turing's work with modern computation ... \citet{murray_how_1988},  ...how life evolves and learns... \citet{valiant_probably_2013}, QQQ find other basic bio references from my 2010 paper? ...]
 \par
 
-
-\begin{figure*}
-    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-    \caption{TexSyn expression trees and crossover between them, illustrated with a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) spliced under \texttt{warp}. (Actual TexSyn c++ code for these examples in Supplemental Materials.)}
-    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
-    \label{fig:TexSyn_overview}
-\end{figure*}
-
-%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Camouflaged object detection}
@@ -228,9 +230,9 @@ Throughout this model, \textbf{tournaments involve three individuals}. (This con
 
 \subsection{Negative selection, drift, and mixability}
 
-A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and algorithms suggests evolution may act to optimize \jargon{mixability} — a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...”
+A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (“no-regret learning” — the multiplicative weights update algorithm) suggests evolution may act to optimize \jargon{mixability} — a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to \citet{kimura_evolutionary_1968}. 
 \par
-The evolutionary model used in the current work, implemented in software called \jargon{LazyPredator,} attempts to operate in this mode. Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This skews the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, LazyPredator uses \textit{negative selection} to encourage \jargon{drift}. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
+The evolutionary model used in the current work, implemented in software called \jargon{LazyPredator,} attempts to operate in this mode. Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This skews the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, LazyPredator uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of the three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant (it is arbitrary). If the predator \jargon{fails} and predicts a position outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
@@ -239,7 +241,14 @@ In the predator population, a tournament is ranked by the \textbf{distance from 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Offspring, crossover, and mutation}
-[... ...]
+In the prey population, a tournament is used to find the lowest relative fitness. This corresponds to the worst camouflage, the \jargon{most conspicuous} of three prey in a tournament. If a predator successfully locates a prey, we assume it is captured and eaten. The object representing that departed prey is removed from its population and replaced with a new individual. This is the \jargon{population update} stage of a steady-state genetic programming system.
+\par
+The new prey, which replaces the one killed by predator, is called the \jargon{offspring} of two other prey. This is the motivation for using tournaments of size 3: the least fit prey dies, and is replaced by the offspring of the other two prey. We don't know which of them has higher relative fitness, but either way they become the \jargon{parents} given as input to the \jargon{crossover} operation.
+\par
+In GP, individuals are represented as tree structures. (Which in this work are interpreted as TexSyn programs as described in the next subsection.) The crossover operation is defined on two abstract trees. The two parents are first copied to preserve them. One copy is chosen as recipient and one as donor. In each a “random subtree” is selected. The recipient's random subtree is replaced by the donor's random subtree, by splicing the pointers between tree nodes. This is shown in Figure \ref{fig:TexSyn_overview}.
+\par
+After crossover, a mutation operator further modifies the offspring tree. It basically traverses the tree, finding all the leaf nodes, which here correspond to numerical constants in the texture programs. Because LazyPredator uses \jargon{strongly typed genetic programming} \cite{montana_strongly_1995} each leaf belongs to a specific user defined type (for example a floating point number between 0 and 1). A method of the type's class can mutate (“jiggle”) the constant value of a leaf node (for example, add a small random offset, then clip into range). After crossover and mutation the new offspring is inserted into the population, replacing the dead prey.
+\par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -270,8 +279,6 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 \par
 [... all results are hand selected, “cherry picked” ...] 
 \par
-[... cite that fast growing literature on “camouflaged object detection” ...]
-\par
 [... propose a crowd sourced user study of camouflage quality ... could be based on time to find ... like the interactive web games of \href{https://www.visual-ecology.com/2020/10/06/martin-stevens/}{Martin Stevens} nuthatch egg? ...] 
 \par
 [... in email to Ken I wrote: \textit{The aspect of my project I'm unsure how to approach is lack of rigor. My evaluations are all subjective. It comes down to “we can see that the effectiveness of the camouflage clearly increases during the simulation.”}]
@@ -284,6 +291,7 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
+[... see note about future work at post “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}” ...]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
