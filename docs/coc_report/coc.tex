@@ -230,9 +230,9 @@ Throughout this model, \textbf{tournaments involve three individuals}. (This con
 
 \subsection{Negative selection, drift, and mixability}
 
-A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (“no-regret learning” — the multiplicative weights update algorithm) suggests evolution may act to optimize \jargon{mixability} — a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to \citet{kimura_evolutionary_1968}. 
+A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (“no-regret learning” — the multiplicative weights update algorithm) suggests evolution may act to optimize \jargon{mixability} — a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to the “Neutral Theory” in \citet{kimura_evolutionary_1968}. Another helpful perspective on the interaction of evolution and learning can be found in \citet{valiant_probably_2013}. [... out of place here? QQQ]
 \par
-The evolutionary model used in the current work, implemented in software called \jargon{LazyPredator,} attempts to operate in this mode. Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This skews the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, LazyPredator uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
+The evolutionary model used in the current work, implemented in software called \jargon{LazyPredator,} attempts to operate in this “neutral” mode. Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This skews the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, LazyPredator uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of the three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant (it is arbitrary). If the predator \jargon{fails} and predicts a position outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
@@ -261,6 +261,22 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 \par
 [... see Figure \ref{fig:TexSyn_overview} ...]
 \par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Predator vision}
+[... some of this is covered in the Introduction, should any of tht be moved here, or is the duplication OK? ...]
+\par
+In this simulation it is a predator's job to look at an image and “hunt” for prey. Specifically an image is built from a portion of a background photo and overlaid with three camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the TexSyn side. Because all images in this simulation are synthetic, they are inherently labeled with \jargon{ground truth} position data for each prey. This allows the predators to learn in a \jargon{self-supervised} manner.
+\par
+
+\subsubsection{Pre-train to Find Conspicuous Disk}
+The basis for a predator's visual system is a \jargon{pre-trained} neural net model. This deep neural net model was created before camouflage evolution was attempted. TexSyn was used to generate a large dataset of [... QQQ lookup size ...] labeled training examples. Each example was an RGB image, a 128×128×3 tensor, with an associated label in the form of an \textit{xy} pair of indicating a location in the image in normalized coordinates. [... QQQ oh, wait was this in pixel coordinates? ...]
+\par
+Each image was a random portion cropped out of one of the background images, chosen at random. Over it was rendered one to three prey disks with \jargon{random texture}. While a random texture is a slippery concept, the meaning here is the sort of prey texture used to initialize the population before an evolution run. The LazyPredator genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as the TexSyn library. So the random tree corresponds to a random nested expression of TexSyn operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not just independently chosen random pixel values.
+
+\subsubsection{Fine tune during evolution run}
+foo bar
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
