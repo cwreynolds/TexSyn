@@ -166,13 +166,11 @@ A bit of explanation for the term “abstract model.” In artificial life model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
-    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
-    \caption{TexSyn expression trees and crossover between them, using a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four solid color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) under a \texttt{warp} operator. (See Supplemental Material for actual TexSyn c++ code used for these.)}
-    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
-    \label{fig:TexSyn_overview}
+    \includegraphics[width=\textwidth,height=2in]{images/middle_gray_pixel.png}
+    \caption{Overview of the coevolutionary simulation of camouflage evolution. [... QQQ ...]}
+    \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
+    \label{fig:simulation_overview}
 \end{figure*}
-
-%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -201,6 +199,17 @@ COD attempts \textit{a priori} camouflage “breaking” — detecting the prese
 \par
 In contrast, the goal of the simulation reported in this paper is to pit camouflage evolution against vision-based hunting. In that context, determining the exact (pixel level) shape of the prey is largely irrelevant, especially small differences, as between a mask that is for example, 93\% correct versus 96\% correct. The simulation described here ignores segmentation, abstracting prey as a disk of constant size, so it is sufficiently characterized by its center position. A real world predator can aim its attack at a prey's center without an exact segmentation. This work simulates predators learning to find prey despite evolving camouflage patterns. Thus this model \jargon{adapts} to dynamic camouflage rather than approach COD as a static task of generalist detection. Significantly, this work requires no hand-labeled datasets at all, using a form of \jargon{self-supervision}.
 \par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure*}
+    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+    \caption{TexSyn expression trees and crossover between them, using a simplified version of TexSyn with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four solid color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) under a \texttt{warp} operator. (See Supplemental Material for actual TexSyn c++ code used for these.)}
+    \Description{Overview of TexSyn representation of texture and the idea of \textit{crossover} between expression trees.}
+    \label{fig:TexSyn_overview}
+\end{figure*}
+
+%% maybe more detail about GP and TexSyn in appendix? I think that does not add to page count
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -264,8 +273,17 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{figure}
+    \includegraphics[width=\columnwidth,height=2in]{images/middle_gray_pixel.png}
+    \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered.}
+    \Description{Diagram of Predator's convolutional neural net.}
+    \label{fig:predator_cnn}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Predator vision}
-[... some of this is covered in the Introduction, should any of tht be moved here, or is the duplication OK? ...]
+[... some of this is covered in the Introduction, should any of that be moved here, or is the duplication OK? ...]
 \par
 In this simulation it is a predator's job to look at an image and “hunt” for prey. Specifically an image is built from a portion of a background photo and overlaid with three camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the TexSyn side. Because all images in this simulation are synthetic, they are inherently labeled with \jargon{ground truth} position data for each prey. This allows the predators to learn in a \jargon{self-supervised} manner.
 \par
@@ -276,8 +294,7 @@ The basis for a predator's visual system is a \jargon{pre-trained} neural net mo
 Each image was a random portion cropped out of one of the background images, chosen at random. Over it was rendered one to three prey disks with \jargon{random texture}. While a random texture is a slippery concept, the meaning here is the sort of prey texture used to initialize the population before an evolution run. The LazyPredator genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as the TexSyn library. So the random tree corresponds to a random nested expression of TexSyn operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not just independently chosen random pixel values.
 
 \subsubsection{Fine tune during evolution run}
-foo bar
-
+[... see Figure \ref{fig:predator_cnn} ...]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
