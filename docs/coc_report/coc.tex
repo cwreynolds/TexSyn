@@ -195,8 +195,8 @@ A bit of explanation for the term “abstract model.” In artificial life model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
-    \includegraphics[width=\textwidth,height=2in]{images/middle_gray_pixel.png}
-    \caption{Overview of the coevolutionary simulation of camouflage evolution. [... QQQ ...]}
+    \includegraphics[width=\textwidth]{images/coc_overview.pdf}
+    \caption{One step of the coevolutionary simulation of camouflage evolution. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512×512 pixels. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position in the image, predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replace by a new offspring of the other two prey. If the worst scoring predator finds no prey, it may die of starvation, to be replaced by a new offspring.}
     \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
     \label{fig:simulation_overview}
 \end{figure*}
