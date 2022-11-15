@@ -304,7 +304,7 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 %% prototyping CNN diagram
 
 \begin{figure}
-    \includegraphics[width=\columnwidth]{images/FCN8.pdf}
+    \includegraphics[width=\columnwidth]{images/predator_cnn.pdf}
     \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered.}
     \Description{Diagram of Predator's convolutional neural net.}
     \label{fig:predator_cnn}
@@ -403,6 +403,10 @@ and of course, Alan Turing. [too weird/maudlin? QQQ]
 \newpage
 \appendix
 \section{Supplemental Materials}
+
+%% maybe this section should switch to single column layout?
+%% maybe this should be in a separate .tex / .pdf file?
+
 \subsection{TexSyn \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
 % Better to use listings package?  https://ctan.org/pkg/listings
 \begin{small}
@@ -427,6 +431,13 @@ NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 % research that is less-polished but still potentially-impactful. Journal 
 % papers do not have a page limit, and may include more thorough experiments
 % and derivations within the main paper. 
+
+\subsection{Background image sets}
+[... list names of background sets used in each figure ... say anything about availability? ...]
+
+\subsection{Additional examples}
+[... include some results of other runs, perhaps similar to the format of my blog posts,  ...]
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
