@@ -88,7 +88,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-  Camouflage in nature seems to arise from competition between predators who must find prey to survive, and prey who must avoid detection to survive. This work simulates a simplified, abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learns to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This simulation is based on an evolving population of predators and another of prey. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, and more significantly an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. All code and research notes are available on GitHub.
+  Natural camouflage seems to arise from competition between predators who must find prey to survive, and prey who must avoid detection to survive. This work simulates a simplified, abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learns to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on an evolving population of predators and another of prey. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, and more significantly an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. All code and research notes are available on GitHub.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,7 +196,7 @@ A bit of explanation for the term “abstract model.” In artificial life model
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{images/coc_overview.pdf}
-    \caption{One step of the coevolutionary simulation of camouflage evolution. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512×512 pixels. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position in the image, predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replace by a new offspring of the other two prey. If the worst scoring predator finds no prey, it may die of starvation, to be replaced by a new offspring.}
+    \caption{One step of the coevolutionary simulation of camouflage evolution. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512×512 pixels. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position in the image, predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replaced by a new offspring of the other two prey. If the worst scoring predator finds no prey, it may die of starvation, to be replaced by a new offspring.}
     \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
     \label{fig:simulation_overview}
 \end{figure*}
@@ -311,6 +311,16 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Full step/tournament image with predator responses
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{images/20221007_0806_step_7030.png}
+    \caption{Tournament image after simulation step. Starts with crop from given background set. Composited over that are three prey with evolved camouflage patterns. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black and white, second best is green and black, third is red and black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
+    \Description{Full tournament image showing background, three prey, and three predator responses.}
+    \label{fig:predator_responses}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Predator vision}
 [... some of this is covered in the Introduction, should any of that be moved here, or is the duplication OK? ...]
@@ -338,11 +348,7 @@ Each image was a random portion cropped out of one of the background images, cho
 [... among other things, makes it hard to evaluate adjustments to the model: is the new parameter value better? can't measure with a numeric value ...]
 [... suggest  \cite{lv_cod_2022} as a way to rank conspicuousness ...]
 \par
-[... currently a “mixed paradigm” model using both evolution and learning ... (maybe note these typically co-occur in nature  \cite{valiant_probably_2013}) ... propose an all-evolution model with evolved detectors for predators, or an all learning model, something like CamoGAN \cite{talas_camogan_2020} ...]
-\par
 [... all results are hand selected, “cherry picked” ...] 
-\par
-[... propose a crowd sourced user study of camouflage quality ... could be based on time to find ... like the interactive web games of \href{https://www.visual-ecology.com/2020/10/06/martin-stevens/}{Martin Stevens} nuthatch egg? ...] 
 \par
 [... in email to Ken I wrote: \textit{The aspect of my project I'm unsure how to approach is lack of rigor. My evaluations are all subjective. It comes down to “we can see that the effectiveness of the camouflage clearly increases during the simulation.”}]
 \par
@@ -355,6 +361,12 @@ Each image was a random portion cropped out of one of the background images, cho
 
 \section{Future Work}
 [... see note about future work at post “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}” ...]
+\par
+[... propose a crowd sourced user study of camouflage quality ... could be based on time to find ... like the interactive web games of \href{https://www.visual-ecology.com/2020/10/06/martin-stevens/}{Martin Stevens} nuthatch egg? ...] 
+\par
+[... currently a “mixed paradigm” model using both evolution and learning ... (maybe note these typically co-occur in nature  \cite{valiant_probably_2013}) ... propose an all-evolution model with evolved detectors for predators [... perhaps like the work of \href{https://people.wgtn.ac.nz/Mengjie.Zhang}{Mengjie Zhang} or his students like \href{https://yingbi92.github.io/homepage/}{Ying Bi}? find a representative paper to cite, perhaps coauthored by them ...] or an all learning model, something like CamoGAN \cite{talas_camogan_2020} ...]
+\par
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
