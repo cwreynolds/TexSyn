@@ -305,7 +305,7 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{images/predator_cnn.pdf}
-    \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered.}
+    \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered. All convolution layers but the first use strides of (2,2) while increasing the number of learned filters. Then fully connected layers reduce the flattened features, by factors of 4, down to an output layer of 2 values.}
     \Description{Diagram of Predator's convolutional neural net.}
     \label{fig:predator_cnn}
 \end{figure}
@@ -325,16 +325,16 @@ These TexSyn style textures are represented as operators, trees, and parameters.
 \subsection{Predator vision}
 [... some of this is covered in the Introduction, should any of that be moved here, or is the duplication OK? ...]
 \par
-In this simulation it is a predator's job to look at an image and “hunt” for prey. Specifically an image is built from a portion of a background photo and overlaid with three camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the TexSyn side. Because all images in this simulation are synthetic, they are inherently labeled with \jargon{ground truth} position data for each prey. This allows the predators to learn in a \jargon{self-supervised} manner.
+It is the predator's job in this simulation to look at an image and “hunt” for prey. Specifically an image is built from a portion of a background photo and overlaid with three camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the TexSyn side. Because all images in this simulation are synthetic, they are labeled with \jargon{ground truth} position data for each prey. This allows predators to learn in a \jargon{self-supervised} manner.
 \par
-
-\subsubsection{Pre-train to Find Conspicuous Disk}
-The basis for a predator's visual system is a \jargon{pre-trained} neural net model. This deep neural net model was created before camouflage evolution was attempted. TexSyn was used to generate a large dataset of [... QQQ lookup size ...] labeled training examples. Each example was an RGB image, a 128×128×3 tensor, with an associated label in the form of an \textit{xy} pair of indicating a location in the image in normalized coordinates. [... QQQ oh, wait was this in pixel coordinates? ...]
+The basis for a predator's visual system is \textbf{a \jargon{pre-trained} deep neural net model for a “find conspicuous disk” task}, see Figure \ref{fig:predator_cnn}. The goal of this task is to look at an arbitrary image and locate the center point of the most conspicuous (salient) region, assumed to be a prey-sized disk. This pre-trained model is created as a preparatory step then reused for each subsequent camouflage evolution run. TexSyn was used to generate a dataset of 20,000 labeled training examples called \jargon{FCD5}. Each example was an RGB image, a 128×128×3 tensor, with an associated label: an \textit{xy} coordinate pair indicating a location in the image.
 \par
-Each image was a random portion cropped out of one of the background images, chosen at random. Over it was rendered one to three prey disks with \jargon{random texture}. While a random texture is a slippery concept, the meaning here is the sort of prey texture used to initialize the population before an evolution run. The LazyPredator genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as the TexSyn library. So the random tree corresponds to a random nested expression of TexSyn operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not just independently chosen random pixel values.
-
-\subsubsection{Fine tune during evolution run}
-[... see Figure \ref{fig:predator_cnn} ...]
+Each image has a random crop of an image from a background set. Over it was rendered one or three prey disks with \jargon{random texture}. While a random texture is a slippery concept, the meaning here is the sort of prey texture used to initialize the prey population before an evolution run. The LazyPredator genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as one corresponding to the TexSyn library. So the random tree corresponds to a random nested expression of TexSyn operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not uncorrelated noise.
+\par
+Each image in the “find conspicuous disk” training dataset is generated in one of three styles chosen with equal probability. Style 1 has a single prey disk, and the label is its center point. Style 2 has three different prey. Style 3 has three copies of a single prey disk. The latter two cases reduce the visibility of two of the three disks, by blending or dithering the pixels of the prey disk into the background. The label corresponds to the disk whose visibility is not reduced. See Figure \ref{fig:fcd5_samples}.
+\par
+During simulations of camouflage evolution, each predator is initialized as a copy of the pre-trained “find conspicuous disk” model to which noise is added. (Zero mean noise of less than 0.003 is added to each parameter of the deep neural net.) In each simulation step, the three predators chosen to participate in the tournament (see Figure \ref{fig:simulation_overview}) predict a prey position. Then \textbf{each predator is \jargon{fine-tuned} based on a dataset of labeled images collected during this simulation run}. This dataset is a collection of images from earlier simulation steps in this run. It is essentially the memory of recent activity in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images. Thereafter, each new tournament image replaces one of the 500 chosen at random. Labels for this dataset correspond to predictions made by the “best” predator (least aim error) in each step (see Figure \ref{fig:predator_responses}).
+\par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -347,6 +347,8 @@ Each image was a random portion cropped out of one of the background images, cho
 [... no objective measure of camouflage effectiveness ...]
 [... among other things, makes it hard to evaluate adjustments to the model: is the new parameter value better? can't measure with a numeric value ...]
 [... suggest  \cite{lv_cod_2022} as a way to rank conspicuousness ...]
+\par
+See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?}
 \par
 [... all results are hand selected, “cherry picked” ...] 
 \par
@@ -438,6 +440,14 @@ NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \subsection{Additional examples}
 [... include some results of other runs, perhaps similar to the format of my blog posts,  ...]
 
+
+
+\begin{figure*}
+    \includegraphics[width=\linewidth]{images/fcd5_samples.png}
+    \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
+    \Description{Full tournament image showing background, three prey, and three predator responses.}
+    \label{fig:fcd5_samples}
+\end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
