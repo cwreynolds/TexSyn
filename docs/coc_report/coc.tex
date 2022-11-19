@@ -46,6 +46,7 @@
 \newcommand{\jargon}[1]{\textit{#1}}
 
 
+\usepackage{changepage}% http://ctan.org/pkg/changepage
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +134,7 @@
 \ccsdesc[300]{Computing methodologies~Genetic programming}
 
 %% Keywords
-\keywords{camouflage, coevolution, nature, biology, predator, prey, vision, texture synthesis}
+\keywords{camouflage, coevolution, nature, biology, predator, prey, vision, learning, texture synthesis, simulation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -171,7 +172,7 @@
     \includegraphics[scale=0.16]{images/20221030_1220_step_6650.png}
     \hfill
     \includegraphics[scale=0.16]{images/20221030_1220_step_7467.png}
-    \caption{Evolution of prey camouflage over simulated time}
+    \caption{Prey camouflage evolving over simulation time to become more effective in a given environment.}
     \Description{Sequence of images showing evolution of prey camouflage over simulated time.}
     \label{fig:time_sequence}
 \end{figure*}
@@ -179,11 +180,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
-This work aims to create a simple, abstract 2d simulation model of camouflage evolution in nature. These camouflage patterns emerge from the interaction — the coevolution — of a population of simulated \textit{prey} each with a candidate texture and a population of simulated \textit{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \textit{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within that 2D environment.
+This work aims to create a simple, abstract 2d simulation model of camouflage evolution in nature. These camouflage patterns emerge from the interaction — the coevolution — of a population of simulated \jargon{prey} each with a candidate texture and a population of simulated \jargon{predators} each with a learned visual detector. The input to the simulation is a set of photos of a background environment. The prey evolve to be \jargon{cryptic} (hard to see) against the background images. The predators evolve and learn to hunt the prey by locating their position within that 2D environment.
 \par
 Computational models of complex biological systems have several benefits. Constructing them, getting them to work as seen in nature, helps crystallize our thinking about natural phenomenon. Computational models also allow experimentation \textit{in silico} to help characterize complex natural systems.
 \par
-Following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved in response to negative selection by a predator seeking the prey which are most visually conspicuous against a given background. In that game-like interactive simulation, the predator was a human “player.” The simulation would display a photographic background image overlaid with camouflaged prey. The human predator would select, with a mouse click, the most conspicuous five out of ten displayed prey. These “eaten” prey were removed from the population, and replaced by offspring created by genetic \textit{crossover} between surviving prey followed by \textit{mutation}. This simulation step was repeated around 2000 times.
+Following the approach of \citet{Reynolds2011} a population of prey, each with a synthetic camouflage texture, are evolved in response to negative selection by a predator seeking the prey which are most visually conspicuous against a given background. In that game-like interactive simulation, the predator was a human “player.” The simulation would display a photographic background image overlaid with camouflaged prey. The human predator would select, with a mouse click, the most conspicuous five out of ten displayed prey. Those prey — “eaten” by the predator — were removed from the population.  They were replaced by offspring created with genetic \jargon{crossover} between surviving prey (as \jargon{parents}) followed by \jargon{mutation}. This simulation step was repeated about 2000 times.
 \par
 In the simulation described here, evolution of prey camouflage closely follows that earlier work. But now, the human-in-the-loop is replaced with a second population, of predators, each based on a deep neural network. These CNN networks take an image as input and produce a \jargon{prediction}, an estimate, of where in the image the most conspicuous prey is located. The input to these neural nets is a a small RGB image (a 128x128x3 tensor: 49,152 floating point numbers) and the output is two floats, interpreted as an \textit{xy} position relative to the image. 
 \par
@@ -408,6 +409,7 @@ Aaron Hertzmann.
 
 %% Appendix
 \newpage
+\onecolumn
 \appendix
 \section{Supplemental Materials}
 
@@ -426,7 +428,7 @@ LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
 Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray, 0.3, 0.5);
 NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
 LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
-Grating stripes2(Vec2(), green, Vec2(.1, .2), spots, 0.3, 0.5);
+Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
 NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \end{verbatim}
 \end{small}
@@ -445,7 +447,39 @@ NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \subsection{Additional examples}
 [... include some results of other runs, perhaps similar to the format of my blog posts,  ...]
 
+\subsection{Details on pre-trained predator model}
+The pre-trained predator model, shown in \ref{fig:predator_cnn}, is a Keras TensorFlow model. Here is its \texttt{model.summary()}:
+\begin{adjustwidth}{1cm}{0cm}
+\begin{small}
+\begin{verbatim}
 
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #
+=================================================================
+ conv2d (Conv2D)             (None, 128, 128, 16)      1216
+ dropout (Dropout)           (None, 128, 128, 16)      0
+ conv2d_1 (Conv2D)           (None, 64, 64, 32)        12832
+ dropout_1 (Dropout)         (None, 64, 64, 32)        0
+ conv2d_2 (Conv2D)           (None, 32, 32, 64)        51264
+ dropout_2 (Dropout)         (None, 32, 32, 64)        0
+ conv2d_3 (Conv2D)           (None, 16, 16, 128)       204928
+ dropout_3 (Dropout)         (None, 16, 16, 128)       0
+ conv2d_4 (Conv2D)           (None, 8, 8, 256)         819456
+ dropout_4 (Dropout)         (None, 8, 8, 256)         0
+ flatten (Flatten)           (None, 16384)             0
+ dense (Dense)               (None, 128)               2097280
+ dropout_5 (Dropout)         (None, 128)               0
+ dense_1 (Dense)             (None, 32)                4128
+ dense_2 (Dense)             (None, 8)                 264
+ dense_3 (Dense)             (None, 2)                 18
+=================================================================
+Total params: 3,191,386
+Trainable params: 3,191,386
+Non-trainable params: 0
+\end{verbatim}
+\end{small}
+\end{adjustwidth}
 
 \begin{figure*}
     \includegraphics[width=\linewidth]{images/fcd5_samples.png}
