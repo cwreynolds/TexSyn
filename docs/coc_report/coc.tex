@@ -1,5 +1,6 @@
 % \documentclass[sigconf,anonymous,review,timestamp]{acmart}
-\documentclass[sigconf]{acmart}
+% \documentclass[sigconf]{acmart}
+\documentclass[acmtog]{acmart}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% prototyping CNN diagram
 % \documentclass[sigconf, tikz]{acmart}
@@ -197,7 +198,7 @@ A bit of explanation for the term “abstract model.” In artificial life model
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{images/coc_overview.pdf}
-    \caption{One step of the coevolutionary simulation of camouflage evolution. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512×512 pixels. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position in the image, predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replaced by a new offspring of the other two prey. If the worst scoring predator finds no prey, it may die of starvation, to be replaced by a new offspring.}
+    \caption{Overview of one step of the coevolutionary simulation of camouflage. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512×512 pixels. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position (circled crosshairs in tournament image) predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replaced by a new offspring of the other two prey. If the worst scoring predator finds no prey, it may die of starvation, to be replaced by a new offspring.}
     \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
     \label{fig:simulation_overview}
 \end{figure*}
@@ -369,21 +370,26 @@ See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability
 \par
 [... currently a “mixed paradigm” model using both evolution and learning ... (maybe note these typically co-occur in nature  \cite{valiant_probably_2013}) ... propose an all-evolution model with evolved detectors for predators [... perhaps like the work of \href{https://people.wgtn.ac.nz/Mengjie.Zhang}{Mengjie Zhang} or his students like \href{https://yingbi92.github.io/homepage/}{Ying Bi}? find a representative paper to cite, perhaps coauthored by them ...] or an all learning model, something like CamoGAN \cite{talas_camogan_2020} ...]
 \par
-
+An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs taken with the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps vision techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
+\par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Acknowledgements
 \begin{acks}
-Deep appreciation to all who helped me with this work: my supportive family, Ken Perlin for—well, lots—but especially \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for helpful career advice (“just do the research”).
+Deep appreciation to all who helped me with this work: my supportive family, Ken Perlin for (well, lots, but especially) \citet{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
 \par
 I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}) and a year before I was born: \citet{turing_chemical_1952}.
-Also thanks for general help from:
-John Koza,
+Also thanks for various help from:
 Richard Dawkins,
-Michael wahrman, 
+Steve DiPaola,
+Aaron Hertzmann,
+John Koza,
+Dominic Mallinson,
+Nick Porcino,
+Michael Wahrman, 
 and
-Aaron Hertzmann.
+QQQ.
 
 % Ken Perlin,
 % Aaron Hertzmann,
