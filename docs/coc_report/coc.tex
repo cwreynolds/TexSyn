@@ -345,7 +345,9 @@ During simulations of camouflage evolution, each predator is initialized as a co
 \section{Discussion QQQ}
 To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of prey with camouflage [... c++ / TexSyn / LazyPredator ...]. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception [... Python / PredatorEye ...]. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
 \par
-The parameters for each simulation run are primarily a choice of background set [... see section QQQ ...] and a seed for random number generation. There are a few other parameters to the command [... which are listed in the Supplemental Materials ...].
+The parameters for each simulation run are primarily a choice of background set [... see section QQQ ...], a scale factor for the background images, and a seed for random number generation. There are a few other parameters to the command [... which are listed in the Supplemental Materials ...]. Other key parameters are summarized in Supplemental Materials ZZZ
+\par
+[... say something about saving every 19th image as a sort of visual log ...]
 \par
 [... QQQ ...]
 
@@ -493,7 +495,33 @@ Non-trainable params: 0
 \end{small}
 \end{adjustwidth}
 
-\begin{figure*}
+
+%% QQQ ZZZ
+
+\subsection{Key Simulation Parameters}
+The fully detailed description of this simulation is the source code [... which is open source on the web at this URL ...]. This table summariezes some of the key parameters which are held constant for all results shown in this paper. [... maybe move this into the main paper if it fits ...]
+\par
+
+\begin{adjustwidth}{1cm}{0cm}
+    \begin{tabular}{ |l|r| } 
+        \hline
+        \textbf{Parameter} & \textbf{value} \\ 
+        \hline
+        predator population & 20 \\ 
+        prey population & 200 \\ 
+        prey subpopulations (demes) & 10 \\
+        prey max init tree size & 100 \\
+        prey min tree size after crossover & 50 \\
+        prey max tree size after crossover & 150 \\
+        predator input image size & 128² \\ 
+        prey render size & 512² \\ 
+        tournament image save frequency & 19 \\
+        \hline
+    \end{tabular}
+\end{adjustwidth}
+
+
+\begin{figure*}[b]
     \includegraphics[width=\linewidth]{images/fcd5_samples.png}
     \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
     \Description{Full tournament image showing background, three prey, and three predator responses.}
