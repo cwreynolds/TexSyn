@@ -342,14 +342,27 @@ During simulations of camouflage evolution, each predator is initialized as a co
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Discussion QQQ}
+\section{Runs — temp section — QQQ}
+[... this recap and discussion of runs feels less like Discussion and more part of Methods — which I don't have but maybe should be the final subsection in \textbf{Components of the Simulation} — for now I will break this off into a new temp section ...]
+\par
 To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of prey with camouflage [... c++ / TexSyn / LazyPredator ...]. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception [... Python / PredatorEye ...]. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
 \par
 The parameters for each simulation run are primarily a choice of background set [... see section QQQ ...], a scale factor for the background images, and a seed for random number generation. There are a few other parameters to the command [... which are listed in the Supplemental Materials ...]. Other key parameters are summarized in Supplemental Materials ZZZ
 \par
-[... say something about saving every 19th image as a sort of visual log ...]
+A typical run consists of 6000 steps with a prey population of 200 and predator population of 20. A preliminary version, reimplementing the interactive approach of \citet{Reynolds2011}, used a prey population of 120 and typical runs of 2000 to 3000 steps. This was also typical for an intermediate version using a single pre-trained predator. The introduction of a population of predators reduced the rate of fine-tuning of predator's neural net models, leading to the longer 6000 step simulations.
+\par
+During a simulation run various data is collected in log files. The most important output is a “visual log” — periodically saving tournament images (a crop of the given backgrounds overlaid with camouflaged prey, as in Figure \ref{fig:teaser}) along with the predator response data. To “compress” this data, these images are saved “occasionally.” Originally it was every 20 steps, but changed to every 19 steps to be relatively prime to cycling through the 6 or 10 subpopulations (demes/islands) of the prey population.
+\par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Discussion QQQ}
+This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figure [... QQQ ...] which shows several examples from each of several runs. (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
 [... QQQ ...]
+\par
+[... QQQ ...]
+\par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -430,6 +443,36 @@ QQQ.
 %% maybe this section should switch to single column layout?
 %% maybe this should be in a separate .tex / .pdf file?
 
+%% QQQ ZZZ
+\subsection{Key Simulation Parameters}
+The fully detailed description of this simulation is the source code [... which is open source on the web at this URL ...]. This table summariezes some of the key parameters which are held constant for all results shown in this paper. [... maybe move this into the main paper if it fits ...]
+\par
+
+\begin{adjustwidth}{1cm}{0cm}
+    \begin{tabular}{ |l|r| } 
+        \hline
+        \textbf{Parameter} & \textbf{value} \\ 
+        \hline
+        predator population & 20 \\ 
+        prey population & 200 \\ 
+        prey subpopulations (demes) & 10 \\
+        prey max init tree size & 100 \\
+        prey min tree size after crossover & 50 \\
+        prey max tree size after crossover & 150 \\
+        \hline
+        prey render diameter (pixels) & 100 \\ 
+        % tournament output image size & 512² \\ 
+        % predator input image size & 128² \\ 
+        tournament output image size & 512×512 \\ 
+        predator input image size & 128×128 \\ 
+        \hline
+        simulation steps per run (typical) & 6000 \\
+        tournament image save frequency & 19 \\
+        \hline
+    \end{tabular}
+\end{adjustwidth}
+
+
 \subsection{TexSyn \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
 % Better to use listings package?  https://ctan.org/pkg/listings
 \begin{small}
@@ -494,32 +537,6 @@ Non-trainable params: 0
 \end{verbatim}
 \end{small}
 \end{adjustwidth}
-
-
-%% QQQ ZZZ
-
-\subsection{Key Simulation Parameters}
-The fully detailed description of this simulation is the source code [... which is open source on the web at this URL ...]. This table summariezes some of the key parameters which are held constant for all results shown in this paper. [... maybe move this into the main paper if it fits ...]
-\par
-
-\begin{adjustwidth}{1cm}{0cm}
-    \begin{tabular}{ |l|r| } 
-        \hline
-        \textbf{Parameter} & \textbf{value} \\ 
-        \hline
-        predator population & 20 \\ 
-        prey population & 200 \\ 
-        prey subpopulations (demes) & 10 \\
-        prey max init tree size & 100 \\
-        prey min tree size after crossover & 50 \\
-        prey max tree size after crossover & 150 \\
-        predator input image size & 128² \\ 
-        prey render size & 512² \\ 
-        tournament image save frequency & 19 \\
-        \hline
-    \end{tabular}
-\end{adjustwidth}
-
 
 \begin{figure*}[b]
     \includegraphics[width=\linewidth]{images/fcd5_samples.png}
