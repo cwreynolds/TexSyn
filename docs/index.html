@@ -96,20 +96,28 @@
       <li>Approximate time line:</li>
       <ul>
         <li><a moz-do-not-send="true" href="#20191215">December 2019</a>:
-          start developing TexSyn.</li>
+          start developing <a moz-do-not-send="true"
+            href="https://github.com/cwreynolds/TexSyn">TexSyn</a>.</li>
         <li><a moz-do-not-send="true" href="#20200806">August 2020</a>:
-          start developing LazyPredator, integrate with TexSyn.<br>
+          start developing <a moz-do-not-send="true"
+            href="https://github.com/cwreynolds/LazyPredator">LazyPredator</a>,
+          integrate with TexSyn.<br>
         </li>
         <li><a moz-do-not-send="true" href="#20201118">November 2020</a>:
           evolutionary optimization of texture, procedural fitness
           function.</li>
-        <li><a moz-do-not-send="true" href="#20210129">January 29, 2021</a>:
-          early interactive evolution of camouflage, <code>evo_camo_game</code>.</li>
+        <li><a moz-do-not-send="true" href="#20210129">January 2021</a>:
+          early interactive evolution of camouflage, <a
+            moz-do-not-send="true"
+            href="https://cwreynolds.github.io/TexSyn/evo_camo_game_doc.html"><code>evo_camo_game</code></a>.</li>
         <li><a moz-do-not-send="true" href="#20210727">July 2021</a>:
-          side project “simple image match”.</li>
+          three month hiatus for side project SimpleImageMatch and
+          studying deep learning.<br>
+        </li>
         <li><a moz-do-not-send="true" href="#20211114">November 2021</a>:
-          start PredatorEye, make training set for learning to “find
-          conspicuous disks”.</li>
+          start <a moz-do-not-send="true"
+            href="https://github.com/cwreynolds/PredatorEye">PredatorEye</a>,
+          make training set for learning to “find conspicuous disks”.</li>
         <li><a moz-do-not-send="true" href="#20220204">February 2022</a>:
           first “no human in loop” adversarial camouflage run.</li>
         <li><a moz-do-not-send="true" href="#20220411">April 2022</a>:
@@ -118,7 +126,7 @@
         <li><a moz-do-not-send="true" href="#20220831">August 2022</a>:
           working toward population of predators.</li>
         <li><a moz-do-not-send="true" href="#20221031">October 2022</a>:
-          settle on parameter settings.<br>
+          settle on “Halloween” parameter settings.<br>
         </li>
       </ul>
       <li>While TexSyn is written in c++, many of the code samples below
@@ -149,6 +157,15 @@
           camouflage” runs using a (very alpha) app called <a
             href="https://cwreynolds.github.io/TexSyn/evo_camo_game_doc.html">evo_camo_game</a>
           based on TexSyn and LazyPredator.</li>
+        <li>After November 2021, the focus of this work moved to an
+          adversarial model of evolving camouflage against pre-trained
+          deep learning (CNN) models of prey detection in <a
+            moz-do-not-send="true"
+            href="https://github.com/cwreynolds/PredatorEye">PredatorEye</a>.
+          Later the predator vision system was fine-tuned during each
+          run, and the single predator model became an evolving
+          population of predators.<br>
+        </li>
       </ul>
     </ul>
     <br style="-------------------------------------------------------">
