@@ -352,43 +352,45 @@ During a simulation run various data is collected in log files. The most importa
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Discussion QQQ}
-This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figure [... QQQ ...] which shows several examples from each of several runs. (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
+\section{Discussion}
+This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figure [... QQQ ...] which shows several examples from each of several runs. 
+% (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
-[... QQQ ...]
+These experiments have been run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core. The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat faster since it take 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the TensorFlow-Metal plug-in layer which prevents this TF-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
 \par
-[... QQQ ...]
+A key observation from these experiments is that different background sets have differing degrees of difficulty. For some background sets, a simulated evolution run produces effective camouflage. (In some cases effective enough to momentarily fool a human observer: “Wait, where is the third prey?!”) In other cases, runs (even repeated runs) fail to produce good results. So far this difference cannot be reliably predicted nor addressed.
+% [... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
+\par
+
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Limitations QQQ}
+\section{Limitations}
 \label{subsec:limitations}
-[... no objective measure of camouflage effectiveness ...]
-[... among other things, makes it hard to evaluate adjustments to the model: is the new parameter value better? can't measure with a numeric value ...]
-[... suggest  \cite{lv_cod_2022} as a way to rank conspicuousness ...]
+Chief among the limitations of this work is the lack of an objective measure of camouflage effectiveness. Without a metric it is impossible to plot how effectiveness increases over simulated time. Without a metric it is hard to simply evaluate adjustments to the model: is a new parameter value better or worse? In fact if such a metric existed, it \textit{could} be used directly as a fitness function for camouflage evolution.
 \par
-[... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
+Another limitation is that all results are hand selected: “cherry picked.” After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes some judgement of their effectiveness. From an objective standpoint, it is hard to claim that this simulation even “works.” Subjectively, it seems clear that it does: conspicuous prey seen early in a simulation tend to become less frequent, while cryptic prey become more common and effective (see Figure \ref{fig:time_sequence}).
 \par
-[... all results are hand selected, “cherry picked” ...] 
-\par
-[... in email to Ken I wrote: \textit{The aspect of my project I'm unsure how to approach is lack of rigor. My evaluations are all subjective. It comes down to “we can see that the effectiveness of the camouflage clearly increases during the simulation.”}]
-\par
-[... inherently 2d ...]
-\par
-[... texture synthesis lacks genetic or biological plausibility ...]
+Other limitations include the inherently 2D nature of the simulation and that the model of texture synthesis lacks genetic or biological plausibility. These are among the simplifying abstractions intended to make this initial model of camouflage coevolution tractable. But it is fair to complain that as a result, the model is \textit{too} abstract to provide much insight.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Future Work QQQ}
-[... see note about future work at post “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}” ...]
+\section{Future Work}
+The goal of this work was to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a prototype for an automatic process to generate camouflage for a given environment from photos. Most importantly was creating a model to allow future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
 \par
-[... propose a crowd sourced user study of camouflage quality ... could be based on time to find ... like the interactive web games of \href{https://www.visual-ecology.com/2020/10/06/martin-stevens/}{Martin Stevens} nuthatch egg? ...] 
+As mentioned in Section \ref{subsec:limitations}, a limitation of this model is the lack of an objective metric of camouflage effectiveness. Were a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. Some contemporaneous work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” It would be interesting to test that approach in the coevolution model presented here. It may also be possible to evaluate runs of this simulation with crowd-sourced rating of camouflage quality. [...cite Martin Stevens...]
+% QQQ maybe cite https://www.sensoryecology.com/games/ ?
+% Sent Martin Stevens email asking to suggest a paper to cite.
 \par
-[... currently a “mixed paradigm” model using both evolution and learning ... (maybe note these typically co-occur in nature  \cite{valiant_probably_2013}) ... propose an all-evolution model with evolved detectors for predators [... perhaps like the work of \href{https://people.wgtn.ac.nz/Mengjie.Zhang}{Mengjie Zhang} or his students like \href{https://yingbi92.github.io/homepage/}{Ying Bi}? find a representative paper to cite, perhaps coauthored by them ...] or an all learning model, something like CamoGAN \cite{talas_camogan_2020} ...]
+An important next step is to understand the failure modes of this simulation. Why some environments (background sets) are \textit{hard} while others are \textit{easy}? Why does this difference persist through repeated runs with unique random number seeds?
+% As discussed in “\href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}” and “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}”.
+Easy environments produce effective camouflage. Hard environment appear to generate camouflage that is less effective. They seem to move toward effective camouflage, then fail to improve. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation, and fail to reproduce so fail to spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. What about certain (hard) background sets could cause predators to “go off on a tangent”?
 \par
-An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs taken with the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps vision techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
+This simulation is currently a “mixed paradigm” model using both evolution and learning while these typically co-occur in nature \cite{valiant_probably_2013}) it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{bi_using_2022}. Or conversely, an all learning model, something like CamoGAN \cite{talas_camogan_2020}.
+\par
+An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps vision techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -410,8 +412,8 @@ Michael Wahrman,
 and
 QQQ.
 \par
-[... something about my neighbor's landscaping producing many of the background images? ...]
-
+Thanks also to my neighbors whose landscaping provided many of the background images used here.
+\par
 \end{acks}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,6 +451,14 @@ QQQ.
 \appendix
 \section{Supplemental Materials}
 
+\begin{figure*}[b]
+    \includegraphics[width=\linewidth]{images/fcd5_samples.png}
+    \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
+    \Description{Full tournament image showing background, three prey, and three predator responses.}
+    \label{fig:fcd5_samples}
+\end{figure*}
+
+
 %% maybe this section should switch to single column layout?
 %% maybe this should be in a separate .tex / .pdf file?
 
@@ -464,6 +474,7 @@ The fully detailed description of this simulation is the source code [... which 
         \textbf{Parameter} & \textbf{value} \\ 
         \hline
         predator population & 20 \\ 
+        predator starvation threshold & < 7 of 20 \\ 
         prey population & 200 \\ 
         prey subpopulations (demes) & 10 \\
         prey max init tree size & 100 \\
@@ -547,12 +558,6 @@ Non-trainable params: 0
 \end{small}
 \end{adjustwidth}
 
-\begin{figure*}[b]
-    \includegraphics[width=\linewidth]{images/fcd5_samples.png}
-    \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
-    \Description{Full tournament image showing background, three prey, and three predator responses.}
-    \label{fig:fcd5_samples}
-\end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
