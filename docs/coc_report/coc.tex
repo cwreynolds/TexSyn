@@ -336,13 +336,13 @@ As used here, “similarity” is meant to suggest image features have a \jargon
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Simulation Runs}
-To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of prey with camouflage. It is c++ code using \texsyn{} and \lazypredator{}. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception. This \predatoreye{} is Python code using Keras \cite{chollet_keras_2015} and TensorFlow \cite{tensorflow_whitepaper_2015}. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
+To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of prey with camouflage, it is c++ code based on \texsyn{} and \lazypredator{}. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception. This \predatoreye{} is Python code using Keras \cite{chollet_keras_2015} and TensorFlow \cite{tensorflow_whitepaper_2015}. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
 \par
-The parameters for each simulation run are primarily a choice of background set (see section \ref{subsec:background_sets}), a scale factor for the background images, and a seed for random number generation. There are a few other parameters to the command [... which are listed in the Supplemental Materials ...]. Other key parameters are summarized in Supplemental Materials. [... ZZZ ...]
+The parameters for a simulation run are primarily a choice of background set (see section \ref{subsec:background_sets}), a scale factor for the background images, and a seed for random number generation. There are a few other parameters to the \texsyn{} command. These and other key parameters are summarized in Supplemental Materials.
 \par
 A typical run consists of 6000 steps with a prey population of 200 and predator population of 20. A preliminary version, reimplementing the interactive approach of \citet{reynolds_iec_2011}, used a prey population of 120 and typical runs of 2000 to 3000 steps. This was also typical for an intermediate version using a single pre-trained predator. The introduction of a population of predators reduced the rate of fine-tuning of predator's neural net models, leading to the longer 6000 step simulations.
 \par
-During a simulation run various data is collected in log files. The most important output is a “visual log” — periodically saving tournament images (a crop of the given backgrounds overlaid with camouflaged prey, as in Figure \ref{fig:teaser}) along with the predator response data. To “compress” this data, these images are saved “occasionally.” Originally it was every 20 steps, but changed to every 19 steps to be relatively prime to cycling through the 6 or 10 subpopulations (demes/islands) of the prey population.
+During a simulation run various data is collected in log files. The most important output is a “visual log” — periodically saving tournament images (a crop of the given backgrounds overlaid with camouflaged prey, as in Figure \ref{fig:teaser}) along with the predator response data. These images are saved “occasionally.” Originally it was every 20 steps, but was changed to every 19 steps to be relatively prime to cycle through the 6 or 10 subpopulations (demes/islands) of the prey population.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,21 +351,19 @@ During a simulation run various data is collected in log files. The most importa
 This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figure [... QQQ ...] which shows several examples from each of several runs. 
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
-These experiments have been run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core. The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat faster since it take 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the TensorFlow-Metal plug-in layer which prevents this TF-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
+These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core. The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it take 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
 \par
-A key observation from these experiments is that different background sets have differing degrees of difficulty. For some background sets, a simulated evolution run produces effective camouflage. (In some cases effective enough to momentarily fool a human observer: “Wait, where is the third prey?!”) In other cases, runs (even repeated runs) fail to produce good results. So far this difference cannot be reliably predicted nor addressed.
+A key observation from these experiments is that different background sets have differing degrees of difficulty. For some background sets, a simulated evolution run produces effective camouflage. Occasionally it is effective enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs (even repeated runs) fail to produce good results. So far this difference cannot be reliably predicted nor addressed. Anecdotally, it seems the more “stationary” the background textures are (see Section \ref{subsec:background_sets}) the easier it is to evolve effective camouflage.
 % [... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
-\par
-
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Limitations}
 \label{subsec:limitations}
-Chief among the limitations of this work is the lack of an objective measure of camouflage effectiveness. Without a metric it is impossible to plot how effectiveness increases over simulated time. Without a metric it is hard to simply evaluate adjustments to the model: is a new parameter value better or worse? In fact if such a metric existed, it \textit{could} be used directly as a fitness function for camouflage evolution.
+Chief among the limitations of this work is the lack of an objective measure of camouflage effectiveness. Without such a metric it is impossible to plot how camouflage effectiveness increases over simulated time. Without a metric it is hard to simply evaluate adjustments to the model: is a new parameter value better or worse? In fact, if such a metric existed, it \textit{could} be used directly as a fitness function for camouflage evolution.
 \par
-Another limitation is that all results are hand selected: “cherry picked.” After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes some judgement of their effectiveness. From an objective standpoint, it is hard to claim that this simulation even “works.” Subjectively, it seems clear that it does: conspicuous prey seen early in a simulation tend to become less frequent, while cryptic prey become more common and effective (see Figure \ref{fig:time_sequence}).
+Another limitation is that all results are hand selected: “cherry picked.” After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes a mental judgement of their effectiveness. From an objective standpoint, it is hard to claim that this simulation even “works.” Subjectively, it seems clear that it does: conspicuous prey seen early in a simulation tend to become less frequent, while cryptic prey become more common and effective (see Figure \ref{fig:time_sequence}).
 \par
 Other limitations include the inherently 2D nature of the simulation and that the model of texture synthesis lacks genetic or biological plausibility. These are among the simplifying abstractions intended to make this initial model of camouflage coevolution tractable. But it is fair to complain that as a result, the model is \textit{too} abstract to provide much insight.
 \par
@@ -373,22 +371,19 @@ Other limitations include the inherently 2D nature of the simulation and that th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
-The goal of this work was to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a prototype for an automatic process to generate camouflage for a given environment from photos. The most important aspect was creating a model to allow future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
+The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a prototype for an automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create a model allowing future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
 \par
-As mentioned in Section \ref{subsec:limitations}, a limitation of this model is the lack of an objective metric of camouflage effectiveness. Were a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. Some contemporaneous work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” It would be interesting to test that approach in the coevolution model presented here. It may also be possible to evaluate runs of this simulation with crowd-sourced rating of camouflage quality. [...cite Martin Stevens...]
-% QQQ maybe cite https://www.sensoryecology.com/games/ ?
-% Sent Martin Stevens email asking to suggest a paper to cite.
-% oh, or if no reply: CamoEvo \cite{hancock_camoevo_2022}
+As mentioned in Section \ref{subsec:limitations}, a limitation of this model is the lack of an objective metric of camouflage effectiveness. Were a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. Some contemporaneous work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” It would be interesting to test that approach in the coevolution model presented here. It may also be possible to evaluate runs of this simulation with crowd-sourced rating of camouflage quality, as in SEE Games \cite{stevens_games_2022} and CamoEvo \cite{hancock_camoevo_2022}.
 \par
-With an objective measure of camouflage quality, many parameter settings of the current model ([...see table in supplemental materials ...]) could be revisited. For example, the size of predator and prey populations could be varied to find the best combination. 
+If an objective measure of camouflage quality did exist, many parameter settings of the current model could be revisited (see table in Supplemental Materials). For example, the size of predator and prey populations could be varied to find the best combination. 
 \par
 An important next step is to understand the failure modes of this simulation. Why some environments (background sets) are \textit{hard} while others are \textit{easy}? Why does this difference persist through repeated runs with unique random number seeds?
 % As discussed in “\href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}” and “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}”.
-Easy environments produce effective camouflage. Hard environment appear to generate camouflage that is less effective. They seem to move toward effective camouflage, then fail to improve. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation, and fail to reproduce so fail to spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. What about certain (hard) background sets could cause predators to “go off on a tangent”?
+Easy environments produce effective camouflage. Hard environment appear to generate camouflage that is less effective. They seem to move toward effective camouflage, then fail to improve. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation, and fail to reproduce so cannot spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. How can certain (hard) background sets cause predators to “go off on a tangent”?
 \par
-This simulation is currently a “mixed paradigm” model using both evolution and learning while these typically co-occur in nature \cite{valiant_probably_2013}, it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{bi_genetic_2022}. Or conversely, an all learning model, something like CamoGAN \cite{talas_camogan_2020}.
+This simulation is currently a mixed paradigm model using both evolution and learning. While these typically co-occur in nature \cite{valiant_probably_2013}, it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{bi_genetic_2022}. Or conversely, an all learning model, something similar to CamoGAN \cite{talas_camogan_2020}.
 \par
-An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps vision techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
+An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps neural techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -519,8 +514,26 @@ NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \subsection{Background image sets}
 [... list names of background sets used in each figure ... say anything about availability? ...]
 
-\subsection{Additional examples}
-[... include some results of other runs, perhaps similar to the format of my blog posts,  ...]
+\subsection{Additional parameters to simulation run}
+Command line arguments to pkgT:
+\begin{adjustwidth}{1cm}{0cm}
+\begin{small}
+\begin{verbatim}
+pkgT requires at least one pathname parameter, others may be omitted from the end:
+    background image directory (required)
+    output directory (defaults to .)
+    background scale (defaults to 0.5)
+    random seed (else: default seed)
+    window width (defaults to 1200)
+    window height (defaults to 800)
+    individuals (defaults to 120)
+    subpopulations (defaults to 6)
+    max init tree size (defaults to 100)
+    min crossover tree size (default max init tree size  * 0.5)
+    max crossover tree size (default max init tree size  * 1.5)
+\end{verbatim}
+\end{small}
+\end{adjustwidth}
 
 \subsection{Details on pre-trained predator model}
 The pre-trained predator model, shown in \ref{fig:predator_cnn}, is a Keras TensorFlow model. Here is its \texttt{model.summary()}:
