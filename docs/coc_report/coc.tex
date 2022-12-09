@@ -1,7 +1,7 @@
 % \documentclass[sigconf,anonymous,review,timestamp]{acmart}
 % \documentclass[sigconf]{acmart}
 \documentclass[acmtog]{acmart}
-
+% \documentclass[acmtog,anonymous,review,timestamp]{acmart}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % From https://s2023.siggraph.org/program/technical-papers/ -- The submissions are required to adhere to the following length constraints: Papers must be no longer than 7 pages excluding references and figures-only pages. There is no limit on the length of the reference section. Each paper can have at most two figures-only pages, placed at the end of the submission, after references. Authors can also include as many figures as they wish within the core 7 pages. Papers should not include appendices in the main document.
@@ -55,6 +55,9 @@
 \newcommand{\predatoreye}[0]{pkgV}
 
 \usepackage{changepage}  % http://ctan.org/pkg/changepage
+
+% \graphicspath{ {pix/} {../pix/} }
+\graphicspath{ {images/} }
 
 \begin{document}
 
@@ -126,14 +129,14 @@
 %% Teaser figure that appears on the top of the article.
 \begin{teaserfigure}
     %% TODO note: use images without the “predator prediction crosshairs”.
-    \includegraphics[scale=0.24]{images/20220918_step_7372.png}
+    \includegraphics[scale=0.24]{20220918_step_7372.png}
     \hfill
-    \includegraphics[scale=0.24]{images/20220926_step_6143.png}
+    \includegraphics[scale=0.24]{20220926_step_6143.png}
     \hfill
-    \includegraphics[scale=0.24]{images/20221003_step_3667.png}
+    \includegraphics[scale=0.24]{20221003_step_3667.png}
     \hfill
-    \includegraphics[scale=0.24]{images/20220930_step_6093.png}
-    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version. [QQQ replace stand-in images]}
+    \includegraphics[scale=0.24]{20220930_step_6093.png}
+    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version.) [QQQ replace stand-in images]}
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
     % \vspace{5mm} %5mm vertical space
@@ -146,17 +149,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
-    \includegraphics[scale=0.16]{images/20221030_1220_step_19.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_19.png}
     \hfill
-    \includegraphics[scale=0.16]{images/20221030_1220_step_1045.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_1045.png}
     \hfill
-    \includegraphics[scale=0.16]{images/20221030_1220_step_2014.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_2014.png}
     \hfill
-    \includegraphics[scale=0.16]{images/20221030_1220_step_3059.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_3059.png}
     \hfill
-    \includegraphics[scale=0.16]{images/20221030_1220_step_6650.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_6650.png}
     \hfill
-    \includegraphics[scale=0.16]{images/20221030_1220_step_7467.png}
+    \includegraphics[scale=0.16]{20221030_1220_step_7467.png}
     \caption{Prey camouflage evolving over simulation time to become more effective in a given environment.}
     \Description{Sequence of images showing evolution of prey camouflage over simulated time.}
     \label{fig:time_sequence}
@@ -179,7 +182,7 @@ In abstract artificial life models, it is common to focus in detail on one aspec
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
-    \includegraphics[width=\textwidth]{images/coc_overview.pdf}
+    \includegraphics[width=\textwidth]{coc_overview.pdf}
     \caption{Overview of one step of the coevolutionary simulation of camouflage. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512² pixels is made. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position (circled crosshairs in tournament image, see also Figure \ref{fig:predator_responses}) predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the ground truth center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replaced by a new offspring of the other two prey. If the worst scoring predator's estimate is \textit{outside} all prey, it may die of starvation, to be replaced by a new offspring.}
     \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
     \label{fig:simulation_overview}
@@ -216,7 +219,7 @@ In contrast, the goal of the simulation reported in this paper is to pit camoufl
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
-    \includegraphics[width=\textwidth]{images/texsyn_overview.pdf}
+    \includegraphics[width=\textwidth]{texsyn_overview.pdf}
     \caption{\texsyn{} expression trees and crossover between them, using a simplified version of \texsyn{} with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four named solid color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) under a \texttt{warp} operator. (See Supplemental Material for actual \texsyn{} c++ code used for these examples.)}
     \Description{Overview of \texsyn{} representation of texture and the idea of \textit{crossover} between expression trees.}
     \label{fig:TexSyn_overview}
@@ -276,7 +279,7 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
 %% prototyping CNN diagram
 
 \begin{figure}
-    \includegraphics[width=\columnwidth]{images/predator_cnn.pdf}
+    \includegraphics[width=\columnwidth]{predator_cnn.pdf}
     \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered. All convolution layers but the first use strides of (2,2) while increasing the number of learned filters. Then fully connected layers reduce the flattened features, by factors of 4, down to an output layer of 2 values. This model contains about 3.2 million parameters (Additional details in Supplemental Materials.)}
     \Description{Diagram of Predator's convolutional neural net.}
     \label{fig:predator_cnn}
@@ -286,7 +289,7 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
 %% Full step/tournament image with predator responses
 
 \begin{figure}
-    \includegraphics[width=\columnwidth]{images/20221007_0806_step_7030.png}
+    \includegraphics[width=\columnwidth]{20221007_0806_step_7030.png}
     \caption{Tournament image after simulation step. Starts with crop from given background set. Composited over that are three prey with evolved camouflage patterns. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black and white, second best is green and black, third is red and black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
     \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:predator_responses}
@@ -351,7 +354,7 @@ During a simulation run various data is collected in log files. The most importa
 This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figure [... QQQ ...] which shows several examples from each of several runs. 
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
-These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core. The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it take 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
+These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps use previously rendered prey). The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it take 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
 \par
 A key observation from these experiments is that different background sets have differing degrees of difficulty. For some background sets, a simulated evolution run produces effective camouflage. Occasionally it is effective enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs (even repeated runs) fail to produce good results. So far this difference cannot be reliably predicted nor addressed. Anecdotally, it seems the more “stationary” the background textures are (see Section \ref{subsec:background_sets}) the easier it is to evolve effective camouflage.
 % [... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
@@ -371,15 +374,15 @@ Other limitations include the inherently 2D nature of the simulation and that th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
-The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a prototype for an automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create a model allowing future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
+The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a simplistic automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create a model allowing future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
 \par
 As mentioned in Section \ref{subsec:limitations}, a limitation of this model is the lack of an objective metric of camouflage effectiveness. Were a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. Some contemporaneous work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” It would be interesting to test that approach in the coevolution model presented here. It may also be possible to evaluate runs of this simulation with crowd-sourced rating of camouflage quality, as in SEE Games \cite{stevens_games_2022} and CamoEvo \cite{hancock_camoevo_2022}.
 \par
-If an objective measure of camouflage quality did exist, many parameter settings of the current model could be revisited (see table in Supplemental Materials). For example, the size of predator and prey populations could be varied to find the best combination. 
+If an objective measure of camouflage quality did exist, many parameter settings of the current model could be revisited (see table in Supplemental Materials). For example, the size of predator and prey populations could be varied to find the best combination. Similarly: do much longer runs produce better quality?
 \par
-An important next step is to understand the failure modes of this simulation. Why some environments (background sets) are \textit{hard} while others are \textit{easy}? Why does this difference persist through repeated runs with unique random number seeds?
+An important next step is to understand the failure modes of this simulation. Why some environments (background sets) are \textit{hard} while others are \textit{easy}? Why does this difference persist through repeated runs with differing random number seeds?
 % As discussed in “\href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}” and “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}”.
-Easy environments produce effective camouflage. Hard environment appear to generate camouflage that is less effective. They seem to move toward effective camouflage, then fail to improve. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation, and fail to reproduce so cannot spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. How can certain (hard) background sets cause predators to “go off on a tangent”?
+Easy environments produce effective camouflage. Hard environments do not. They seem to move toward effective camouflage, then stop improving. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation. They fail to reproduce so cannot spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. How can certain (hard) background sets cause predators to “go off on a tangent”?
 \par
 This simulation is currently a mixed paradigm model using both evolution and learning. While these typically co-occur in nature \cite{valiant_probably_2013}, it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{bi_genetic_2022}. Or conversely, an all learning model, something similar to CamoGAN \cite{talas_camogan_2020}.
 \par
@@ -421,15 +424,64 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 
 
 \begin{figure*}
-    \includegraphics[width=1cm,height=1.15\linewidth]{images/middle_gray_pixel.png}
-    \caption{First “figure only” page.}
-    \Description{...}
-    \label{fig:temp_fo_1}
+    \includegraphics[scale=0.24]{20221202_1555_step_6460.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6560.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6830.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
+    \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
+    \Description{QQQ.}
+    \label{fig:4_from_jans_oak_leaves}
+\end{figure*}
+
+% temp, just for mocking up layout:
+\begin{figure*}
+    \includegraphics[scale=0.24]{20221202_1555_step_6460.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6560.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6830.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
+    \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
+    \Description{QQQ.}
+    \label{fig:xxx}
+\end{figure*}
+
+% temp, just for mocking up layout:
+\begin{figure*}
+    \includegraphics[scale=0.24]{20221202_1555_step_6460.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6560.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6830.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
+    \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
+    \Description{QQQ.}
+    \label{fig:yyy}
+\end{figure*}
+
+% temp, just for mocking up layout:
+\begin{figure*}
+    \includegraphics[scale=0.24]{20221202_1555_step_6460.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6560.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_6830.png}
+    \hfill
+    \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
+    \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
+    \Description{QQQ.}
+    \label{fig:zzz}
 \end{figure*}
 
 
+
 \begin{figure*}
-    \includegraphics[width=1cm,height=1.15\linewidth]{images/middle_gray_pixel.png}
+    \includegraphics[width=1cm,height=1.15\linewidth]{middle_gray_pixel.png}
     \caption{Second “figure only” page.}
     \Description{...}
     \label{fig:temp_fo_2}
@@ -445,7 +497,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \section{Supplemental Materials}
 
 \begin{figure*}[b]
-    \includegraphics[width=\linewidth]{images/fcd5_samples.png}
+    \includegraphics[width=\linewidth]{fcd5_samples.png}
     \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
     \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:fcd5_samples}
@@ -480,8 +532,9 @@ The fully detailed description of this simulation is the source code [... which 
         tournament output image size & 512×512 \\ 
         predator input image size & 128×128 \\ 
         \hline
-        simulation steps per run (typical) & 6000 \\
         tournament image save frequency & 19 \\
+        simulation steps per run (typical) & 6000 \\
+        predator fail rate (typical) & 20\%-25\% \\
         \hline
     \end{tabular}
 \end{adjustwidth}
