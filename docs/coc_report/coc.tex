@@ -384,6 +384,8 @@ An important next step is to understand the failure modes of this simulation. Wh
 % As discussed in “\href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}” and “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}”.
 Easy environments produce effective camouflage. Hard environments do not. They seem to move toward effective camouflage, then stop improving. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation. They fail to reproduce so cannot spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. How can certain (hard) background sets cause predators to “go off on a tangent”?
 \par
+In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean position over all prey positions. To work around this, a constraint was added to prey placement to avoid positions near [QQQ number?] the center. This seems like a bug to be better understood and fixed in a more principled way.
+\par
 This simulation is currently a mixed paradigm model using both evolution and learning. While these typically co-occur in nature \cite{valiant_probably_2013}, it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{bi_genetic_2022}. Or conversely, an all learning model, something similar to CamoGAN \cite{talas_camogan_2020}.
 \par
 An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps neural techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
@@ -393,7 +395,7 @@ An obvious next step is to apply this model to 3d environments. Perhaps along th
 
 %% Acknowledgements
 \begin{acks}
-I deeply appreciate all who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
+I deeply appreciate everyone who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
 \par
 I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
 Thanks for additional help from:
@@ -438,14 +440,15 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 
 % temp, just for mocking up layout:
 \begin{figure*}
-    \includegraphics[scale=0.24]{20221202_1555_step_6460.png}
+    \includegraphics[scale=0.24]{20221108_2018_step_4655.png}
     \hfill
-    \includegraphics[scale=0.24]{20221202_1555_step_6560.png}
+    \includegraphics[scale=0.24]{20221108_2018_step_5498.png}
     \hfill
-    \includegraphics[scale=0.24]{20221202_1555_step_6830.png}
+    \includegraphics[scale=0.24]{20221108_2018_step_5947.png
+    }
     \hfill
-    \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
-    \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
+    \includegraphics[scale=0.24]{20221108_2018_step_6562.png}
+    \caption{Four tournament images from run tree\_leaf\_blossom\_sky\_20221108\_2018.}
     \Description{QQQ.}
     \label{fig:zzz}
 \end{figure*}
