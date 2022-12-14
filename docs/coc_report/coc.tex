@@ -77,7 +77,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-    Camouflage in nature is thought to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid them. This work simulates an abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learns to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on an evolving population of predators and another of prey. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, but more significantly, an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. \textbf{(Note to reviewers: all source code for this simulation will be made publicly available if paper is accepted. In this review draft, modules are referred to by anonymous names: \texsyn{}, \lazypredator{}, \predatoreye{}.)}
+    Camouflage in nature is thought to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid them. This work simulates an abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learn to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on one evolving population of prey and another of predators. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, but more significantly, an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. \textbf{(Note to reviewers: all source code for this simulation will be made publicly available if paper is accepted. In this review draft, modules are referred to by anonymous names: \texsyn{}, \lazypredator{}, \predatoreye{}.)}
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,7 +261,7 @@ The evolutionary model used in the current work, implemented in software called 
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the prey tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant (it is arbitrary). If the predator \jargon{fails} and predicts a position outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
-In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator may then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? (Currently this is 35\% hunting success over its last 20 attempts.)
+In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator may then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? Currently this threshold is 50\% hunting success over its last 20 attempts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -311,14 +311,15 @@ Note that the images in this paper are rendered at 512² pixels and the prey dis
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Predator vision}
-It is the predator's job in this simulation to look at an image and “hunt” for prey. Specifically an image is built from a portion of a background photo and overlaid with three camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the \texsyn{} side. Because all images in this simulation are synthetic, they are labeled with \jargon{ground truth} position data for each prey. This allows predators to learn in a \jargon{self-supervised} manner.
+It is the predator's job to look at a tournament image and “hunt” for prey. These images are built from a portion of a background photo and overlaid with three randomly placed camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the \texsyn{} side. Because all images in this simulation are synthetic, they are labeled with \jargon{ground truth} position data for each prey. This allows predators to learn in a \jargon{self-supervised} manner.
 \par
 \subsubsection{Pre-Training Predator's Vision}
-The basis for a predator's visual system is \textbf{a \jargon{pre-trained} deep neural net model for a “find conspicuous disk” task}, see Figure \ref{fig:predator_cnn}. The goal of this task is to look at an arbitrary image and locate the centerpoint of the most conspicuous (salient) region, assumed to be a prey-sized disk. This pre-trained model is created as a preparatory step then reused for each subsequent camouflage evolution run. \texsyn{} was used to generate a dataset of 20,000 labeled training examples called \jargon{FCD5}. Each example was an RGB image, a 128×128×3 tensor, with an associated label: an \textit{xy} coordinate pair indicating a location in the image.
+\label{sec:pre_train_predator}
+The basis for a predator's visual system is \textbf{a \jargon{pre-trained} deep neural net model for a “find conspicuous disk” task}, see Figure \ref{fig:predator_cnn}. The goal of this task is to look at an arbitrary image and locate the centerpoint of the most conspicuous (salient) region, assumed to be a prey-sized disk. This pre-trained model is created as a preparatory step then reused for each subsequent camouflage evolution run. \texsyn{} was used to generate a dataset of 20,000 labeled training examples called \jargon{FCD5}. (Effective training set size via augmentation was 500,000.) Each example was an RGB image, a 128×128×3 tensor, with an associated label: an \textit{xy} coordinate pair indicating a location in the image.
 \par
-Each training image starts with a \jargon{random texture} or a random crop of a photo (from the library of background images, see Section \ref{subsec:background_sets}). Over it was rendered one or three prey disks with random texture. While “random texture” is a slippery concept, the meaning here is the sort of prey texture used to initialize the prey population before an evolution run. The \lazypredator{} genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as one corresponding to the \texsyn{} library. A random tree corresponds to a random nested expression of \texsyn{} operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not uncorrelated noise.
+Each training image starts with a \jargon{random texture} or a random crop of a photo (from a library of background images, see Section \ref{subsec:background_sets}). Over it was rendered one or three prey disks with random texture. While “random texture” is a slippery concept, the meaning here is the sort of prey texture used to initialize the prey population before an evolution run. The \lazypredator{} genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as one corresponding to the \texsyn{} library. A random tree is interpreted as a random nested expression of \texsyn{} operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not uncorrelated noise.
 \par
-Each image in the “find conspicuous disk” training dataset is generated in one of three styles chosen with equal probability. Style 1 has a single prey disk, and the label is its center point. Style 2 has three different prey. Style 3 has three copies of a single prey disk. The latter two cases reduce the visibility of two of the three disks, by blending or dithering the pixels of the prey disk into the background. The label corresponds to the disk whose visibility is not reduced. See Figure \ref{fig:fcd5_samples}.
+Each image in the “find conspicuous disk” training dataset is generated in one of three styles chosen with equal probability. Style 1 has a single prey disk, and the label is its center point. Style 2 has three different prey. Style 3 has three copies of a single prey disk. The latter two cases reduce the visibility of two of the three disks, by blending or dithering the pixels of the prey disk into the background. The label corresponds to the disk whose visibility is not reduced, presumed to be more conspicuous. See Figure \ref{fig:fcd5_examples}.
 \par
 \subsubsection{Fine-Tuning Predator's Vision}
 During simulations of camouflage evolution, each predator is initialized as a copy of the pre-trained “find conspicuous disk” model to which noise is added. (Zero mean noise of less than 0.003 is added to each parameter of the deep neural net.) In each simulation step, the three predators chosen to participate in the tournament (see Figure \ref{fig:simulation_overview}) predict a prey position. Then \textbf{each predator is \jargon{fine-tuned} based on a dataset of labeled images collected during this simulation run}. This dataset is a collection of images from earlier simulation steps in this run. It is essentially the memory of prey coloration recently found in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images. Thereafter, each new tournament image replaces one of the 500 chosen at random. Labels for this dataset correspond to predictions made by the “best” predator (least aim error) in each step, see Figure \ref{fig:predator_responses}.
@@ -399,6 +400,8 @@ I deeply appreciate everyone who helped me with this work: my family for loving 
 \par
 I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
 Thanks for additional help from:
+Bilal Abbasi,
+Jan Allbeck,
 Rebecca Allen,
 Richard Dawkins,
 Steve DiPaola,
@@ -406,9 +409,7 @@ Aaron Hertzmann,
 John Koza,
 Dominic Mallinson,
 Nick Porcino,
-Michael Wahrman, 
-and
-QQQ.
+and Michael Wahrman.
 \par
 Thanks also to my neighbors whose landscaping provided many of the background images used here.
 \par
@@ -483,6 +484,65 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \end{figure*}
 
 \begin{figure*}
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_UVSfqCzewt_38_20.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_SBWaLRHOzk_56_33.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_bUMqcbutgJ_25_78.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_HZzUzWWqcC_54_28.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_inuPKUxnHQ_72_71.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_RRGCwhmcJc_101_84.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_PYinyJAWaj_61_60.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_TNXfhQtzYa_92_91.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_cDMtFaTYKk_63_54.png}
+    \vspace{0.1cm}
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_wIRPERwSCh_49_63.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_edDsCjbHdf_61_92.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_fGMFBgMQDX_93_86.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_jQREPLQyuL_33_39.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_ijBOHTccYX_104_101.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_KAoOFAqFyU_80_58.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_NExMwxEbzU_85_92.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_kpcUyhHXOh_91_98.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_oWPwPGkcSb_82_22.png}
+    \vspace{0.1cm}
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_uAEPxMZbeo_83_45.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_cADfBauZUV_47_32.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_YAMfudJxeH_30_84.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_JeyBgDfMcN_40_82.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_OaOJaByhbU_90_55.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_mhYpDjxaKf_78_57.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_ASsEgFUlly_23_60.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_nzgItDrYqT_71_99.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_QuHYtnPora_72_73.png}
+    \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random “prey” over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, two prey are blended into background to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
+    \Description{Full tournament image showing background, three prey, and three predator responses.}
+    \label{fig:fcd5_examples}
+\end{figure*}
+
+\begin{figure*}
     \includegraphics[width=1cm,height=1.15\linewidth]{middle_gray_pixel.png}
     \caption{Second “figure only” page.}
     \Description{...}
@@ -498,12 +558,9 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \appendix
 \section{Supplemental Materials}
 
-\begin{figure*}[b]
-    \includegraphics[width=\linewidth]{fcd5_samples.png}
-    \caption{examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training.  [QQQ Temporary figure.]}
-    \Description{Full tournament image showing background, three prey, and three predator responses.}
-    \label{fig:fcd5_samples}
-\end{figure*}
+
+
+
 
 
 %% maybe this section should switch to single column layout?
@@ -521,7 +578,6 @@ The fully detailed description of this simulation is the source code [... which 
         \textbf{Parameter} & \textbf{value} \\ 
         \hline
         predator population & 20 \\ 
-        predator starvation threshold & < 7 of 20 \\ 
         prey population & 200 \\ 
         prey subpopulations (demes) & 10 \\
         prey max init tree size & 100 \\
@@ -537,6 +593,11 @@ The fully detailed description of this simulation is the source code [... which 
         tournament image save frequency & 19 \\
         simulation steps per run (typical) & 6000 \\
         predator fail rate (typical) & 20\%-25\% \\
+        predator starvation threshold & <10 of 20 \\ 
+        \hline
+        predator “FCD” pre-training: & \\
+        \hspace{0.2cm} synthetic dataset size & 20,000 \\
+        \hspace{0.2cm} effective size with augmentation & 500,000 \\
         \hline
     \end{tabular}
 \end{adjustwidth}
