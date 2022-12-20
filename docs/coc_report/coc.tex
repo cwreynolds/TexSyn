@@ -57,7 +57,7 @@
 \usepackage{changepage}  % http://ctan.org/pkg/changepage
 
 % \graphicspath{ {pix/} {../pix/} }
-\graphicspath{ {images/} }
+\graphicspath{ {images/} {images/fcd5/} }
 
 \begin{document}
 
@@ -133,10 +133,12 @@
     \hfill
     \includegraphics[scale=0.24]{20220926_step_6143.png}
     \hfill
-    \includegraphics[scale=0.24]{20221003_step_3667.png}
+    % \includegraphics[scale=0.24]{20221003_step_3667.png}
+    \includegraphics[scale=0.24]{20221215_step_5867.png}
     \hfill
-    \includegraphics[scale=0.24]{20220930_step_6093.png}
-    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version.) [QQQ replace stand-in images]}
+    % \includegraphics[scale=0.24]{20220930_step_6093.png}
+    \includegraphics[scale=0.24]{20221218_step_6933.png}
+    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version.) [QQQ replace first 2 stand-in images]}
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
     % \vspace{5mm} %5mm vertical space
@@ -209,7 +211,7 @@ The biological literature on camouflage and related topics is vast. A few starti
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Camouflaged object detection}
-In the last several years, there has been burst of related research on \jargon{camouflaged object detection} (COD) in computer vision. See for example this well-curated list of COD publications: \citet{visionxiang_cod}. COD is part of predator behavior: detecting the presence of a camouflaged object. These COD systems focus on \jargon{segmenting} camouflaged objects: finding per-pixel masks of their silhouette in a photo. A recent example, which surveys this topic and presents its own strong solution, is \citet{Zhang2022}. Other research on COD include some based on boundaries \cite{chen_boundary-guided_2022} \cite{sun_boundary-guided_2022}, a mixed-scale approach \cite{pang_zoom_2022}, and an attempt to rank camouflaged objects by “conspicuousness” \cite{lv_cod_2022}.
+In the last several years, there has been burst of related research on \jargon{camouflaged object detection} (COD) in computer vision. See for example this well-curated list of COD publications: \citet{visionxiang_cod}. COD is part of predator behavior: detecting the presence of a camouflaged object. These COD systems focus on \jargon{segmenting} camouflaged objects: finding per-pixel masks of their silhouette in a photo. A recent example, which surveys this topic and presents its own strong solution, is \citet{Zhang2022}. Other research on COD include some based on boundaries \cite{chen_boundary-guided_2022} \cite{sun_boundary-guided_2022}, a mixed-scale approach \cite{pang_zoom_2022}, an approach based on transformer architecture \cite{yin_camoformer_2022}, and an attempt to rank camouflaged objects by “conspicuousness” \cite{lv_cod_2022}.
 \par
 COD attempts \textit{a priori} camouflage “breaking” — detecting the presence of well camouflaged objects — without learning either the background or the typical appearance of prey camouflage found in a given environment. That is, they are \jargon{generalist} predators, effectively using a strong form of \jargon{salience}. As summarized in \citet{Zhang2022}, COD is based on several labeled datasets (CHAMELEON, CAMO, and COD10K) carefully annotated by hand at the pixel level. Incremental progress in this area is measured by the per-pixel accuracy of predicted shapes of camouflaged objects.
 \par
@@ -261,7 +263,7 @@ The evolutionary model used in the current work, implemented in software called 
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the prey tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant (it is arbitrary). If the predator \jargon{fails} and predicts a position outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
-In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator may then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? Currently this threshold is 50\% hunting success over its last 20 attempts.
+In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator may then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? Currently this threshold is 40\% hunting success over its last 20 attempts.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -436,7 +438,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \includegraphics[scale=0.24]{20221202_1555_step_7124.png}
     \caption{Four tournament images from run jans\_oak\_leaves\_20221202\_1555.}
     \Description{QQQ.}
-    \label{fig:4_from_jans_oak_leaves}
+    \label{fig:jans_oak_leaves_4x}
 \end{figure*}
 
 % temp, just for mocking up layout:
@@ -445,13 +447,12 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \includegraphics[scale=0.24]{20221108_2018_step_5498.png}
     \hfill
-    \includegraphics[scale=0.24]{20221108_2018_step_5947.png
-    }
+    \includegraphics[scale=0.24]{20221108_2018_step_5947.png}
     \hfill
     \includegraphics[scale=0.24]{20221108_2018_step_6562.png}
     \caption{Four tournament images from run tree\_leaf\_blossom\_sky\_20221108\_2018.}
     \Description{QQQ.}
-    \label{fig:zzz}
+    \label{fig:tree_leaf_blossom_sky_4x}
 \end{figure*}
 
 
@@ -466,10 +467,9 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \includegraphics[scale=0.24]{20221121_1819_step_6755.png}
     \caption{Four tournament images from run plum\_leaf\_litter\_20221121\_1819.}
     \Description{QQQ.}
-    \label{fig:xxx}
+    \label{fig:plum_leaf_litter_4x}
 \end{figure*}
 
-% temp, just for mocking up layout:
 \begin{figure*}
     \includegraphics[scale=0.24]{20221112_1555_step_6495.png}
     \hfill
@@ -480,74 +480,101 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \includegraphics[scale=0.24]{20221112_1555_step_6370.png}
     \caption{Four tournament images from run rock\_wall\_20221112\_1555.}
     \Description{QQQ.}
-    \label{fig:yyy}
+    \label{fig:rock_wall_4x}
 \end{figure*}
 
 \begin{figure*}
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_UVSfqCzewt_38_20.png}
+    \includegraphics[scale=0.24]{20221218_step_5396.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_SBWaLRHOzk_56_33.png}
+    \includegraphics[scale=0.24]{20221218_step_5641.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_bUMqcbutgJ_25_78.png}
+    \includegraphics[scale=0.24]{20221218_step_5947.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_HZzUzWWqcC_54_28.png}
+    \includegraphics[scale=0.24]{20221218_step_6753.png}
+    \caption{Four tournament images from run yellow\_flower\_on\_green\_20221217\_1826.}
+    \Description{QQQ.}
+    \label{fig:yellow_flower_4x}
+\end{figure*}
+
+
+\begin{figure*}
+    \includegraphics[scale=0.24]{20221215_step_5892.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_inuPKUxnHQ_72_71.png}
+    \includegraphics[scale=0.24]{20221215_step_6830.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_RRGCwhmcJc_101_84.png}
+    \includegraphics[scale=0.24]{20221215_step_6916.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_PYinyJAWaj_61_60.png}
+    \includegraphics[scale=0.24]{20221215_step_7182.png}
+    \caption{Four tournament images from run michaels\_gravel\_20221214\_1837.}
+    \Description{QQQ.}
+    \label{fig:michaels_gravel_4x}
+\end{figure*}
+
+\begin{figure*}    
+    \includegraphics[width=0.105\linewidth]{20220303_UVSfqCzewt_38_20.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_TNXfhQtzYa_92_91.png}
+    \includegraphics[width=0.105\linewidth]{20220303_SBWaLRHOzk_56_33.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_cDMtFaTYKk_63_54.png}
+    \includegraphics[width=0.105\linewidth]{20220303_bUMqcbutgJ_25_78.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_HZzUzWWqcC_54_28.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_inuPKUxnHQ_72_71.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_RRGCwhmcJc_101_84.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_PYinyJAWaj_61_60.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_TNXfhQtzYa_92_91.png}
+    \hfill
+    \includegraphics[width=0.105\linewidth]{20220303_cDMtFaTYKk_63_54.png}
     \vspace{0.1cm}
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_wIRPERwSCh_49_63.png}
+    \includegraphics[width=0.105\linewidth]{20220303_wIRPERwSCh_49_63.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_edDsCjbHdf_61_92.png}
+    \includegraphics[width=0.105\linewidth]{20220303_edDsCjbHdf_61_92.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_fGMFBgMQDX_93_86.png}
+    \includegraphics[width=0.105\linewidth]{20220303_fGMFBgMQDX_93_86.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_jQREPLQyuL_33_39.png}
+    \includegraphics[width=0.105\linewidth]{20220303_jQREPLQyuL_33_39.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_ijBOHTccYX_104_101.png}
+    \includegraphics[width=0.105\linewidth]{20220303_ijBOHTccYX_104_101.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_KAoOFAqFyU_80_58.png}
+    \includegraphics[width=0.105\linewidth]{20220303_KAoOFAqFyU_80_58.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_NExMwxEbzU_85_92.png}
+    \includegraphics[width=0.105\linewidth]{20220303_NExMwxEbzU_85_92.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_kpcUyhHXOh_91_98.png}
+    \includegraphics[width=0.105\linewidth]{20220303_kpcUyhHXOh_91_98.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_oWPwPGkcSb_82_22.png}
+    \includegraphics[width=0.105\linewidth]{20220303_oWPwPGkcSb_82_22.png}
     \vspace{0.1cm}
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_uAEPxMZbeo_83_45.png}
+    \includegraphics[width=0.105\linewidth]{20220303_uAEPxMZbeo_83_45.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_cADfBauZUV_47_32.png}
+    \includegraphics[width=0.105\linewidth]{20220303_cADfBauZUV_47_32.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_YAMfudJxeH_30_84.png}
+    \includegraphics[width=0.105\linewidth]{20220303_YAMfudJxeH_30_84.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_JeyBgDfMcN_40_82.png}
+    \includegraphics[width=0.105\linewidth]{20220303_JeyBgDfMcN_40_82.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_OaOJaByhbU_90_55.png}
+    \includegraphics[width=0.105\linewidth]{20220303_OaOJaByhbU_90_55.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_mhYpDjxaKf_78_57.png}
+    \includegraphics[width=0.105\linewidth]{20220303_mhYpDjxaKf_78_57.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_ASsEgFUlly_23_60.png}
+    \includegraphics[width=0.105\linewidth]{20220303_ASsEgFUlly_23_60.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_nzgItDrYqT_71_99.png}
+    \includegraphics[width=0.105\linewidth]{20220303_nzgItDrYqT_71_99.png}
     \hfill
-    \includegraphics[width=0.105\linewidth]{images/fcd5/20220303_QuHYtnPora_72_73.png}
-    \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random “prey” over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, two prey are blended into background to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
+    \includegraphics[width=0.105\linewidth]{20220303_QuHYtnPora_72_73.png}
+    \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random prey over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, two prey are blended into background to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
     \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:fcd5_examples}
 \end{figure*}
 
-\begin{figure*}
-    \includegraphics[width=1cm,height=1.15\linewidth]{middle_gray_pixel.png}
-    \caption{Second “figure only” page.}
-    \Description{...}
-    \label{fig:temp_fo_2}
-\end{figure*}
+% \begin{figure*}
+%     \includegraphics[width=1cm,height=1.15\linewidth]{middle_gray_pixel.png}
+%     \caption{Second “figure only” page.}
+%     \Description{...}
+%     \label{fig:temp_fo_2}
+% \end{figure*}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -571,7 +598,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 The fully detailed description of this simulation is the source code [... which is open source on the web at this URL ...]. This table summarizes some of the key parameters which are held constant for all results shown in this paper. [... maybe move this into the main paper if it fits ...]
 \par
 
-\begin{adjustwidth}{1cm}{0cm}
+\begin{adjustwidth}{1cm}{10cm}
     \vspace{0.3cm}
     \begin{tabular}{ |l|r| } 
         \hline
@@ -592,8 +619,9 @@ The fully detailed description of this simulation is the source code [... which 
         \hline
         tournament image save frequency & 19 \\
         simulation steps per run (typical) & 6000 \\
-        predator fail rate (typical) & 20\%-25\% \\
-        predator starvation threshold & <10 of 20 \\ 
+        predator fail rate (typical) & 20\%-30\% \\
+        predator starvation threshold & \\
+        \hspace{0.2cm}(success in previous 20 attempts) & < 40\% \\ 
         \hline
         predator “FCD” pre-training: & \\
         \hspace{0.2cm} synthetic dataset size & 20,000 \\
@@ -684,7 +712,6 @@ Non-trainable params: 0
 \end{verbatim}
 \end{small}
 \end{adjustwidth}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
