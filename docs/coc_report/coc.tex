@@ -77,7 +77,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-    Camouflage in nature is thought to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid them. This work simulates an abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learn to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on one evolving population of prey and another of predators. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, but more significantly, an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. \textbf{(Note to reviewers: all source code for this simulation will be made publicly available if paper is accepted. In this review draft, modules are referred to by anonymous names: \texsyn{}, \lazypredator{}, \predatoreye{}.)}
+    Camouflage in nature is thought to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid them. This work simulates an abstract model of this adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision which learn to locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on one evolving population of prey and another of predators. The mutual conflict between these populations tends to produce both effective camouflage and skilled predators. This simulation provides a method for creating camouflage patterns for arbitrary backgrounds, but more significantly, an experimental \textit{artificial life} model for investigating aspects of camouflage evolution in nature. \textbf{(Note to reviewers: all source code and development notes for this simulation will be placed online if paper is accepted. In this draft, modules are given anonymized names: \texsyn{}, \lazypredator{}, \predatoreye{}.)}
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,9 +129,12 @@
 %% Teaser figure that appears on the top of the article.
 \begin{teaserfigure}
     %% TODO note: use images without the “predator prediction crosshairs”.
-    \includegraphics[scale=0.24]{20220918_step_7372.png}
+    % RRR
+    % \includegraphics[scale=0.24]{20220918_step_7372.png}
+    \includegraphics[scale=0.24]{20221121_1819_step_6464.png}
     \hfill
-    \includegraphics[scale=0.24]{20220926_step_6143.png}
+    % \includegraphics[scale=0.24]{20220926_step_6143.png}
+    \includegraphics[scale=0.24]{20221108_2018_step_6562.png}
     \hfill
     % \includegraphics[scale=0.24]{20221003_step_3667.png}
     \includegraphics[scale=0.24]{20221215_step_7182.png}
@@ -139,7 +142,7 @@
     % \includegraphics[scale=0.24]{20220930_step_6093.png}
     % \includegraphics[scale=0.24]{20221218_step_6933.png}
     \includegraphics[scale=0.24]{20221216_step_5997.png}
-    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Note: for best results zoom into the digital version.) [QQQ replace first 2 stand-in images]}
+    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail, disk diameter is 20\% of image width.) }
     \Description{Examples of camouflage textures produced by the simulation.}
     \label{fig:teaser}
     % \vspace{5mm} %5mm vertical space
@@ -378,7 +381,7 @@ Other limitations include the inherently 2D nature of the simulation and that th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
-The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a simplistic automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create a model allowing future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
+The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a simplistic automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create an open source model allowing future experiments, to help study camouflage in nature, and the phenomena of camouflage more generally.
 \par
 As mentioned in Section \ref{subsec:limitations}, a limitation of this model is the lack of an objective metric of camouflage effectiveness. Were a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. Some contemporaneous work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” It would be interesting to test that approach in the coevolution model presented here. It may also be possible to evaluate runs of this simulation with crowd-sourced rating of camouflage quality, as in SEE Games \cite{stevens_games_2022} and CamoEvo \cite{hancock_camoevo_2022}.
 \par
@@ -461,6 +464,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \begin{figure*}
     \includegraphics[scale=0.24]{20221121_1819_step_6324.png}
     \hfill
+    % RRR
     \includegraphics[scale=0.24]{20221121_1819_step_6464.png}
     \hfill
     \includegraphics[scale=0.24]{20221121_1819_step_6677.png}
@@ -506,7 +510,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \includegraphics[scale=0.24]{20221215_step_6830.png}
     \hfill
     \includegraphics[scale=0.24]{20221215_step_6916.png}
-    \caption{Four tournament images from run michaels\_gravel\_20221214\_1837.}
+    \caption{Four tournament images from run michaels\_gravel\_20221214\_1837}.
     \Description{QQQ.}
     \label{fig:michaels_gravel_4x}
 \end{figure*}
@@ -568,7 +572,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \ig{20220303_nzgItDrYqT_71_99.png}
     \hfill
     \ig{20220303_QuHYtnPora_72_73.png}
-    \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random prey over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, two prey are blended into background to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
+    \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random prey over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, one prey is unaltered, the other two are blended into background, by differing amounts, to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
     \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:fcd5_examples}
 \end{figure*}
@@ -576,27 +580,19 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Appendix -- must become separate PDF document before submission.
+\appendix
 \newpage
 \onecolumn
-\appendix
+% \appendix
 \section{Supplemental Materials}
 
-
-
-
-
-
-%% maybe this section should switch to single column layout?
-%% maybe this should be in a separate .tex / .pdf file?
-
-%% QQQ ZZZ
 \subsection{Key Simulation Parameters}
-The fully detailed description of this simulation is the source code [... which is open source on the web at this URL ...]. This table summarizes some of the key parameters which are held constant for all results shown in this paper. [... maybe move this into the main paper if it fits ...]
+The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are held constant for all results shown in this paper.
 \par
 
 \begin{adjustwidth}{1cm}{0cm}
     \vspace{0.3cm}
-    \begin{tabular}{ |l|r| } 
+    \begin{tabular}{ |l|r| }
         \hline
         \textbf{Parameter} & \textbf{value} \\ 
         \hline
@@ -628,6 +624,7 @@ The fully detailed description of this simulation is the source code [... which 
 
 \subsection{\texsyn{} \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
 % Better to use listings package?  https://ctan.org/pkg/listings
+\begin{adjustwidth}{1cm}{0cm}
 \begin{small}
 \begin{verbatim}
 Uniform white(1);
@@ -642,6 +639,7 @@ Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
 NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \end{verbatim}
 \end{small}
+\end{adjustwidth}
 
 % Note (from https://s2022.siggraph.org/technical-papers-submissions-faq/): 
 % The Conference Paper track encourages submissions for high-quality, 
