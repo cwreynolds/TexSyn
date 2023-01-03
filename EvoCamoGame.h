@@ -1531,20 +1531,30 @@ public:
         // Short wait (0.1 second) allowing the OpenCV windows to refresh.
         Texture::waitKey(100);
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20221014 formalize step save stride.
     
     // Just a constant, but wrap in API so derived classes can access.
     int stepSaveStride() const { return step_save_stride_; }
     // Is the current step one that should be saved?
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230102 skip mid-run saves for “super heavy” runs. TEMP  TEMP  TEMP
+//    bool saveThisStep() const
+//    {
+//        int step = getPopulation()->getStepCount();
+//        return step % step_save_stride_ == 0;
+//    }
     bool saveThisStep() const
     {
         int step = getPopulation()->getStepCount();
-        return step % step_save_stride_ == 0;
+        bool skip = ((step > 100) and (step < 10000));
+        bool savable = ((step % step_save_stride_) == 0);
+        if (savable && skip)
+        {
+            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
+        }
+        return savable && !skip;
     }
-    int step_save_stride_ = 19;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    int step_save_stride_ = 19;
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
