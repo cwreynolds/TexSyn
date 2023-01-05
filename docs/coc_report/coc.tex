@@ -594,49 +594,49 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Appendix -- must become separate PDF document before submission.
-\appendix
-\newpage
 \onecolumn
-% \appendix
+\appendix
 \section{Supplemental Materials}
-
 \subsection{Key Simulation Parameters}
-The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are held constant for all results shown in this paper.
-\par
 
+\begin{table}[H]
 \begin{adjustwidth}{1cm}{0cm}
-    \vspace{0.3cm}
-    \begin{tabular}{ |l|r| }
-        \hline
-        \textbf{Parameter} & \textbf{value} \\ 
-        \hline
-        predator population & 20 \\ 
-        prey population & 200 \\ 
-        prey subpopulations (demes) & 10 \\
-        prey max init tree size & 100 \\
-        prey min tree size after crossover & 50 \\
-        prey max tree size after crossover & 150 \\
-        \hline
-        prey render diameter (pixels) & 100 \\ 
-        % tournament output image size & 512² \\ 
-        % predator input image size & 128² \\ 
-        tournament output image size & 512×512 \\ 
-        predator input image size & 128×128 \\ 
-        \hline
-        tournament image save frequency & 19 \\
-        simulation steps per run (typical) & 6000 \\
-        predator fail rate (typical) & 15\%-30\% \\
-        predator starvation threshold & \\
-        \hspace{0.2cm}(success in previous 20 attempts) & < 40\% \\ 
-        \hline
-        predator “FCD” pre-training: & \\
-        \hspace{0.2cm} synthetic dataset size & 20,000 \\
-        \hspace{0.2cm} effective size with augmentation & 500,000 \\
-        \hline
-        max noise added to predator CNN & 0.003 \\
-        \hline
-    \end{tabular}
+\begin{tabular}{ |l|r|r| }
+\hline
+\textbf{Parameter} & \textbf{value} & \textbf{x-large} \\ 
+\hline
+predator population & 20 & 40 \\ 
+prey population & 200 & 400 \\ 
+prey subpopulations (demes) & 10 & 20 \\
+prey max init tree size & 100 & \\
+prey min tree size after crossover & 50 & \\
+prey max tree size after crossover & 150 & \\
+\hline
+prey render diameter (pixels) & 100 & \\ 
+tournament output image size & 512×512 & \\ 
+predator input image size & 128×128 & \\ 
+\hline
+tournament image save frequency & 19 & \\
+simulation steps per run (typical) & 6000 & 12,000 \\
+prey generation equiv (steps/pop) & 30 & \\
+predator fail rate (typical) & 15\%-30\% & \\
+predator starvation threshold & & \\
+\hspace{0.2cm}(success in previous 20 attempts) & < 40\% & \\ 
+\hline
+predator “FCD” pre-training: & & \\
+\hspace{0.2cm} synthetic dataset size & 20,000 & \\
+\hspace{0.2cm} effective size with augmentation & 500,000 & \\
+\hline
+max signed “jiggle” noise added to  & & \\
+\hspace{0.2cm} all params of new predator CNN & 0.003 & \\
+\hline
+\end{tabular}
 \end{adjustwidth}
+\label{table:1}
+\end{table}
+
+The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for all results shown in this paper.
+\par
 
 \subsection{\texsyn{} \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
 % Better to use listings package?  https://ctan.org/pkg/listings
