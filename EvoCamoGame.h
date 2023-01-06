@@ -1644,11 +1644,18 @@ public:
     }
     
     // Like writeTournamentImageToFile() but save "previous step" image to file.
+    // (TODO 20230106 probably they should use a common untility)
     void writePreviousStepImageToFile()
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString(-1) + ".png";
-        std::cout << "Writing tournament image to file " << path << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20230106 fix OCD-inducing mismatch
+//        std::cout << "Writing tournament image to file " << path << std::endl;
+        std::cout << "Writing tournament image to file ";
+        std::cout << std::string(path) << std::endl;
+//        std::string(path.parent_path().filename())
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         cv::imwrite(path, previous_step_image_);
     }
     
