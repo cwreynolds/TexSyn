@@ -1653,7 +1653,8 @@ public:
         // TODO 20230106 fix OCD-inducing mismatch
 //        std::cout << "Writing tournament image to file " << path << std::endl;
         std::cout << "Writing tournament image to file ";
-        std::cout << std::string(path) << std::endl;
+//        std::cout << std::string(path) << std::endl;
+        std::cout << path.string() << std::endl;
 //        std::string(path.parent_path().filename())
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         cv::imwrite(path, previous_step_image_);

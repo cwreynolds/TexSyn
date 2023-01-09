@@ -283,7 +283,7 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{predator_cnn.pdf}
-    \caption{Architecture of a predator's deep neural net which maps a 128² RGB image into an \textit{xy} location within the image where it predicts the most conspicuous prey is centered. All convolution layers but the first use strides of (2,2) while increasing the number of learned filters. Then fully connected layers reduce the flattened features, by factors of 4, down to an output layer of 2 values. This model contains about 3.2 million parameters (Additional details in Supplemental Materials.)}
+    \caption{Architecture of a predator's neural net which maps a 128² RGB image into an \textit{xy} location where it estimates the most conspicuous prey is centered. All convolution layers but the first use strides of (2,2) while doubling the number of learned filters. Then fully connected layers reduce the flattened features, by factors of 4, down to an output layer of 2 values. This model contains 3.2 million parameters (More details in Supplemental Materials.)}
     \Description{Diagram of Predator's convolutional neural net.}
     \label{fig:predator_cnn}
 \end{figure}
