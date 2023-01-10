@@ -401,19 +401,21 @@ public:
         return selected;
     }
 
-    // Write the entire "tournament" image (3 textures and background) to file.
+    // Write current "tournament" image (3 textures and background) to file.
     void writeTournamentImageToFile()
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString() + ".png";
-        writeTournamentImageToFile(path);
+        writeTournamentImageToFile(path, gui().getCvMat());
     }
     
-    void writeTournamentImageToFile(const std::string& image_pathname)
+    // Write given "tournament" image to given pathname. Also note on log.
+    void writeTournamentImageToFile(const fs::path& pathname,
+                                    const cv::Mat& image)
     {
-        std::cout << "Writing tournament image to file "
-                  << image_pathname << std::endl;
-        cv::imwrite(image_pathname, gui().getCvMat());
+        std::cout << "Writing tournament image to file ";
+        std::cout << pathname.string() << std::endl;
+        cv::imwrite(pathname, image);
     }
 
     // Write a "thumbnail" image with Texture and its background neighborhood.
@@ -1644,20 +1646,11 @@ public:
     }
     
     // Like writeTournamentImageToFile() but save "previous step" image to file.
-    // (TODO 20230106 probably they should use a common untility)
     void writePreviousStepImageToFile()
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString(-1) + ".png";
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230106 fix OCD-inducing mismatch
-//        std::cout << "Writing tournament image to file " << path << std::endl;
-        std::cout << "Writing tournament image to file ";
-//        std::cout << std::string(path) << std::endl;
-        std::cout << path.string() << std::endl;
-//        std::string(path.parent_path().filename())
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        cv::imwrite(path, previous_step_image_);
+        writeTournamentImageToFile(path, previous_step_image_);
     }
     
     PythonComms& getComms() { return comms_; }
