@@ -1538,23 +1538,24 @@ public:
     int stepSaveStride() const { return step_save_stride_; }
     // Is the current step one that should be saved?
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230102 skip mid-run saves for “super heavy” runs. TEMP  TEMP  TEMP
-//    bool saveThisStep() const
-//    {
-//        int step = getPopulation()->getStepCount();
-//        return step % step_save_stride_ == 0;
-//    }
+    // TODO 20230102 TEMP  TEMP  TEMP
+    // skip mid-run saves for “twice as big” / superheavy / extra-large runs.
     bool saveThisStep() const
     {
         int step = getPopulation()->getStepCount();
-        bool skip = ((step > 100) and (step < 10000));
-        bool savable = ((step % step_save_stride_) == 0);
-        if (savable && skip)
-        {
-            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
-        }
-        return savable && !skip;
+        return step % step_save_stride_ == 0;
     }
+//    bool saveThisStep() const
+//    {
+//        int step = getPopulation()->getStepCount();
+//        bool skip = ((step > 100) and (step < 10000));
+//        bool savable = ((step % step_save_stride_) == 0);
+//        if (savable && skip)
+//        {
+//            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
+//        }
+//        return savable && !skip;
+//    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int step_save_stride_ = 19;
     
@@ -1640,7 +1641,10 @@ public:
                 outfile << "steps,fails" << std::endl;
             }
             int fails = getPredatorFails();
-            std::cout << "    " << step << "," << fails << std::endl;
+//            std::cout << "    " << step << "," << fails << std::endl;
+            std::cout << "    predator fail rate: ";
+            std::cout << std::setprecision(4) << fails / float(step);
+            std::cout << " (" << fails << " / " << step  << ")" << std::endl;
             outfile << step << "," << fails << std::endl;
         }
     }
