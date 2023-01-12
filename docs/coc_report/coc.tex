@@ -55,13 +55,12 @@
 \newcommand{\predatoreye}[0]{pkgV}
 
 %% for laying out a row of 4, 6, or 9 images
-\newcommand{\igfour}[1]{\includegraphics[scale=0.24]{#1}}
-\newcommand{\igsix}[1]{\includegraphics[scale=0.16]{#1}}
+\newcommand{\igfour}[1]{\includegraphics[width=0.24\linewidth]{#1}}
+\newcommand{\igsix}[1]{\includegraphics[width=0.16\linewidth]{#1}}
 \newcommand{\ignine}[1]{\includegraphics[width=0.105\linewidth]{#1}}
 
 \usepackage{changepage}  % http://ctan.org/pkg/changepage
 
-% \graphicspath{ {pix/} {../pix/} }
 \graphicspath{ {images/} {images/fcd5/} }
 
 \begin{document}
@@ -298,6 +297,7 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
     \label{fig:predator_responses}
 \end{figure}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Texture synthesis}
@@ -355,7 +355,7 @@ During a simulation run various data is collected in log files. The most importa
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
-This simulation model was applied to a variety of environments — background sets — to produce prey camouflage patterns suited to those environments. See Figures \ref{fig:jans_oak_leaves_4x} to \ref{fig:michaels_gravel_4x} which shows several examples from each of several runs. 
+This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Figures \ref{fig:jans_oak_leaves_4x} to \ref{fig:michaels_gravel_4x} shows examples from several runs. 
 % remember to check those \ref{}s in case ordering change.
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
@@ -525,7 +525,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20221215_step_6830.png}
     \hfill
     \igfour{20221215_step_6916.png}
-    \caption{Four tournament images from run michaels\_gravel\_20221214\_1837}.
+    \caption{Four tournament images from run michaels\_gravel\_20221214\_1837.}
     \Description{QQQ.}
     \label{fig:michaels_gravel_4x}
 \end{figure*}
@@ -722,6 +722,22 @@ Non-trainable params: 0
 \end{verbatim}
 \end{small}
 \end{adjustwidth}
+
+
+\subsection{Additional samples of simulation runs}
+
+\begin{figure}[H]
+    \igfour{20230111_step_5576.png}
+    \hfill
+    \igfour{20230111_step_6159.png}
+    \hfill
+    \igfour{20230111_step_6303.png}
+    \hfill
+    \igfour{20230111_step_6726.png}
+    \caption{Four tournament images from run kitchen\_granite\_20230110\_1758.}
+    \Description{QQQ.}
+    \label{fig:kitchen_granite_4x}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

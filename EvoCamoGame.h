@@ -1642,9 +1642,9 @@ public:
             }
             int fails = getPredatorFails();
 //            std::cout << "    " << step << "," << fails << std::endl;
-            std::cout << "    predator fail rate: ";
+            std::cout << "    Predator fail rate: ";
             std::cout << std::setprecision(4) << fails / float(step);
-            std::cout << " (" << fails << " / " << step  << ")" << std::endl;
+            std::cout << " (" << fails << "/" << step  << ")" << std::endl;
             outfile << step << "," << fails << std::endl;
         }
     }
