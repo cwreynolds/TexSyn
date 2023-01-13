@@ -192,7 +192,7 @@ In abstract artificial life models, it is common to focus in detail on one aspec
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Related work}
+\section{Related Work}
 This work builds on \citet{reynolds_iec_2011} by replacing the human predator there with an evolving population of procedural predators, which \jargon{hunt} using a learning vision model. An earlier attempt at this approach, using coevolution and procedural predators, was described by \citet{harrington_coevolution_2014}.
 \par
 Closely related work on learning surface textures to camouflage 3D objects within real 3D scenes is described in \citet{owens_camouflaging_2014} for cubes, using one technique, and in \citet{guo_ganmouflage_2022}, for arbitrarily shaped 3D objects, using an improved technique. In both cases, the 3D scene is described by a set of photos from various viewpoints. The textures mapped onto the object to be camouflaged must trade off being inconspicuous from all viewpoints in the scene.
@@ -210,7 +210,7 @@ The biological literature on camouflage and related topics is vast. A few starti
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Camouflaged object detection (COD)}
+\subsection{Camouflaged Object Detection (COD)}
 The last several years has seen a surge of computer vision research on \jargon{camouflaged object detection} — a part of predator behavior — finding camouflaged objects. (See for example this well-curated publication list: \citet{visionxiang_cod}.) COD systems seek to \jargon{segment} camouflaged objects in images: identify the pixels they cover. A recent example, which surveys this topic and presents its own strong solution, is \citet{Zhang2022}. Other research on COD include some based on boundaries \cite{chen_boundary-guided_2022} \cite{sun_boundary-guided_2022}, a mixed-scale approach \cite{pang_zoom_2022}, one based on transformer architecture \cite{yin_camoformer_2022}, and an attempt to rank camouflaged objects by “conspicuousness” \cite{lv_cod_2022}.
 \par
 COD attempts \textit{a priori} camouflage “breaking” — detecting the presence of well camouflaged objects — without learning either the background or the typical appearance of prey camouflage found in a given environment. That is, they are \jargon{generalist} predators, effectively using a form of \jargon{salience}. As summarized in \citet{Zhang2022}, COD is based on several labeled datasets (CHAMELEON, CAMO, and COD10K) carefully annotated by hand at the pixel level.
@@ -231,8 +231,8 @@ In contrast, the goal of the simulation reported in this paper is to pit camoufl
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Components of the simulation}
-\subsection{Coevolution, populations, and fitness}
+\section{Components of the Simulation}
+\subsection{Coevolution, Populations, and Fitness}
 This camouflage simulation is based on two adversarial \jargon{populations}: one of \jargon{predators} and one of \jargon{prey}. Individual prey compete for survival within their own population, similarly for predators. Predators must \jargon{hunt} successfully to “eat” and so survive. Prey survive if inconspicuous (cryptic) enough to avoid being found and eaten. Prey that is hunted and eaten, or a predator perished from hunger, is removed from its population. It is replaced by an \jargon{offspring} of parents from the surviving population.
 \par
 Predators define the fitness of prey: being easy to spot is bad, blending in is good. Similarly prey define the fitness of predators: being fooled by camouflage is bad, spotting cryptic prey is good. From this adversarial interaction, the two populations \jargon{coevolve}. If one side has some sort of flaw, the other side is motivated to exploit it. As a result both sides tend to improve over simulated time.
@@ -242,7 +242,7 @@ Initial random prey have coloration likely to contrast with the background. Init
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Tournaments, competition, relative fitness}
+\subsection{Tournaments, Competition, Relative Fitness}
 \label{subsec:tournaments}
 It is common in \jargon{evolutionary computation} to define \jargon{fitness} as a function that maps an \jargon{individual} (of the evolving population) into a number. That is, the function somehow evaluates the individual and assigns it a score. Typically this fitness function is \jargon{idempotent}: its value depends only on static properties of the given individual. This can be seen as \jargon{absolute fitness}.
 \par
@@ -255,7 +255,7 @@ Throughout this model, \textbf{tournaments involve three individuals}. (Unlike t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Negative selection, drift, and mixability}
+\subsection{Negative Selection, Drift, and Mixability}
 
 A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (the multiplicative weights update algorithm: “no-regret learning”) suggests evolution may act to optimize \jargon{mixability}, a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to the “Neutral Theory” in \citet{kimura_evolutionary_1968}.
 \par
@@ -267,7 +267,7 @@ In the predator population, a tournament is ranked by the \textbf{distance from 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Offspring, crossover, and mutation}
+\subsection{Offspring, Crossover, and Mutation}
 In the prey population, a tournament is used to find the lowest relative fitness. This corresponds to the worst camouflage, the \jargon{most conspicuous} of three prey in a tournament. If a predator successfully locates a prey, we assume it is captured and eaten. The object representing that departed prey is removed from its population and replaced with a new individual. This is the \jargon{population update} stage of a steady-state genetic programming system \cite{syswerda_study_1991}.
 \par
 The new prey, which replaces the one killed by predator, is called the \jargon{offspring} of two other prey. This is the motivation for using tournaments of size 3: the least fit prey dies, and is replaced by the offspring of the tournament's two surviving prey. This is why their relative fitness is irrelevant, they both become the \jargon{parents} given as input to the \jargon{crossover} operation.
@@ -300,7 +300,7 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Texture synthesis}
+\subsection{Texture Synthesis}
 \label{subsec:texture_synthesis}
 Textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{\texsyn{}} is a simple domain specific language for describing textures.
 \par
@@ -313,7 +313,7 @@ Note that the images in this paper are rendered at 512² pixels and the prey dis
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Predator vision}
+\subsection{Predator Vision}
 It is the predator's job to look at a tournament image and “hunt” for prey. These images are built from a portion of a background photo and overlaid with three randomly placed camouflaged prey. The camouflage texture for each disk shaped prey is rendered on the \texsyn{} side. Because all images in this simulation are synthetic, they are labeled with the random \jargon{ground truth} position data for each prey. This allows predators to learn in a \jargon{self-supervised} manner.
 \par
 \subsubsection{Pre-Training Predator's Vision}
@@ -330,7 +330,7 @@ During simulations of camouflage evolution, each predator is initialized as a co
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Background sets}
+\subsection{Background Sets}
 \label{subsec:background_sets}
 Each simulation run is based on a \jargon{background set} of images, usually photographs of natural scenes. These images form the background of tournament images, over which the camouflaged prey are drawn. These background images play the role of an \jargon{environment} in which prey need to hide to avoid being found and eaten by predators. Because the model is purely 2d, photographs offer an easy way to provide a variety of environments, of plausible natural complexity, in which to test camouflage evolution.
 \par
@@ -638,7 +638,7 @@ max signed “jiggle” noise added to  & & \\
 The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for all results shown in this paper.
 \par
 
-\subsection{\texsyn{} \texttt{c++} code for Figure \ref{fig:TexSyn_overview}}
+\subsection{\texsyn{} \texttt{c++} Code for Figure \ref{fig:TexSyn_overview}}
 % Better to use listings package?  https://ctan.org/pkg/listings
 \begin{adjustwidth}{1cm}{0cm}
 \begin{small}
@@ -665,10 +665,10 @@ NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 % papers do not have a page limit, and may include more thorough experiments
 % and derivations within the main paper. 
 
-\subsection{Background image sets}
-[... list names of background sets used in each figure ... say anything about availability? ...]
+\subsection{Background Image Sets}
+[... list names of background sets used in each figure ... short description of source ... say anything about availability? ...]
 
-\subsection{Additional parameters to simulation run}
+\subsection{Additional Parameters to Simulation Runs}
 Command line arguments to pkgT:
 \begin{adjustwidth}{1cm}{0cm}
 \begin{small}
@@ -689,8 +689,8 @@ pkgT requires at least one pathname parameter, others may be omitted from the en
 \end{small}
 \end{adjustwidth}
 
-\subsection{Details on pre-trained predator model}
-The pre-trained predator model, shown in \ref{fig:predator_cnn}, is a Keras TensorFlow model. Here is its \texttt{model.summary()}:
+\subsection{Details of Pre-Trained Predator Model}
+The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers: the data for this pre-trained model will be made available if paper is accepted for publication)}. Here is its \texttt{model.summary()}:
 \begin{adjustwidth}{1cm}{0cm}
 \begin{small}
 \begin{verbatim}
@@ -722,9 +722,9 @@ Non-trainable params: 0
 \end{verbatim}
 \end{small}
 \end{adjustwidth}
+\par
 
-
-\subsection{Additional samples of simulation runs}
+\subsection{Additional Samples of Simulation Runs}
 
 \begin{figure}[H]
     \igfour{20230111_step_5576.png}
