@@ -45,6 +45,9 @@
 %% To fix a margin violation bug, apparently due to poor hyphenation.
 \hyphenation{Go-men-so-ro}
 
+% Allows expressions of measurements. (Included in The ACM Publishing System (TAPS) List of Accepted LaTeX Packages)
+\usepackage{calc}
+
 %% For introducing terms which have a special meaning in this work.
 \newcommand{\jargon}[1]{\textit{#1}}
 
@@ -58,8 +61,6 @@
 \newcommand{\igfour}[1]{\includegraphics[width=0.24\linewidth]{#1}}
 \newcommand{\igsix}[1]{\includegraphics[width=0.16\linewidth]{#1}}
 \newcommand{\ignine}[1]{\includegraphics[width=0.105\linewidth]{#1}}
-
-\usepackage{changepage}  % http://ctan.org/pkg/changepage
 
 \graphicspath{ {images/} {images/fcd5/} }
 
@@ -578,12 +579,14 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \section{Supplemental Materials}
 \subsection{Key Simulation Parameters}
 \setcounter{page}{0}
-\begin{minipage}{\linewidth}
-The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for all results shown in this paper.
-\par
 
+\begin{minipage}{\linewidth}
+The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. A few runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
+\par
+\hspace*{1cm}
+\begin{minipage}{\linewidth-1.1cm}
 \begin{table}[H]
-\begin{adjustwidth}{1cm}{0cm}
+\raggedright 
 \begin{tabular}{ |l|r|r| }
 \hline
 \textbf{Parameter} & \textbf{value} & \textbf{x-large} \\ 
@@ -614,17 +617,19 @@ max signed “jiggle” noise added to  & & \\
 \hspace{0.2cm} all params of new predator CNN & 0.003 & \\
 \hline
 \end{tabular}
-\end{adjustwidth}
 \label{table:key_simulation_parameters}
 \end{table}
+\end{minipage}
 \end{minipage}
 
 \subsection{Background Image Sets}
 \begin{minipage}{\linewidth}
-Names and descriptions for the sets of background images used in this paper, see section \ref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene. \textbf{(Note to reviewers, these images can be made available, along with source code, other data and development documentation.)}
+Names and descriptions for the sets of background images used in this paper, see section \ref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene. \textbf{(Note to reviewers, these images will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}
 \par
+\hspace*{1cm}
+\begin{minipage}{\linewidth-1.1cm}
 \begin{table}[H]
-\begin{adjustwidth}{1cm}{0cm}
+\raggedright 
 \begin{tabular}{ |l|l|c|c| }
 \hline
 \textbf{name} & \textbf{description} & \textbf{photos} & \textbf{figures} \\ 
@@ -681,17 +686,20 @@ yellow\_flower\_on\_green &
     “Scot's broom” or “French broom” in neighbor's yard &
     6 & \ref{fig:yellow_flower_4x} \\
 \hline
-
 \end{tabular}
-\end{adjustwidth}
 \label{table:background_sets}
 \end{table}
 \end{minipage}
+\end{minipage}
 
 \subsection{\texsyn{} \texttt{c++} Code for Figure \ref{fig:TexSyn_overview}}
-% Better to use listings package?  https://ctan.org/pkg/listings
+% Is it any better to use LaTeX "listings" package?
+%     https://ctan.org/pkg/listings
+%     note that package IS approved by SIGGRAPH/ACM TAPS
+%     https://authors.acm.org/proceedings/production-information/accepted-latex-packages
 \begin{minipage}{\linewidth}
-\begin{adjustwidth}{1cm}{0cm}
+\hspace*{1cm}
+\begin{minipage}{\linewidth-1.1cm}
 \begin{small}
 \begin{verbatim}
 Uniform white(1);
@@ -706,24 +714,16 @@ Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
 NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
 \end{verbatim}
 \end{small}
-\end{adjustwidth}
 \end{minipage}
-
-% Note (from https://s2022.siggraph.org/technical-papers-submissions-faq/): 
-% The Conference Paper track encourages submissions for high-quality, 
-% ground-breaking research that fits within a strict 7-page limit (plus 
-% additional pages for references), and may be more appropriate for
-% research that is less-polished but still potentially-impactful. Journal 
-% papers do not have a page limit, and may include more thorough experiments
-% and derivations within the main paper. 
-
+\end{minipage}
 
 \subsection{Additional Parameters to Simulation Runs}
 \begin{minipage}{\linewidth}
 Command line arguments to pkgT:
 \par
-\begin{adjustwidth}{1cm}{0cm}
 \begin{small}
+\hspace*{1cm}
+\begin{minipage}{\linewidth-1.1cm}
 \begin{verbatim}
 pkgT requires at least one pathname parameter, others may be omitted from the end:
     background image directory (required)
@@ -738,15 +738,16 @@ pkgT requires at least one pathname parameter, others may be omitted from the en
     min crossover tree size (default max init tree size  * 0.5)
     max crossover tree size (default max init tree size  * 1.5)
 \end{verbatim}
+\end{minipage}
 \end{small}
-\end{adjustwidth}
 \end{minipage}
 
 \subsection{Details of Pre-Trained Predator Model}
 \begin{minipage}{\linewidth}
-The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers: the data for this pre-trained model will be made available if paper is accepted for publication)}. Here is its \texttt{model.summary()}:
+The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers, this pre-trained model will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}. Here is its \texttt{model.summary()}:
 \par
-\begin{adjustwidth}{1cm}{0cm}
+\hspace*{1cm}
+\begin{minipage}{\linewidth-1.1cm}
 \begin{small}
 \begin{verbatim}
 
@@ -776,7 +777,7 @@ Trainable params: 3,191,386
 Non-trainable params: 0
 \end{verbatim}
 \end{small}
-\end{adjustwidth}
+\end{minipage}
 \end{minipage}
 \par
 
