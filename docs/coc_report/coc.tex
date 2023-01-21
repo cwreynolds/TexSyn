@@ -4,7 +4,7 @@
 
 \documentclass[acmtog,
     anonymous,
-    % review
+    review
     ]{acmart}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -328,12 +328,11 @@ During simulations of camouflage evolution, each predator is initialized as a co
 
 \subsection{Background Sets}
 \label{subsec:background_sets}
-Each simulation run is based on a \jargon{background set} of images, usually photographs of natural scenes. These images form the background of tournament images, over which camouflaged prey are drawn. These background images play the role of an \jargon{environment} in which prey need to hide to avoid being found and eaten by predators. Because the model is purely 2d, photographs offer an easy way to provide a variety of environments, of plausible natural complexity, in which to test camouflage evolution.
+Each simulation run is based on a \jargon{background set} of images, usually photographs of natural scenes. These images provide the background of tournament images, over which camouflaged prey are drawn. These background images play the role of an \jargon{environment} in which prey must hide to avoid being found and eaten by predators. Because the model is purely 2d, photographs offer an easy way to provide varied environments, of plausible natural complexity, in which to test camouflage evolution.
 \par
-Background sets used in this work consist of from 1 to 14 photographs, most have 4 or 5 photos. Almost all are casual snapshots taken with a mobile phone. The images in a background set are all similar. For example a set called \texttt{oak\_leaf\_litter} has six images, all of slightly different portions of leaves fallen on the ground. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet consistent backgrounds in which to try hiding.
+Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example a set called \texttt{oak\_leaf\_litter} has six images, all of slightly different portions of a pile of leaves fallen on the ground. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet consistent backgrounds in which to try hiding.
 \par
-As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches have the same statistical distribution of color and frequency. When background sets are “less stationary” it becomes \jargon{harder} for evolution to find good camouflage. See discussion of limitations in Section \ref{subsec:limitations}.
-
+As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches (e.g. of a size comparable to prey) have the same statistical distribution of color and frequency. When background sets are “less stationary” (e.g. large areas of single color) it becomes \jargon{harder} for evolution to find good camouflage. In these cases, better results can be had with an “extra large” run. See Section \ref{sec:discussion}.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,12 +350,13 @@ During a simulation run various data is collected in log files. The most importa
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
-This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Figures \ref{fig:rock_wall_4x} to \ref{fig:yellow_flower_4x} shows examples from several runs. See Supplemental Materials for more.
+\label{sec:discussion}
+This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Figures \ref{fig:rock_wall_4x} to \ref{fig:yellow_flower_4x} shows examples from several runs, more are shown in the Supplemental Materials.
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
 These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps use previously rendered prey). The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it takes 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
 \par
-A key observation from these experiments is that different background sets have differing degrees of difficulty. For some background sets, a simulated evolution run produces effective camouflage. Occasionally it is effective enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs (even repeated runs) fail to produce good results. So far this difference cannot be reliably predicted nor addressed. Anecdotally, it seems the more “stationary” the background textures are (see Section \ref{subsec:background_sets}) the easier it is to evolve effective camouflage.
+A key observation from these experiments is that background sets present varying levels of difficulty. For some background sets, a simulated evolution run easily produces effective camouflage. Occasionally it is good enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs fail to produce effective results. These may be addressed either by re-running the simulation with a new random seed, or by using an “extra large” simulation: doubling population size and number of steps. It appears that the more “stationary” the background textures are (see Section \ref{subsec:background_sets}) the easier it is to evolve effective camouflage.
 % [... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
 \par
 
@@ -380,9 +380,7 @@ Section \ref{subsec:limitations} notes this model lacks an objective metric of c
 \par
 If an objective measure of camouflage quality did exist, many parameter settings of the current model could be revisited (see table in Supplemental Materials). For example, the size of predator and prey populations could be varied to find the best combination. Similarly: do much longer runs produce better quality?
 \par
-An important next step is to understand the failure modes of this simulation. Why some environments (background sets) are \textit{hard} while others are \textit{easy}? Why does this difference persist through repeated runs with differing random number seeds?
-% As discussed in “\href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}” and “\href{https://cwreynolds.github.io/TexSyn/#20221106}{Rerun kitchen granite}”.
-Easy environments produce effective camouflage. Hard environments do not. They seem to move toward effective camouflage, then stop improving. Examining the “fossil record” of these runs, occasional isolated examples of effective camouflage do appear. For some reason they are lost to predation. They fail to reproduce so cannot spread through the population. That better camouflage \textit{is} discovered by prey evolution may suggest that the problem is not there but in the predators. How can certain (hard) background sets cause predators to “go off on a tangent”?
+An important next step is to better understand the failure modes of this simulation. Some environments (background sets) are \textit{easy} while others are \textit{hard}. It seems that easy environment are more “stationary.” As mentioned in Section\ref{sec:discussion}, hard backgrounds can sometimes be addressed with changing a random seed or using an “extra large” simulation. These suggest that hard backgrounds have a lower liklihood of success. Perhaps the standard size simulation used here is a bit underpowered?
 \par
 In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean position over all prey positions. To work around this, random prey center placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug to be better understood and fixed in a more principled way.
 \par
@@ -434,7 +432,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20221112_1555_step_5681.png}
     \hfill
     \igfour{20221112_1555_step_6370.png}
-    \caption{Four tournament images from run rock\_wall\_20221112\_1555. Standard run parameters.}
+    \caption{Four tournament images from run rock\_wall\_20221112\_1555.}
     \Description{QQQ.}
     \label{fig:rock_wall_4x}
 \end{figure*}
@@ -447,7 +445,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20230101_step_10950.png}
     \hfill
     \igfour{20230101_step_11861.png}
-    \caption{Four tournament images from run bean\_soup\_mix\_20221231\_1317. Note: this was an “extra large” run on a hard background.}
+    \caption{Four tournament images from run bean\_soup\_mix\_20221231\_1317. (“Extra large” run.)}
     \Description{QQQ.}
     \label{fig:bean_soup_mix_4x}
 \end{figure*}
@@ -460,7 +458,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20230115_step_7942.png}
     \hfill
     \igfour{20230115_step_12413.png}
-    \caption{Four tournament images from run backyard\_oak\_20230113\_2254. Note: this was an “extra large” run on a hard background.}
+    \caption{Four tournament images from run backyard\_oak\_20230113\_2254. (“Extra large” run.)}
     \Description{QQQ.}
     \label{fig:backyard_oak_4x}
 \end{figure*}
@@ -473,7 +471,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20230106_step_11689.png}
     \hfill
     \igfour{20230106_step_11995.png}
-    \caption{Four tournament images from run mbta\_flowers\_20230105\_1114. Note: this was an “extra large” run on a hard background.}
+    \caption{Four tournament images from run mbta\_flowers\_20230105\_1114. (“Extra large” run.)}
     \Description{QQQ.}
     \label{fig:mbta_flowers_4x}
 \end{figure*}
@@ -486,7 +484,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20230111_step_6303.png}
     \hfill
     \igfour{20230111_step_6726.png}
-    \caption{Four tournament images from run kitchen\_granite\_20230110\_1758. Standard run parameters.}
+    \caption{Four tournament images from run kitchen\_granite\_20230110\_1758.}
     \Description{QQQ.}
     \label{fig:kitchen_granite_4x}
 \end{figure*}
@@ -499,7 +497,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \igfour{20221218_step_5947.png}
     \hfill
     \igfour{20221218_step_6753.png}
-    \caption{Four tournament images from run yellow\_flower\_on\_green\_20221217\_1826. Standard run parameters.}
+    \caption{Four tournament images from run yellow\_flower\_on\_green\_20221217\_1826. This was a notoriously “hard” non-stationary test case.}
     \Description{QQQ.}
     \label{fig:yellow_flower_4x}
 \end{figure*}
@@ -575,7 +573,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 \setcounter{page}{0}
 
 \begin{minipage}{\linewidth}
-The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. A few runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
+The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. Some runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
 \par
 \hspace*{1cm}
 \begin{minipage}{\linewidth-1.1cm}
@@ -583,7 +581,7 @@ The most fully detailed description of this simulation model is the source code 
 \raggedright 
 \begin{tabular}{ |l|r|r| }
 \hline
-\textbf{Parameter} & \textbf{value} & \textbf{x-large} \\ 
+\textbf{Parameter} & \textbf{value} & \textbf{large} \\ 
 \hline
 predator population & 20 & 40 \\ 
 prey population & 200 & 400 \\ 
