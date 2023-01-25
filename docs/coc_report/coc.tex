@@ -4,7 +4,7 @@
 
 \documentclass[acmtog,
     anonymous,
-    % review
+    review
     ]{acmart}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -232,7 +232,7 @@ In contrast, the goal of the simulation reported in this paper is to pit camoufl
 
 \section{Components of the Simulation}
 \subsection{Coevolution, Populations, and Fitness}
-This camouflage simulation is based on two adversarial \jargon{populations}: one of \jargon{predators} and one of \jargon{prey}. Individual prey compete for survival within their own population, similarly for predators. Predators must \jargon{hunt} successfully to “eat” and so survive. Prey survive if inconspicuous (cryptic) enough to avoid being found and eaten. A victim of predation, or a predator perished from hunger, is removed from its population. It is replaced by an \jargon{offspring} of parents from the surviving population.
+This camouflage simulation is based on two adversarial \jargon{populations}: one of \jargon{predators} and one of \jargon{prey}. Individual prey compete for survival within their own population and similarly for predators. Predators must \jargon{hunt} successfully to “eat” and so survive. Prey survive if they are inconspicuous (cryptic) enough to avoid being found and eaten. A victim of predation, or a predator perished from hunger, is removed from its population. It is replaced by an \jargon{offspring} of parents from the surviving population.
 \par
 Predators define the fitness of prey: being easy to spot is bad, blending in is good. Similarly prey define the fitness of predators: being fooled by camouflage is bad, spotting cryptic prey is good. From this adversarial interaction, the two populations \jargon{coevolve}. If one side has some sort of flaw, the other side is motivated to exploit it. As a result both sides tend to improve over simulated time.
 \par
@@ -243,11 +243,11 @@ Initial random prey have coloration likely to contrast with the background. Init
 
 \subsection{Tournaments, Competition, Relative Fitness}
 \label{subsec:tournaments}
-It is common in \jargon{evolutionary computation} to define \jargon{fitness} as a function that maps an \jargon{individual} (of the evolving population) into a number. That is, the function somehow evaluates the individual and assigns it a score. Typically this fitness function is \jargon{idempotent}: its value depends only on static properties of the given individual. This can be seen as \jargon{absolute fitness}.
+It is common in \jargon{evolutionary computation} to define \jargon{fitness} as a function that maps an \jargon{individual} (member of the evolving population) into a number. That is, the function somehow evaluates the individual and assigns it a score. Typically this fitness function is \jargon{idempotent}: its value depends only on static properties of the given individual. This can be seen as \jargon{absolute fitness}.
 \par
 In contrast, this simulation uses \jargon{relative fitness}, determined by \jargon{competition} between individuals, in \jargon{tournaments}. A tournament is a game, a contest, between multiple individuals. 
 \par
-A simple example of relative fitness is a foot race. The winner of the race is the first to cross the finish line. The order of finishing \jargon{sorts} the racers by speed. Races have been run this way since ancient times. Today it is simple to precisely measure each runner's speed but that is not required to determine who won the race. Now consider two people playing chess. We do not know how to measure or predicts a player's skill. But by pitting them against each other, having them play a game (or a series of games) the results provide a useful measurement of relative fitness. 
+A simple example of relative fitness is a foot race. The winner of the race is the first to cross the finish line. The order of finishing \jargon{sorts} the racers by speed. Races have been run this way since ancient times. Today it is simple to precisely measure each runner's absolute speed but that is not required to determine who won the race. Now consider two people playing chess. We do not know how to measure or predict a player's skill. But by pitting them against each other, having them play a game (or a series of games) the results provide a useful measurement of relative fitness. 
 \par
 Throughout this model, \textbf{tournaments involve three individuals}. (Unlike the simulation in \citet{reynolds_iec_2011} which used tournaments of 10.) One simulation step (see Figure \ref{fig:simulation_overview}) consists of drawing three prey individuals out of their population to compete in a tournament. Like a foot race, or chess game, a tournament serves to sort the individuals according to relative fitness. That relative fitness results from the behavior of adversarial predators. During the same simulation step, three predators are drawn from their population. Each predator looks at the same input: an image with three camouflaged prey overlaid on a background image. The predators compete with each other for most accurate hunting of prey. The prey compete with each other by hiding from (not being found by) the predators.
 \par
@@ -258,7 +258,7 @@ Throughout this model, \textbf{tournaments involve three individuals}. (Unlike t
 
 A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (the multiplicative weights update algorithm: “no-regret learning”) suggests evolution may act to optimize \jargon{mixability}, a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to the “Neutral Theory” in \citet{kimura_evolutionary_1968}.
 \par
-The evolutionary model used in the current work, implemented in software called \jargon{\lazypredator{},} attempts to operate in this “neutral” mode (as did the simulations in \citet{reynolds_iec_2011} and \citet{harrington_coevolution_2014}). Genetic algorithms often seek to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This \jargon{elitism} can skew the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, \lazypredator{} uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
+The evolutionary model used in the current work, implemented in software called \jargon{\lazypredator{},} attempts to operate in this “neutral” mode (as did the simulations in \citet{reynolds_iec_2011} and \citet{harrington_coevolution_2014}). Genetic algorithms are often designed to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This \jargon{elitism} can skew the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, \lazypredator{} uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the prey tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant and is ignored. If all predators \jargon{fail} and predict positions outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
@@ -267,13 +267,13 @@ In the predator population, a tournament is ranked by the \textbf{distance from 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Offspring, Crossover, and Mutation}
-In the prey population, a tournament is used to find the lowest relative fitness. This corresponds to the worst camouflage, the \jargon{most conspicuous} of three prey in a tournament. If a predator successfully locates a prey, it is captured and “eaten.” The object representing that prey is removed from its population and replaced with a new individual. This is the \jargon{population update} stage of a steady-state genetic programming system \cite{syswerda_study_1991}.
+In the prey population, a tournament is used to find the lowest relative fitness (section \ref{subsec:tournaments}). This corresponds to the worst camouflage, the \jargon{most conspicuous} of three prey in a tournament. If a predator successfully locates a prey, it is captured and “eaten.” The object representing that prey is removed from its population and replaced with a new individual. This is the \jargon{population update} stage of a steady-state genetic programming system \cite{syswerda_study_1991}.
 \par
-The new prey, replacing the one eaten by the predator, is called the \jargon{offspring} of two other prey. This is the motivation for using tournaments of size 3: the least fit prey dies, and is replaced by the offspring of the tournament's two surviving prey. This is why their relative fitness is irrelevant, they both become the \jargon{parents} given as input to the \jargon{crossover} operation.
+The new prey, replacing the one eaten by the predator, is the \jargon{offspring} of two other prey. This is the motivation for using tournaments of size 3: the least fit prey dies, and is replaced by the offspring of the tournament's two surviving prey. This is why their relative fitness is irrelevant, they both become the \jargon{parents} given as input to the \jargon{crossover} operation.
 \par
-In GP (and \lazypredator{}) individuals are represented as tree structures. In this simulation, those trees are interpreted as \texsyn{} programs as described in Section \ref{subsec:texture_synthesis}. The crossover operation is defined on two abstract trees. The two parents are first copied to preserve them. One copy is chosen as recipient and one as donor. In each a “random subtree” is selected. The recipient's random subtree is replaced by the donor's random subtree, by splicing the pointers between tree nodes, see Figure \ref{fig:TexSyn_overview}.
+In GP (and \lazypredator{}) individuals are represented as tree structures. In this simulation, those trees are interpreted as \texsyn{} programs as described in Section \ref{subsec:texture_synthesis}. The GP crossover operation is defined on two abstract parent trees. First they are copied to preserve the originals. One copy is chosen as recipient and one as donor. In each a “random subtree” is selected. The recipient's random subtree is replaced by the donor's random subtree, by splicing the pointers between tree nodes, see Figure \ref{fig:TexSyn_overview}.
 \par
-After crossover, a mutation operator further modifies the offspring tree. It traverses the tree, finding all the leaf nodes, which here correspond to numerical constants in the texture programs. Because \lazypredator{} uses \jargon{strongly typed genetic programming} \cite{montana_strongly_1995} each leaf belongs to a specific user defined type (for example: a floating point number between 0 and 1). A method of the type's class can mutate (“jiggle”) the constant value of a leaf node (for example, add a small signed random offset, then clip back into the type's range). After crossover and mutation the new offspring is inserted into the population, replacing the dead prey.
+After crossover, a mutation operator further modifies the offspring. It traverses the tree, finding all the leaf nodes, which here correspond to numerical constants in the texture programs. Because \lazypredator{} uses \jargon{strongly typed genetic programming} \cite{montana_strongly_1995} each leaf belongs to a specific application-defined type (for example: a floating point number between 0 and 1). A method of the type's class can mutate (“jiggle”) the constant value of a leaf node (for example, add a small signed random offset, then clip back into the type's range). After crossover and mutation the new offspring is inserted into the population, replacing the dead prey.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,9 +301,9 @@ After crossover, a mutation operator further modifies the offspring tree. It tra
 
 \subsection{Texture Synthesis}
 \label{subsec:texture_synthesis}
-Textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{\texsyn{}} is a simple domain specific language for describing textures.
+Camouflage textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{\texsyn{}} is a simple domain specific language for describing textures.
 \par
-The details of \texsyn{} are not central to understanding this camouflage model. A quick overview is given here. \texsyn{} is library, an API, with many \jargon{operators} each of which return a \jargon{Texture}. Most of them also take Textures as input parameters, along with simple values like colors, 2d vectors, and scalars (floating point numbers). Nested functional expressions of \texsyn{} operators, say in source code, create trees of operator instances.
+The details of \texsyn{} are not central to understanding this camouflage model. A quick overview is given here. \texsyn{} is library, an API, with many \jargon{operators} each of which return a \jargon{Texture}. Most of them also take Textures as input parameters, along with simple values like colors, 2d vectors, and scalars (floating point numbers). Nested functional expressions of \texsyn{} operators (as in source code) are compiled into trees of operator instances.
 \par
 These \texsyn{} textures are represented by operators, trees, and parameters. They do not store pixel data. Instead the Texture class provides a function to sample the texture's color at an arbitrary floating point \textit{xy} location. That color is computed on the fly. This is similar to GPU \jargon{fragment shaders} and the Pixel Stream Editor functions in \citet{perlin_image_1985}. Figure \ref{fig:TexSyn_overview} shows some simple examples and how these textures can be recombined with tree crossover.
 \par
@@ -324,7 +324,7 @@ Each training image starts with a \jargon{random texture} or a random crop of a 
 Each image in the “find conspicuous disk” training dataset is generated in one of three styles chosen with equal probability. Style 1 has a single prey disk, and the label is its center point. Style 2 has three different prey. Style 3 has three copies of a single prey disk. The latter two cases reduce the visibility of two disks, by blending or dithering the pixels of the prey disk into the background. The label corresponds to the disk whose visibility is not reduced, presumed to be more conspicuous. See Figure \ref{fig:fcd5_examples}.
 \par
 \subsubsection{Fine-Tuning Predator's Vision}
-During simulations of camouflage evolution, each predator is initialized as a copy of the pre-trained “find conspicuous disk” model to which noise is added. (Zero mean noise of less than 0.003 is added to each parameter of the deep neural net.) In each simulation step, the three predators chosen to participate in the tournament (see Figure \ref{fig:simulation_overview}) predict a prey position. Then \textbf{each predator is \jargon{fine-tuned} based on a dataset of labeled images collected during this simulation run}. This dataset is a collection of images from earlier simulation steps in this run. It is essentially the memory of prey coloration recently found in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images. Thereafter, each new tournament image replaces one of the 500 chosen at random. Labels for this dataset correspond to predictions made by the “best” predator (least aim error) in each step, see Figure \ref{fig:predator_responses}.
+During simulations of camouflage evolution, each predator is initialized as a copy of the pre-trained “find conspicuous disk” model to which noise is added. (Zero mean noise of less than ±0.003 is added to each parameter of the deep neural net.) In each simulation step (see Figure \ref{fig:simulation_overview}) the three predators chosen to participate in the tournament predict a prey position. Then \textbf{each predator is \jargon{fine-tuned} based on a dataset of labeled images collected during this simulation run}. This dataset is a collection of images from earlier simulation steps in this run. It is essentially the memory of prey coloration recently found in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images. Thereafter, each new tournament image replaces one of the 500 chosen at random. Labels for this dataset correspond to predictions made by the “best” predator (least aim error) in each step, see Figure \ref{fig:predator_responses}.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,7 +335,7 @@ Each simulation run is based on a \jargon{background set} of images, usually pho
 \par
 Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example a set called \texttt{oak\_leaf\_litter} has six images, all of slightly different portions of a pile of leaves fallen on the ground. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet consistent backgrounds in which to try hiding.
 \par
-As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches (e.g. of a size comparable to prey) have the same statistical distribution of color and frequency. When background sets are “less stationary” (e.g. large areas of single color) it becomes \jargon{harder} for evolution to find good camouflage. In these cases, better results can be had with an “extra large” run. See Section \ref{sec:discussion}.
+As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches (say of a size comparable to prey) have the same statistical distribution of color and spatial frequency. When background sets are “less stationary” (e.g. large areas of uniform color) it becomes \jargon{harder} for evolution to find good camouflage. In these cases, better results can be had with an “extra large” run. See Section \ref{sec:discussion}.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,7 +345,7 @@ To run this coevolutionary simulation model, two processes are launched. One is 
 \par
 Parameters for a simulation run are primarily a choice of background set (see section \ref{subsec:background_sets}), a scale factor for the background images, and a seed for random number generation. There are a few other parameters to the \texsyn{} command. These and other key parameters are summarized in Supplemental Materials.
 \par
-A typical run consists of 6000 steps with a prey population of 200 and predator population of 20. A preliminary version, reimplementing the interactive approach of \citet{reynolds_iec_2011}, used a prey population of 120 and typical runs of 2000 to 3000 steps. This was also typical for an intermediate version using a single pre-trained predator. The introduction of a population of predators reduced the rate of fine-tuning of predator's neural net models, leading to the longer 6000 step simulations.
+A typical run consists of 6000 steps with a prey population of 200 and predator population of 20. A preliminary version, reimplementing the interactive approach of \citet{reynolds_iec_2011}, used a prey population of 120 and typical runs of 2000 to 3000 steps. The introduction of a population of predators reduced the rate of fine-tuning of predator's neural net models, leading to the longer 6000 step simulations. Some “extra large” runs (doubling population (400, 40) and number of steps (12,000)) have been used on “hard backgrounds.”
 \par
 During a simulation run various data is collected in log files. The most important output is a “visual log” — periodically saving tournament images (a crop of the given backgrounds overlaid with camouflaged prey, as in Figure \ref{fig:teaser}) along with the predator response data. These images are saved “occasionally.” Originally it was every 20 steps, but was changed to every 19 steps to be relatively prime and so cycle through the 6, 10, or 20 \jargon{subpopulations} (\jargon{demes} or \jargon{islands}) of the prey population.
 \par
@@ -357,9 +357,10 @@ During a simulation run various data is collected in log files. The most importa
 This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Figures \ref{fig:rock_wall_4x} to \ref{fig:yellow_flower_4x} shows examples from several runs, more are shown in the Supplemental Materials.
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
-These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. A typical recent simulation run showed the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps use previously rendered prey). The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it takes 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
+These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. Typical simulation runs show the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps use previously rendered prey). The time to complete a single simulation step is about 10 seconds. Typical runs are 6000 steps, so 60,000 seconds, about 16 hours. (Somewhat less since it takes 500 steps for the fine-tuning dataset to reach full size.) Unfortunately there is a bug in the \jargon{TensorFlow-Metal plug-in layer} which prevents this TensorFlow-based code from running on the GPU. When the bug is fixed, the overall simulation might run about 10 times faster, but that remains to be seen.
 \par
-A key observation from these experiments is that background sets present varying levels of difficulty. For some background sets, a simulated evolution run easily produces effective camouflage. Occasionally it is good enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs fail to produce effective results. These may be addressed either by re-running the simulation with a new random seed, or by using an “extra large” simulation: doubling population size and number of steps. It appears that the more “stationary” the background textures are (see Section \ref{subsec:background_sets}) the easier it is to evolve effective camouflage.
+A key observation from these experiments is that background sets present varying levels of difficulty. For some background sets, a simulated evolution run easily produces effective camouflage. Occasionally it is good enough to momentarily fool a human observer: “Wait, where is the third prey?!” In other cases, runs fail to produce effective results. These may be addressed either by re-running the simulation with a new random seed, or by using an “extra large” simulation: doubling population size and number of steps. It appears to be easier to evolve effective camouflage on more “stationary” backgrounds (see Section \ref{subsec:background_sets}).
+
 % [... See blog entry: \href{https://cwreynolds.github.io/TexSyn/#20220930}{Reliability: what \textit{is} the likelihood of camouflage?} see also comment “Perhaps the common issue is large areas of nearly uniform [but contrasting] colors” in post \href{https://cwreynolds.github.io/TexSyn/#20221119}{Trouble with orange pyracantha}. I next did the elm(?) leaves and as expected that run went fine. Maybe the way to say it is that “easy” backgrounds are those where a correctly chosen uniform color can do a reasonable job of matching the backgrounds. See also comments in post \href{https://cwreynolds.github.io/TexSyn/#20221122}{Leaf litter by Plum, et al.}. — \textbf{Maybe this topic belongs in Discussion?} ...]
 \par
 
@@ -369,23 +370,23 @@ A key observation from these experiments is that background sets present varying
 \label{subsec:limitations}
 Chief among the limitations of this work is the lack of an objective measure of camouflage effectiveness. Without such a metric it is impossible to, for example, simply plot how camouflage effectiveness increases over simulated time. Without a metric it is hard to even evaluate adjustments to the model: is a new parameter value better or worse?
 \par
-Another limitation is that all results are hand selected: “cherry picked.” After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes a mental judgement of their effectiveness. From an objective standpoint, it is hard to claim that this simulation even “works.” Subjectively, it seems clear that it does: conspicuous prey seen early in a simulation tend to become less frequent, while cryptic prey become more common and effective as in Figure \ref{fig:time_sequence}.
+Another limitation is that all results are hand selected: “cherry picked.” After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes a mental judgement of their effectiveness. From an objective standpoint, it is hard to claim that this simulation even “works.” Subjectively, it seems clear that it does: conspicuous prey seen early in a simulation tend to become less frequent, while cryptic prey become more common and effective, as in Figure \ref{fig:time_sequence}.
 \par
-Other limitations include the inherently 2D nature of the simulation, that simulated time is discrete, and that the model of texture synthesis lacks genetic or biological plausibility. These are among the simplifying abstractions intended to make this initial model of camouflage coevolution tractable. But it is fair to complain that as a result, the model is \textit{too} abstract to provide much insight.
+Other limitations include the inherently 2D nature of the simulation, that simulated time is discrete, and that the model of texture synthesis lacks genetic or biological plausibility. These are among the simplifying abstractions intended to make this initial model of camouflage coevolution tractable. Still it would be fair to complain that as a result, the model is \textit{too} abstract to provide much biological insight.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
-The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. Part of that was simply to show that camouflage can in fact arise from such a system. It also provides a simplistic automatic process to generate camouflage for a given environment from photos. The most important aspect of the work has been to create an open source model allowing future experiments, to help study camouflage in nature, and the perceptual phenomenon of camouflage more generally.
+The goal of this work has been to build a computational model of the coevolution of camouflage from the interaction of predator and prey. It demonstrates that camouflage can in fact arise from such a system. It also provides a simple process to generate camouflage for a given environment from photos. The most important contribution of the work has been to create an open source model allowing future experiments, to help study camouflage in nature, and the perceptual phenomenon of camouflage more generally.
 \par
-Section \ref{subsec:limitations} notes this model lacks an objective metric of camouflage effectiveness. One approach would be to take a \jargon{standard predator} (like one pre-trained on the FCD5 dataset, Section \ref{sec:pre_train_predator}) and testing it repeatedly against a given prey. The metric would be its average “miss” rate. Other work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” Where a candidate metric proposed, the model presented here would be a useful testbed for its evaluation. It should be possible to validate these candidate metrics with crowd-sourced rating of camouflage quality, as in SEE Games \cite{stevens_games_2022} and CamoEvo \cite{hancock_camoevo_2022}.
+Section \ref{subsec:limitations} notes this model lacks an objective metric of camouflage effectiveness. One approach would be to take a \jargon{standard predator} (like one pre-trained on the FCD5 dataset, Section \ref{sec:pre_train_predator}) and testing it repeatedly against a given prey. The metric would be its average “miss” rate. Other work \cite{lv_cod_2022} suggests potential ways to rank “conspicuousness.” The model presented here would be a useful testbed for evaluating candidate metrics. It should also be possible to validate these candidate metrics with crowd-sourced rating of camouflage quality, as in SEE Games \cite{stevens_games_2022} and CamoEvo \cite{hancock_camoevo_2022}.
 \par
-If an objective measure of camouflage quality did exist, many parameter settings of the current model could be revisited (see table in Supplemental Materials). For example, the size of predator and prey populations could be varied to find the best combination. Similarly: do much longer runs produce better quality?
+An important next step is to better understand the weaknesses of this simulation. Some environments (background sets) are \textit{easy} while others are \textit{hard}. It seems that easy environments are more “stationary.” As mentioned in Section \ref{sec:discussion}, hard backgrounds can sometimes be addressed with changing a random seed or using an “extra large” simulation. These suggest that hard backgrounds have a lower likelihood of success. Perhaps the standard size simulation used here is a bit underpowered?
 \par
-An important next step is to better understand the failure modes of this simulation. Some environments (background sets) are \textit{easy} while others are \textit{hard}. It seems that easy environment are more “stationary.” As mentioned in Section\ref{sec:discussion}, hard backgrounds can sometimes be addressed with changing a random seed or using an “extra large” simulation. These suggest that hard backgrounds have a lower liklihood of success. Perhaps the standard size simulation used here is a bit underpowered?
+The neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be built and evaluated.
 \par
-In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean position over all prey positions. To work around this, random prey center placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug to be better understood and fixed in a more principled way.
+In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean position over all prey positions. To work around this, \texsyn{}'s random prey placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug to be better understood and fixed in a more principled way.
 \par
 This simulation is currently a mixed paradigm model using both evolution and learning. While these typically co-occur in nature \cite{valiant_probably_2013}, it would be interesting to look at an all-evolution model with evolved detectors for predators, perhaps along the lines of \citet{harrington_coevolution_2014} and \citet{bi_genetic_2022}. Or conversely, an all learning model, something similar to CamoGAN \cite{talas_camogan_2020}.
 \par
@@ -610,7 +611,7 @@ predator “FCD” pre-training: & & \\
 \hspace{0.2cm} effective size with augmentation & 500,000 & \\
 \hline
 max signed “jiggle” noise added to  & & \\
-\hspace{0.2cm} all params of new predator CNN & 0.003 & \\
+\hspace{0.2cm} all params of new predator CNN & ±0.003 & \\
 \hline
 \end{tabular}
 \label{table:key_simulation_parameters}
@@ -631,7 +632,7 @@ Names and descriptions for the sets of background images used in this paper, see
 \textbf{name} & \textbf{description} & \textbf{photos} & \textbf{figures} \\ 
 \hline
 backyard\_oak &
-    under canopy of California live oak (Quercus agrifolia) &
+    under canopy of California live oak (\textit{Quercus agrifolia}) &
     12 & \ref{fig:backyard_oak_4x} \\
 \hline
 bean\_soup\_mix &
@@ -665,12 +666,10 @@ oxalis\_sprouts &
 plum\_leaf\_litter &
     fallen leaves from plum and other trees, near sunset &
     5 & \ref{fig:teaser}, \ref{fig:plum_leaf_litter_4x} \\
-
 \hline
 redwood\_leaf\_litter &
     dried redwood leaf/needle litter collected in a roadside gutter &
     4 & \ref{fig:redwood_leaf_litter_4x} \\
-
 \hline
 rock\_wall &
     “dry stack” retaining wall in a neighbor's front yard &
@@ -685,7 +684,7 @@ tree\_leaf\_blossom\_sky &
     5 & \ref{fig:teaser}, \ref{fig:tree_leaf_blossom_sky_4x} \\
 \hline
 yellow\_flower\_on\_green &
-    “Scot's broom” or “French broom” in neighbor's yard &
+    “Scot's broom” (or “French broom”?) in neighbor's yard &
     6 & \ref{fig:yellow_flower_4x} \\
 \hline
 \end{tabular}
