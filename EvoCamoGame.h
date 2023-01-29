@@ -1540,22 +1540,22 @@ public:
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20230102 TEMP  TEMP  TEMP
     // skip mid-run saves for “twice as big” / superheavy / extra-large runs.
-    bool saveThisStep() const
-    {
-        int step = getPopulation()->getStepCount();
-        return step % step_save_stride_ == 0;
-    }
 //    bool saveThisStep() const
 //    {
 //        int step = getPopulation()->getStepCount();
-//        bool skip = ((step > 100) and (step < 10000));
-//        bool savable = ((step % step_save_stride_) == 0);
-//        if (savable && skip)
-//        {
-//            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
-//        }
-//        return savable && !skip;
+//        return step % step_save_stride_ == 0;
 //    }
+    bool saveThisStep() const
+    {
+        int step = getPopulation()->getStepCount();
+        bool skip = ((step > 100) and (step < 10000));
+        bool savable = ((step % step_save_stride_) == 0);
+        if (savable && skip)
+        {
+            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
+        }
+        return savable && !skip;
+    }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int step_save_stride_ = 19;
     
