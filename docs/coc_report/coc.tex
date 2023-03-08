@@ -1,47 +1,62 @@
+% Submission for ALIFE 2023
+\documentclass[letterpaper]{article}
+\usepackage{natbib,alifeconf}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % \documentclass[acmtog]{acmart}
 % \documentclass[acmtog,anonymous,review]{acmart}
 % \documentclass[acmtog,anonymous]{acmart}
+% \documentclass[acmtog,
+%     % anonymous,
+%     % review
+%     ]{acmart}
+%
+% Officially withdrew submission to SIGGRAPH on 20230307.
 
-\documentclass[acmtog,
-    anonymous,
-    review
-    ]{acmart}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % From https://s2023.siggraph.org/program/technical-papers/ -- The submissions are required to adhere to the following length constraints: Papers must be no longer than 7 pages excluding references and figures-only pages. There is no limit on the length of the reference section. Each paper can have at most two figures-only pages, placed at the end of the submission, after references. Authors can also include as many figures as they wish within the core 7 pages. Papers should not include appendices in the main document.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Rights management information.  This information is sent to you
 %% when you complete the rights form.  These commands have SAMPLE
 %% values in them; it is your responsibility as an author to replace
 %% the commands and values with those provided to you when you
 %% complete the rights form.
-\setcopyright{acmcopyright}
-\copyrightyear{2023}
-\acmYear{2023}
-\acmDOI{XXXXXXX.XXXXXXX}
+% \setcopyright{acmcopyright}
+% \copyrightyear{2023}
+% \acmYear{2023}
+% \acmDOI{XXXXXXX.XXXXXXX}
 
 %% These commands are for a PROCEEDINGS abstract or paper.
-\acmConference[Conference acronym 'XX]{Conference title}{January 01--02,
-  1900}{Someplace, NY}
-\acmPrice{15.00}
-\acmISBN{978-1-4503-XXXX-X/18/06}
+% \acmConference[Conference acronym 'XX]{Conference title}{January 01--02,
+%   1900}{Someplace, NY}
+% \acmPrice{15.00}
+% \acmISBN{978-1-4503-XXXX-X/18/06}
 
 %% Submission ID.
 %% Use this when submitting an article to a sponsored event. You'll
 %% receive a unique submission ID from the organizers of the event,
 %% and this ID should be used as the parameter to this command.
-\acmSubmissionID{papers\_466}
+% \acmSubmissionID{papers\_466}
 
 %% If you are preparing content for an event sponsored by ACM SIGGRAPH,
 %% you must use the "author year" style of citations and references.
-\citestyle{acmauthoryear}
+% \citestyle{acmauthoryear}
 
 %% To fix a margin violation bug, apparently due to poor hyphenation.
 \hyphenation{Go-men-so-ro}
 
 % Allows expressions of measurements. (Included in The ACM Publishing System (TAPS) List of Accepted LaTeX Packages)
 \usepackage{calc}
+
+
+% Adding for ALife, maybe previously loaded by ACM style?
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+\usepackage{titlepic} % ??? QQQ
+\usepackage{caption} % ??? QQQ -- for \captionof command
 
 %% For introducing terms which have a special meaning in this work.
 \newcommand{\jargon}[1]{\textit{#1}}
@@ -67,15 +82,73 @@
 \title{Coevolution of Camouflage}
 
 %% Author
-\author{Craig Reynolds}
-\email{cwr@red3d.com}
-\orcid{0000-0001-8203-712X}
-\affiliation{%
-  \institution{unaffiliated researcher}
-  \country{USA}
-}
+% \author{Craig Reynolds}
+\author{[authors anonymized]}
+% \email{cwr@red3d.com}
+% \orcid{0000-0001-8203-712X}
+% \affiliation{%
+%   \institution{unaffiliated researcher}
+%   \country{USA}
+% }
 
-\renewcommand{\shortauthors}{Craig Reynolds}
+% \renewcommand{\shortauthors}{Craig Reynolds}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% OK this ALMOST does the teaserfigure trick
+
+% \titlepic{\includegraphics[width=0.24\linewidth]{20221121_1819_step_6464.png}}
+
+
+% \titlepic{\igfour{20221121_1819_step_6464.png}\hfill\igfour{20221108_2018_step_6562.png}\hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png}}
+
+% \titlepic{\vspace{5mm} \igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail, disk diameter is 20\% of image width. Images of: plum leaf litter, tree and sky, gravel, oxalis sprouts.) } \label{fig:teaser} \vspace{3mm} }
+
+% \titlepic{%
+%     \begin{figure*} %
+%     \vspace{5mm} %
+%     \igfour{20221121_1819_step_6464.png} \hfill % 
+%     \igfour{20221108_2018_step_6562.png} \hfill %
+%     \igfour{20221215_step_7182.png} \hfill %
+%     \igfour{20221216_step_5997.png} %
+%     \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail, disk diameter is 20\% of image width. Images of: plum leaf litter, tree and sky, gravel, oxalis sprouts.) } % 
+%     \label{fig:teaser} %
+%     \vspace{3mm} %
+%     \end{figure*} }
+
+% \captionsetup[]{hypcap=false}
+\captionsetup{hypcap=false}
+
+\titlepic{\vspace{5mm} \igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \captionof{figure}{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail. Disk diameter is 20\% of image width. See version of this \href{https://www.google.com/QQQ}{PDF with full resolution images} Background photos of: plum leaf litter, tree and sky, gravel, oxalis sprouts.) } \label{fig:teaser} }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%% Lay out the single column “top matter” defined above.
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% QQQ this needs to be changed to a regular page-width figure
+% QQQ rather than an ACM special teaserfigure
+
+% % %% Teaser figure that appears on the top of the article.
+% % \begin{teaserfigure}
+% \begin{figure*}
+%     \igfour{20221121_1819_step_6464.png}
+%     \hfill
+%     \igfour{20221108_2018_step_6562.png}
+%     \hfill
+%     \igfour{20221215_step_7182.png}
+%     \hfill
+%     \igfour{20221216_step_5997.png}
+%     \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail, disk diameter is 20\% of image width. Images of: plum leaf litter, tree and sky, gravel, oxalis sprouts.) }
+%     % \Description{Examples of camouflage textures produced by the simulation.}
+%     \label{fig:teaser}
+%     \vspace{3mm} % 3mm vertical space
+% % \end{teaserfigure}
+% \end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,64 +161,45 @@
 %%
 %% Generate your CCSCML using http://dl.acm.org/ccs.cfm.
 %%
-\begin{CCSXML}
-<ccs2012>
-   <concept>
-       <concept_id>10010147.10010341.10010349.10011810</concept_id>
-       <concept_desc>Computing methodologies~Artificial life</concept_desc>
-       <concept_significance>500</concept_significance>
-       </concept>
-   <concept>
-       <concept_id>10010147.10010371.10010382.10010384</concept_id>
-       <concept_desc>Computing methodologies~Texturing</concept_desc>
-       <concept_significance>300</concept_significance>
-       </concept>
-   <concept>
-       <concept_id>10010147.10010178.10010224</concept_id>
-       <concept_desc>Computing methodologies~Computer vision</concept_desc>
-       <concept_significance>300</concept_significance>
-       </concept>
-    <concept>
-       <concept_id>10010147.10010178.10010224.10010245.10010246</concept_id>
-       <concept_desc>Computing methodologies~Interest point and salient region detections</concept_desc>
-       <concept_significance>300</concept_significance>
-       </concept>
-    <concept>
-        <concept_id>10010147.10010257.10010293.10011809.10011813</concept_id>
-        <concept_desc>Computing methodologies~Genetic programming</concept_desc>
-        <concept_significance>300</concept_significance>
-        </concept>
- </ccs2012>
-\end{CCSXML}
+% \begin{CCSXML}
+% <ccs2012>
+%    <concept>
+%        <concept_id>10010147.10010341.10010349.10011810</concept_id>
+%        <concept_desc>Computing methodologies~Artificial life</concept_desc>
+%        <concept_significance>500</concept_significance>
+%        </concept>
+%    <concept>
+%        <concept_id>10010147.10010371.10010382.10010384</concept_id>
+%        <concept_desc>Computing methodologies~Texturing</concept_desc>
+%        <concept_significance>300</concept_significance>
+%        </concept>
+%    <concept>
+%        <concept_id>10010147.10010178.10010224</concept_id>
+%        <concept_desc>Computing methodologies~Computer vision</concept_desc>
+%        <concept_significance>300</concept_significance>
+%        </concept>
+%     <concept>
+%        <concept_id>10010147.10010178.10010224.10010245.10010246</concept_id>
+%        <concept_desc>Computing methodologies~Interest point and salient region detections</concept_desc>
+%        <concept_significance>300</concept_significance>
+%        </concept>
+%     <concept>
+%         <concept_id>10010147.10010257.10010293.10011809.10011813</concept_id>
+%         <concept_desc>Computing methodologies~Genetic programming</concept_desc>
+%         <concept_significance>300</concept_significance>
+%         </concept>
+%  </ccs2012>
+% \end{CCSXML}
 
-\ccsdesc[500]{Computing methodologies~Artificial life}
-\ccsdesc[300]{Computing methodologies~Texturing}
-\ccsdesc[300]{Computing methodologies~Computer vision}
-\ccsdesc[300]{Computing methodologies~Interest point and salient region detections} 
-\ccsdesc[300]{Computing methodologies~Genetic programming}
+% \ccsdesc[500]{Computing methodologies~Artificial life}
+% \ccsdesc[300]{Computing methodologies~Texturing}
+% \ccsdesc[300]{Computing methodologies~Computer vision}
+% \ccsdesc[300]{Computing methodologies~Interest point and salient region detections} 
+% \ccsdesc[300]{Computing methodologies~Genetic programming}
 
-%% Keywords
-\keywords{camouflage, coevolution, nature, biology, predator, prey, vision, learning, texture synthesis, simulation}
+% %% Keywords
+% \keywords{camouflage, coevolution, nature, biology, predator, prey, vision, learning, texture synthesis, simulation}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Teaser figure that appears on the top of the article.
-\begin{teaserfigure}
-    \igfour{20221121_1819_step_6464.png}
-    \hfill
-    \igfour{20221108_2018_step_6562.png}
-    \hfill
-    \igfour{20221215_step_7182.png}
-    \hfill
-    \igfour{20221216_step_5997.png}
-    \caption{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Zoom in for detail, disk diameter is 20\% of image width. Images of: plum leaf litter, tree and sky, gravel, oxalis sprouts.) }
-    \Description{Examples of camouflage textures produced by the simulation.}
-    \label{fig:teaser}
-    \vspace{3mm} % 3mm vertical space
-\end{teaserfigure}
-
-%% Lay out the single column “top matter” defined above.
-\maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -162,7 +216,7 @@
     \hfill
     \igsix{20221030_1220_step_7467.png}
     \caption{Prey camouflage evolving over simulation time to become more effective in a given environment.}
-    \Description{Sequence of images showing evolution of prey camouflage over simulated time.}
+    % \Description{Sequence of images showing evolution of prey camouflage over simulated time.}
     \label{fig:time_sequence}
 \end{figure*}
 
@@ -180,12 +234,13 @@ In the simulation described here, evolution of prey camouflage closely follows t
 In abstract artificial life models, it is common to focus in detail on one aspect of a natural system. In the current model, that aspect is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computational stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs (nested expressions) in \texsyn{}'s language for procedural texture synthesis. \jargon{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, all of the animal's existence is ignored except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely located. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. These details of simulated evolution, morphogenesis, vision, and genetic representation are all quite unlike the natural world. But they are assumed to be sufficiently similar in their effect to allow a plausible simulation of the natural system, producing analogous results, and so may provide insights about the natural system.
 \par
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{coc_overview.pdf}
     \caption{Overview of one step of the coevolutionary simulation of camouflage. Three prey are selected at random from their population of 200. Similarly for three predators from their population of 20. A random background image is selected from the given set, and a random crop of 512² pixels is made. The three prey are rendered to random non-overlapping locations. This composite image is given to each predator which estimates a position (circled crosshairs in tournament image, see also Figure \ref{fig:predator_responses}) predicting the center point of the most conspicuous prey. The predators are scored by “aim error” — the distance from their estimate to the \jargon{ground truth} center of the nearest prey. If the best predator's estimate is \textit{inside} a prey's disk, that prey is eaten and replaced by a new offspring of the other two prey. If all predators fail, all prey survive. If the worst scoring predator's estimate is \textit{outside} all prey, it may die of starvation, to be replaced by a new offspring.}
-    \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
+    % \Description{Overview diagram of the coevolutionary simulation of camouflage evolution.}
     \label{fig:simulation_overview}
 \end{figure*}
 
@@ -207,6 +262,7 @@ Evolution is represented in this model using \jargon{genetic programming} (GP), 
 The biological literature on camouflage and related topics is vast. A few starting points include: an early survey of camouflage in nature, \citet{thayer_concealing-coloration_1909}, pioneering work on mathematical models of biological patterns \citet{turing_chemical_1952}, revisiting Turing's work with improved computation \citet{murray_how_1988}, and a modern perspective on how life evolves and learns in \citet{valiant_probably_2013}. A recent survey of how camouflage increases survival \cite{de_alcantara_viana_predator_2022} reiterates how it need not be perfect. A small change, increasing a predator's search time, or reducing its attack rate, is enough to drive camouflage evolution.
 \par
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Camouflaged Object Detection (COD)}
@@ -222,7 +278,7 @@ In contrast, the goal of the simulation reported in this paper is to pit camoufl
 \begin{figure*}
     \includegraphics[width=\textwidth]{texsyn_overview.pdf}
     \caption{\texsyn{} expression trees and crossover between them, using a simplified version of \texsyn{} with three texture operators (\texttt{spots}, \texttt{stripes}, and \texttt{warp}) plus four named solid color textures. Minimal operator trees are shown in (a) and (b). \textit{Crossover} between (a) and (b) is shown in (c) and (d). (c) is \texttt{spots} where \texttt{blue} is replaced with \texttt{stripes}. (d) is \texttt{stripes} where \texttt{gray} is replaced with \texttt{spots}. (e) and (f) show (c) and (d) under a \texttt{warp} operator. (See Supplemental Material for actual \texsyn{} c++ code used for these examples.)}
-    \Description{Overview of \texsyn{} representation of texture and the idea of \textit{crossover} between expression trees.}
+    % \Description{Overview of \texsyn{} representation of texture and the idea of \textit{crossover} between expression trees.}
     \label{fig:TexSyn_overview}
 \end{figure*}
 
@@ -258,7 +314,7 @@ Throughout this model, \textbf{tournaments involve three individuals}. (Unlike t
 
 A modern synthesis \cite{livnat_sex_2016} of evolution theory, game theory, and machine learning (the multiplicative weights update algorithm: “no-regret learning”) suggests evolution may act to optimize \jargon{mixability}, a type of modularity in the genetic representation of phenotypes. As described in \citet{chastain_multiplicative_2013} this perspective focuses on the “...special case of weak selection in which all fitness values are assumed to be close to one another. ...hypothesizing that evolution proceeds for the most part not by substantial increases in fitness but by essentially random drift...” This concept goes back to the “Neutral Theory” in \citet{kimura_evolutionary_1968}.
 \par
-The evolutionary model used in the current work, implemented in software called \jargon{\lazypredator{},} attempts to operate in this “neutral” mode (as did the simulations in \citet{reynolds_iec_2011} and \citet{harrington_coevolution_2014}). Genetic algorithms are often designed to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This \jargon{elitism} can skew the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, \lazypredator{} uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \ref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
+The evolutionary model used in the current work, implemented in software called \jargon{\lazypredator{},} attempts to operate in this “neutral” mode (as did the simulations in \citet{reynolds_iec_2011} and \citet{harrington_coevolution_2014}). Genetic algorithms are often designed to promote the population's highest fitness individuals. They allow these high fitness individuals to survive longer and reproduce more often. This \jargon{elitism} can skew the evolutionary search: too much \jargon{exploiting} without enough \jargon{exploring.}  In contrast, \lazypredator{} uses \textit{negative selection} to encourage \jargon{drift}. Higher fitness individuals experience almost no difference in  relative fitness. It is the lowest fitness individuals that get culled by predation. In each tournament (see section \nameref{subsec:tournaments}) the goal is to sort the three individuals by relative fitness. In fact, the only requirement is to identify the \textbf{least fit} of the three individuals.
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the prey tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant and is ignored. If all predators \jargon{fail} and predict positions outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
@@ -282,20 +338,9 @@ After crossover, a mutation operator further modifies the offspring. It traverse
 \begin{figure}
     \includegraphics[width=\columnwidth]{predator_cnn.pdf}
     \caption{Architecture of a predator's neural net which maps a 128² RGB image into an \textit{xy} location where it estimates the most conspicuous prey is centered. All convolution layers but the first use strides of (2,2) while doubling the number of learned filters. Then fully connected layers reduce the flattened features, by factors of 4, down to an output layer of 2 values. This model contains 3.2 million parameters (More details in Supplemental Materials.)}
-    \Description{Diagram of Predator's convolutional neural net.}
+    % \Description{Diagram of Predator's convolutional neural net.}
     \label{fig:predator_cnn}
 \end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Full step/tournament image with predator responses
-
-\begin{figure}
-    \includegraphics[width=\columnwidth]{20221007_0806_step_7030.png}
-    \caption{Tournament image after simulation step. Starts with crop from given background set. Composited over that are three prey with evolved camouflage patterns. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black and white, second best is green and black, third is red and black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
-    \Description{Full tournament image showing background, three prey, and three predator responses.}
-    \label{fig:predator_responses}
-\end{figure}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -309,6 +354,17 @@ These \texsyn{} textures are represented by operators, trees, and parameters. Th
 \par
 Note that the images in this paper are rendered at 512² pixels and the prey disks have a diameter of 100 pixels. These images are downsampled to 128² for use by predator's vision CNNs.
 \par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Full step/tournament image with predator responses
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{20221007_0806_step_7030.png}
+    \caption{Tournament image after simulation step. Starts with crop from given background set. Composited over that are three prey with evolved camouflage patterns. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black and white, second best is green and black, third is red and black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
+    % \Description{Full tournament image showing background, three prey, and three predator responses.}
+    \label{fig:predator_responses}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -395,27 +451,27 @@ An obvious next step is to apply this model to 3d environments. Perhaps along th
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Acknowledgements
-\begin{acks}
-I deeply appreciate everyone who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
-\par
-I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
-Thanks for additional help from:
-Bilal Abbasi,
-Jan Allbeck,
-Rebecca Allen,
-Richard Dawkins,
-Steve DiPaola,
-Aaron Hertzmann,
-Bjoern Knafla,
-John Koza,
-Dominic Mallinson,
-Nick Porcino,
-and Michael Wahrman.
-\par
-Thanks also to my neighbors whose landscaping provided many of the background images used here.
-\par
-\end{acks}
+% %% Acknowledgements
+% \begin{acks}
+% I deeply appreciate everyone who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
+% \par
+% I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
+% Thanks for additional help from:
+% Bilal Abbasi,
+% Jan Allbeck,
+% Rebecca Allen,
+% Richard Dawkins,
+% Steve DiPaola,
+% Aaron Hertzmann,
+% Bjoern Knafla,
+% John Koza,
+% Dominic Mallinson,
+% Nick Porcino,
+% and Michael Wahrman.
+% \par
+% Thanks also to my neighbors whose landscaping provided many of the background images used here.
+% \par
+% \end{acks}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -437,7 +493,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20221112_1555_step_6370.png}
     \caption{Four tournament images from run {\runID rock\_wall\_20221112\_1555}.}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:rock_wall_4x}
 \end{figure*}
 
@@ -450,7 +506,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20230115_step_12413.png}
     \caption{Four tournament images from run {\runID backyard\_oak\_20230113\_2254}. (“Extra large” run.)}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:backyard_oak_4x}
 \end{figure*}
 
@@ -463,7 +519,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20230106_step_11995.png}
     \caption{Four tournament images from run {\runID mbta\_flowers\_20230105\_1114}. (“Extra large” run.)}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:mbta_flowers_4x}
 \end{figure*}
 
@@ -476,7 +532,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20221215_step_6916.png}
     \caption{Four tournament images from run {\runID michaels\_gravel\_20221214\_1837}.}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:michaels_gravel_4x}
 \end{figure*}
 
@@ -489,7 +545,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20230111_step_6726.png}
     \caption{Four tournament images from run {\runID kitchen\_granite\_20230110\_1758}.}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:kitchen_granite_4x}
 \end{figure*}
 
@@ -502,7 +558,7 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \igfour{20221218_step_6753.png}
     \caption{Four tournament images from run {\runID yellow\_flower\_on\_green\_20221217\_1826}. This background set was a notoriously “hard” non-stationary test case.}
-    \Description{QQQ.}
+    % \Description{QQQ.}
     \label{fig:yellow_flower_4x}
 \end{figure*}
 
@@ -564,307 +620,309 @@ Thanks also to my neighbors whose landscaping provided many of the background im
     \hfill
     \ignine{20220303_QuHYtnPora_72_73.png}
     \caption{Examples of the three types of labeled training example in the FCD5 training dataset for “find conspicuous disk” pre-training. \textbf{Top row, type 1}: single random prey over random background. \textbf{Middle row, type 2}: three different prey. \textbf{Bottom row, type 3}: three copies of one prey. For types 2 and 3, one prey is unaltered, the other two are blended into background, by differing amounts, to make them more muted, less conspicuous. See Section \ref{sec:pre_train_predator}.}
-    \Description{Full tournament image showing background, three prey, and three predator responses.}
+    % \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:fcd5_examples}
 \end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Appendix -- must become separate PDF document before submission.
-\appendix
-\onecolumn
-\section{Supplemental Materials}
-\subsection{Key Simulation Parameters}
-\setcounter{page}{0}
+% QQQ removing all of this for now (20230306) since ALife does not support appendix like Supplemental Materials.
 
-\begin{minipage}{\linewidth}
-The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. Some runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
-\par
-\hspace*{1cm}
-\begin{minipage}{\linewidth-1.1cm}
-\begin{table}[H]
-\raggedright 
-\begin{tabular}{ |l|r|r| }
-\hline
-\textbf{Parameter} & \textbf{value} & \textbf{large} \\ 
-\hline
-predator population & 20 & 40 \\ 
-prey population & 200 & 400 \\ 
-prey subpopulations (demes) & 10 & 20 \\
-prey max init tree size & 100 & \\
-prey min tree size after crossover & 50 & \\
-prey max tree size after crossover & 150 & \\
-\hline
-prey render diameter (pixels) & 100 & \\ 
-tournament output image size & 512×512 & \\ 
-predator input image size & 128×128 & \\ 
-\hline
-tournament image save frequency & 19 & \\
-simulation steps per run (typical) & 6,000 & 12,000 \\
-prey generation equiv (steps/pop) & 30 & \\
-predator fail rate (typical) & 15\%-30\% & \\
-predator starvation threshold & & \\
-\hspace{0.2cm}(success in previous 20 attempts) & < 40\% & \\ 
-\hline
-predator “FCD” pre-training: & & \\
-\hspace{0.2cm} synthetic dataset size & 20,000 & \\
-\hspace{0.2cm} effective size with augmentation & 500,000 & \\
-\hline
-max signed “jiggle” noise added to  & & \\
-\hspace{0.2cm} all params of new predator CNN & ±0.003 & \\
-\hline
-\end{tabular}
-\label{table:key_simulation_parameters}
-\end{table}
-\end{minipage}
-\end{minipage}
+% %% Appendix -- must become separate PDF document before submission.
+% \appendix
+% \onecolumn
+% \section{Supplemental Materials}
+% \subsection{Key Simulation Parameters}
+% \setcounter{page}{0}
 
-\subsection{Background Image Sets}
-\begin{minipage}{\linewidth}
-Names and descriptions for the sets of background images used in this paper, see section \ref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene. \textbf{(Note to reviewers, these images will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}
-\par
-\hspace*{1cm}
-\begin{minipage}{\linewidth-1.1cm}
-\begin{table}[H]
-\raggedright 
-\begin{tabular}{ |l|l|c|c| }
-\hline
-\textbf{name} & \textbf{description} & \textbf{photos} & \textbf{figures} \\ 
-\hline
-backyard\_oak &
-    under canopy of California live oak (\textit{Quercus agrifolia}) &
-    12 & \ref{fig:backyard_oak_4x} \\
-\hline
-bean\_soup\_mix &
-    mixture of dried beans from grocery store &
-    4 & \ref{fig:bean_soup_mix_4x} \\
-\hline
-jans\_oak\_leaves &
-    white(?) oak leaf litter (by Jan Allbeck in Fairfax, Virginia) &
-    6 & \ref{fig:jans_oak_leaves_4x} \\
-\hline
-kitchen\_granite &
-    polished granite counter-top in our kitchen &
-    6 & \ref{fig:kitchen_granite_4x} \\
-\hline
-mbta\_flowers &
-    flowers (impatiens?) near MBTA Northeastern stop &
-    4 & \ref{fig:predator_responses}, \ref{fig:mbta_flowers_4x} \\
-\hline
-michaels\_gravel &
-    gravel bed in neighbor’s front yard &
-    4 & \ref{fig:teaser}, \ref{fig:predator_cnn}, \ref{fig:michaels_gravel_4x} \\
-\hline
-oak\_leaf\_litter &
-    fallen oak leaves on edge of road &
-    6 & \ref{fig:time_sequence} \\
-\hline
-oxalis\_sprouts &
-    sprouts of Oxalis push through leaf litter after first rain &
-    5 & \ref{fig:teaser} \\
-\hline
-plum\_leaf\_litter &
-    fallen leaves from plum and other trees, near sunset &
-    5 & \ref{fig:teaser}, \ref{fig:plum_leaf_litter_4x} \\
-\hline
-redwood\_leaf\_litter &
-    dried redwood leaf/needle litter collected in a roadside gutter &
-    4 & \ref{fig:redwood_leaf_litter_4x} \\
-\hline
-rock\_wall &
-    “dry stack” retaining wall in a neighbor's front yard &
-    14 & \ref{fig:rock_wall_4x} \\
-\hline
-tiger\_eye\_beans &
-    dried heirloom “tiger eye” beans from farmers market  &
-    5 & \ref{fig:simulation_overview} \\
-\hline
-tree\_leaf\_blossom\_sky &
-    small trees (branches, leaves, and blossoms) sky background &
-    5 & \ref{fig:teaser}, \ref{fig:tree_leaf_blossom_sky_4x} \\
-\hline
-yellow\_flower\_on\_green &
-    “Scot's broom” (or “French broom”?) in neighbor's yard &
-    6 & \ref{fig:yellow_flower_4x} \\
-\hline
-\end{tabular}
-\label{table:background_sets}
-\end{table}
-\end{minipage}
-\end{minipage}
+% \begin{minipage}{\linewidth}
+% The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. Some runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
+% \par
+% \hspace*{1cm}
+% \begin{minipage}{\linewidth-1.1cm}
+% \begin{table}[H]
+% \raggedright 
+% \begin{tabular}{ |l|r|r| }
+% \hline
+% \textbf{Parameter} & \textbf{value} & \textbf{large} \\ 
+% \hline
+% predator population & 20 & 40 \\ 
+% prey population & 200 & 400 \\ 
+% prey subpopulations (demes) & 10 & 20 \\
+% prey max init tree size & 100 & \\
+% prey min tree size after crossover & 50 & \\
+% prey max tree size after crossover & 150 & \\
+% \hline
+% prey render diameter (pixels) & 100 & \\ 
+% tournament output image size & 512×512 & \\ 
+% predator input image size & 128×128 & \\ 
+% \hline
+% tournament image save frequency & 19 & \\
+% simulation steps per run (typical) & 6,000 & 12,000 \\
+% prey generation equiv (steps/pop) & 30 & \\
+% predator fail rate (typical) & 15\%-30\% & \\
+% predator starvation threshold & & \\
+% \hspace{0.2cm}(success in previous 20 attempts) & < 40\% & \\ 
+% \hline
+% predator “FCD” pre-training: & & \\
+% \hspace{0.2cm} synthetic dataset size & 20,000 & \\
+% \hspace{0.2cm} effective size with augmentation & 500,000 & \\
+% \hline
+% max signed “jiggle” noise added to  & & \\
+% \hspace{0.2cm} all params of new predator CNN & ±0.003 & \\
+% \hline
+% \end{tabular}
+% \label{table:key_simulation_parameters}
+% \end{table}
+% \end{minipage}
+% \end{minipage}
 
-\subsection{\texsyn{} \texttt{c++} Code for Figure \ref{fig:TexSyn_overview}}
-% Is it any better to use LaTeX "listings" package?
-%     https://ctan.org/pkg/listings
-%     note that package IS approved by SIGGRAPH/ACM TAPS
-%     https://authors.acm.org/proceedings/production-information/accepted-latex-packages
-\begin{minipage}{\linewidth}
-\hspace*{1cm}
-\begin{minipage}{\linewidth-1.1cm}
-\begin{small}
-\begin{verbatim}
-Uniform white(1);
-Uniform gray(0.1);
-Uniform blue(0, 0, 1);
-Uniform green(0, 1, 0);
-LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
-Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray, 0.3, 0.5);
-NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
-LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
-Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
-NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
-\end{verbatim}
-\end{small}
-\end{minipage}
-\end{minipage}
+% \subsection{Background Image Sets}
+% \begin{minipage}{\linewidth}
+% Names and descriptions for the sets of background images used in this paper, see section \ref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene. \textbf{(Note to reviewers, these images will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}
+% \par
+% \hspace*{1cm}
+% \begin{minipage}{\linewidth-1.1cm}
+% \begin{table}[H]
+% \raggedright 
+% \begin{tabular}{ |l|l|c|c| }
+% \hline
+% \textbf{name} & \textbf{description} & \textbf{photos} & \textbf{figures} \\ 
+% \hline
+% backyard\_oak &
+%     under canopy of California live oak (\textit{Quercus agrifolia}) &
+%     12 & \ref{fig:backyard_oak_4x} \\
+% \hline
+% bean\_soup\_mix &
+%     mixture of dried beans from grocery store &
+%     4 & \ref{fig:bean_soup_mix_4x} \\
+% \hline
+% jans\_oak\_leaves &
+%     white(?) oak leaf litter (by Jan Allbeck in Fairfax, Virginia) &
+%     6 & \ref{fig:jans_oak_leaves_4x} \\
+% \hline
+% kitchen\_granite &
+%     polished granite counter-top in our kitchen &
+%     6 & \ref{fig:kitchen_granite_4x} \\
+% \hline
+% mbta\_flowers &
+%     flowers (impatiens?) near MBTA Northeastern stop &
+%     4 & \ref{fig:predator_responses}, \ref{fig:mbta_flowers_4x} \\
+% \hline
+% michaels\_gravel &
+%     gravel bed in neighbor’s front yard &
+%     4 & \ref{fig:teaser}, \ref{fig:predator_cnn}, \ref{fig:michaels_gravel_4x} \\
+% \hline
+% oak\_leaf\_litter &
+%     fallen oak leaves on edge of road &
+%     6 & \ref{fig:time_sequence} \\
+% \hline
+% oxalis\_sprouts &
+%     sprouts of Oxalis push through leaf litter after first rain &
+%     5 & \ref{fig:teaser} \\
+% \hline
+% plum\_leaf\_litter &
+%     fallen leaves from plum and other trees, near sunset &
+%     5 & \ref{fig:teaser}, \ref{fig:plum_leaf_litter_4x} \\
+% \hline
+% redwood\_leaf\_litter &
+%     dried redwood leaf/needle litter collected in a roadside gutter &
+%     4 & \ref{fig:redwood_leaf_litter_4x} \\
+% \hline
+% rock\_wall &
+%     “dry stack” retaining wall in a neighbor's front yard &
+%     14 & \ref{fig:rock_wall_4x} \\
+% \hline
+% tiger\_eye\_beans &
+%     dried heirloom “tiger eye” beans from farmers market  &
+%     5 & \ref{fig:simulation_overview} \\
+% \hline
+% tree\_leaf\_blossom\_sky &
+%     small trees (branches, leaves, and blossoms) sky background &
+%     5 & \ref{fig:teaser}, \ref{fig:tree_leaf_blossom_sky_4x} \\
+% \hline
+% yellow\_flower\_on\_green &
+%     “Scot's broom” (or “French broom”?) in neighbor's yard &
+%     6 & \ref{fig:yellow_flower_4x} \\
+% \hline
+% \end{tabular}
+% \label{table:background_sets}
+% \end{table}
+% \end{minipage}
+% \end{minipage}
 
-\subsection{Additional Parameters to Simulation Runs}
-\begin{minipage}{\linewidth}
-Command line arguments to pkgT:
-\par
-\begin{small}
-\hspace*{1cm}
-\begin{minipage}{\linewidth-1.1cm}
-\begin{verbatim}
-pkgT requires at least one pathname parameter, others may be omitted from the end:
-    background image directory (required)
-    output directory (defaults to .)
-    background scale (defaults to 0.5)
-    random seed (else: default seed)
-    window width (defaults to 1200)
-    window height (defaults to 800)
-    individuals (defaults to 120)
-    subpopulations (defaults to 6)
-    max init tree size (defaults to 100)
-    min crossover tree size (default max init tree size  * 0.5)
-    max crossover tree size (default max init tree size  * 1.5)
-\end{verbatim}
-\end{minipage}
-\end{small}
-\end{minipage}
+% \subsection{\texsyn{} \texttt{c++} Code for Figure \ref{fig:TexSyn_overview}}
+% % Is it any better to use LaTeX "listings" package?
+% %     https://ctan.org/pkg/listings
+% %     note that package IS approved by SIGGRAPH/ACM TAPS
+% %     https://authors.acm.org/proceedings/production-information/accepted-latex-packages
+% \begin{minipage}{\linewidth}
+% \hspace*{1cm}
+% \begin{minipage}{\linewidth-1.1cm}
+% \begin{small}
+% \begin{verbatim}
+% Uniform white(1);
+% Uniform gray(0.1);
+% Uniform blue(0, 0, 1);
+% Uniform green(0, 1, 0);
+% LotsOfSpots spots(0.9, 0.05, 0.3, 0.02, 0.02, blue, white);
+% Grating stripes(Vec2(), green, Vec2(0.1, 0.2), gray, 0.3, 0.5);
+% NoiseWarp warp_stripes(1, 0.1, 0.7, stripes);
+% LotsOfSpots spots2(0.9, 0.05, 0.3, 0.02, 0.02, stripes, white);
+% Grating stripes2(Vec2(), green, Vec2(0.1, 0.2), spots, 0.3, 0.5);
+% NoiseWarp warp_all(1, 0.1, 0.7, stripes2);
+% \end{verbatim}
+% \end{small}
+% \end{minipage}
+% \end{minipage}
 
-\subsection{Details of Pre-Trained Predator Model}
-\begin{minipage}{\linewidth}
-The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers, this pre-trained model will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}. Here is its \texttt{model.summary()}:
-\par
-\hspace*{1cm}
-\begin{minipage}{\linewidth-1.1cm}
-\begin{small}
-\begin{verbatim}
+% \subsection{Additional Parameters to Simulation Runs}
+% \begin{minipage}{\linewidth}
+% Command line arguments to pkgT:
+% \par
+% \begin{small}
+% \hspace*{1cm}
+% \begin{minipage}{\linewidth-1.1cm}
+% \begin{verbatim}
+% pkgT requires at least one pathname parameter, others may be omitted from the end:
+%     background image directory (required)
+%     output directory (defaults to .)
+%     background scale (defaults to 0.5)
+%     random seed (else: default seed)
+%     window width (defaults to 1200)
+%     window height (defaults to 800)
+%     individuals (defaults to 120)
+%     subpopulations (defaults to 6)
+%     max init tree size (defaults to 100)
+%     min crossover tree size (default max init tree size  * 0.5)
+%     max crossover tree size (default max init tree size  * 1.5)
+% \end{verbatim}
+% \end{minipage}
+% \end{small}
+% \end{minipage}
 
-Model: "sequential"
-_________________________________________________________________
- Layer (type)                Output Shape              Param #
-=================================================================
- conv2d (Conv2D)             (None, 128, 128, 16)      1216
- dropout (Dropout)           (None, 128, 128, 16)      0
- conv2d_1 (Conv2D)           (None, 64, 64, 32)        12832
- dropout_1 (Dropout)         (None, 64, 64, 32)        0
- conv2d_2 (Conv2D)           (None, 32, 32, 64)        51264
- dropout_2 (Dropout)         (None, 32, 32, 64)        0
- conv2d_3 (Conv2D)           (None, 16, 16, 128)       204928
- dropout_3 (Dropout)         (None, 16, 16, 128)       0
- conv2d_4 (Conv2D)           (None, 8, 8, 256)         819456
- dropout_4 (Dropout)         (None, 8, 8, 256)         0
- flatten (Flatten)           (None, 16384)             0
- dense (Dense)               (None, 128)               2097280
- dropout_5 (Dropout)         (None, 128)               0
- dense_1 (Dense)             (None, 32)                4128
- dense_2 (Dense)             (None, 8)                 264
- dense_3 (Dense)             (None, 2)                 18
-=================================================================
-Total params: 3,191,386
-Trainable params: 3,191,386
-Non-trainable params: 0
-\end{verbatim}
-\end{small}
-\end{minipage}
-\end{minipage}
-\par
+% \subsection{Details of Pre-Trained Predator Model}
+% \begin{minipage}{\linewidth}
+% The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers, this pre-trained model will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}. Here is its \texttt{model.summary()}:
+% \par
+% \hspace*{1cm}
+% \begin{minipage}{\linewidth-1.1cm}
+% \begin{small}
+% \begin{verbatim}
 
-\subsection{Additional Samples of Simulation Runs}
+% Model: "sequential"
+% _________________________________________________________________
+%  Layer (type)                Output Shape              Param #
+% =================================================================
+%  conv2d (Conv2D)             (None, 128, 128, 16)      1216
+%  dropout (Dropout)           (None, 128, 128, 16)      0
+%  conv2d_1 (Conv2D)           (None, 64, 64, 32)        12832
+%  dropout_1 (Dropout)         (None, 64, 64, 32)        0
+%  conv2d_2 (Conv2D)           (None, 32, 32, 64)        51264
+%  dropout_2 (Dropout)         (None, 32, 32, 64)        0
+%  conv2d_3 (Conv2D)           (None, 16, 16, 128)       204928
+%  dropout_3 (Dropout)         (None, 16, 16, 128)       0
+%  conv2d_4 (Conv2D)           (None, 8, 8, 256)         819456
+%  dropout_4 (Dropout)         (None, 8, 8, 256)         0
+%  flatten (Flatten)           (None, 16384)             0
+%  dense (Dense)               (None, 128)               2097280
+%  dropout_5 (Dropout)         (None, 128)               0
+%  dense_1 (Dense)             (None, 32)                4128
+%  dense_2 (Dense)             (None, 8)                 264
+%  dense_3 (Dense)             (None, 2)                 18
+% =================================================================
+% Total params: 3,191,386
+% Trainable params: 3,191,386
+% Non-trainable params: 0
+% \end{verbatim}
+% \end{small}
+% \end{minipage}
+% \end{minipage}
+% \par
 
-\begin{figure}[H]
-    \igfour{20230116_step_5868.png}
-    \hfill
-    \igfour{20230116_step_6057.png}
-    \hfill
-    \igfour{20230116_step_6347.png}
-    \hfill
-    \igfour{20230116_step_6814.png}
-    \caption{Four tournament images from run {\runID redwood\_leaf\_litter\_20230115\_1730}.}
-    \Description{QQQ.}
-    \label{fig:redwood_leaf_litter_4x}
-\end{figure}
+% \subsection{Additional Samples of Simulation Runs}
 
-\begin{figure}[H]
-    \igfour{20221108_2018_step_4655.png}
-    \hfill
-    \igfour{20221108_2018_step_5498.png}
-    \hfill
-    \igfour{20221108_2018_step_5947.png}
-    \hfill
-    \igfour{20221108_2018_step_6562.png}
-    \caption{Four tournament images from run {\runID tree\_leaf\_blossom\_sky\_20221108\_2018}.}
-    \Description{QQQ.}
-    \label{fig:tree_leaf_blossom_sky_4x}
-\end{figure}
+% \begin{figure}[H]
+%     \igfour{20230116_step_5868.png}
+%     \hfill
+%     \igfour{20230116_step_6057.png}
+%     \hfill
+%     \igfour{20230116_step_6347.png}
+%     \hfill
+%     \igfour{20230116_step_6814.png}
+%     \caption{Four tournament images from run {\runID redwood\_leaf\_litter\_20230115\_1730}.}
+%     % \Description{QQQ.}
+%     \label{fig:redwood_leaf_litter_4x}
+% \end{figure}
 
-\begin{figure}[H]
-    \igfour{20221121_1819_step_6324.png}
-    \hfill
-    \igfour{20221121_1819_step_6464.png}
-    \hfill
-    \igfour{20221121_1819_step_6677.png}
-    \hfill
-    \igfour{20221121_1819_step_6755.png}
-    \caption{Four tournament images from run {\runID plum\_leaf\_litter\_20221121\_1819}.}
-    \Description{QQQ.}
-    \label{fig:plum_leaf_litter_4x}
-\end{figure}
+% \begin{figure}[H]
+%     \igfour{20221108_2018_step_4655.png}
+%     \hfill
+%     \igfour{20221108_2018_step_5498.png}
+%     \hfill
+%     \igfour{20221108_2018_step_5947.png}
+%     \hfill
+%     \igfour{20221108_2018_step_6562.png}
+%     \caption{Four tournament images from run {\runID tree\_leaf\_blossom\_sky\_20221108\_2018}.}
+%     % \Description{QQQ.}
+%     \label{fig:tree_leaf_blossom_sky_4x}
+% \end{figure}
 
-\begin{figure}[H]
-    \igfour{20230101_step_10561.png}
-    \hfill
-    \igfour{20230101_step_10750.png}
-    \hfill
-    \igfour{20230101_step_10950.png}
-    \hfill
-    \igfour{20230101_step_11861.png}
-    \caption{Four tournament images from run {\runID bean\_soup\_mix\_20221231\_1317}. (“Extra large” run.)}
-    \Description{QQQ.}
-    \label{fig:bean_soup_mix_4x}
-\end{figure}
+% \begin{figure}[H]
+%     \igfour{20221121_1819_step_6324.png}
+%     \hfill
+%     \igfour{20221121_1819_step_6464.png}
+%     \hfill
+%     \igfour{20221121_1819_step_6677.png}
+%     \hfill
+%     \igfour{20221121_1819_step_6755.png}
+%     \caption{Four tournament images from run {\runID plum\_leaf\_litter\_20221121\_1819}.}
+%     % \Description{QQQ.}
+%     \label{fig:plum_leaf_litter_4x}
+% \end{figure}
 
-\begin{figure}[H]
-    \igfour{20221228_step_6662.png}
-    \hfill
-    \igfour{20221228_step_7095.png}
-    \hfill
-    \igfour{20221228_step_7574.png}
-    \hfill
-    \igfour{20221228_step_7742.png}
-    \caption{Four tournament images from run {\runID jans\_oak\_leaves\_20221227\_1717}.}
-    \Description{QQQ.}
-    \label{fig:jans_oak_leaves_4x}
-\end{figure}
+% \begin{figure}[H]
+%     \igfour{20230101_step_10561.png}
+%     \hfill
+%     \igfour{20230101_step_10750.png}
+%     \hfill
+%     \igfour{20230101_step_10950.png}
+%     \hfill
+%     \igfour{20230101_step_11861.png}
+%     \caption{Four tournament images from run {\runID bean\_soup\_mix\_20221231\_1317}. (“Extra large” run.)}
+%     % \Description{QQQ.}
+%     \label{fig:bean_soup_mix_4x}
+% \end{figure}
 
-\subsection{Additional Samples of Predator Responses}
-Similar to Fig. \ref{fig:predator_responses}, these examples from run {\runID tiger\_eye\_beans\_20220903\_1401} show the prediction output of all three predators in each tournament. The crosshairs are ordered by least “aim error” with the best drawn in black and white, second in black and green, and worst in black and red. From left to right: (a) all three predators miss all three prey, (b) best is near center of one prey, second is off center but still inside another prey, and third fails to find any prey, (c) all three succeed, best inside one prey, the other two inside another prey, and (d) all three predators select the same prey which has especially conspicuous coloration.
-\par
+% \begin{figure}[H]
+%     \igfour{20221228_step_6662.png}
+%     \hfill
+%     \igfour{20221228_step_7095.png}
+%     \hfill
+%     \igfour{20221228_step_7574.png}
+%     \hfill
+%     \igfour{20221228_step_7742.png}
+%     \caption{Four tournament images from run {\runID jans\_oak\_leaves\_20221227\_1717}.}
+%     % \Description{QQQ.}
+%     \label{fig:jans_oak_leaves_4x}
+% \end{figure}
 
-\begin{figure}[H]
-    \igfour{20220904_step_4883.png}
-    \hfill
-    \igfour{20220904_step_4788.png}
-    \hfill
-    \igfour{20220904_step_3914.png}
-    \hfill
-    \igfour{20220904_step_4636.png}
-    \caption{Four tournament images, plus predator responses as crosshairs, from run {\runID tiger\_eye\_beans\_20220903\_1401}.}
-    \Description{QQQ.}
-    \label{fig:tiger_eye_beans_4x}
-\end{figure}
+% \subsection{Additional Samples of Predator Responses}
+% Similar to Fig. \ref{fig:predator_responses}, these examples from run {\runID tiger\_eye\_beans\_20220903\_1401} show the prediction output of all three predators in each tournament. The crosshairs are ordered by least “aim error” with the best drawn in black and white, second in black and green, and worst in black and red. From left to right: (a) all three predators miss all three prey, (b) best is near center of one prey, second is off center but still inside another prey, and third fails to find any prey, (c) all three succeed, best inside one prey, the other two inside another prey, and (d) all three predators select the same prey which has especially conspicuous coloration.
+% \par
+
+% \begin{figure}[H]
+%     \igfour{20220904_step_4883.png}
+%     \hfill
+%     \igfour{20220904_step_4788.png}
+%     \hfill
+%     \igfour{20220904_step_3914.png}
+%     \hfill
+%     \igfour{20220904_step_4636.png}
+%     \caption{Four tournament images, plus predator responses as crosshairs, from run {\runID tiger\_eye\_beans\_20220903\_1401}.}
+%     % \Description{QQQ.}
+%     \label{fig:tiger_eye_beans_4x}
+% \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
