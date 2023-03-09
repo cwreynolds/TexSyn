@@ -6666,15 +6666,29 @@ int main(int argc, const char * argv[])
     
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // Back to evocamo runs
-    std::cout << "October 28, 2022" << std::endl;
+//    // Back to evocamo runs
+//    std::cout << "October 28, 2022" << std::endl;
+//    
+//    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
+//
+//    // trying bigger prey population: 200 as 10 subpops of 20
+//    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel ~/Desktop/TexSyn_temp/ 0.5 20221019 512 512
+
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    EvoCamoVsLearnPredPop(CommandLine(argc, argv)).run();
-
-    // trying bigger prey population: 200 as 10 subpops of 20
-    // texsyn ~/Pictures/camouflage_backgrounds/michaels_gravel ~/Desktop/TexSyn_temp/ 0.5 20221019 512 512
-
-
+    // In the week between SIGGRAPH 2023 rejection and ALIFE 2023 submission.
+    std::cout << "March 8, 2023" << std::endl;
+    
+    EvoCamoVsLppSqm(CommandLine(argc, argv)).run();
+    
+    // See “COC logs” in Notes app, but typical recent usage is like:
+    // caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter
+    //                   ~/Desktop/TexSyn_temp/
+    //                   0.25 20230308 512 512 400 20
+    
+    
+    
     //--------------------------------------------------------------------------
     //
     // Putting this note here because I worry that by the time I need this info
