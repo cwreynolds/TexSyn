@@ -1386,6 +1386,33 @@ public:
         }
     }
     
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    // TODO 20230310
+    // Generalize the gist of saveResponsesFile()
+    
+    std::vector<Vec2> readResponseFile(fs::path pathname, int expected_points)
+    {
+        std::vector<Vec2> xy_points;
+        while (true)
+        {
+            float x, y;
+            std::ifstream input_file(pathname);
+            while ((input_file >> x) && (input_file >> y))
+            {
+                xy_points.push_back(Vec2(x, y));
+            }
+            input_file.close();
+            if (xy_points.size() >= expected_points) {break;}
+            std::cout << "Reread: bad format for " << pathname;
+            std::cout << std::endl;
+        }
+        return xy_points;
+    }
+
+    
+    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 build out expected_response_count_ api
     // Get/set the expected number of predator responses (prediction xy).
@@ -2133,15 +2160,16 @@ public:
     
     EvoCamoVsLppSqm(const CommandLine& cmd) : EvoCamoVsLearnPredPop(cmd) {}
     
-    // Using this method name just as a "hook", adding an "after" method to it.
-    void appendStepResultsToRunLog() override
+    // Using this method name just as a "hook", adding a "before" method to it.
+    void waitForUserInput() override
     {
-        // Call corresponding method in base class.
-        EvoCamoVsLearnPredPop::appendStepResultsToRunLog();
-        
         // Handle the Static Quality Metric protocol.
         handleSQM();
+
+        // Call corresponding method in base class.
+        EvoCamoVsLearnPredPop::waitForUserInput();
     }
+
     
     // Every 100 simulation steps, compute and record SQM data.
     const int sqm_interval_ = 100;
@@ -2150,124 +2178,18 @@ public:
         int step = getPopulation()->getStepCount();
         if ((step % sqm_interval_) == 0)
         {
-//            ensureAllHaveSQM();
             ensureAllPreyHaveSQM();
-            std::cout << "    **** SQM UPDATE" << std::endl;
-            std::cout << "    **** ";
-            debugPrint(maxStaticQualityMetric());
-            std::cout << "    **** ";
-            debugPrint(averageStaticQualityMetric());
+//            std::cout << "    **** SQM UPDATE" << std::endl;
+//            std::cout << "    **** ";
+//            debugPrint(maxStaticQualityMetric());
+//            std::cout << "    **** ";
+//            debugPrint(averageStaticQualityMetric());
+//            std::cout << "    **** should write max and ave to log file!!" << std::endl;
+            logSQM();
         }
     }
     
-//    //        void ensureAllHaveSQM()
-//    //        {
-//    //            int count_new = 0;
-//    //            auto f = [&](Individual* i)
-//    //            {
-//    //                if (! i->hasStaticQualityMetric())
-//    //                {
-//    //    //                i->setStaticQualityMetric(rs_.frandom01());
-//    //    //                makeImageForEvaluation(i);
-//    //                    count_new++;
-//    //                    evaluateIndividualsSQM(i);
-//    //                }
-//    //            };
-//    //
-//    //            std::cout << "    **** "; debugPrint(count_new);
-//    //
-//    //            getPopulation()->applyToAllIndividuals(f);
-//    //        }
-//
-//        void ensureAllPreyHaveSQM()
-//        {
-//            int count_new = 0;
-//            auto f = [&](Individual* i)
-//            {
-//                if (! i->hasStaticQualityMetric())
-//                {
-//                    count_new++;
-//    //                evaluateIndividualsSQM(i);
-//                    evaluateIndividualsSQM(*i);
-//                }
-//            };
-//            getPopulation()->applyToAllIndividuals(f);
-//            std::cout << "    **** "; debugPrint(count_new);
-//        }
-//
-//        int trialsPerSQM() const { return 10; }
-//
-//    //    void evaluateIndividualsSQM(Individual* individual)
-//        void evaluateIndividualsSQM(Individual& individual)
-//        {
-//            float sum_of_trials = 0;
-//            for (int i = 0; i < trialsPerSQM(); i++)
-//            {
-//                sum_of_trials += sampleSQM(individual);
-//            }
-//            ;
-//
-//    //            // TODO 20230309
-//    //            // Compute SQM (for now, just a random number). Then cache it on this
-//    //            // prey, a LazyPredator Individual instance from the Population.
-//    //            float sqm = rs_.frandom01();
-//    //    //        individual->setStaticQualityMetric(sqm);
-//    //            individual.setStaticQualityMetric(sqm);
-//
-//            // TODO 20230309
-//            // Compute SQM (for now, just a random number). Then cache it on this
-//            // prey, a LazyPredator Individual instance from the Population.
-//    //        float sqm = rs_.frandom01();
-//            individual.setStaticQualityMetric(sum_of_trials / trialsPerSQM());
-//        }
-//
-//        // Constructs a test image, and return its Static Quality Metric.
-//    //    float sampleSQM(Individual* individual)
-//        float sampleSQM(Individual& individual)
-//        {
-//            makeImageForEvaluation(individual);
-//
-//            // Compute SQM (for now, just a random number).
-//            return rs_.frandom01();
-//        }
-//
-//        // Constructs composite image, leaving it in GUI
-//    //    void makeImageForEvaluation(Individual* individual)
-//        void makeImageForEvaluation(Individual& individual)
-//        {
-//            cv::Mat background_image = selectRandomBackgroundForWindow();
-//
-//            // Draw the randomly selected background, then the 3 textures on top.
-//            gui().drawMat(background_image, Vec2());
-//
-//            int size = textureSize();
-//            Vec2 size2d(size, size);
-//
-//            Vec2 tl = size2d / 2;
-//            Vec2 br = guiSize() - (size2d * 1.5);
-//            Vec2 prey_tl = rs_.randomPointInAxisAlignedRectangle(tl, br);
-//
-//    //        Texture* texture = GP::textureFromIndividual(individual);
-//            Texture* texture = GP::textureFromIndividual(&individual);
-//            texture->rasterizeToImageCache(size, true);
-//            cv::Mat target = gui().getCvMatRect(prey_tl, size2d);
-//            texture->matteImageCacheDiskOverBG(size, target);
-//
-//            static int mife_counter = 0;
-//            std::cout << mife_counter++ << ": makeImageForEvaluation() -- ";  // QQQ
-//            debugPrint(prey_tl);  // QQQ
-//
-//            gui().refresh();  // QQQ
-//            using namespace std::chrono_literals;  // QQQ
-//            std::this_thread::sleep_for(0.1s);  // QQQ
-//
-//            int step = getPopulation()->getStepCount();
-//            std::string prefix = "eval_" + std::to_string(mife_counter) + "_";
-//            fs::path path = getComms().makePathname(step, prefix, ".png");
-//            getComms().writeFile(path, gui().getCvMat());
-//
-//        }
-
+    // Loop over all prey, compute SQM for any without one.
     void ensureAllPreyHaveSQM()
     {
         int count_new = 0;
@@ -2283,8 +2205,8 @@ public:
         std::cout << "    **** "; debugPrint(count_new);
     }
 
-//    int trialsPerSQM() const { return 10; }
-    int trialsPerSQM() const { return 1; } // QQQ
+    int trialsPerSQM() const { return 10; }
+//    int trialsPerSQM() const { return 1; } // QQQ
 
     // Set prey individual's SQM as the average of ten trials
     void evaluateIndividualSQM(Individual& individual)
@@ -2296,50 +2218,47 @@ public:
         }
         
         float average_metric = sum_of_trials / trialsPerSQM();
-        
         debugPrint(average_metric);
         
         // Cache average SQM on this prey, a LazyPredator Population Individual.
-//        individual.setStaticQualityMetric(sum_of_trials / trialsPerSQM());
         individual.setStaticQualityMetric(average_metric);
     }
     
-    // Constructs a test image and return its Static Quality Metric.
+    // Constructs a test image and returns its Static Quality Metric.
     float sampleSQM(Individual& individual)
     {
         // Make test image of this prey over a randomly selected background.
         // send it to PredatorEye for evaluation
         Vec2 prey_center = makeImageForEvaluation(individual);
         
-//        int step = getPopulation()->getStepCount();
-//        std::string prefix = "eval_" + std::to_string(mife_counter_) + "_";
-//        fs::path path = getComms().makePathname(step, prefix, ".png");
-//        getComms().writeFile(path, gui().getCvMat());
-        
         sendForEvaluation();
         
         Vec2 predator_prediction = waitForEvaluation(prey_center);
         
-        
         float aim_error = (predator_prediction - prey_center).length();
-        
-//        float disk_radius = diskDiameter() * 0.5 * gui().getSize().x();
         float disk_radius = diskDiameter() / (2 * gui().getSize().x());
 
-        
-        
-//        // Compute SQM (for now, just a random number).
-//        return rs_.frandom01();  // QQQ
-        
         // Is prediction outside prey disk?
         float sqm = (aim_error > disk_radius) ? 1 : 0;
 
-        debugPrint(aim_error);
-        debugPrint(disk_radius);
-        debugPrint(sqm);
+//        std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+//        std::cout << "~~~~    "; debugPrint(prey_center);
+//        std::cout << "~~~~    "; debugPrint(predator_prediction);
+//        std::cout << "~~~~    "; debugPrint(aim_error);
+//        std::cout << "~~~~    "; debugPrint(disk_radius);
+//        std::cout << "~~~~    "; debugPrint(sqm);
+//        std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 
         return sqm;
     }
+    
+    
+//    read back SQM (0.560077, 0.439505)
+//    aim_error = 363.548
+//    disk_radius = 0.0976562
+//    sqm = 1
+//    average_metric = 1
+
     
     int mife_counter_ = 0;
 
@@ -2364,47 +2283,22 @@ public:
         cv::Mat target = gui().getCvMatRect(prey_tl, size2d);
         texture->matteImageCacheDiskOverBG(size, target);
         
-//        static int mife_counter = 0;
         std::cout << mife_counter_++ << ": makeImageForEvaluation() -- ";  // QQQ
         debugPrint(prey_tl);  // QQQ
         
         gui().refresh();  // QQQ
-        using namespace std::chrono_literals;  // QQQ
-        std::this_thread::sleep_for(0.1s);  // QQQ
+//        using namespace std::chrono_literals;  // QQQ
+//        std::this_thread::sleep_for(0.1s);  // QQQ
         
-//        int step = getPopulation()->getStepCount();
-//        std::string prefix = "eval_" + std::to_string(mife_counter) + "_";
-//        fs::path path = getComms().makePathname(step, prefix, ".png");
-//        getComms().writeFile(path, gui().getCvMat());
+        
+//        debugPrint(getComms().expectedImageSize());
 
-        return prey_center;
+        
+//        return prey_center;
+        return prey_center / gui().getSize().x();
+
     }
-    
-//        void sendForEvaluation()
-//        {
-//            int step = getPopulation()->getStepCount();
-//
-//            auto p = [&](std::string preprefix)
-//            {
-//                std::string prefix = preprefix + std::to_string(mife_counter_) + "_";
-//                return getComms().makePathname(step, prefix, ".png");
-//            };
-//
-//
-//    //        std::string prefix_real = "eval_" + std::to_string(mife_counter_) + "_";
-//    //        std::string prefix_temp = "wait_" + std::to_string(mife_counter_) + "_";
-//    //
-//    //        fs::path path_real = getComms().makePathname(step, prefix_real, ".png");
-//    //        fs::path path_temp = getComms().makePathname(step, prefix_temp, ".png");
-//
-//            getComms().writeFile(p("wait_"), gui().getCvMat());
-//
-//
-//            // now rename from "wait_..." to "eval_..."
-//            fs::rename(p("wait_"), p("eval_"));
-//
-//        }
-      
+          
     void sendForEvaluation()
     {
         // Function to make fs:path from preprefix ("wait_..." or "eval_...")
@@ -2414,13 +2308,19 @@ public:
             std::string prefix = preprefix + std::to_string(mife_counter_) + "_";
             return getComms().makePathname(step, prefix, ".png");
         };
+        
+        
+        
         // Write image file with temp name.
-        getComms().writeFile(p("wait_"), gui().getCvMat());
+//        getComms().writeFile(p("wait_"), gui().getCvMat());
+        getComms().writeFile(p("wait_"),
+                             getComms().resizeImage(gui().getCvMat()));
+
+        
         // now rename from "wait_..." to "eval_..."
         fs::rename(p("wait_"), p("eval_"));
     }
 
-    
     // TODO may not need prey_center, using it for mock results
     Vec2 waitForEvaluation(Vec2 prey_center)
     {
@@ -2428,24 +2328,92 @@ public:
         std::string prefix = "sqm_" + std::to_string(mife_counter_) + "_";
         fs::path path = getComms().makePathname(step, prefix, ".txt");
         
+//            while (!getComms().isFilePresent(path))
+//            {
+//    //            using namespace std::chrono_literals;  // QQQ
+//    //            std::this_thread::sleep_for(1s);  // QQQ
+//    //            std::cout << "waiting for " << path << std::endl;
+//            }
+        
+        
         while (!getComms().isFilePresent(path))
         {
             using namespace std::chrono_literals;  // QQQ
-            std::this_thread::sleep_for(1s);  // QQQ
-            std::cout << "waiting for " << path << std::endl;
+            std::this_thread::sleep_for(0.01s);  // QQQ
         }
-        
-        // TODO 20230309 VERY TEMP, wait a little bit for file to finish reading.
-        using namespace std::chrono_literals;  // QQQ
-        std::this_thread::sleep_for(0.1s);  // QQQ
 
-        // TODO after reading file, delete it.
+//
+//        // TODO 20230309 VERY TEMP, wait a little bit for file to finish reading.
+//        using namespace std::chrono_literals;  // QQQ
+//        std::this_thread::sleep_for(0.1s);  // QQQ
+
+//        // TODO after reading file, delete it.
+//        // QQQ
+//        std::cout << "deleting " << path << std::endl;
+//        fs::remove(path);
+
+        // TODO after reading file, delete eval...png file.
         // QQQ
+        std::vector<Vec2> xy_points = getComms().readResponseFile(path, 1);
+        std::string pf2 = "eval_" + std::to_string(mife_counter_) + "_";
+        fs::path eval_image_path = getComms().makePathname(step, pf2, ".png");
+//        std::cout << "deleting " << eval_image_path << std::endl;
+        fs::remove(eval_image_path);
 
-        // TODO 20230309 return random point for predator prediction.
-        return prey_center + (rs_.randomPointInUnitDiameterCircle() * 2 * 0.2);
+//        // TODO 20230309 return random point for predator prediction.
+//        return prey_center + (rs_.randomPointInUnitDiameterCircle() * 2 * 0.2);
+        
+        std::cout << "read back SQM " << xy_points.front() << std::endl;
+
+        
+        
+        return xy_points.front();
     }
+    
+    
+    
+//    // Count and record "invalid tournaments" -- aka "predator fails"
+//    void recordPredatorFailTimeSeriesData()
+//    {
+//        int step = getPopulation()->getStepCount();
+//        if ((step % 10) == 0)
+//        {
+//            // Open output stream to file in append mode.
+//            fs::path out = outputDirectoryThisRun();
+//            std::ofstream outfile;
+//            outfile.open(out / "predator_fails.csv", std::ios::app);
+//            // Column headings for csv file.
+//            if (step == 0)
+//            {
+//                std::cout << "    " << "steps,fails" << std::endl;
+//                outfile << "steps,fails" << std::endl;
+//            }
+//            int fails = getPredatorFails();
+//            //            std::cout << "    " << step << "," << fails << std::endl;
+//            std::cout << "    Predator fail rate: ";
+//            std::cout << std::setprecision(4) << fails / float(step);
+//            std::cout << " (" << fails << "/" << step  << ")" << std::endl;
+//            outfile << step << "," << fails << std::endl;
+//        }
+//    }
 
+    // Called very 100 steps, to log SQM max and average over the population.
+    void logSQM()
+    {
+        int step = getPopulation()->getStepCount();
+        // Open output stream to file in append mode.
+        fs::path out = outputDirectoryThisRun();
+        std::ofstream outfile;
+        outfile.open(out / "sqm_log.txt", std::ios::app);
+        // Column headings for csv file.
+        if (step == 0) { outfile << "step average max" << std::endl; }
+        float ave = averageStaticQualityMetric();
+        float max = maxStaticQualityMetric();
+        outfile << step << " " << ave << " " << max << std::endl;
+        outfile.close();
+        std::cout << step << ": SQM average " << ave
+                  << ", SQM max " << max << std::endl;
+    }
 
     float averageStaticQualityMetric() const
     {

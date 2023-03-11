@@ -57,6 +57,7 @@
 
 \usepackage{titlepic} % ??? QQQ
 \usepackage{caption} % ??? QQQ -- for \captionof command
+\usepackage{float} % ??? QQQ -- for [H] on figure
 
 %% For introducing terms which have a special meaning in this work.
 \newcommand{\jargon}[1]{\textit{#1}}
@@ -251,7 +252,7 @@ This work builds on \citet{reynolds_iec_2011} by replacing the human predator th
 \par
 Closely related work on learning surface textures to camouflage 3D objects within real 3D scenes is described in \citet{owens_camouflaging_2014} for cubes, using one technique, and in \citet{guo_ganmouflage_2022}, for arbitrarily shaped 3D objects, using an improved technique. In both cases, the 3D scene is described by a set of photos from various viewpoints. The camouflage textures mapped onto these objects must trade off being inconspicuous from all viewpoints in the scene.
 \par
-Other computer graphics work related to camouflage include meticulously detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games to understand evolution in real biological species. Being web-based, such simulations can be powered by very large numbers of human volunteers — citizen scientists — engaged in \jargon{human-based computation}.
+Other computer graphics work related to camouflage include meticulously detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games to understand evolution in real biological species. Such web-based simulations can be powered by very large numbers of human volunteers (“citizen scientists”) engaged in \jargon{human-based computation}.
 \par
 This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is an ideal application of GANs, as in CamoGAN \cite{talas_camogan_2020}. However the goal of the current work (as suggested in the Future Work section of \citet{reynolds_iec_2011}) is not \textbf{learning} camouflage, but to produce a simulation of a biological evolutionary system, suitable for “what if” experiments which cannot be performed in the natural world.
 \par
@@ -352,14 +353,15 @@ The details of \texsyn{} are not central to understanding this camouflage model.
 \par
 These \texsyn{} textures are represented by operators, trees, and parameters. They do not store pixel data. Instead the Texture class provides a function to sample the texture's color at an arbitrary floating point \textit{xy} location. That color is computed on the fly. This is similar to GPU \jargon{fragment shaders} and the Pixel Stream Editor functions in \citet{perlin_image_1985}. Figure \ref{fig:TexSyn_overview} shows some simple examples and how these textures can be recombined with tree crossover.
 \par
-Note that the images in this paper are rendered at 512² pixels and the prey disks have a diameter of 100 pixels. These images are downsampled to 128² for use by predator's vision CNNs.
+Note that the images in this paper are rendered at 512² pixels and the prey disks have a diameter of 100 pixels. These are downsampled to 128² for use by predator's vision CNNs.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Full step/tournament image with predator responses
 
 \begin{figure}
-    \includegraphics[width=\columnwidth]{20221007_0806_step_7030.png}
+    \centering
+    \includegraphics[width=0.7\columnwidth]{20221007_0806_step_7030.png}
     \caption{Tournament image after simulation step. Starts with crop from given background set. Composited over that are three prey with evolved camouflage patterns. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black and white, second best is green and black, third is red and black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
     % \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:predator_responses}
@@ -375,7 +377,7 @@ It is the predator's job to look at a tournament image and “hunt” for prey. 
 \label{sec:pre_train_predator}
 The basis for a predator's visual system is \textbf{a \jargon{pre-trained} deep neural net model for a “find conspicuous disk” task}, see Figure \ref{fig:predator_cnn}. The goal of this task is to look at an arbitrary image and locate the centerpoint of the most conspicuous (salient) region, assumed to be a prey-sized disk. This pre-training is done once then reused for each subsequent camouflage evolution run. \texsyn{} was used to generate a dataset of 20,000 labeled training examples called \jargon{FCD5}. (Effective training set size was 500,000 via augmentation by random variation.) Each example was an RGB image, a 128×128×3 tensor, with an associated label: an \textit{xy} coordinate pair indicating a location in the image.
 \par
-Each training image starts with a \jargon{random texture} or a random crop of a photo (from a library of background images, see Section \nameref{subsec:background_sets}). Over it was rendered one or three prey disks with random texture. While “random texture” is a slippery concept, the meaning here is the sort of prey texture used to initialize the prey population before an evolution run. The \lazypredator{} genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as one corresponding to the \texsyn{} library. A random tree is interpreted as a random nested expression of \texsyn{} operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not uncorrelated noise. See, for example, Figure \ref{fig:time_sequence} (leftmost image) and Figure \ref{fig:fcd5_examples}.
+Each training image starts with a \jargon{random texture} or a random crop of a photo (from a library of background images, see Section \nameref{subsec:background_sets}) over which are one or three prey disks with random texture. While “random texture” is a slippery concept, the meaning here is the sort of prey texture used to initialize the prey population before an evolution run. The \lazypredator{} genetic programming engine has facilities for creating random trees of a given size from a user-defined \jargon{function set} such as one corresponding to the \texsyn{} library. A random tree is interpreted as a random nested expression of \texsyn{} operators with randomly chosen leaf constants. As such these prey textures are quite varied, but have a fair amount of structure, they are not uncorrelated noise. See, for example, Figure \ref{fig:time_sequence} (leftmost image) and Figure \ref{fig:fcd5_examples}.
 \par
 Each image in the “find conspicuous disk” training dataset is generated in one of three styles chosen with equal probability. Style 1 has a single prey disk, and the label is its center point. Style 2 has three different prey. Style 3 has three copies of a single prey disk. The latter two cases reduce the visibility of two disks, by blending or dithering the pixels of the prey disk into the background. The label corresponds to the disk whose visibility is not reduced, presumed to be more conspicuous. See Figure \ref{fig:fcd5_examples}.
 \par
@@ -389,7 +391,7 @@ During simulations of camouflage evolution, each predator is initialized as a co
 \label{subsec:background_sets}
 Each simulation run is based on a \jargon{background set} of images, usually photographs of natural scenes. These images provide the background of tournament images, over which camouflaged prey are drawn. These background images play the role of an \jargon{environment} in which prey must hide to avoid being found and eaten by predators. Because the model is purely 2d, photographs offer an easy way to provide varied environments, of plausible natural complexity, in which to test camouflage evolution.
 \par
-Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example a set called \texttt{oak\_leaf\_litter} has six images, all of slightly different portions of a pile of leaves fallen on the ground. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet consistent backgrounds in which to try hiding.
+Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example a set called \texttt{oak\_leaf\_litter} has six images, all of slightly different portions of leaves fallen in gutter. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet consistent backgrounds in which to try hiding.
 \par
 As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches (say of a size comparable to prey) have the same statistical distribution of color and spatial frequency. When background sets are “less stationary” (e.g. large areas of uniform color) it becomes \jargon{harder} for evolution to find good camouflage. In these cases, better results can be had with an “extra large” run. See Section \nameref{sec:discussion}.
 \par
@@ -405,6 +407,17 @@ A typical run consists of 6000 steps with a prey population of 200 and predator 
 \par
 During a simulation run various data is collected in log files. The most important output is a “visual log” — periodically saving tournament images (a crop of the given backgrounds overlaid with camouflaged prey, as in Figure \ref{fig:teaser}) along with the predator response data. These images are saved “occasionally.” Originally it was every 20 steps, but was changed to every 19 steps to be relatively prime and so cycle through the 6, 10, or 20 \jargon{subpopulations} (\jargon{demes} or \jargon{islands}) of the prey population.
 \par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{sqm_plot.pdf}
+    \caption{Static quality metric versus simulation time. Metric is based on failure of pre-trained FCD model to find prey.}
+    % \Description{...}
+    \label{fig:sqm_plot}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -440,7 +453,7 @@ Section \nameref{subsec:limitations} notes this model lacks an objective metric 
 \par
 An important next step is to better understand the weaknesses of this simulation. Some environments (background sets) are \textit{easy} while others are \textit{hard}. It seems that easy environments are more “stationary.” As mentioned in Section \nameref{sec:discussion}, hard backgrounds can sometimes be addressed with changing a random seed or using an “extra large” simulation. These suggest that hard backgrounds have a lower likelihood of success. Perhaps the standard size simulation used here is a bit underpowered?
 \par
-The neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be built and evaluated.
+The neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be evaluated.
 \par
 In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean position over all prey positions. To work around this, \texsyn{}'s random prey placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug to be better understood and fixed in a more principled way.
 \par
@@ -448,6 +461,45 @@ This simulation is currently a mixed paradigm model using both evolution and lea
 \par
 An obvious next step is to apply this model to 3d environments. Perhaps along the lines described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments will be much harder. Perhaps neural techniques like NeRF (e.g. \cite{gao_nerf_2022}) will meet that need.
 \par
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{small}
+\centering
+\vspace{0.3cm}
+\begin{tabular}{ |l|r|r| }
+\hline
+\textbf{Parameter} & \textbf{value} \\ 
+\hline
+predator population & 40 \\ 
+prey population & 400 \\ 
+prey subpopulations (demes) & 20 \\
+prey max init tree size & 100 \\
+prey min tree size after crossover & 50 \\
+prey max tree size after crossover & 150 \\
+\hline
+prey render diameter (pixels) & 100 \\ 
+tournament output image size & 512×512 \\ 
+predator input image size & 128×128 \\ 
+\hline
+tournament image save frequency & 19 \\
+simulation steps per run (typical) & 12,000 \\
+prey generation equiv (steps/pop) & 30 \\
+predator fail rate (typical) & 15\%-30\% \\
+predator starvation threshold & \\
+\hspace{0.2cm}(success in previous 20 attempts) & less than 40\% \\ 
+\hline
+predator “FCD” pre-training: & \\
+\hspace{0.2cm} synthetic dataset size & 20,000 \\
+\hspace{0.2cm} effective size with augmentation & 500,000 \\
+\hline
+max signed “jiggle” noise added to  & \\
+\hspace{0.2cm} all params of new predator CNN & ±0.003 \\
+\hline
+\end{tabular}
+\captionof{table}{Key simulation parameters. Details in source code.} 
+\label{table:key_simulation_parameters} 
+\end{small}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -628,12 +680,12 @@ An obvious next step is to apply this model to 3d environments. Perhaps along th
 
 % QQQ removing all of this for now (20230306) since ALife does not support appendix like Supplemental Materials.
 
-% %% Appendix -- must become separate PDF document before submission.
-% \appendix
-% \onecolumn
-% \section{Supplemental Materials}
-% \subsection{Key Simulation Parameters}
-% \setcounter{page}{0}
+%% Appendix -- must become separate PDF document before submission.
+\appendix
+\onecolumn
+\section{Supplemental Materials}
+\subsection{Key Simulation Parameters}
+\setcounter{page}{0}
 
 % \begin{minipage}{\linewidth}
 % The most fully detailed description of this simulation model is the source code of its reference implementation \textbf{(Note to reviewers: open source code (plus other data) will be made available if paper is accepted for publication)}. This table summarizes some of the key parameters which are used for most results shown in this paper. Some runs, where noted, were “extra large” with populations twice as large, and simulation run for twice as many steps.
@@ -642,34 +694,64 @@ An obvious next step is to apply this model to 3d environments. Perhaps along th
 % \begin{minipage}{\linewidth-1.1cm}
 % \begin{table}[H]
 % \raggedright 
+% % \begin{tabular}{ |l|r|r| }
+% % \hline
+% % \textbf{Parameter} & \textbf{value} & \textbf{large} \\ 
+% % \hline
+% % predator population & 20 & 40 \\ 
+% % prey population & 200 & 400 \\ 
+% % prey subpopulations (demes) & 10 & 20 \\
+% % prey max init tree size & 100 & \\
+% % prey min tree size after crossover & 50 & \\
+% % prey max tree size after crossover & 150 & \\
+% % \hline
+% % prey render diameter (pixels) & 100 & \\ 
+% % tournament output image size & 512×512 & \\ 
+% % predator input image size & 128×128 & \\ 
+% % \hline
+% % tournament image save frequency & 19 & \\
+% % simulation steps per run (typical) & 6,000 & 12,000 \\
+% % prey generation equiv (steps/pop) & 30 & \\
+% % predator fail rate (typical) & 15\%-30\% & \\
+% % predator starvation threshold & & \\
+% % \hspace{0.2cm}(success in previous 20 attempts) & less than 40\% & \\ 
+% % \hline
+% % predator “FCD” pre-training: & & \\
+% % \hspace{0.2cm} synthetic dataset size & 20,000 & \\
+% % \hspace{0.2cm} effective size with augmentation & 500,000 & \\
+% % \hline
+% % max signed “jiggle” noise added to  & & \\
+% % \hspace{0.2cm} all params of new predator CNN & ±0.003 & \\
+% % \hline
+% % \end{tabular}
 % \begin{tabular}{ |l|r|r| }
 % \hline
-% \textbf{Parameter} & \textbf{value} & \textbf{large} \\ 
+% \textbf{Parameter} & \textbf{value} \\ 
 % \hline
-% predator population & 20 & 40 \\ 
-% prey population & 200 & 400 \\ 
-% prey subpopulations (demes) & 10 & 20 \\
-% prey max init tree size & 100 & \\
-% prey min tree size after crossover & 50 & \\
-% prey max tree size after crossover & 150 & \\
+% predator population & 40 \\ 
+% prey population & 400 \\ 
+% prey subpopulations (demes) & 20 \\
+% prey max init tree size & 100 \\
+% prey min tree size after crossover & 50 \\
+% prey max tree size after crossover & 150 \\
 % \hline
-% prey render diameter (pixels) & 100 & \\ 
-% tournament output image size & 512×512 & \\ 
-% predator input image size & 128×128 & \\ 
+% prey render diameter (pixels) & 100 \\ 
+% tournament output image size & 512×512 \\ 
+% predator input image size & 128×128 \\ 
 % \hline
-% tournament image save frequency & 19 & \\
-% simulation steps per run (typical) & 6,000 & 12,000 \\
-% prey generation equiv (steps/pop) & 30 & \\
-% predator fail rate (typical) & 15\%-30\% & \\
-% predator starvation threshold & & \\
-% \hspace{0.2cm}(success in previous 20 attempts) & < 40\% & \\ 
+% tournament image save frequency & 19 \\
+% simulation steps per run (typical) & 12,000 \\
+% prey generation equiv (steps/pop) & 30 \\
+% predator fail rate (typical) & 15\%-30\% \\
+% predator starvation threshold & \\
+% \hspace{0.2cm}(success in previous 20 attempts) & less than 40\% \\ 
 % \hline
-% predator “FCD” pre-training: & & \\
-% \hspace{0.2cm} synthetic dataset size & 20,000 & \\
-% \hspace{0.2cm} effective size with augmentation & 500,000 & \\
+% predator “FCD” pre-training: & \\
+% \hspace{0.2cm} synthetic dataset size & 20,000 \\
+% \hspace{0.2cm} effective size with augmentation & 500,000 \\
 % \hline
-% max signed “jiggle” noise added to  & & \\
-% \hspace{0.2cm} all params of new predator CNN & ±0.003 & \\
+% max signed “jiggle” noise added to  & \\
+% \hspace{0.2cm} all params of new predator CNN & ±0.003 \\
 % \hline
 % \end{tabular}
 % \label{table:key_simulation_parameters}
