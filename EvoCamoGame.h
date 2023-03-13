@@ -2404,12 +2404,15 @@ public:
         // Open output stream to file in append mode.
         fs::path out = outputDirectoryThisRun();
         std::ofstream outfile;
-        outfile.open(out / "sqm_log.txt", std::ios::app);
+//        outfile.open(out / "sqm_log.txt", std::ios::app);
+        outfile.open(out / "sqm_log.csv", std::ios::app);
         // Column headings for csv file.
-        if (step == 0) { outfile << "step average max" << std::endl; }
+//        if (step == 0) { outfile << "step average max" << std::endl; }
+        if (step == 0) { outfile << "step,average,max" << std::endl; }
         float ave = averageStaticQualityMetric();
         float max = maxStaticQualityMetric();
-        outfile << step << " " << ave << " " << max << std::endl;
+//        outfile << step << " " << ave << " " << max << std::endl;
+        outfile << step << "," << ave << "," << max << std::endl;
         outfile.close();
         std::cout << step << ": SQM average " << ave
                   << ", SQM max " << max << std::endl;
