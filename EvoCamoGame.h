@@ -2207,6 +2207,7 @@ public:
 
     int trialsPerSQM() const { return 10; }
 //    int trialsPerSQM() const { return 1; } // QQQ
+//    int trialsPerSQM() const { return 100; }
 
     // Set prey individual's SQM as the average of ten trials
     void evaluateIndividualSQM(Individual& individual)
@@ -2218,6 +2219,7 @@ public:
         }
         
         float average_metric = sum_of_trials / trialsPerSQM();
+        std::cout << mife_counter_ << "  ";  // QQQ
         debugPrint(average_metric);
         
         // Cache average SQM on this prey, a LazyPredator Population Individual.
@@ -2283,8 +2285,10 @@ public:
         cv::Mat target = gui().getCvMatRect(prey_tl, size2d);
         texture->matteImageCacheDiskOverBG(size, target);
         
-        std::cout << mife_counter_++ << ": makeImageForEvaluation() -- ";  // QQQ
-        debugPrint(prey_tl);  // QQQ
+        mife_counter_++;
+//        std::cout << mife_counter_ << ": makeImageForEvaluation() -- ";  // QQQ
+        
+//        debugPrint(prey_tl);  // QQQ
         
         gui().refresh();  // QQQ
 //        using namespace std::chrono_literals;  // QQQ
@@ -2363,7 +2367,7 @@ public:
 //        // TODO 20230309 return random point for predator prediction.
 //        return prey_center + (rs_.randomPointInUnitDiameterCircle() * 2 * 0.2);
         
-        std::cout << "read back SQM " << xy_points.front() << std::endl;
+//        std::cout << "read back SQM " << xy_points.front() << std::endl;
 
         
         
