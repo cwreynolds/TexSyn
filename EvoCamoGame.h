@@ -1342,7 +1342,7 @@ public:
         erase_temp_text(temp_part);
         std::cout << ", waited " << seconds_waiting << " seconds." << std::endl;
         // Read and store the contents of the predator's response file.
-        saveResponsesFile(others_pathname);
+        readAndSaveResponsesFile(others_pathname);
         return allResponses().front();
     }
     
@@ -1364,32 +1364,17 @@ public:
     // empty, and so allResponses().front() is undefined behavior. On 20221005
     // I changed this to loop until it has read the expected number of responses
     // from the file. (Maybe Rube Goldberg hid this bug with long sync delays.)
-    void saveResponsesFile(fs::path others_pathname)
+    void readAndSaveResponsesFile(fs::path others_pathname)
     {
-        while (true)
-        {
-            float x, y;
-            predator_responses_.clear();
-            std::ifstream input_file(others_pathname);
-            while ((input_file >> x) && (input_file >> y))
-            {
-                predator_responses_.push_back(Vec2(x, y));
-            }
-            input_file.close();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20221012 build out expected_response_count_ api
-//            if (predator_responses_.size() == expected_response_count_) {break;}
-            if (predator_responses_.size() >= expected_response_count_) {break;}
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            std::cout << "Reread: bad format for " << others_pathname;
-            std::cout << std::endl;
-        }
+        predator_responses_ =
+            readResponseFile(others_pathname, expected_response_count_);
     }
-    
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO 20230310
-    // Generalize the gist of saveResponsesFile()
-    
+
+    // Read a "response file" of xy floats from PredatorEye from the given
+    // pathname. Reread until the expected number of points is found.
+    // (TODO 20230322 this is to deal with reading partially written files. I
+    //       now prefer the aprpoach used in EvoCamoVsLppSqm where the file is
+    //       written to a temporary pathname, then renamed when completed.)
     std::vector<Vec2> readResponseFile(fs::path pathname, int expected_points)
     {
         std::vector<Vec2> xy_points;
@@ -1408,10 +1393,6 @@ public:
         }
         return xy_points;
     }
-
-    
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 build out expected_response_count_ api
