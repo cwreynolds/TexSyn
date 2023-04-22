@@ -1,7 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Coevolution of Camouflage
 % Submission for ALIFE 2023
+%
+% March 12, 2023 submit draft for review.
+% April 21, 2023 convert to non-anonymous draft to post on arXiv.
+%                So edit author info, uncomment Acknowledgments.
+%                Convert pkgT, pkgE, pkgV to real names, add citations.
+
+
 \documentclass[letterpaper]{article}
 \usepackage{natbib,alifeconf}
 
+% added 20230421
+\usepackage{authblk}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -53,6 +65,7 @@
 
 
 % Adding for ALife, maybe previously loaded by ACM style?
+\usepackage[hyphens]{xurl}
 \usepackage{hyperref}
 \usepackage{tabularx}
 
@@ -65,10 +78,12 @@
 \newcommand{\jargon}[1]{\textit{#1}}
 
 %% Stand-ins for software package names, anonymized for review.
-% \newcommand{\texsyn}[0]{TexSyn}
-\newcommand{\texsyn}[0]{pkgT}
-\newcommand{\lazypredator}[0]{pkgE}
-\newcommand{\predatoreye}[0]{pkgV}
+% \newcommand{\texsyn}[0]{pkgT}
+% \newcommand{\lazypredator}[0]{pkgE}
+% \newcommand{\predatoreye}[0]{pkgV}
+\newcommand{\texsyn}[0]{TexSyn}
+\newcommand{\lazypredator}[0]{LazyPredator}
+\newcommand{\predatoreye}[0]{PredatorEye}
 
 %% Use like: {\runID backyard\_oak\_20230113\_2254}
 \newcommand{\runID}{\footnotesize}
@@ -88,14 +103,12 @@
 \title{Coevolution of Camouflage}
 
 %% Author
-% \author{Craig Reynolds}
 \author{[authors anonymized]}
-% \email{cwr@red3d.com}
-% \orcid{0000-0001-8203-712X}
-% \affiliation{%
-%   \institution{unaffiliated researcher}
-%   \country{USA}
-% }
+
+%% Author
+\author{Craig Reynolds\authorcr
+    unaffiliated researcher\authorcr 
+    cwr@red3d.com}
 
 % \renewcommand{\shortauthors}{Craig Reynolds}
 
@@ -103,9 +116,9 @@
 
 \captionsetup{hypcap=false}
 
-\titlepic{\vspace{5mm} \igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \captionof{figure}{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Background photos of: plum leaf litter, tree and sky, gravel, oxalis sprouts. Zoom in for detail. Disk diameter is 20\% of image width.) See version of this \href{https://drive.google.com/file/d/1QrqmOeqqhmn52NQU0WpOLACH2mFw1vrL/view?usp=share_link}{PDF file with full resolution images}.) } \label{fig:teaser}}
+\titlepic{\vspace{5mm} \igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \captionof{figure}{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Background photos of: plum leaf litter, tree and sky, gravel, oxalis sprouts. Zoom in for detail. Disk diameter is 20\% of image width.} \label{fig:teaser}}
 
-
+% See version of this \href{https://drive.google.com/file/d/1QrqmOeqqhmn52NQU0WpOLACH2mFw1vrL/view?usp=share_link}{PDF file with full resolution images}.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -115,7 +128,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-    Camouflage in nature seems to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid being found. This work simulates an abstract model of that adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision. During their “lifetime” predators learn to better locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on two evolving populations, one of prey and another of predators. Mutual conflict between these populations can produce both effective prey camouflage and predators skilled at “breaking” camouflage. The result is an open source \textit{artificial life} model to help study camouflage in nature, and the perceptual phenomenon of camouflage more generally. \textbf{(Note to reviewers: all source code and development notes will be posted online if paper is accepted. In this draft, modules are given anonymized names: \texsyn{}, \lazypredator{}, \predatoreye{}.)}
+    Camouflage in nature seems to arise from competition between predator and prey. To survive, predators must find prey, and prey must avoid being found. This work simulates an abstract model of that adversarial relationship. It looks at \textit{crypsis} through evolving prey camouflage patterns (as color textures) in competition with evolving predator vision. During their “lifetime” predators learn to better locate camouflaged prey. The environment for this 2D simulation is provided by a set of photographs, typically of natural scenes. This model is based on two evolving populations, one of prey and another of predators. Mutual conflict between these populations can produce both effective prey camouflage and predators skilled at “breaking” camouflage. The result is an open source \textit{artificial life} model to help study camouflage in nature, and the perceptual phenomenon of camouflage more generally.
 \end{abstract}
 
 % \keywords{camouflage, coevolution, nature, biology, predator, prey, vision, learning, texture synthesis, simulation, competition}
@@ -150,7 +163,7 @@ This work follows the approach of \citet{reynolds_iec_2011} where a population o
 \par
 In the simulation described here, evolution of prey camouflage closely follows that earlier work. However the human-in-the-loop is replaced with a second population of predators, each based on a deep neural network. These CNN networks take an image as input and produce a \jargon{prediction}, an estimate, of where in the image the most conspicuous prey is located.
 \par
-In abstract artificial life models, it is common to focus in detail on one aspect of a natural system. In the current model, that aspect is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computational stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs (nested expressions) in \texsyn{}'s language for procedural texture synthesis. \jargon{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, all of the animal's existence is ignored except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely located. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. These details of simulated evolution, morphogenesis, vision, and genetic representation are all quite unlike the natural world. But they appear to be sufficiently similar in their effect to allow a plausible simulation of the natural system, producing analogous results, and so may provide insights about the natural system.
+In abstract artificial life models, it is common to focus in detail on one aspect of a natural system. In the current model, that aspect is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computational stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs (nested expressions) in \texsyn{}'s language for procedural texture synthesis \cite{reynolds_texsyn_2019}. \jargon{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, all of the animal's existence is ignored except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely located. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. These details of simulated evolution, morphogenesis, vision, and genetic representation are all quite unlike the natural world. But they appear to be sufficiently similar in their effect to allow a plausible simulation of the natural system, producing analogous results, and so may provide insights about the natural system.
 \par
 To help ground this abstract simulation, consider a bird (predator), hunting for tasty but camouflaged beetles (prey), seen against the bark of a tree trunk (background image).
 \par
@@ -177,7 +190,7 @@ This adversarial coevolutionary simulation has clear similarities to \jargon{gen
 \par
 The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation of 3D textures. A recent example of this approach is found in \citet{Guerrero_MatFormer_2022}. Using texture synthesis under the control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. FormSynth \cite{latham_form_1989} inspired Mutator \cite{todd_evolutionary_1994} and other tools.
 \par
-Evolution is represented in this model using \jargon{genetic programming} (GP), a population-based evolutionary optimization algorithm. It was first described by \citet{cramer_representation_1985} and popularized by \citet{koza_genetic_1992}. GP is a variation of \jargon{genetic algorithms} (GA). GA traditionally use a fixed length bit string as its genetic representation, while GP uses an arbitrarily-sized tree-shaped representation. GP trees conveniently map onto nested expressions in a domain specific language. Texture synthesis in this work is based on nested expressions of texture operators from the \texsyn{} library, see Figure \ref{fig:TexSyn_overview}. A prey population of these textures is optimized for camouflage effectiveness by GP using the selection pressure from a population of predators which determine fitness. \texsyn{} is used with the \jargon{strongly typed} variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. The GP implementation used here is called \lazypredator{}.
+Evolution is represented in this model using \jargon{genetic programming} (GP), a population-based evolutionary optimization algorithm. It was first described by \citet{cramer_representation_1985} and popularized by \citet{koza_genetic_1992}. GP is a variation of \jargon{genetic algorithms} (GA). GA traditionally use a fixed length bit string as its genetic representation, while GP uses an arbitrarily-sized tree-shaped representation. GP trees conveniently map onto nested expressions in a domain specific language. Texture synthesis in this work is based on nested expressions of texture operators from the \texsyn{} library, see Figure \ref{fig:TexSyn_overview}. A prey population of these textures is optimized for camouflage effectiveness by GP using the selection pressure from a population of predators which determine fitness. \texsyn{} is used with the \jargon{strongly typed} variant of Genetic Programming known as STGP \cite{montana_strongly_1995}, one of several grammar-based GP variants \cite{Mckay_2010}. The GP implementation used here is called \lazypredator{} \cite{reynolds_lazypredator_2020}.
 \par
 The biological literature on camouflage and related topics is vast. A few starting points include: an early survey of camouflage in nature, \citet{thayer_concealing-coloration_1909}, pioneering work on mathematical models of biological patterns \citet{turing_chemical_1952}, revisiting Turing's work with improved computation \citet{murray_how_1988}, and a modern perspective on how life evolves and learns in \citet{valiant_probably_2013}. A recent survey of how camouflage increases survival \cite{de_alcantara_viana_predator_2022} reiterates how it need not be perfect. A small change, increasing a predator's search time, or reducing its attack rate, is enough to drive camouflage evolution.
 \par
@@ -266,7 +279,7 @@ For predator offspring, a random parent is copied, then mutated by adding signed
 
 \subsection{Texture Synthesis}
 \label{subsec:texture_synthesis}
-Camouflage textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{\texsyn{}} is a simple domain specific language for describing textures.
+Camouflage textures are represented in this simulation as trees of procedural texture operators. These correspond directly to nested expressions in a typical programming language. \jargon{\texsyn{}} is a simple domain specific language for describing textures \cite{reynolds_texsyn_2019}.
 \par
 The details of \texsyn{} are not central to understanding this camouflage model. A quick overview is given here. \texsyn{} is library, an API, with many \jargon{operators} each of which return a \jargon{Texture}. Most of them also take Textures as input parameters, along with simple values like colors, 2d vectors, and scalars (floating point numbers). Nested functional expressions of \texsyn{} operators (as in source code) are compiled into trees of operator instances.
 \par
@@ -321,7 +334,7 @@ As used here, “similarity” is meant to suggest image features have a \jargon
 
 \subsection{Simulation Runs}
 \label{subsec:simulation_runs}
-To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of camouflaged prey. It is c++ code based on \texsyn{} and \lazypredator{}. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception. This \predatoreye{} is Python code using Keras \cite{chollet_keras_2015} and TensorFlow \cite{tensorflow_whitepaper_2015}. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The labeled tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
+To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of camouflaged prey. It is c++ code based on \texsyn{} and \lazypredator{}. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception. This \predatoreye{} \cite{reynolds_predatoreye_2021} is Python code using Keras \cite{chollet_keras_2015} and TensorFlow \cite{tensorflow_whitepaper_2015}. The prey side produces a labeled tournament image. It is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The labeled tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
 \par
 Main parameters for a simulation run are a choice of background set (\nameref{subsec:background_sets}), a scale factor for the background images, and a random number seed, see Table \ref{table:key_simulation_parameters}.
 \par
@@ -347,7 +360,7 @@ To track the objective progress of camouflage coevolution, the pre-trained FCD n
 
 \section{Discussion}
 \label{sec:discussion}
-This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Examples from several runs are shown in the Supplemental Materials.
+This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Examples from several runs are shown in Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, and the Supplemental Materials.
 % (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
 \par
 These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. Typical simulation runs show the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps reuse previously rendered prey). The time to complete a single simulation step is about 1 second. Typical simulation runs are 12,000 steps so take about 3.5 hours. When using the static quality metric to evaluate progress (Figure \ref{fig:sqm_plot}) total simulation run time is about 10 hours.
@@ -398,12 +411,38 @@ This simulation is currently a mixed paradigm model using both evolution and lea
 An obvious next step is to apply this model to 3d environments. Perhaps as described in \citet{miller_color_2022}. One key simplifying assumption of the current purely 2d model is that plausible, naturally complex, environments are provided by simple photographs from the phone in our pocket. Providing plausibly complex 3d environments is much harder. Perhaps neural techniques (like NeRF \cite{gao_nerf_2022} or NIP \cite{sharp_spelunking_2022}) will meet that need.
 \par
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \begin{small}
+%% Acknowledgements
+% \begin{acks}
+\section{Acknowledgements}
+I deeply appreciate everyone who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
+\par
+I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
+Thanks for additional help from:
+Bilal Abbasi,
+Jan Allbeck,
+Rebecca Allen,
+Richard Dawkins,
+Steve DiPaola,
+Aaron Hertzmann,
+Bjoern Knafla,
+John Koza,
+Dominic Mallinson,
+Nick Porcino,
+and Michael Wahrman.
+\par
+Thanks also to my neighbors whose landscaping provided many of the background images used here.
+\par
+% \end{acks}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{tiny}
 \centering
-\vspace{0.3cm}
+% \vspace{0.3cm}
+\vspace{0.7cm}
 \begin{tabular}{ |l|r|r| }
 \hline
 \textbf{Parameter} & \textbf{value} \\ 
@@ -438,38 +477,13 @@ static quality metric: trials per prey & 10\\
 \end{tabular}
 \captionof{table}{Key simulation parameters. Details in source code.} 
 \label{table:key_simulation_parameters} 
-% \end{small}
+\vspace{0.7cm}
 \end{tiny}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %% Acknowledgements
-% \begin{acks}
-% I deeply appreciate everyone who helped me with this work: my family for loving support, Ken Perlin for (well, lots, but especially) PSE \cite{perlin_image_1985}, Andrew Glassner for teaching me everything I know about deep learning \cite{glassner_deep_2021}, and Pat Hanrahan for some key career advice (“just do the research”).
-% \par
-% I've been working on this project on and off since 2007, based on inspirations by papers in the early 1990s (\citet{witkin_reaction_1991}, \citet{turk_generating_1991}, \citet{angeline_competitive_1993}, \citet{sims_artificial_1991}, and \citet{sims_evolving_1994}). Also one paper published a year before I was born: \citet{turing_chemical_1952}.
-% Thanks for additional help from:
-% Bilal Abbasi,
-% Jan Allbeck,
-% Rebecca Allen,
-% Richard Dawkins,
-% Steve DiPaola,
-% Aaron Hertzmann,
-% Bjoern Knafla,
-% John Koza,
-% Dominic Mallinson,
-% Nick Porcino,
-% and Michael Wahrman.
-% \par
-% Thanks also to my neighbors whose landscaping provided many of the background images used here.
-% \par
-% \end{acks}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Bibliography.
-\newpage
+% \newpage
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{coc.bib}
 
@@ -485,7 +499,7 @@ static quality metric: trials per prey & 10\\
 
 \subsection{Background Image Sets}
 \begin{minipage}{\linewidth}
-Names and descriptions for the sets of background images used in this paper, see section \nameref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene. \textbf{(Note to reviewers, these images will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}
+Names and descriptions for the sets of background images used in this paper, see section \nameref{subsec:background_sets}. Each set is composed of several photographs of a similar natural scene.
 \par
 \hspace*{1cm}
 \begin{minipage}{\linewidth-1.1cm}
@@ -558,7 +572,7 @@ yellow\_flower\_on\_green &
 \end{minipage}
 
 \subsection{Details of Pre-Trained Predator Model}
-The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. \textbf{(Note to reviewers, this pre-trained model will be made available (along with source code, other data and development documentation) if paper is accepted for publication.)}. Here is its \texttt{model.summary()}:
+The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. Here is its \texttt{model.summary()}:
 \par
 \begin{minipage}{\linewidth-1.1cm}
 \hspace*{1cm}
