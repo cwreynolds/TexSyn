@@ -7,6 +7,11 @@
 % April 21, 2023 convert to non-anonymous draft to post on arXiv.
 %                So edit author info, uncomment Acknowledgments.
 %                Convert pkgT, pkgE, pkgV to real names, add citations.
+% April 22, 2023 That worked in Overleaf, but caused problems when I tried
+%                to upload to arXiv. Now changed (the obviously wrong) 
+%                \bibliographystyle{ACM-Reference-Format} to 
+%                \bibliographystyle{plainnat}
+
 
 
 \documentclass[letterpaper]{article}
@@ -483,12 +488,14 @@ static quality metric: trials per prey & 10\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Bibliography.
-% \newpage
-\bibliographystyle{ACM-Reference-Format}
+
+% \bibliographystyle{plainnat}
+% \bibliography{coc.bib}
+
+
+\footnotesize
+\bibliographystyle{plainnat}
 \bibliography{coc.bib}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
