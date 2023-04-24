@@ -15,51 +15,21 @@
 
 
 \documentclass[letterpaper]{article}
+
+% TODO 20230422, after a day of failing with arXiv, tried replacing:
 \usepackage{natbib,alifeconf}
+% with these:
+% \usepackage{natbib}
+% \usepackage{graphicx}   % or graphics; put in preamble
+% and then:
+% \usepackage{alifeconf}
+
+\bibliographystyle{plainnat}
 
 % added 20230421
 \usepackage{authblk}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \documentclass[acmtog]{acmart}
-% \documentclass[acmtog,anonymous,review]{acmart}
-% \documentclass[acmtog,anonymous]{acmart}
-% \documentclass[acmtog,
-%     % anonymous,
-%     % review
-%     ]{acmart}
-%
-% Officially withdrew submission to SIGGRAPH on 20230307.
-
-
-% From https://s2023.siggraph.org/program/technical-papers/ -- The submissions are required to adhere to the following length constraints: Papers must be no longer than 7 pages excluding references and figures-only pages. There is no limit on the length of the reference section. Each paper can have at most two figures-only pages, placed at the end of the submission, after references. Authors can also include as many figures as they wish within the core 7 pages. Papers should not include appendices in the main document.
-
-%% Rights management information.  This information is sent to you
-%% when you complete the rights form.  These commands have SAMPLE
-%% values in them; it is your responsibility as an author to replace
-%% the commands and values with those provided to you when you
-%% complete the rights form.
-% \setcopyright{acmcopyright}
-% \copyrightyear{2023}
-% \acmYear{2023}
-% \acmDOI{XXXXXXX.XXXXXXX}
-
-%% These commands are for a PROCEEDINGS abstract or paper.
-% \acmConference[Conference acronym 'XX]{Conference title}{January 01--02,
-%   1900}{Someplace, NY}
-% \acmPrice{15.00}
-% \acmISBN{978-1-4503-XXXX-X/18/06}
-
-%% Submission ID.
-%% Use this when submitting an article to a sponsored event. You'll
-%% receive a unique submission ID from the organizers of the event,
-%% and this ID should be used as the parameter to this command.
-% \acmSubmissionID{papers\_466}
-
-%% If you are preparing content for an event sponsored by ACM SIGGRAPH,
-%% you must use the "author year" style of citations and references.
-% \citestyle{acmauthoryear}
 
 %% To fix a margin violation bug, apparently due to poor hyphenation.
 \hyphenation{Go-men-so-ro}
@@ -126,6 +96,9 @@
 % See version of this \href{https://drive.google.com/file/d/1QrqmOeqqhmn52NQU0WpOLACH2mFw1vrL/view?usp=share_link}{PDF file with full resolution images}.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Remove today's date being inserted after the title/author information.
+\date{}
 
 %% Lay out the single column “top matter” defined above.
 \maketitle
@@ -494,8 +467,9 @@ static quality metric: trials per prey & 10\\
 
 
 \footnotesize
-\bibliographystyle{plainnat}
+% \bibliographystyle{plainnat}
 \bibliography{coc.bib}
+\normalsize
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
