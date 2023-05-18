@@ -11,42 +11,33 @@
 %                to upload to arXiv. Now changed (the obviously wrong) 
 %                \bibliographystyle{ACM-Reference-Format} to 
 %                \bibliographystyle{plainnat}
-
-
+% May 17, 2023   Began editing for final ALIFE version. Then realized that
+%                my citations in the body of the paper are wrong: most
+%                obviously they use brackets [] instead of parentheses.
+%                Found that problem was using "plainnat" instead of
+%                "apalike" in \bibliographystyle
 
 \documentclass[letterpaper]{article}
-
-% TODO 20230422, after a day of failing with arXiv, tried replacing:
 \usepackage{natbib,alifeconf}
-% with these:
-% \usepackage{natbib}
-% \usepackage{graphicx}   % or graphics; put in preamble
-% and then:
-% \usepackage{alifeconf}
-
-\bibliographystyle{plainnat}
-
-% added 20230421
-\usepackage{authblk}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% To fix a margin violation bug, apparently due to poor hyphenation.
 \hyphenation{Go-men-so-ro}
-\hyphenation{back-ground}
 
 % Allows expressions of measurements. (Included in The ACM Publishing System (TAPS) List of Accepted LaTeX Packages)
 \usepackage{calc}
-
 
 % Adding for ALife, maybe previously loaded by ACM style?
 \usepackage[hyphens]{xurl}
 \usepackage{hyperref}
 \usepackage{tabularx}
 
-\usepackage{titlepic} % ??? QQQ
-\usepackage{caption} % ??? QQQ -- for \captionof command
-\usepackage{float} % ??? QQQ -- for [H] on figure
+% added 20230421 to allow SIGGRAPH-style “teaser figure” under title.
+\usepackage{authblk}
+\usepackage{titlepic}
+\usepackage{caption}
+\usepackage{float}
 \usepackage[T1]{fontenc} % ??? QQQ -- "<"
 
 %% For introducing terms which have a special meaning in this work.
@@ -73,27 +64,19 @@
 
 \graphicspath{ {images/} {images/fcd5/} }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
-
 \title{Coevolution of Camouflage}
-
-%% Author
-\author{[authors anonymized]}
-
-%% Author
 \author{Craig Reynolds\authorcr
     unaffiliated researcher\authorcr 
     cwr@red3d.com}
-
-% \renewcommand{\shortauthors}{Craig Reynolds}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \captionsetup{hypcap=false}
 
-\titlepic{\vspace{5mm} \igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \captionof{figure}{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Background photos of: plum leaf litter, tree and sky, gravel, oxalis sprouts. Zoom in for detail. Disk diameter is 20\% of image width.} \label{fig:teaser}}
-
-% See version of this \href{https://drive.google.com/file/d/1QrqmOeqqhmn52NQU0WpOLACH2mFw1vrL/view?usp=share_link}{PDF file with full resolution images}.)
+\titlepic{\igfour{20221121_1819_step_6464.png} \hfill \igfour{20221108_2018_step_6562.png} \hfill\igfour{20221215_step_7182.png}\hfill\igfour{20221216_step_5997.png} \captionof{figure}{Photographs of natural textures, each overlaid with three camouflaged \textit{prey}. The prey are randomly placed 2D disks, each with its own evolved camouflage texture. (Background photos of: plum leaf litter, tree and sky, gravel, oxalis sprouts. Zoom in for detail. Disk diameter is 20\% of image width. See \href{https://arxiv.org/abs/2304.11793}{preprint} with full resolution images and Supplemental Materials.} \label{fig:teaser}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -137,9 +120,9 @@ This work aims to create a simple abstract 2d simulation model of camouflage evo
 \par
 Computational models of complex biological systems have several benefits. Constructing them, making them work as observed in nature, helps crystallize our thinking about natural phenomena. Computational models also allow experimentation \textit{in silico} to help understand complex natural systems.
 \par
-This work follows the approach of \citet{reynolds_iec_2011} where a population of camouflaged prey evolve in response to negative selection from a predator seeking conspicuous prey. In that earlier interactive game-like simulation, the predator was a human “player.” That simulation displayed a photographic background image overlaid with camouflaged prey. With mouse clicks, the human predator selects the most conspicuous five out of ten displayed prey. Those prey, “eaten” by the predator, were removed from the population.  They were replaced by \jargon{offspring} created with genetic \jargon{crossover} between surviving prey (as \jargon{parents}) followed by \jargon{mutation}. This simulation step was repeated about 2000 times.
+This work follows the approach of \citet{reynolds_iec_2011} where a population of camouflaged prey evolve in response to negative selection from a predator seeking conspicuous prey. In that earlier interactive game-like simulation, the predator was a human “player.” That simulation displayed a photographic background image overlaid with camouflaged prey. With mouse clicks, the human predator selects the most conspicuous five out of ten displayed prey. Those prey, “eaten” by the predator, were removed from the population.  They were replaced by \jargon{offspring} created with genetic \jargon{crossover} between surviving prey (as \jargon{parents}) followed by \jargon{mutation}. That simulation step was repeated about 2000 times.
 \par
-In the simulation described here, evolution of prey camouflage closely follows that earlier work. However the human-in-the-loop is replaced with a second population of predators, each based on a deep neural network. These CNN networks take an image as input and produce a \jargon{prediction}, an estimate, of where in the image the most conspicuous prey is located.
+Here, evolution of prey camouflage closely follows that earlier work. However the human-in-the-loop is replaced with a second population of predators, each based on a deep neural network. These CNN networks take an image as input and produce a \jargon{prediction}, an estimate, of where in the image the most conspicuous prey is located.
 \par
 In abstract artificial life models, it is common to focus in detail on one aspect of a natural system. In the current model, that aspect is the coevolutionary dynamics between prey camouflage and predator vision. To make this feasible, other levels of organization, are ignored, or assumed, or represented by a simple computational stand-in. So for example, the entire living organism that embodies these predators and prey, are simply assumed to exist, behaving as animals do, and are otherwise ignored. This model has a simple abstract representation of biological morphogenesis as programs (nested expressions) in \texsyn{}'s language for procedural texture synthesis \cite{reynolds_texsyn_2019}. \jargon{Genetic Programming} provides a simple model of evolution which acts on this “genetic” representation, creating new “offspring” textures through crossover and mutation. On the predator side, all of the animal's existence is ignored except for the key aspect of hunting behavior: looking at a scene and forming an opinion about where in the scene a prey is likely located. These predators can adapt to the appearance of an environment and the prey found there, by learning from its experience. Predators compete with each other on the basis of their ability to hunt prey and so eat. These details of simulated evolution, morphogenesis, vision, and genetic representation are all quite unlike the natural world. But they appear to be sufficiently similar in their effect to allow a plausible simulation of the natural system, producing analogous results, and so may provide insights about the natural system.
 \par
@@ -164,7 +147,7 @@ Closely related work on learning surface textures to camouflage 3D objects withi
 \par
 Other computer graphics work related to camouflage include meticulously detailed reproduction of coloration patterns on real animals \cite{de_gomensoro_malheiros_leopard_2020} and generation of visual puzzles incorporating camouflaged images \cite{chu_camo_image_2010} \cite{Zhang_Yin_Nie_Zheng_2020}. CamoEvo \cite{hancock_camoevo_2022} is a toolbox for authoring online camouflage evolution games to understand evolution in real biological species. Such web-based simulations can be powered by very large numbers of human volunteers (“citizen scientists”) engaged in \jargon{human-based computation}.
 \par
-This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is an ideal application of GANs, as in CamoGAN \cite{talas_camogan_2020}. However the goal of the current work (as suggested in the Future Work section of \citet{reynolds_iec_2011}) is not \textbf{learning} camouflage, but to produce a simulation of a biological evolutionary system, suitable for “what if” experiments which cannot be performed in the natural world. For example: how does evolved camouflage change as the ratio of predators to prey changes?
+This adversarial coevolutionary simulation has clear similarities to \jargon{generative adversarial networks} (GANs) originally described in \citet{goodfellow_gan_2014}. Observer-driven optimization of camouflage patterns is an ideal application of GANs, as in CamoGAN \citet{talas_camogan_2020}. However the goal of the current work (as suggested in the Future Work section of \citet{reynolds_iec_2011}) is not \textbf{learning} camouflage, but to produce a simulation of a biological evolutionary system, suitable for “what if” experiments which cannot be performed in the natural world. For example: how does evolved camouflage change as the ratio of predators to prey changes?
 \par
 The procedural texture synthesis used here to generate camouflage patterns has a long history. This work is perhaps most directly inspired by \citet{perlin_image_1985} where images are rendered from purely procedural representation of 3D textures. A recent example of this approach is found in \citet{Guerrero_MatFormer_2022}. Using texture synthesis under the control of a genetic algorithm goes back to \citet{sims_artificial_1991}, which in turn was inspired by the interactive biomorph evolution demo in \citet{dawkins_blind_1986}. FormSynth \cite{latham_form_1989} inspired Mutator \cite{todd_evolutionary_1994} and other tools.
 \par
@@ -272,7 +255,8 @@ Note that the images in this paper are rendered at 512² pixels and the prey dis
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{20221007_0806_step_7030.png}
-    \caption{Tournament image after simulation step: three camouflaged prey on a random background crop. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black/white, second is green/black, third is red/black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
+    % \caption{Tournament image after simulation step: three camouflaged prey on a random background crop. Over that are drawn three \jargon{crosshair} marks showing the responses of three predators. These are ranked by minimum distance to a prey center. Best is in black/white, second is green/black, third is red/black. Here, only the top ranked predator chose a position inside a prey's disk, the other two failed. Choice of prey, predators, background image, crop, and prey placement — are all uniform random selection.}
+    \caption{Tournament image after simulation step: three camouflaged prey on a random background crop. Three \jargon{crosshair} marks show the responses of three predators, ranked by minimum distance to a prey center. Details in Supplemental Materials.}
     % \Description{Full tournament image showing background, three prey, and three predator responses.}
     \label{fig:predator_responses}
 \end{figure}
@@ -325,7 +309,6 @@ To track the objective progress of camouflage coevolution, the pre-trained FCD n
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{figure}
     \includegraphics[width=\columnwidth]{SQM_plot_easy_vs_hard.pdf}
     \caption{Static quality metric versus simulation time. Metric is based on failure of pre-trained FCD model to find prey. Compares “easy” background (oak\_leaf\_litter) versus “hard” (yellow\_flower\_on\_green).}
@@ -333,15 +316,13 @@ To track the objective progress of camouflage coevolution, the pre-trained FCD n
     \label{fig:sqm_plot}
 \end{figure}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Discussion}
 \label{sec:discussion}
-This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. Examples from several runs are shown in Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, and the Supplemental Materials.
-% (Many additional examples, and other details of the development of this model, can be found in the project diary, whose URL is hidden for purposes of double-blind review. [... can I say this? reconsider after response from papersadmin@siggraph.org ...])
+This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. See examples in Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, Supplemental Materials, and TexSyn blog \cite{reynolds_texsyn_blog_2023}.
 \par
-These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. Typical simulation runs show the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps reuse previously rendered prey). The time to complete a single simulation step is about 1 second. Typical simulation runs are 12,000 steps so take about 3.5 hours. When using the static quality metric to evaluate progress (Figure \ref{fig:sqm_plot}) total simulation run time is about 10 hours.
+These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. Typical simulation runs show the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps reuse cached prey renderings). The time to complete a single simulation step is about 1 second. Typical simulation runs are 12,000 steps so take about 3.5 hours. When using the static quality metric to evaluate progress (Figure \ref{fig:sqm_plot}) total simulation run time is about 10 hours.
 \par
 A key observation from these experiments is that background sets present varying levels of difficulty. For some background sets, a simulated evolution run easily produces effective camouflage. Occasionally it is good enough to momentarily fool a human observer: “Wait, where is the third prey?!” Sometimes runs fail to produce effective results. Re-running the simulation with a new random seed will often find a solution. This suggests a “hard” background set may have a likelihood of success during a run of say 1/2 or 1/3 while “easy” background have likelihood close to 1.
 \par
@@ -365,7 +346,7 @@ A key observation from these experiments is that background sets present varying
 
 \section{Limitations}
 \label{subsec:limitations}
-This work has the nature of an “existence proof.” The model of camouflage coevolution presented here is a starting point. Its architecture and parameters (Table \ref{table:key_simulation_parameters}) are unlikely to be the best. It was tuned well enough to produce the desired result but surely can be improved.
+This work has the nature of an “existence proof.” The model of camouflage coevolution presented here is a starting point. Its architecture and parameters (Table \ref{table:key_simulation_parameters}) are unlikely to be the best. It was tuned well enough to allow camouflage evolution, but surely can be improved.
 \par
 Another limitation is that all results are hand selected: “cherry picked” (see Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, Supplemental Materials). After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes a mental judgement of their effectiveness.
 \par
@@ -410,14 +391,23 @@ John Koza,
 Dominic Mallinson,
 Nick Porcino,
 and Michael Wahrman.
-\par
-Thanks also to my neighbors whose landscaping provided many of the background images used here.
+% \par
+% Thanks also to my neighbors whose landscaping provided many of the background images used here.
+Thanks also to my neighbors whose landscaping provided many of the background images used here, collected on daily walks during COVID-19 lockdown.
 \par
 % \end{acks}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{tiny}
+%% Bibliography.
+
+\bibliographystyle{apalike}
+\bibliography{coc.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{tiny}
+\begin{footnotesize}
 \centering
 % \vspace{0.3cm}
 \vspace{0.7cm}
@@ -456,20 +446,8 @@ static quality metric: trials per prey & 10\\
 \captionof{table}{Key simulation parameters. Details in source code.} 
 \label{table:key_simulation_parameters} 
 \vspace{0.7cm}
-\end{tiny}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Bibliography.
-
-% \bibliographystyle{plainnat}
-% \bibliography{coc.bib}
-
-
-\footnotesize
-% \bibliographystyle{plainnat}
-\bibliography{coc.bib}
-\normalsize
+% \end{tiny}
+\end{footnotesize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
