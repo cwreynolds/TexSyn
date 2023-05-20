@@ -278,7 +278,7 @@ Each image in the “find conspicuous disk” training dataset is generated in o
 \subsubsection{Fine-Tuning Predator's Vision}
 During simulations of camouflage evolution, each predator is initialized as a copy of the pre-trained “find conspicuous disk” model to which noise is added. (Zero mean noise of less than ±0.003 is added to each parameter of the deep neural net.) In each simulation step (see Figure \ref{fig:simulation_overview}) the three predators chosen to participate in the tournament predict a prey position. Then \textbf{each predator is \jargon{fine-tuned} based on a dataset of labeled images collected during this simulation run}. 
 % This dataset is a collection of images from earlier simulation steps in this run. It is essentially the memory of prey coloration recently found in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images. Thereafter, each new tournament image replaces one of the 500 chosen at random. Labels for this dataset correspond to predictions made by the “best” predator (least aim error) in each step, see Figure \ref{fig:predator_responses}.
-Each predator collects its own dataset consisting of tournament images in which it participated, essentially its memory of prey coloration in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images, then replaces one of the 500 chosen at random. Labels for a predator's dataset are prediction it made in each tournament. See Figure \ref{fig:predator_responses}.
+Each predator collects its own dataset consisting of tournament images in which it participated, essentially its memory of prey coloration in this environment. The fine-tuning dataset starts empty, then collects each tournament image until the dataset holds 500 images, then replaces one of the 500 chosen at random. Labels for a predator's dataset are the predictions it made in each tournament. See Figure \ref{fig:predator_responses}.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -287,7 +287,7 @@ Each predator collects its own dataset consisting of tournament images in which 
 \label{subsec:background_sets}
 Each simulation run is based on a \jargon{background set} of images, usually photographs of natural scenes. These images provide the background of tournament images, over which camouflaged prey are drawn. These background images play the role of an \jargon{environment} in which prey must hide to avoid being found and eaten by predators. Because the model is purely 2d, photographs offer an easy way to provide varied environments, of plausible natural complexity, in which to test camouflage evolution.
 \par
-Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example a set called \stt{oak\_leaf\_litter} has six images, all of slightly different portions of leaves fallen in gutter. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet analogous backgrounds in which to try hiding.
+Background sets used in this work consist of from 1 to 14 photographs, 4 or 5 being typical. Almost all are casual snapshots taken with a mobile phone. The images within a given background set are all similar. For example, a set called \stt{oak\_leaf\_litter} has six images, all of slightly different portions of leaves fallen in gutter. Each image in this set is taken with the camera pointing straight down, all from about the same height. As a result the images have features (e.g. leaves) of about the same size. This “similarity” helps the camouflage evolution process by providing many unique yet analogous backgrounds in which to try hiding.
 \par
 As used here, “similarity” is meant to suggest image features have a \jargon{stationary distribution}, that different patches (say of a size comparable to prey) have the same statistical distribution of color and spatial frequency. When background sets are “less stationary” (e.g. large areas of uniform color) it becomes \jargon{harder} for evolution to find good camouflage. See faster progress for easy background in Figure \ref{fig:sqm_plot}.
 \par
@@ -320,7 +320,7 @@ To track the objective progress of camouflage coevolution, the pre-trained FCD n
 
 \section{Discussion}
 \label{sec:discussion}
-This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. See examples in Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, Supplemental Materials, and TexSyn blog \citep{reynolds_texsyn_blog_2023}.
+This simulation model was applied to a variety of background sets to produce prey camouflage patterns suited to those environments. See examples in Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, Supplemental Materials, and TexSyn's blog \citep{reynolds_texsyn_blog_2023}.
 \par
 These experiments were run on a 2021 Apple MacBook Pro with an M1 Max chip. Typical simulation runs show the predator vision/learn process taking about “600\%” of the processing power (that is, about 6 of 10 cores) and the prey texture render/evolve process taking about 10\% of a core (many steps reuse cached prey renderings). The time to complete a single simulation step is about 1 second. Typical simulation runs are 12,000 steps so take about 3.5 hours. When using the static quality metric to evaluate progress (Figure \ref{fig:sqm_plot}) total simulation run time is about 10 hours.
 \par
@@ -362,7 +362,7 @@ A \jargon{static quality metric} for camouflage (discussed in \nameref{subsec:si
 \par
 A static quality metric may allow automating the tedious and potentially biased “cherry picking” of high quality examples of tournament images from a 12,000 step run.
 \par
-All of the parameters in Table \ref{table:key_simulation_parameters} should be reexamined using a static camouflage metric. Similarly, the neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be designed and evaluated.
+All of the parameters in Table \ref{table:key_simulation_parameters} should be reexamined using a static camouflage metric. Similarly, the neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be constructed and evaluated.
 \par
 \par
 In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean over all prey positions. To work around this, \texsyn{}'s random prey placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug that should be better understood and fixed in a more principled way.
@@ -392,9 +392,8 @@ Bjoern Knafla,
 John Koza,
 Dominic Mallinson,
 Nick Porcino,
-and Michael Wahrman.
-% \par
-% Thanks also to my neighbors whose landscaping provided many of the background images used here.
+Michael Wahrman,
+and Lance Williams.
 Thanks also to my neighbors whose landscaping provided many of the background images used here, collected on daily walks during COVID-19 lockdown.
 \par
 % \end{acks}
