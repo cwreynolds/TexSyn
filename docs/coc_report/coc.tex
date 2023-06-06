@@ -16,6 +16,11 @@
 %                obviously they use brackets [] instead of parentheses.
 %                Found that problem was using "plainnat" instead of
 %                "apalike" in \bibliographystyle
+% June, 6, 2023  Got email from the conference objecting to Table 1's
+%                placement which effectively violates the paper length
+%                rule. Moved Table 1 down one page, into the Supplemental
+%                Materials. 4 references to table:key_simulation_parameters
+%                edited to make clear it is now in Supplemental Materials.
 
 \documentclass[letterpaper]{article}
 \usepackage{natbib,alifeconf}
@@ -211,7 +216,7 @@ A modern synthesis \citep{livnat_sex_2016} of evolution theory, game theory, and
 \par 
 For example, a predator looks at a scene then predicts the location of the most conspicuous of three prey. If this location is within the disk-shaped “body” of a prey, it is the \textbf{least} fit of the prey tournament and gets “eaten.” The relative fitness ordering of the other two prey is not significant and is ignored. If all predators \jargon{fail} and predict positions outside all three prey, then the entire simulation step is abandoned, no prey is eaten, and the prey population is unchanged.
 \par
-In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator might then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? Currently this threshold is 40\% hunting success over its last 20 attempts. (More parameters in Table \ref{table:key_simulation_parameters}.)
+In the predator population, a tournament is ranked by the \textbf{distance from a predator's prediction to the center of the nearest prey} — essentially the predator's “aiming error.” The worst predator might then die from \jargon{starvation} based on its recent history of hunting success: has it eaten enough to survive? Currently this threshold is 40\% hunting success over its last 20 attempts. (Supplemental Materials. Table \ref{table:key_simulation_parameters}.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -298,7 +303,7 @@ As used here, “similarity” is meant to suggest image features have a \jargon
 \label{subsec:simulation_runs}
 To run this coevolutionary simulation model, two processes are launched. One is the evolutionary texture synthesis system that models a population of camouflaged prey. It is c++ code based on \texsyn{} and \lazypredator{}. The other is a “predator server” that manages a population of visual hunters and fine-tunes their visual perception. This \jargon{\predatoreye{}} \citep{reynolds_predatoreye_2021} is Python code using Keras \citep{chollet_keras_2015} and TensorFlow \citep{tensorflow_whitepaper_2015}. The prey side produces a labeled tournament image. That is inspected by the predator side, which sends back a target location within the image, indicating its estimate of where the most conspicuous prey is. The labeled tournament image is used to fine-tune the predators. The target location drives the fitness function for prey evolution.
 \par
-Main parameters for a simulation run are a choice of \nameref{subsec:background_sets}, a scale factor for the background images, and a random number seed, see Table \ref{table:key_simulation_parameters}.
+Main parameters for a simulation run are a choice of \nameref{subsec:background_sets}, a scale factor for the background images, and a random number seed, Table \ref{table:key_simulation_parameters}, Supplemental Material.
 \par
 A typical run consists of 12,000 steps with a prey population of 400 and predator population of 40. A reimplementation of the interactive approach of \citet{reynolds_iec_2011} used a prey population of 120 and typical runs of 2000 to 3000 steps, as did the first version with a neural net predator. Introducing a population of predators reduced the rate of fine-tuning of predator's neural net models, leading to simulations of 6000, then 12,000 steps.
 \par
@@ -346,7 +351,7 @@ A key observation from these experiments is that background sets present varying
 
 \section{Limitations}
 \label{subsec:limitations}
-This work has the nature of an “existence proof.” The model of camouflage coevolution presented here is a starting point. Its architecture and parameters (Table \ref{table:key_simulation_parameters}) are unlikely to be the best. It was tuned well enough to allow camouflage evolution, but surely can be improved.
+This work has the nature of an “existence proof.” The model of camouflage coevolution presented here is a starting point. Its architecture and parameters (Supplemental Material, Table \ref{table:key_simulation_parameters}) are unlikely to be the best. It was tuned well enough to allow camouflage evolution, but surely can be improved.
 \par
 Another limitation is that all results are hand selected: “cherry picked” (see Figures \ref{fig:teaser}, \ref{fig:time_sequence}, \ref{fig:rock_wall_4x}, Supplemental Materials). After a simulation run, the resulting images are examined by a human who selects some as representative of the results, and makes a mental judgement of their effectiveness.
 \par
@@ -362,7 +367,7 @@ A \jargon{static quality metric} for camouflage (discussed in \nameref{subsec:si
 \par
 A static quality metric may allow automating the tedious and potentially biased “cherry picking” of high quality examples of tournament images from a 12,000 step run.
 \par
-All of the parameters in Table \ref{table:key_simulation_parameters} should be reexamined using a static camouflage metric. Similarly, the neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be constructed and evaluated.
+All of the parameters (in SM Table \ref{table:key_simulation_parameters}) should be reexamined using a static camouflage metric. Similarly, the neural net architecture in Figure \ref{fig:predator_cnn} is simply the first one that worked. Other designs should be constructed and evaluated.
 \par
 \par
 In early versions, simulated predators often incorrectly predicted prey to be at the tournament image's center. Perhaps this \jargon{center preference} is a “lazy” default strategy, since that is the mean over all prey positions. To work around this, \texsyn{}'s random prey placement was constrained to avoid positions within one prey diameter of the image center. This seems like a bug that should be better understood and fixed in a more principled way.
@@ -407,6 +412,12 @@ Thanks also to my neighbors whose landscaping provided many of the background im
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\appendix
+\onecolumn
+\section{Supplemental Materials}
+\setcounter{page}{0}
+
+\subsection{Key simulation parameters}
 % \begin{tiny}
 \begin{footnotesize}
 \centering
@@ -450,12 +461,10 @@ static quality metric: trials per prey & 10\\
 % \end{tiny}
 \end{footnotesize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\appendix
-\onecolumn
-\section{Supplemental Materials}
-\setcounter{page}{0}
+% \appendix
+% \onecolumn
+% \section{Supplemental Materials}
+% \setcounter{page}{0}
 
 \subsection{Background Image Sets}
 \begin{minipage}{\linewidth}
@@ -532,6 +541,7 @@ yellow\_flower\_on\_green &
 \end{minipage}
 
 \subsection{Details of Pre-Trained Predator Model}
+\begin{minipage}{\linewidth}
 The pre-trained predator visual system, shown in Fig. \ref{fig:predator_cnn}, is a Keras TensorFlow CNN model with about 3.2 million parameters. Its input is a 128×128 pixel RGB image and its output is an \textit{xy} location where it estimates the most conspicuous prey is centered. Here is its \texttt{model.summary()}:
 \par
 \begin{minipage}{\linewidth-1.1cm}
@@ -566,6 +576,7 @@ Trainable params: 3,191,386
 Non-trainable params: 0
 \end{verbatim}
 \end{small}
+\end{minipage}
 \end{minipage}
 \end{minipage}
 \par
