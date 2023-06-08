@@ -10,20 +10,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Rights management information.  This information is sent to you
-%% when you complete the rights form.  These commands have SAMPLE
-%% values in them; it is your responsibility as an author to replace
-%% the commands and values with those provided to you when you
-%% complete the rights form.
-\setcopyright{acmcopyright}
+%% when you complete the rights form. 
+
+\setcopyright{rightsretained}
 \copyrightyear{2023}
 \acmYear{2023}
-\acmDOI{XXXXXXX.XXXXXXX}
+\acmConference{SIGGRAPH '23 Posters}{August 06-10, 2023}{Los Angeles, CA, USA}
+\acmBooktitle{Special Interest Group on Computer Graphics and Interactive Techniques Conference Posters (SIGGRAPH '23 Posters), August 06-10, 2023}
+\acmDOI{10.1145/3588028.3603663}
+\acmISBN{979-8-4007-0152-8/23/08}
 
-%% These commands are for a PROCEEDINGS abstract or paper.
-\acmConference[Conference acronym 'XX]{Conference title}{January 01--02,
-  1900}{Someplace, NY}
-\acmPrice{15.00}
-\acmISBN{978-1-4503-XXXX-X/18/06}
 
 %% Submission ID.
 %% Use this when submitting an article to a sponsored event. You'll
@@ -198,7 +194,7 @@ Prey evolution is simulated with \jargon{Genetic Programming}, an evolutionary a
 
 \section{Simulations}
 
-Simulations run for 12,000 steps, with 400 prey and a 40 predators.  Each prey has a camouflage pattern, represented as a \jargon{tree} of TexSyn operators. Each predator has the same neural net architecture, with weights inherited from parents. Noisy weight copies and fine-tuning during their lifetimes lead to distinct optimization trajectories.
+Simulations run for 12,000 steps, with 400 prey and 40 predators.  Each prey has a camouflage pattern, represented as a \jargon{tree} of TexSyn operators. Each predator has the same neural net architecture, with weights inherited from parents. Noisy weight copies and fine-tuning during their lifetimes lead to distinct optimization trajectories.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,12 +203,10 @@ Simulations run for 12,000 steps, with 400 prey and a 40 predators.  Each prey h
 
 Over simulated evolution time, patterns on prey \textit{seem} to become less conspicuous, as in Figure \ref{fig:time_sequence}. An objective measure is difficult due to the adversarial nature of the coevolutionary game. If predators stop finding prey, does that mean prey have gotten better, or that predators have gotten worse?
 \par
-% Figure \ref{fig:sqm_plot} shows a static predator model — pre-trained on a generic “find conspicuous disk” task — used as an objective metric. Predator fine-tuning during a run is how they become better specialists. The generalist pre-trained predator is inherently weaker. The plots in Figure \ref{fig:sqm_plot} flatten over time. Is that because prey have stopped improving, or have they become too strong to be detected?
-% \par
 Figure \ref{fig:sqm_plot} shows an objective metric based on a static predator model, pre-trained on a generic “find conspicuous disk” task. Predator fine-tuning during evolution is how they become better \jargon{specialists}. The \jargon{generalist} pre-trained predator is inherently weaker. Plots in Figure \ref{fig:sqm_plot} flatten over time. Is that because prey have stopped improving, or have they become too strong to be detected?
 \par
 
-Future work includes a better static quality metric, and to better understand why some background sets are “easy” and others “hard”. This seems related to how \jargon{stationary} the background textures are, where different patches (say of a size comparable to prey) have the same statistical distribution of color and spatial frequency.
+Future work includes a better static quality metric, and to better understand why some background sets are “easy” and others “hard” (Fig. \ref{fig:sqm_plot}). This seems related to how \jargon{stationary} the background textures are, where different patches (say of a size comparable to prey) have the same statistical distribution of color and spatial frequency.
 \par
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
