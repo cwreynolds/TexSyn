@@ -1,6 +1,12 @@
 # TexSyn
 ## Library for evolutionary texture synthesis.
 
+### Update for June 2023
+
+The research which **TexSyn** was built to support has been completed. It is described in the paper _Coevolution of Camouflage_ available as a [preprint on arXiv](https://arxiv.org/abs/2304.11793). That paper will be presented at, and published in the proceedings of, the [2023 Artificial Life conference](https://alife.org/conference/alife-2023/) in Sapporo, Japan, July 24-28. There will be a [poster](https://doi.org/10.1145/3588028.3603663) about this work at SIGGRAPH 2023 in Los Angeles, California, August 6-10.
+
+### Previously
+
 **TexSyn** is a library for procedural texture synthesis. It is intended for use by a _genetic programming_ (“GP”) system, a type of _genetic algorithm_. The GP system performs _simulated evolution_ on a _population_ of programs, according to a _fitness function_ (aka _fitness metric_, _utility function_, or a _loss function_ in machine learning.) In a texture synthesis application, the programs are compositions of functions from this **TexSyn** library. When executed they describe a _color texture_—which is to say—an _image_.
 
 **TexSyn**'s companion genetic programming system is [LazyPredator](https://github.com/cwreynolds/LazyPredator).
