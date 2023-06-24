@@ -1156,10 +1156,16 @@ private:
 //     LotsOfButtons(density, min_r, max_r, soft, button_center,
 //                   button_texture, bg_color)
 //
-class LotsOfSpotsBase : public Texture
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20230624 move LotsOfSpotsBase methods from Operators.cpp to Operators.h
+//      Make copies named LotsOfSpotsBaseOld and LotsOfSpotsOld
+//      Refactor the non-Old versions to move methods here
+
+class LotsOfSpotsBaseOld : public Texture
 {
 public:
-      LotsOfSpotsBase(float _spot_density,
+    LotsOfSpotsBaseOld(float _spot_density,
                       float _min_radius,
                       float _max_radius,
                       float _soft_edge_width,
@@ -1228,6 +1234,161 @@ private:
 };
 
 // Collection of spots matte "spot_texture" over "background_texture".
+class LotsOfSpotsOld : public LotsOfSpotsBaseOld
+{
+public:
+    LotsOfSpotsOld(float _spot_density,
+                float _min_radius,
+                float _max_radius,
+                float _soft_edge_width,
+                float _margin,
+                const Texture& _spot_texture,
+                const Texture& _background_texture)
+      : LotsOfSpotsBaseOld(_spot_density, _min_radius, _max_radius,
+                        _soft_edge_width, _margin),
+        spot_texture(_spot_texture),
+        background_texture(_background_texture) {}
+    // BACKWARD_COMPATIBILITY for version before "margin", "background_texture"
+    LotsOfSpotsOld(float a, float b, float c, float d, Color e, Color f)
+      : LotsOfSpotsOld(a, b, c, d, 0, disposableUniform(e), disposableUniform(f)){}
+    Color getColor(Vec2 position) const override
+    {
+        DiskAndSoft das = getSpot(position);
+        return interpolatePointOnTextures(das.second,
+                                          position, position,
+                                          background_texture, spot_texture);
+    }
+private:
+    const Texture& spot_texture;
+    const Texture& background_texture;
+};
+
+// TODO NEW:
+
+
+class LotsOfSpotsBase : public Texture
+{
+public:
+    LotsOfSpotsBase(float _spot_density,
+                    float _min_radius,
+                    float _max_radius,
+                    float _soft_edge_width,
+                    float _margin)
+      : spot_density(std::min(_spot_density, 1.0f)),
+        min_radius(std::min(_min_radius, _max_radius) + _margin),
+        max_radius(std::max(_min_radius, _max_radius) + _margin),
+        soft_edge_width(_soft_edge_width),
+        margin(_margin),
+        disk_occupancy_grid
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+    {
+        // Timer timer("LotsOfSpots constructor");
+        insertRandomSpots();
+        disk_occupancy_grid->reduceDiskOverlap(max_overlap_reductions, spots);
+    }
+    // To remove limits, these can be set to std::numeric_limits<int>::max().
+    static inline int max_spots_allowed = 5000;
+    static inline int max_overlap_reductions = 200;
+    // Find nearest spot (Dot) and the soft-edged opacity at "position".
+    typedef std::pair<Disk, float> DiskAndSoft;
+    DiskAndSoft getSpot(Vec2 position) const
+    {
+        float gray_level = 0;
+        Disk nearest_spot;
+        Vec2 tiled_pos = disk_occupancy_grid->wrapToCenterTile(position);
+        std::set<Disk*> disks;
+        disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
+        for (auto& disk : disks)
+        {
+            Disk spot = *disk;
+            spot.radius -= margin;
+            // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
+            Vec2 tiled_spot =
+            disk_occupancy_grid->nearestByTiling(tiled_pos, spot.position);
+            // Distance from sample position to spot center. Ignore if too far.
+            float d = (tiled_pos - tiled_spot).length();
+            if (d <= spot.radius)
+            {
+                float inner = std::max(0.0f, spot.radius - soft_edge_width);
+                // Interpolation fraction: 0 inside, 1 outside, ramp between.
+                float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
+                // Sinusoidal interpolation between inner and outer colors.
+                float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
+                gray_level = std::max(gray_level, spot_level);
+                nearest_spot = spot;
+            }
+        }
+        return std::make_pair(nearest_spot, gray_level);
+    }
+//    // Insert random Disks until density threshold is met. Disk center positions
+//    // are uniformly distributed across center tile. Radii are chosen from the
+//    // interval [min_radius, max_radius] with a preference for smaller values.
+//    void insertRandomSpots();
+    
+    // Insert random Disks until density threshold is met. Disk center positions
+    // are uniformly distributed across center tile. Radii are chosen from the
+    // interval [min_radius, max_radius] with a preference for smaller values.
+    void insertRandomSpots()
+    {
+        float total_area = 0;
+        float half = tile_size / 2;
+        // Seed the random number sequence from some operator parameters.
+        RandomSequence rs(seedForRandomSequence());
+        // Add random Disks until density threshold is met.
+        while (total_area < (spot_density * sq(tile_size)))
+        {
+            // Select radius, preferring the low end of the range.
+            float k = rs.frandom01();
+            float i = (std::pow(k, 10) + (k / 2)) / 1.5;
+            float radius = interpolate(i, min_radius, max_radius);
+            Vec2 center(rs.frandom2(-half, half), rs.frandom2(-half, half));
+            spots.push_back(Disk(radius, center));
+            total_area += spots.back().area();
+            if (spots.size() >= max_spots_allowed) break;
+        }
+        // Insert each new random Disk into the DiskOccupancyGrid.
+        // (NB: very important this happens AFTER all Disks added to std::vector
+        // spots (above). Otherwise pointers will be invalidated by reallocation.)
+        for (Disk& spot : spots) disk_occupancy_grid->insertDiskWrap(spot);
+    }
+
+    
+//    void randomizeSpotRotations();
+//    size_t seedForRandomSequence();
+    
+    void randomizeSpotRotations()
+    {
+        // Seed the random number sequence from some operator parameters.
+        RandomSequence rs(seedForRandomSequence());
+        // Each spot gets a random rotation on [0, 2π]
+        for (auto& spot : spots) spot.angle = rs.frandom01() * pi * 2;
+    }
+
+    // Seed the random number sequence from some operator parameters.
+    size_t seedForRandomSequence()
+    {
+        return (getSeedFromHashedArgs() ?
+                (hash_float(spot_density) ^
+                 hash_float(min_radius) ^
+                 hash_float(max_radius) ^
+                 hash_float(soft_edge_width)) :
+                264371215);
+    }
+
+    
+    
+private:
+    std::vector<Disk> spots;
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
+    const float tile_size = 10;
+    const float spot_density;
+    const float min_radius;
+    const float max_radius;
+    const float soft_edge_width;
+    const float margin;
+};
+
+// Collection of spots matte "spot_texture" over "background_texture".
 class LotsOfSpots : public LotsOfSpotsBase
 {
 public:
@@ -1244,7 +1405,7 @@ public:
         background_texture(_background_texture) {}
     // BACKWARD_COMPATIBILITY for version before "margin", "background_texture"
     LotsOfSpots(float a, float b, float c, float d, Color e, Color f)
-      : LotsOfSpots(a, b, c, d, 0, disposableUniform(e), disposableUniform(f)){}
+    : LotsOfSpots(a, b, c, d, 0, disposableUniform(e), disposableUniform(f)){}
     Color getColor(Vec2 position) const override
     {
         DiskAndSoft das = getSpot(position);
@@ -1256,6 +1417,9 @@ private:
     const Texture& spot_texture;
     const Texture& background_texture;
 };
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Collection of spots take their color from "color_texture" sampled at the
 // center of each spot. These are matted over "background_texture".

@@ -6700,9 +6700,13 @@ int main(int argc, const char * argv[])
     Uniform red(1, 0, 0);
     Uniform blue(0, 0, 1);
     Uniform green(0, 1, 0);
-    Texture::diff(Noise(Vec2(), Vec2(.3, .6), green, blue),
-                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
-    
+//    Texture::diff(Noise(Vec2(), Vec2(.3, .6), green, blue),
+//                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
+//    Texture::diff(LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
+//                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
+    Texture::diff(LotsOfSpotsOld(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
+                  LotsOfSpots   (0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
+
     Texture::waitKey();
     
     //--------------------------------------------------------------------------

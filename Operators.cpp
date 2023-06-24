@@ -53,10 +53,16 @@ Texture& Texture::disposableUniform(Color color)
     return *(new Uniform(color));
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20230624 move LotsOfSpotsBase methods from Operators.cpp to Operators.h
+//      Make copies named LotsOfSpotsBaseOld and LotsOfSpotsOld
+//      Refactor the non-Old versions to move methods here
+
+
 // Insert random Disks until density threshold is met. Disk center positions
 // are uniformly distributed across center tile. Radii are chosen from the
 // interval [min_radius, max_radius] with a preference for smaller values.
-void LotsOfSpotsBase::insertRandomSpots()
+void LotsOfSpotsBaseOld::insertRandomSpots()
 {
     float total_area = 0;
     float half = tile_size / 2;
@@ -80,7 +86,7 @@ void LotsOfSpotsBase::insertRandomSpots()
     for (Disk& spot : spots) disk_occupancy_grid->insertDiskWrap(spot);
 }
 
-void LotsOfSpotsBase::randomizeSpotRotations()
+void LotsOfSpotsBaseOld::randomizeSpotRotations()
 {
     // Seed the random number sequence from some operator parameters.
     RandomSequence rs(seedForRandomSequence());
@@ -89,7 +95,7 @@ void LotsOfSpotsBase::randomizeSpotRotations()
 }
 
 // Seed the random number sequence from some operator parameters.
-size_t LotsOfSpotsBase::seedForRandomSequence()
+size_t LotsOfSpotsBaseOld::seedForRandomSequence()
 {
     return (getSeedFromHashedArgs() ?
             (hash_float(spot_density) ^
@@ -98,3 +104,5 @@ size_t LotsOfSpotsBase::seedForRandomSequence()
              hash_float(soft_edge_width)) :
             264371215);
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
