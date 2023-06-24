@@ -6677,17 +6677,33 @@ int main(int argc, const char * argv[])
 
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // In the week between SIGGRAPH 2023 rejection and ALIFE 2023 submission.
-    std::cout << "March 8, 2023" << std::endl;
+//    // In the week between SIGGRAPH 2023 rejection and ALIFE 2023 submission.
+//    std::cout << "March 8, 2023" << std::endl;
+//
+//    EvoCamoVsLppSqm(CommandLine(argc, argv)).run();
+//
+//    // See “COC logs” in Notes app, but typical recent usage is like:
+//    // caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter
+//    //                   ~/Desktop/TexSyn_temp/
+//    //                   0.25 20230308 512 512 400 20
     
-    EvoCamoVsLppSqm(CommandLine(argc, argv)).run();
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    // See “COC logs” in Notes app, but typical recent usage is like:
-    // caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter
-    //                   ~/Desktop/TexSyn_temp/
-    //                   0.25 20230308 512 512 400 20
+    // After submission of paper (https://arxiv.org/abs/2304.11793) to ALIFE and
+    // acceptance, getting back to some log-delayed cleanup. Specifically I am
+    // starting to make this a "pure header only library" by moving code from
+    // .cpp to .h files.
     
+    std::cout << "June 23, 2023" << std::endl;
+
+    Uniform red(1, 0, 0);
+    Uniform blue(0, 0, 1);
+    Uniform green(0, 1, 0);
+    Texture::diff(Noise(Vec2(), Vec2(.3, .6), green, blue),
+                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
     
+    Texture::waitKey();
     
     //--------------------------------------------------------------------------
     //
