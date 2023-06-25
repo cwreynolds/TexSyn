@@ -1162,106 +1162,106 @@ private:
 //      Make copies named LotsOfSpotsBaseOld and LotsOfSpotsOld
 //      Refactor the non-Old versions to move methods here
 
-class LotsOfSpotsBaseOld : public Texture
-{
-public:
-    LotsOfSpotsBaseOld(float _spot_density,
-                      float _min_radius,
-                      float _max_radius,
-                      float _soft_edge_width,
-                      float _margin)
-      : spot_density(std::min(_spot_density, 1.0f)),
-        min_radius(std::min(_min_radius, _max_radius) + _margin),
-        max_radius(std::max(_min_radius, _max_radius) + _margin),
-        soft_edge_width(_soft_edge_width),
-        margin(_margin),
-        disk_occupancy_grid
-            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
-    {
-        // Timer timer("LotsOfSpots constructor");
-        insertRandomSpots();
-        disk_occupancy_grid->reduceDiskOverlap(max_overlap_reductions, spots);
-    }
-    // To remove limits, these can be set to std::numeric_limits<int>::max().
-    static inline int max_spots_allowed = 5000;
-    static inline int max_overlap_reductions = 200;
-    // Find nearest spot (Dot) and the soft-edged opacity at "position".
-    typedef std::pair<Disk, float> DiskAndSoft;
-    DiskAndSoft getSpot(Vec2 position) const
-    {
-        float gray_level = 0;
-        Disk nearest_spot;
-        Vec2 tiled_pos = disk_occupancy_grid->wrapToCenterTile(position);
-        std::set<Disk*> disks;
-        disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
-        for (auto& disk : disks)
-        {
-            Disk spot = *disk;
-            spot.radius -= margin;
-            // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
-            Vec2 tiled_spot =
-                disk_occupancy_grid->nearestByTiling(tiled_pos, spot.position);
-            // Distance from sample position to spot center. Ignore if too far.
-            float d = (tiled_pos - tiled_spot).length();
-            if (d <= spot.radius)
-            {
-                float inner = std::max(0.0f, spot.radius - soft_edge_width);
-                // Interpolation fraction: 0 inside, 1 outside, ramp between.
-                float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
-                // Sinusoidal interpolation between inner and outer colors.
-                float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
-                gray_level = std::max(gray_level, spot_level);
-                nearest_spot = spot;
-            }
-        }
-        return std::make_pair(nearest_spot, gray_level);
-    }
-    // Insert random Disks until density threshold is met. Disk center positions
-    // are uniformly distributed across center tile. Radii are chosen from the
-    // interval [min_radius, max_radius] with a preference for smaller values.
-    void insertRandomSpots();
-    void randomizeSpotRotations();
-    size_t seedForRandomSequence();
-private:
-    std::vector<Disk> spots;
-    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
-    const float tile_size = 10;
-    const float spot_density;
-    const float min_radius;
-    const float max_radius;
-    const float soft_edge_width;
-    const float margin;
-};
-
-// Collection of spots matte "spot_texture" over "background_texture".
-class LotsOfSpotsOld : public LotsOfSpotsBaseOld
-{
-public:
-    LotsOfSpotsOld(float _spot_density,
-                float _min_radius,
-                float _max_radius,
-                float _soft_edge_width,
-                float _margin,
-                const Texture& _spot_texture,
-                const Texture& _background_texture)
-      : LotsOfSpotsBaseOld(_spot_density, _min_radius, _max_radius,
-                        _soft_edge_width, _margin),
-        spot_texture(_spot_texture),
-        background_texture(_background_texture) {}
-    // BACKWARD_COMPATIBILITY for version before "margin", "background_texture"
-    LotsOfSpotsOld(float a, float b, float c, float d, Color e, Color f)
-      : LotsOfSpotsOld(a, b, c, d, 0, disposableUniform(e), disposableUniform(f)){}
-    Color getColor(Vec2 position) const override
-    {
-        DiskAndSoft das = getSpot(position);
-        return interpolatePointOnTextures(das.second,
-                                          position, position,
-                                          background_texture, spot_texture);
-    }
-private:
-    const Texture& spot_texture;
-    const Texture& background_texture;
-};
+//    class LotsOfSpotsBaseOld : public Texture
+//    {
+//    public:
+//        LotsOfSpotsBaseOld(float _spot_density,
+//                          float _min_radius,
+//                          float _max_radius,
+//                          float _soft_edge_width,
+//                          float _margin)
+//          : spot_density(std::min(_spot_density, 1.0f)),
+//            min_radius(std::min(_min_radius, _max_radius) + _margin),
+//            max_radius(std::max(_min_radius, _max_radius) + _margin),
+//            soft_edge_width(_soft_edge_width),
+//            margin(_margin),
+//            disk_occupancy_grid
+//                (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+//        {
+//            // Timer timer("LotsOfSpots constructor");
+//            insertRandomSpots();
+//            disk_occupancy_grid->reduceDiskOverlap(max_overlap_reductions, spots);
+//        }
+//        // To remove limits, these can be set to std::numeric_limits<int>::max().
+//        static inline int max_spots_allowed = 5000;
+//        static inline int max_overlap_reductions = 200;
+//        // Find nearest spot (Dot) and the soft-edged opacity at "position".
+//        typedef std::pair<Disk, float> DiskAndSoft;
+//        DiskAndSoft getSpot(Vec2 position) const
+//        {
+//            float gray_level = 0;
+//            Disk nearest_spot;
+//            Vec2 tiled_pos = disk_occupancy_grid->wrapToCenterTile(position);
+//            std::set<Disk*> disks;
+//            disk_occupancy_grid->findNearbyDisks(tiled_pos, disks);
+//            for (auto& disk : disks)
+//            {
+//                Disk spot = *disk;
+//                spot.radius -= margin;
+//                // Adjust spot center to be nearest "tiled_pos" maybe in other tile.
+//                Vec2 tiled_spot =
+//                    disk_occupancy_grid->nearestByTiling(tiled_pos, spot.position);
+//                // Distance from sample position to spot center. Ignore if too far.
+//                float d = (tiled_pos - tiled_spot).length();
+//                if (d <= spot.radius)
+//                {
+//                    float inner = std::max(0.0f, spot.radius - soft_edge_width);
+//                    // Interpolation fraction: 0 inside, 1 outside, ramp between.
+//                    float f = remapIntervalClip(d, inner, spot.radius, 0, 1);
+//                    // Sinusoidal interpolation between inner and outer colors.
+//                    float spot_level = interpolate(sinusoid(f), 1.0f, 0.0f);
+//                    gray_level = std::max(gray_level, spot_level);
+//                    nearest_spot = spot;
+//                }
+//            }
+//            return std::make_pair(nearest_spot, gray_level);
+//        }
+//        // Insert random Disks until density threshold is met. Disk center positions
+//        // are uniformly distributed across center tile. Radii are chosen from the
+//        // interval [min_radius, max_radius] with a preference for smaller values.
+//        void insertRandomSpots();
+//        void randomizeSpotRotations();
+//        size_t seedForRandomSequence();
+//    private:
+//        std::vector<Disk> spots;
+//        std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid;
+//        const float tile_size = 10;
+//        const float spot_density;
+//        const float min_radius;
+//        const float max_radius;
+//        const float soft_edge_width;
+//        const float margin;
+//    };
+//
+//    // Collection of spots matte "spot_texture" over "background_texture".
+//    class LotsOfSpotsOld : public LotsOfSpotsBaseOld
+//    {
+//    public:
+//        LotsOfSpotsOld(float _spot_density,
+//                    float _min_radius,
+//                    float _max_radius,
+//                    float _soft_edge_width,
+//                    float _margin,
+//                    const Texture& _spot_texture,
+//                    const Texture& _background_texture)
+//          : LotsOfSpotsBaseOld(_spot_density, _min_radius, _max_radius,
+//                            _soft_edge_width, _margin),
+//            spot_texture(_spot_texture),
+//            background_texture(_background_texture) {}
+//        // BACKWARD_COMPATIBILITY for version before "margin", "background_texture"
+//        LotsOfSpotsOld(float a, float b, float c, float d, Color e, Color f)
+//          : LotsOfSpotsOld(a, b, c, d, 0, disposableUniform(e), disposableUniform(f)){}
+//        Color getColor(Vec2 position) const override
+//        {
+//            DiskAndSoft das = getSpot(position);
+//            return interpolatePointOnTextures(das.second,
+//                                              position, position,
+//                                              background_texture, spot_texture);
+//        }
+//    private:
+//        const Texture& spot_texture;
+//        const Texture& background_texture;
+//    };
 
 // TODO NEW:
 
@@ -2021,3 +2021,57 @@ private:
     Grating green_stripes;
     Add plaid;
 };
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20230625 move code from Operators.cpp to Operators.h
+
+//#include "Operators.h"
+//#include <thread>
+
+// Texture diff/comparison utility. Defined here since it uses AbsDiff operator.
+// Last three arguments can default, see Texture.h for details.
+inline void Texture::diff(const Texture& t0,
+                          const Texture& t1,
+                          std::string pathname,
+                          int size,
+                          bool binary)
+{
+    AbsDiff abs_diff(t0, t1);
+    int pixel_count = 0;
+    Color total_color_diff(0, 0, 0);
+    int mismatch_count = 0;
+    Texture::rasterizeDisk(size,
+                           [&](int i, int j, Vec2 position)
+                           {
+                               Color diff = abs_diff.getColor(position);
+                               total_color_diff += diff;
+                               pixel_count++;
+                               if (diff != Color()) mismatch_count++;
+                            });
+    debugPrint(pixel_count);
+    debugPrint(total_color_diff);
+    debugPrint(total_color_diff / pixel_count);
+    debugPrint(mismatch_count);
+    NotEqual not_equal(t0, t1);
+    const Texture* compare = (binary ?
+                              (Texture*)(&not_equal) :
+                              (Texture*)(&abs_diff));
+    Texture::displayAndFile3(t0, t1, *compare, pathname, size);
+}
+
+// BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
+// is called ONLY from constructors providing backward compatibility. The
+// tiny Uniform texture object is allowed to "memory leak" for ease of use.
+// (I suppose they could be held in a collection, a static member of Texture
+// class to be deleted at end of run. But this is only used from old code, such
+// as samples in the blog.)
+inline Texture& Texture::disposableUniform(Color color)
+{
+    std::cout << "Warning: creating disposableUniform" << color
+    << " for backward compatibility." << std::endl;
+    return *(new Uniform(color));
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

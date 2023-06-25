@@ -6704,8 +6704,10 @@ int main(int argc, const char * argv[])
 //                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
 //    Texture::diff(LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
 //                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
-    Texture::diff(LotsOfSpotsOld(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
-                  LotsOfSpots   (0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
+//    Texture::diff(LotsOfSpotsOld(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
+//                  LotsOfSpots   (0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
+    Texture::diff(LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
+                  LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
 
     Texture::waitKey();
     
