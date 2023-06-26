@@ -25,7 +25,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_executable(texsyn
                main.cpp
                Disk.cpp
-               Operators.cpp
                Texture.cpp
                UnitTests.cpp
                Utilities.cpp)
