@@ -24,7 +24,6 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 # Add source files to the executable
 add_executable(texsyn
                main.cpp
-               Disk.cpp
                Texture.cpp
                UnitTests.cpp
                Utilities.cpp)

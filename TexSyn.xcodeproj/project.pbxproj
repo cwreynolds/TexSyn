@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		843D95C12452653A00741263 /* Disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 843D95BF2452653A00741263 /* Disk.cpp */; };
 		849FF57723A70EC2008B4326 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57623A70EC2008B4326 /* main.cpp */; };
 		849FF57F23A70F93008B4326 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 849FF57D23A70F93008B4326 /* Texture.cpp */; };
 		84BC108C25B7B4410095F83B /* texsyn in CopyFiles */ = {isa = PBXBuildFile; fileRef = 849FF57323A70EC2008B4326 /* texsyn */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -34,7 +33,6 @@
 		8422C74924980277006D4A50 /* COTS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COTS.h; sourceTree = "<group>"; };
 		84261A802857ADC000003F15 /* texsyn.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = texsyn.entitlements; sourceTree = "<group>"; };
 		843C02FE268CE72E00ABCB4A /* SimpleImageMatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleImageMatch.h; sourceTree = "<group>"; };
-		843D95BF2452653A00741263 /* Disk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Disk.cpp; sourceTree = "<group>"; };
 		843D95C02452653A00741263 /* Disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Disk.h; sourceTree = "<group>"; };
 		8458EED22518152C0079DF1D /* GP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GP.h; sourceTree = "<group>"; };
 		849FF57323A70EC2008B4326 /* texsyn */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = texsyn; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,7 +71,6 @@
 				84FE3C7123A71E8100600F2A /* Color.h */,
 				8422C74924980277006D4A50 /* COTS.h */,
 				843D95C02452653A00741263 /* Disk.h */,
-				843D95BF2452653A00741263 /* Disk.cpp */,
 				84BC108E25B916B20095F83B /* EvoCamoGame.h */,
 				8458EED22518152C0079DF1D /* GP.h */,
 				8413E64E257ACFEF0045734B /* GUI.h */,
@@ -160,7 +157,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				843D95C12452653A00741263 /* Disk.cpp in Sources */,
 				849FF57723A70EC2008B4326 /* main.cpp in Sources */,
 				84F6BB3E23A85C1F00911365 /* UnitTests.cpp in Sources */,
 				849FF57F23A70F93008B4326 /* Texture.cpp in Sources */,
