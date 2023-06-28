@@ -49,6 +49,7 @@
 		84F6BB3F23A85E0A00911365 /* Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utilities.cpp; sourceTree = "<group>"; };
 		84F6BB4023A85E0A00911365 /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		84F6BB4323AC6AF800911365 /* Vec2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vec2.h; sourceTree = "<group>"; };
+		84FB927F2A4CB2ED005EE737 /* PerlinNoise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PerlinNoise.h; sourceTree = "<group>"; };
 		84FE3C7123A71E8100600F2A /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +77,7 @@
 				8413E64E257ACFEF0045734B /* GUI.h */,
 				849FF57623A70EC2008B4326 /* main.cpp */,
 				84172B4423BBA26E00B866B6 /* Operators.h */,
+				84FB927F2A4CB2ED005EE737 /* PerlinNoise.h */,
 				843C02FE268CE72E00ABCB4A /* SimpleImageMatch.h */,
 				84DE15B224D9CA5F005DCCE4 /* TexSyn.h */,
 				849FF57E23A70F93008B4326 /* Texture.h */,

@@ -11,6 +11,10 @@
 #include "Disk.h"
 #include "COTS.h"
 #include "TwoPointTransform.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20230628 move PerlinNoise code into PerlinNoise.h
+#include "PerlinNoise.h"
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Minimal texture, a uniform color everywhere on the texture plane. Its single
 // parameter is that color. As a convenience for hand written code, also can be
@@ -463,6 +467,45 @@ private:
     const Vec2 offset2;
     const Vec2 offset3;
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20230628 move PerlinNoise code into PerlinNoise.h
+
+// Initially Name the new version PerlinNoise2 so I can A/B it
+
+// Color Noise -- RGB Perlin Noise
+//class ColorNoise : public MultiNoise
+class ColorNoise2 : public MultiNoise
+{
+public:
+    ColorNoise2(Vec2 point_0, Vec2 point_1, float _which)
+      : MultiNoise(point_0, point_1, *this, *this, _which),
+        offset1(Vec2(1, 0)),
+        offset2(offset1.rotate(pi * 2 / 3)),
+        offset3(offset2.rotate(pi * 2 / 3)) {};
+    
+    Color getColor(Vec2 position) const override
+    {
+        Vec2 tp1 = transformIntoNoiseSpace(position + offset1).rotate(0.3);
+        Vec2 tp2 = transformIntoNoiseSpace(position + offset2).rotate(0.6);
+        Vec2 tp3 = transformIntoNoiseSpace(position + offset3).rotate(0.9);
+//        return Color(PerlinNoise::multiNoise2d(tp1, which),
+//                     PerlinNoise::multiNoise2d(tp2, which),
+//                     PerlinNoise::multiNoise2d(tp3, which));
+        return Color(PerlinNoise2::multiNoise2d(tp1, which),
+                     PerlinNoise2::multiNoise2d(tp2, which),
+                     PerlinNoise2::multiNoise2d(tp3, which));
+    }
+//    // BACKWARD_COMPATIBILITY with version before "two point" specification.
+//    ColorNoise(float a, Vec2 b, float c) : ColorNoise(b, b + Vec2(a, 0), c) {};
+private:
+    const Vec2 offset1;
+    const Vec2 offset2;
+    const Vec2 offset3;
+};
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // Maps the brightness of a sample of the given Texture to a pure hue (full
 // brightness, full saturation). The hue transform is offset by a given phase.
