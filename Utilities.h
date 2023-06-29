@@ -185,37 +185,6 @@ inline float fmod_floor(float x, float y)
     return std::fmod(x, y) + ((x < 0) ? y : 0);
 }
 
-// Perlin Noise
-// Ken Perlin's 2002 "Improved Noise": http://mrl.nyu.edu/~perlin/noise/
-// This code based on a transliteration by Malcolm Kesson from Java to c:
-// http://www.fundza.com/c4serious/noise/perlin/perlin.html
-namespace PerlinNoise
-{
-    // Classic Perlin noise, in 2d, output range approximately on [-1, 1].
-    float noise2d(Vec2 position);
-    // Classic Perlin noise, in 2d, output range on [0, 1].
-    float unitNoise2d(Vec2 position);
-    // Classic Perlin turbulence, in 2d, output range on [0, 1].
-    float turbulence2d(Vec2 position);
-    // Brownian Noise, fractal 1/f Perlin noise, output range on [0, 1].
-    float brownian2d(Vec2 position);
-    // Furbulence: two "fold" version of Turbulence producing sharp features at
-    // both low and high ends of the output range.
-    float furbulence2d(Vec2 position);
-    // Wrapulence: another variation on turbulence(). noise() is scaled up in
-    // value, then wrapped modulo [0, 1]. It has hard edge discontinuities at
-    // all scales.
-    float wrapulence2d(Vec2 position);
-    // Returns result of one of the noise functions (unitNoise2d, turbulence2d,
-    // brownian2d, furbulence2d, wrapulence2d -- selected according to "which")
-    // applied to "position".
-    float multiNoise2d(Vec2 position, float which);
-    // Tool to measure typical range of a noise function. Returns min and max
-    // range from calling given noise function 100000 times for random points
-    // in a circle at origin with diameter of 100.
-    std::pair<float, float> measure_range(std::function<float(Vec2)> noise_func);
-};
-
 // Generic look up table. Currently only used in Texture Operator StretchSpot,
 // so current design is skewed toward that. Could be generalized and made into a
 // type agnostic template, but for now (2020-01-18) my goal is just to move some
