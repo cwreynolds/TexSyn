@@ -23,25 +23,6 @@ Complex inverse_mobius_transform(Complex z,
     return numerator / denominator;
 }
 
-// Hash a float to a 32 bit value.
-size_t hash_float(float x)
-{
-    return rehash32bits(std::hash<float>()(x));
-}
-
-// Combine two 32 bit hash values.
-size_t hash_mashup(size_t hash0, size_t hash1)
-{
-    return rehash32bits((hash0 ^ (hash1 >> 16 ^ hash1 << 16)) + 918273645);
-}
-
-// Return 2.2, TexSyn's default output gamma, intended to approximate
-// the nonlinearity of sRGB (digital display screen) color space.
-// (Made settable for testing/debugging.)
-float default_gamma = 2.2;
-float defaultGamma() { return default_gamma; }
-void setDefaultGamma(float gamma) { default_gamma = gamma; }
-
 // Utility for randomized subsampling in a square 2d region. Generates 2d
 // offsets from the center of the square for an NxN jittered grid. Parameters:
 //     n: square root of the number of grid cells (and offsets returned).

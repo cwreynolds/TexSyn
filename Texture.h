@@ -334,6 +334,11 @@ public:
     // Has max render time been exceeded?
     static bool renderTimeOut()
         { return elapsedRenderTime() > getRenderMaxTime(); }
+    // Return 2.2, TexSyn's default output gamma, intended to approximate
+    // the nonlinearity of sRGB (digital display screen) color space.
+    // (Made settable for testing/debugging.)
+    static float defaultGamma() { return default_gamma_; }
+    static void setDefaultGamma(float gamma) { default_gamma_ = gamma; }
 
 private:
     static inline const int validity_key_ = 1234567890;
@@ -367,9 +372,10 @@ private:
     // Count nesting of certain "expensive_to_nest" convolution operators.
     thread_local static inline int expensive_to_nest_ = 0;
     static inline int max_expensive_nest_ = 0;
-
     static inline bool seed_from_hashed_args_ = true;
     static inline int constructor_count_ = 0;
     static inline int destructor_count_ = 0;
+    // Could be per-instance (non-static) but it has only been used for testing.
+    static inline float default_gamma_ = 2.2;
     int valid_bot_ = validity_key_ / 2;
 };

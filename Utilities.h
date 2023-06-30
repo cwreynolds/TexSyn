@@ -273,12 +273,6 @@ private:
     TimePoint start_time_;
 };
 
-// Hash a float to a 32 bit value.
-size_t hash_float(float x);
-
-// Combine two 32 bit hash values.
-size_t hash_mashup(size_t hash0, size_t hash1);
-
 // Takes a 32 bit value and shuffles it around to produce a new 32 bit value.
 // "Robert Jenkins' 32 bit integer hash function" from "Integer Hash Function"
 // (1997) by Thomas Wang (https://gist.github.com/badboy/6267743)
@@ -293,6 +287,18 @@ inline uint32_t rehash32bits(uint64_t u64)
     a = (a+0xfd7046c5) + (a<<3);
     a = (a^0xb55a4f09) ^ (a>>16);
     return a;
+}
+
+// Hash a float to a 32 bit value.
+inline size_t hash_float(float x)
+{
+    return rehash32bits(std::hash<float>()(x));
+}
+
+// Combine two 32 bit hash values.
+inline size_t hash_mashup(size_t hash0, size_t hash1)
+{
+    return rehash32bits((hash0 ^ (hash1 >> 16 ^ hash1 << 16)) + 918273645);
 }
 
 // Simple self-contained generator for a sequence of psuedo-random 32 bit values
@@ -349,11 +355,6 @@ public:
 private:
     uint32_t state_;
 };
-
-// Return 2.2, TexSyn's default output gamma, intended to approximate
-// the nonlinearity of sRGB (digital display screen) color space.
-float defaultGamma();
-void setDefaultGamma(float gamma);
 
 // Utility for randomized subsampling in a square 2d region. Generates 2d
 // offsets from the center of the square for an NxN jittered grid. Parameters:
