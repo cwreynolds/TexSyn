@@ -45,6 +45,7 @@
 #pragma once
 #include "Utilities.h"
 #include "Vec2.h"
+#include "RandomSequence.h"
 
 class PerlinNoise
 {

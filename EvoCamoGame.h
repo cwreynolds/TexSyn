@@ -22,6 +22,9 @@
 
 #pragma once
 #include "GP.h"
+#include "Texture.h"
+#include "Utilities.h"
+#include "RandomSequence.h"
 
 class EvoCamoGame
 {

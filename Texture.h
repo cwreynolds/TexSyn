@@ -10,6 +10,7 @@
 #include "Vec2.h"
 #include "Color.h"
 #include "Utilities.h"
+#include "RandomSequence.h"
 #include <vector>
 #include <limits>
 namespace cv {class Mat;}

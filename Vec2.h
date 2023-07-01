@@ -54,29 +54,6 @@ private:
     float y_ = 0;
 };
 
-// Generate a random point inside a unit diameter disk centered on origin.
-inline Vec2 RandomSequence::randomPointInUnitDiameterCircle()
-{
-    Vec2 v;
-    float h = 0.5;
-    do { v = {frandom01() - h, frandom01() - h}; } while (v.length() > h);
-    return v;
-}
-
-// Generate a random unit vector.
-inline Vec2 RandomSequence::randomUnitVector()
-{
-    Vec2 v;
-    do { v = randomPointInUnitDiameterCircle(); } while (v.length() == 0);
-    return v.normalize();
-}
-
-inline Vec2 RandomSequence::randomPointInAxisAlignedRectangle(Vec2 a, Vec2 b)
-{
-    return Vec2(random2(std::min(a.x(), b.x()), std::max(a.x(), b.x())),
-                random2(std::min(a.y(), b.y()), std::max(a.y(), b.y())));
-}
-
 // Is distance between vectors no more than epsilon?
 inline bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {

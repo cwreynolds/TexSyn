@@ -23,32 +23,6 @@ Complex inverse_mobius_transform(Complex z,
     return numerator / denominator;
 }
 
-// Utility for randomized subsampling in a square 2d region. Generates 2d
-// offsets from the center of the square for an NxN jittered grid. Parameters:
-//     n: square root of the number of grid cells (and offsets returned).
-//     square_side_length: dimension of the 2d region covered by grid.
-//     rs: a RandomSequence for generating random jitter.
-//     offsets: vector to be filled with Vec2d offsets
-// (FYI See https://www.redblobgames.com/x/1830-jittered-grid/)
-// September 28, 2020: if n=1 offset will be in center of cell (square)
-void jittered_grid_NxN_in_square(int n,
-                                 float square_side_length,
-                                 RandomSequence& rs,
-                                 std::vector<Vec2>& offsets)
-{
-    offsets.clear();
-    float radius = square_side_length / 2;
-    float cell_width = square_side_length / n;
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            offsets.push_back(n == 1 ?
-                              Vec2() :
-                              Vec2((i * cell_width) - radius, // cell corner
-                                   (j * cell_width) - radius) +
-                              Vec2(rs.frandom01() * cell_width,  // jitter
-                                   rs.frandom01() * cell_width));
-}
-
 // Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
 // position, and given spot parameters (center, inner_radius, outer_radius)
 // as in Spot::getColor(), etc. (TODO use it there?)

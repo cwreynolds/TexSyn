@@ -12,6 +12,7 @@
 #include "COTS.h"
 #include "TwoPointTransform.h"
 #include "PerlinNoise.h"
+#include "RandomSequence.h"
 
 // Minimal texture, a uniform color everywhere on the texture plane. Its single
 // parameter is that color. As a convenience for hand written code, also can be

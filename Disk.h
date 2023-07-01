@@ -14,6 +14,7 @@
 #include "Vec2.h"
 #include "Texture.h"
 #include "Utilities.h"
+#include "RandomSequence.h"
 
 // Represents a disk on the 2d plane, defined by center position and radius.
 // TODO stores some other properties: "future_position" for LotsOfSpotsBase,

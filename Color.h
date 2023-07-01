@@ -272,11 +272,5 @@ inline std::ostream& operator<<(std::ostream& os, const Color& c)
     return os;
 }
 
-// RandomSequence: random color, uniformly distributed across the unit RGB cube.
-inline Color RandomSequence::randomUnitRGB()
-{
-    return Color(frandom01(), frandom01(), frandom01());
-}
-
 // Hoist the internal helper class to global scope.
 typedef Color::HSV HSV;

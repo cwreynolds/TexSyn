@@ -6713,6 +6713,7 @@ int main(int argc, const char * argv[])
         //Texture::diff(ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65),
         //              ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65));
         
+        Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65));
         Texture::displayAndFile(LotsOfSpots(0.7, 0.3, 0.3, 0.2, 0.02, red, green));
         Texture::setDefaultGamma(1);
         Texture::displayAndFile(LotsOfSpots(0.7, 0.3, 0.3, 0.2, 0.02, red, green));
