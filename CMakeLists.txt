@@ -22,11 +22,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Add source files to the executable
-add_executable(texsyn
-               main.cpp
-               Texture.cpp
-               UnitTests.cpp
-               Utilities.cpp)
+add_executable(texsyn main.cpp Texture.cpp UnitTests.cpp)
 
 # Link executable with libraries.
 target_link_libraries(texsyn ${OpenCV_LIBS})

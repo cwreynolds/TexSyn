@@ -2,12 +2,14 @@
 //  Utilities.h
 //  texsyn
 //
+//  These are generally utility functions based purely on c++ itself, and not on
+//  other classes defined by TexSyn. This avoids circular header dependencies.
+//
 //  Created by Craig Reynolds on 12/16/19.
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
 
 #pragma once
-
 #include <cassert>
 #include <cmath>
 #include <complex>
@@ -21,8 +23,6 @@
 #include <thread>
 #include <filesystem>
 namespace fs = std::filesystem;
-class Vec2;
-class Color;
 
 // for debugging: prints one line with a given C expression, an equals sign,
 // and the value of the expression.  For example "angle = 35.6"
@@ -206,15 +206,23 @@ private:
     float maximum_input_value_ = 1;
 };
 
-
 // Compute the inverse Möbius transformation of the complex plane. It is
 // parameterized by four "points" (aka complex numbers). The Wikipedia
-// article (https://en.wikipedia.org/wiki/Möbius_transformation) says the four
-// points should satisfy: ad − bc ≠ 0.
+// article (https://en.wikipedia.org/wiki/Möbius_transformation) says the
+// four points should satisfy: ad − bc ≠ 0.
 // See Tim Hutton cool app: http://timhutton.github.io/mobius-transforms/
 typedef std::complex<float> Complex;
-Complex inverse_mobius_transform(Complex z,
-                                 Complex a, Complex b, Complex c, Complex d);
+inline Complex inverse_mobius_transform(Complex z,
+                                        Complex a,
+                                        Complex b,
+                                        Complex c,
+                                        Complex d)
+{
+    Complex numerator = (d * z) - b;
+    Complex denominator = a - (c * z);
+    if (denominator == Complex(0, 0)) debugPrint(denominator);
+    return numerator / denominator;
+}
 
 // Short names
 typedef std::chrono::high_resolution_clock TimeClock;
@@ -500,18 +508,6 @@ private:
     // Parsed version of the ("unix") command line that invoked this run.
     const std::vector<std::string> cmd_line_;
 };
-
-// Returns the scalar amplitude of a co-sinusoidal spot, for a given sample
-// position, and given spot parameters (center, inner_radius, outer_radius)
-// as in Spot::getColor(), etc.
-float spot_utility(Vec2 position,
-                   Vec2 center,
-                   float inner_radius,
-                   float outer_radius);
-
-// TODO to be used by Gabor noise. Something like the Grating texture operator,
-// but transform is via an angle and center point, assumes sinosoid (softness=1)
-float grating_utility(Vec2 position, Vec2 center, float angle, float wavelength);
 
 // This thread allows others to run. Prevents lockup during long computations.
 inline void yield() { std::this_thread::yield(); }
