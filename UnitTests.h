@@ -12,15 +12,15 @@
 //
 //
 //    // TODO very informal so far. This function should return true:
-//    bool allTestsOK();
+//    bool UnitTests::allTestsOK();
 //
 //    // Verbosity 0: no printing unless error occurs.
 //    //           1: print one line, unless error occurs (default).
 //    //           2: print report for each test like previous behavior.
-//    bool allTestsOK(int verbosity);
+//    bool UnitTests::allTestsOK(int verbosity);
 //
 //    // Ad hoc utility to verify all texture types build and run.
-//    void instantiateAllTextureTypes();
+//    void UnitTests::instantiateAllTextureTypes();
 //
 //  Conceivably these functions should all be declared “inline” -- on the off
 //  chance that this header might be included in multiple compilation units,
@@ -797,7 +797,11 @@ void instantiateAllTextureTypes()
     do_thumbnail(Hyperbolic(p3, 1.5, 4, 2, black_red, white_cyan));
     do_thumbnail(Affine(p3, p3 + Vec2(0.3, 0.3), white_cyan));
     do_thumbnail(HueOnly(1, 1, AdjustBrightness(0.1, Add(white_cyan, white))));
-    
+    do_thumbnail(PhasorNoiseRanges(.2, .5, .05, .2, .05, .1, 0, .5, white, red));
+    do_thumbnail(PhasorNoiseTextures(0.2, 0.5, cyan, red, t3, white, red));
+    do_thumbnail(NoiseWarp(0.2, 4, 0.1, t1));
+    do_thumbnail(Plaid());
+
     std::cout << "Total thumbnails constructed: " << counter << std::endl;
 }
 

@@ -6709,10 +6709,10 @@ int main(int argc, const char * argv[])
         //              LotsOfSpots   (0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
         // Texture::diff(LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue),
         //               LotsOfSpots(0.8, 0.05, 0.2, 0.04, 0.02, red, blue));
-        
+
         //Texture::diff(ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65),
         //              ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65));
-        
+
         Texture::displayAndFile(ColorNoise(Vec2(), Vec2(0.3, 0.1), 0.65));
         Texture::displayAndFile(LotsOfSpots(0.7, 0.3, 0.3, 0.2, 0.02, red, green));
         Texture::setDefaultGamma(1);
@@ -6728,7 +6728,7 @@ int main(int argc, const char * argv[])
                             plaid);
         Texture::displayAndFile(mt0);
         Texture::displayAndFile(mt1);
-        
+
         Texture::displayAndFile
             (PhasorNoiseTextures
                  (0.966585,
@@ -6748,6 +6748,8 @@ int main(int argc, const char * argv[])
                         ColorNoise(Vec2(2.06214, 0.309379),
                                    Vec2(0.983534, 3.74675),
                                    0.00450438))));
+
+        UnitTests::instantiateAllTextureTypes();
     }
     Texture::waitKey();
     
