@@ -13,7 +13,15 @@
 #include "RandomSequence.h"
 #include <vector>
 #include <limits>
-namespace cv {class Mat;}
+//namespace cv {class Mat;}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>  // TODO temp(?) for fft_test()
+#include <opencv2/highgui/highgui.hpp>
+#pragma clang diagnostic pop
+
 
 // Nickname for the type of PixelFunction used for rasterization.
 typedef std::function<void(int i, int j, Vec2 position)> PixelFunction;
@@ -29,9 +37,19 @@ public:
 class Texture : public AbstractTexture
 {
 public:
-    // Default constructor.
-    Texture() : raster_(emptyCvMat()) { constructor_count_++; }
-    virtual ~Texture();
+//        // Default constructor.
+//        Texture() : raster_(emptyCvMat()) { constructor_count_++; }
+//    //    virtual ~Texture();
+//        ~Texture()
+//        {
+//            assert("already invalid at top of ~Texture" && valid());
+//            markAsInvalid();
+//            destructor_count_++;
+//        }
+    
+    // Default constructor and virtual destructor.
+    Texture() : raster_(emptyCvMat()) { constructor_validity_util(); }
+    ~Texture() { destructor_validity_util(); }
     
     // Provide a default so Texture is a concrete (non-virtual) class.
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
@@ -40,17 +58,62 @@ public:
     // Get color at position, clipping to unit RGB color cube, and anti-aliased.
     Color getColorClippedAntialiased(Vec2 position, float size) const;
     // Utility for getColor(), special-cased for when alpha is 0 or 1.
-    Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
-                                     const Texture& t0, const Texture& t1) const;
+    
+//    Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
+//                                     const Texture& t0, const Texture& t1) const;
+    // Utility for getColor(), special-cased for when alpha is 0 or 1.
+    Color interpolatePointOnTextures(float alpha,
+                                     Vec2 position0,
+                                     Vec2 position1,
+                                     const Texture& t0,
+                                     const Texture& t1) const
+    {
+        return ((alpha == 0) ?
+                // For alpha==0 evaluate only t0.
+                t0.getColor(position0) :
+                ((alpha == 1) ?
+                 // For alpha==1 evaluate only t1.
+                 t1.getColor(position1) :
+                 // Otherwise evaluate both and interpolate between them.
+                 interpolate(alpha,
+                             t0.getColor(position0),
+                             t1.getColor(position1))));
+    }
+
+//    // Rasterize this texture into size² OpenCV image, display in pop-up window.
+//    void displayInWindow(int size = getDefaultRenderSize(),
+//                         bool wait = true) const;
     // Rasterize this texture into size² OpenCV image, display in pop-up window.
-    void displayInWindow(int size = getDefaultRenderSize(),
-                         bool wait = true) const;
+    void displayInWindow(int size, bool wait) const
+    {
+        rasterizeToImageCache(size, getDefaultRenderAsDisk());
+        windowPlacementTool(*raster_);
+        if (wait) waitKey();  // Wait for a keystroke in the window.
+    }
+
+    
     // Display a collection of Textures, each in a window, then wait for a char.
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = getDefaultRenderSize(),
                                 bool wait = true);
+    
+//    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
+//    static void windowPlacementTool(cv::Mat& mat);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
-    static void windowPlacementTool(cv::Mat& mat);
+    static void windowPlacementTool(cv::Mat& mat) 
+    {
+        std::string window_name = "TexSyn" + std::to_string(window_counter++);
+        cv::namedWindow(window_name);       // Create a window for display.
+        int tm = 23;  // TODO approximate top margin height
+        cv::moveWindow(window_name, window_x, window_y);
+        window_x += tm;
+        window_y += tm;
+        cv::imshow(window_name, mat);  // Show our image inside it.
+        waitKey(1);  // TODO Trying to force window to display if not "on top."
+        // TODO pure hack, assumes 511x511, screen size of my MacBook Pro (Mid 2014)
+        if ((window_counter % 15) == 0) window_y =0 ;
+    }
+
     static inline int window_counter = 0;
     static inline int window_x = 0;
     static inline int window_y = 0;
@@ -223,6 +286,16 @@ public:
         std::cout << ", destructions=" << destructor_count_;
         std::cout << ", leaked=" << constructor_count_ - destructor_count_;
         std::cout << std::endl;
+    }
+    void constructor_validity_util()
+    {
+        constructor_count_++;
+    }
+    void destructor_validity_util()
+    {
+        assert("already invalid at top of ~Texture" && valid());
+        markAsInvalid();
+        destructor_count_++;
     }
     static int getDefaultOpencvMatType() { return default_opencv_mat_type_; }
     static void setDefaultOpencvMatType(int opencv_mat_type)

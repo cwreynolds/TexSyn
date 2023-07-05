@@ -8,61 +8,61 @@
 
 #include "Texture.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>  // TODO temp(?) for fft_test()
-#include <opencv2/highgui/highgui.hpp>
-#pragma clang diagnostic pop
+//    #pragma clang diagnostic push
+//    #pragma clang diagnostic ignored "-Wdocumentation"
+//    #include <opencv2/core/core.hpp>
+//    #include <opencv2/imgproc/imgproc.hpp>  // TODO temp(?) for fft_test()
+//    #include <opencv2/highgui/highgui.hpp>
+//    #pragma clang diagnostic pop
 
-Texture::~Texture()
-{
-    assert("already invalid at top of ~Texture" && valid());
-    markAsInvalid();
-    destructor_count_++;
-}
+//    Texture::~Texture()
+//    {
+//        assert("already invalid at top of ~Texture" && valid());
+//        markAsInvalid();
+//        destructor_count_++;
+//    }
 
-// Utility for getColor(), special-cased for when alpha is 0 or 1.
-Color Texture::interpolatePointOnTextures(float alpha,
-                                          Vec2 position0,
-                                          Vec2 position1,
-                                          const Texture& t0,
-                                          const Texture& t1) const
-{
-    return ((alpha == 0) ?
-            // For alpha==0 evaluate only t0.
-            t0.getColor(position0) :
-            ((alpha == 1) ?
-             // For alpha==1 evaluate only t1.
-             t1.getColor(position1) :
-             // Otherwise evaluate both and interpolate between them.
-             interpolate(alpha,
-                         t0.getColor(position0),
-                         t1.getColor(position1))));
-}
+//    // Utility for getColor(), special-cased for when alpha is 0 or 1.
+//    Color Texture::interpolatePointOnTextures(float alpha,
+//                                              Vec2 position0,
+//                                              Vec2 position1,
+//                                              const Texture& t0,
+//                                              const Texture& t1) const
+//    {
+//        return ((alpha == 0) ?
+//                // For alpha==0 evaluate only t0.
+//                t0.getColor(position0) :
+//                ((alpha == 1) ?
+//                 // For alpha==1 evaluate only t1.
+//                 t1.getColor(position1) :
+//                 // Otherwise evaluate both and interpolate between them.
+//                 interpolate(alpha,
+//                             t0.getColor(position0),
+//                             t1.getColor(position1))));
+//    }
 
-// Rasterize this texture into size² OpenCV image, display in pop-up window.
-void Texture::displayInWindow(int size, bool wait) const
-{
-    rasterizeToImageCache(size, getDefaultRenderAsDisk());
-    windowPlacementTool(*raster_);
-    if (wait) waitKey();  // Wait for a keystroke in the window.
-}
+//    // Rasterize this texture into size² OpenCV image, display in pop-up window.
+//    void Texture::displayInWindow(int size, bool wait) const
+//    {
+//        rasterizeToImageCache(size, getDefaultRenderAsDisk());
+//        windowPlacementTool(*raster_);
+//        if (wait) waitKey();  // Wait for a keystroke in the window.
+//    }
 
-// Display cv::Mat in pop-up window. Stack diagonally from upper left.
-void Texture::windowPlacementTool(cv::Mat& mat)
-{
-    std::string window_name = "TexSyn" + std::to_string(window_counter++);
-    cv::namedWindow(window_name);       // Create a window for display.
-    int tm = 23;  // TODO approximate top margin height
-    cv::moveWindow(window_name, window_x, window_y);
-    window_x += tm;
-    window_y += tm;
-    cv::imshow(window_name, mat);  // Show our image inside it.
-    waitKey(1);  // TODO Trying to force window to display if not "on top."
-    // TODO pure hack, assumes 511x511, screen size of my MacBook Pro (Mid 2014)
-    if ((window_counter % 15) == 0) window_y =0 ;
-}
+//    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
+//    void Texture::windowPlacementTool(cv::Mat& mat)
+//    {
+//        std::string window_name = "TexSyn" + std::to_string(window_counter++);
+//        cv::namedWindow(window_name);       // Create a window for display.
+//        int tm = 23;  // TODO approximate top margin height
+//        cv::moveWindow(window_name, window_x, window_y);
+//        window_x += tm;
+//        window_y += tm;
+//        cv::imshow(window_name, mat);  // Show our image inside it.
+//        waitKey(1);  // TODO Trying to force window to display if not "on top."
+//        // TODO pure hack, assumes 511x511, screen size of my MacBook Pro (Mid 2014)
+//        if ((window_counter % 15) == 0) window_y =0 ;
+//    }
 
 // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
 // draw a round image, otherwise a square. Run parallel threads for speed.
