@@ -100,7 +100,7 @@ public:
 //    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
 //    static void windowPlacementTool(cv::Mat& mat);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
-    static void windowPlacementTool(cv::Mat& mat) 
+    static void windowPlacementTool(cv::Mat& mat)
     {
         std::string window_name = "TexSyn" + std::to_string(window_counter++);
         cv::namedWindow(window_name);       // Create a window for display.
@@ -117,25 +117,160 @@ public:
     static inline int window_counter = 0;
     static inline int window_x = 0;
     static inline int window_y = 0;
+    
+//    // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
+//    // draw a round image, otherwise a square. Run parallel threads for speed.
+//    void rasterizeToImageCache(int size, bool disk) const;
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
-    void rasterizeToImageCache(int size, bool disk) const;
+    void rasterizeToImageCache(int size, bool disk) const
+    {
+        //Timer t("rasterizeToImageCache");
+        // If size changed, including from initial value of 0x0, generate raster.
+        // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)
+        if ((size != raster_->rows) || (size != raster_->cols))
+        {
+            // Reset our OpenCV Mat to be (size, size) at default depth.
+            raster_->create(size, size, getDefaultOpencvMatType());
+            startRenderTimer();
+            // Synchronizes access to opencv_image to allow multiple render threads.
+            std::mutex ocv_image_mutex;
+            RasterizeHelper rh(size, disk);
+            if (getParallelRender())
+            {
+                // Make helper threads, each to work on a horizontal "stripe" of the
+                // texture in parallel. The goal is roughly one thread per hardware
+                // processor but that is just hardcoded inline. (So "TODO 20220710")
+                int number_of_threads = 6;
+                int rows_per_thread = size / number_of_threads;
+                int rows_left_over = size % number_of_threads;
+                // Collection of all row threads.
+                std::vector<std::thread> all_threads;
+                // Threads increment "row_counter" when a row of pixels is finished.
+                int row_counter = 0;
+                // Veritcal (y/j) bounds for each stripe. First is bigger if needed.
+                // These value updated in the loop below.
+                int stripe_top = rh.top_j;
+                int stripe_bot = stripe_top + rows_per_thread + rows_left_over;
+                for (int s = 0; s < number_of_threads; s++)
+                {
+                    all_threads.push_back(std::thread
+                                          (&Texture::rasterizeStripeOfDisk,
+                                           this,
+                                           stripe_top,
+                                           stripe_bot - stripe_top,
+                                           size,
+                                           disk,
+                                           std::ref(*raster_),
+                                           std::ref(row_counter),
+                                           std::ref(ocv_image_mutex)));
+                    stripe_top = stripe_bot;
+                    stripe_bot = stripe_top + rows_per_thread;
+                }
+                // Wait for helper threads to finish, join them with this thread.
+                while (row_counter < size) { checkForUserInput(); }
+                for (auto& t : all_threads) { t.join(); }
+            }
+            else
+            {
+                // Sequential case, single threaded. Loop over all image rows.
+                int i = 0;  // Counter whose value is ignore in single thread case.
+                for (int j = rh.top_j; j <= rh.bot_j; j++)
+                {
+                    rasterizeRowOfDisk(j, size, disk, *raster_, i, ocv_image_mutex);
+                    checkForUserInput();
+                }
+            }
+            // If optional render timeout was reached, return uniform black texture.
+            if (renderTimeOut())
+            {
+                std::cout << "RENDER TIMEOUT: returning black texture." << std::endl;
+                *raster_ = cv::Scalar::all(0);
+            }
+        }
+    }
+
+
+//    // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
+//    // to run in its own thread, uses mutex to synchonize access to the image.
+//    void rasterizeRowOfDisk(int j, int size, bool disk,
+//                            cv::Mat& opencv_image,
+//                            int& row_counter,
+//                            std::mutex& ocv_image_mutex) const;
+
     // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
     // to run in its own thread, uses mutex to synchonize access to the image.
-    void rasterizeRowOfDisk(int j, int size, bool disk,
+    //void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
+    void rasterizeRowOfDisk(int j,                    // starting row index
+                            int size,                 // total texture size
+                            bool disk,                // disk or square?
                             cv::Mat& opencv_image,
                             int& row_counter,
-                            std::mutex& ocv_image_mutex) const;
+                            std::mutex& ocv_image_mutex) const
+    {
+        // Half the rendering's size corresponds to the disk's center.
+        int half = size / 2;
+        RasterizeHelper rh(j, size, disk);
+        // Create temp cv::Mat to accumulate pixels for this row.
+        cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
+        cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
+        for (int i = rh.first_pixel_index; i <= rh.last_pixel_index; i++)
+        {
+            if ((i == rh.first_pixel_index) && renderTimeOut()) { break; }
+            // Read TexSyn Color from Texture at (i, j).
+            Vec2 pixel_center = Vec2(i, j) / half;
+            resetExpensiveToNest();
+            // Render one pixel to produce a color value.
+            Color color = getColorClippedAntialiased(pixel_center, size);
+            // Adjust for display gamma.
+            color = color.gamma(1 / defaultGamma());
+            // Make OpenCV color, with reversed component order.
+            cv::Vec3b opencv_color(color.b() * 255,  // Note: assumes CV_8UC3.
+                                   color.g() * 255,
+                                   color.r() * 255);
+            // Write OpenCV color to corresponding pixel on row image:
+            row_image.at<cv::Vec3b>(cv::Point(half + i, 0)) = opencv_color;
+            // Near midpoint of rendering this Texture row, yield to other threads,
+            // to avoid locking up the whole machine during a lengthy render run.
+            if (i == 0) { yield(); }
+        }
+        
+        // Define a new image which is a "pointer" to j-th row of opencv_image.
+        cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
+        // Wait to grab lock for access to image. (Lock released at end of block)
+        const std::lock_guard<std::mutex> lock(ocv_image_mutex);
+        // Copy line_image into the j-th row of opencv_image.
+        row_image.copyTo(row_in_full_image);
+        row_counter++;
+    }
+
+//    // Rasterizes (renders) a horizontal "stripe" -- a range of vertically
+//    // adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
+//    void rasterizeStripeOfDisk(int j,
+//                               int n_rows,
+//                               int size,
+//                               bool disk,
+//                               cv::Mat& opencv_image,
+//                               int& row_counter,
+//                               std::mutex& ocv_image_mutex) const;
+
     // Rasterizes (renders) a horizontal "stripe" -- a range of vertically
     // adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
-    void rasterizeStripeOfDisk(int j,
-                               int n_rows,
-                               int size,
-                               bool disk,
+    void rasterizeStripeOfDisk(int j,            // starting row index
+                               int n_rows,       // number of row in stripe
+                               int size,         // total texture size
+                               bool disk,        // disk or square?
                                cv::Mat& opencv_image,
                                int& row_counter,
-                               std::mutex& ocv_image_mutex) const;
-    
+                               std::mutex& ocv_image_mutex) const
+    {
+        for (int row_index = j; row_index < (j + n_rows); row_index++)
+        {
+            rasterizeRowOfDisk(row_index, size, disk, opencv_image,
+                               row_counter, ocv_image_mutex);
+        }
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20220621 gathering data -- should this be kept?
     // TODO How tall are the per-thread "stripes"? On Intel laptop it was 1.
