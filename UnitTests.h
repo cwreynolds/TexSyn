@@ -756,6 +756,7 @@ void instantiateAllTextureTypes()
     do_thumbnail(Max(t1, t2));
     do_thumbnail(Min(t1, t2));
     do_thumbnail(AbsDiff(t1, t2));
+    do_thumbnail(NotEqual(t2, black));    
     do_thumbnail(Noise(p1, p2, t1, t2));
     do_thumbnail(Brownian(p1, p2, t1, t2));
     do_thumbnail(Turbulence(p1, p2, t1, t2));
