@@ -186,7 +186,7 @@
 //            // to avoid locking up the whole machine during a lengthy render run.
 //            if (i == 0) { yield(); }
 //        }
-//        
+//
 //        // Define a new image which is a "pointer" to j-th row of opencv_image.
 //        cv::Mat row_in_full_image(opencv_image, cv::Rect(0, half - j, size, 1));
 //        // Wait to grab lock for access to image. (Lock released at end of block)
@@ -196,123 +196,123 @@
 //        row_counter++;
 //    }
 
-// Copies disk-shaped portion of image cache onto given background cv::Mat.
-// Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
-{
-    // Ensure the Texture has been rendered to image cache as disk.
-    rasterizeToImageCache(size, true);
-    // Matte cached disk image over bg.
-    matteImageCacheDiskOverBG(*raster_, bg);
-}
-
-// Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
-void Texture::matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
-{
-    assert(disk.rows == disk.cols);
-    int size = disk.rows;
-    // For each row.
-    RasterizeHelper rh(size);
-    for (int j = rh.top_j; j <= rh.bot_j; j++)
-    {
-        // Update rh for current row.
-        rh = RasterizeHelper(j, size);
-        // On j-th row, from first to last pixel.
-        cv::Rect row_rect(rh.row_rect_x, rh.row_index, rh.row_rect_w, 1);
-        // Create two submats (ROIs) of the disk mat and the destination mat.
-        cv::Mat disk_row(disk, row_rect);
-        cv::Mat bg_row(bg, row_rect);
-        // Copy the disk row into the destination row.
-        disk_row.copyTo(bg_row);
-    }
-}
-
-// TODO 20211112: using for debugging, make part of UnitTest?
-// Verify that given mat is: square and symmetric (vertically, horizontally,
-// and diagonally (90° rotation)). Note: this function has multiple return
-// statements. I try to avoid that, but doing so here made it 9 lines longer.
-bool Texture::isDiskSymmetric(const cv::Mat& mat)
-{
-    if (mat.cols != mat.rows) { return false; }
-    auto pixels_differ = [&](int x0, int y0, int x1, int y1)
-    {
-        auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
-        auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
-        return pixel0 != pixel1;
-    };
-    // Check for x/horizontal symmetry.
-    for (int y = 0; y < mat.rows; y++)
-    {
-        int x0 = 0;
-        int x1 = mat.rows - 1;
-        do
-        {
-            if (pixels_differ(x0, y, x1, y)) { return false; }
-            x0++;
-            x1--;
-        }
-        while (x0 < x1);
-    }
-    // Check for y/vertical symmetry.
-    for (int x = 0; x < mat.rows; x++)
-    {
-        int y0 = 0;
-        int y1 = mat.rows - 1;
-        do
-        {
-            if (pixels_differ(x, y0, x, y1)) { return false; }
-            y0++;
-            y1--;
-        }
-        while (y0 < y1);
-    }
-    // Check for 90°/diagonal symmetry.
-    for (int p = 0; p < mat.rows; p++)
-    {
-        for (int q = 0; q < mat.rows; q++)
-        {
-            if (pixels_differ(p, q, q, p)) { return false; }
-        }
-    }
-    return true;
-}
-
-Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
-{
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO experimental 20220123
-    position /= secret_render_scale_factor_;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // Read TexSyn Color from Texture at (i, j).
-    Color color(0, 0, 0);
-    resetExpensiveToNest();
-    if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
-    {
-        float pixel_radius = 2.0 / size;
-        std::vector<Vec2> offsets;
-        RandomSequence rs(position.hash());
-        jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
-                                    pixel_radius * 2, rs, offsets);
-        for (Vec2 offset : offsets)
-            color += getColorClipped(position + offset);
-        color = color / sq(sqrt_of_aa_subsample_count);
-    }
-    else
-    {
-        color = getColorClipped(position);
-    }
-    return color;
-}
-
-// Display a collection of Textures, each in a window, then wait for a char.
-void Texture::displayInWindow(std::vector<const Texture*> textures,
-                              int size,
-                              bool wait)
-{
-    for (auto& t : textures) t->displayInWindow(size, false);
-    // Wait for keystroke, close windows, exit function.
-    if (wait) waitKey();
-}
+//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+//    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+//    void Texture::matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+//    {
+//        // Ensure the Texture has been rendered to image cache as disk.
+//        rasterizeToImageCache(size, true);
+//        // Matte cached disk image over bg.
+//        matteImageCacheDiskOverBG(*raster_, bg);
+//    }
+//
+//    // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
+//    void Texture::matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
+//    {
+//        assert(disk.rows == disk.cols);
+//        int size = disk.rows;
+//        // For each row.
+//        RasterizeHelper rh(size);
+//        for (int j = rh.top_j; j <= rh.bot_j; j++)
+//        {
+//            // Update rh for current row.
+//            rh = RasterizeHelper(j, size);
+//            // On j-th row, from first to last pixel.
+//            cv::Rect row_rect(rh.row_rect_x, rh.row_index, rh.row_rect_w, 1);
+//            // Create two submats (ROIs) of the disk mat and the destination mat.
+//            cv::Mat disk_row(disk, row_rect);
+//            cv::Mat bg_row(bg, row_rect);
+//            // Copy the disk row into the destination row.
+//            disk_row.copyTo(bg_row);
+//        }
+//    }
+//
+//    // TODO 20211112: using for debugging, make part of UnitTest?
+//    // Verify that given mat is: square and symmetric (vertically, horizontally,
+//    // and diagonally (90° rotation)). Note: this function has multiple return
+//    // statements. I try to avoid that, but doing so here made it 9 lines longer.
+//    bool Texture::isDiskSymmetric(const cv::Mat& mat)
+//    {
+//        if (mat.cols != mat.rows) { return false; }
+//        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
+//        {
+//            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+//            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+//            return pixel0 != pixel1;
+//        };
+//        // Check for x/horizontal symmetry.
+//        for (int y = 0; y < mat.rows; y++)
+//        {
+//            int x0 = 0;
+//            int x1 = mat.rows - 1;
+//            do
+//            {
+//                if (pixels_differ(x0, y, x1, y)) { return false; }
+//                x0++;
+//                x1--;
+//            }
+//            while (x0 < x1);
+//        }
+//        // Check for y/vertical symmetry.
+//        for (int x = 0; x < mat.rows; x++)
+//        {
+//            int y0 = 0;
+//            int y1 = mat.rows - 1;
+//            do
+//            {
+//                if (pixels_differ(x, y0, x, y1)) { return false; }
+//                y0++;
+//                y1--;
+//            }
+//            while (y0 < y1);
+//        }
+//        // Check for 90°/diagonal symmetry.
+//        for (int p = 0; p < mat.rows; p++)
+//        {
+//            for (int q = 0; q < mat.rows; q++)
+//            {
+//                if (pixels_differ(p, q, q, p)) { return false; }
+//            }
+//        }
+//        return true;
+//    }
+//
+//    Color Texture::getColorClippedAntialiased(Vec2 position, float size) const
+//    {
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // TODO experimental 20220123
+//        position /= secret_render_scale_factor_;
+//        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+//        // Read TexSyn Color from Texture at (i, j).
+//        Color color(0, 0, 0);
+//        resetExpensiveToNest();
+//        if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
+//        {
+//            float pixel_radius = 2.0 / size;
+//            std::vector<Vec2> offsets;
+//            RandomSequence rs(position.hash());
+//            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
+//                                        pixel_radius * 2, rs, offsets);
+//            for (Vec2 offset : offsets)
+//                color += getColorClipped(position + offset);
+//            color = color / sq(sqrt_of_aa_subsample_count);
+//        }
+//        else
+//        {
+//            color = getColorClipped(position);
+//        }
+//        return color;
+//    }
+//
+//    // Display a collection of Textures, each in a window, then wait for a char.
+//    void Texture::displayInWindow(std::vector<const Texture*> textures,
+//                                  int size,
+//                                  bool wait)
+//    {
+//        for (auto& t : textures) t->displayInWindow(size, false);
+//        // Wait for keystroke, close windows, exit function.
+//        if (wait) waitKey();
+//    }
 
 // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
 // codec, but pathname's extension names the format to be used. Converts to

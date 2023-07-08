@@ -6698,6 +6698,7 @@ int main(int argc, const char * argv[])
     std::cout << "June 23, 2023" << std::endl;
 
     {
+        Timer t("Tests");
         Uniform red(1, 0, 0);
         Uniform blue(0, 0, 1);
         Uniform green(0, 1, 0);

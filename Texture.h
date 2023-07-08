@@ -55,10 +55,39 @@ public:
     Color getColor(Vec2 position) const override { return Color(0, 0, 0); }
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
+
+//    // Get color at position, clipping to unit RGB color cube, and anti-aliased.
+//    Color getColorClippedAntialiased(Vec2 position, float size) const;
+
     // Get color at position, clipping to unit RGB color cube, and anti-aliased.
-    Color getColorClippedAntialiased(Vec2 position, float size) const;
-    // Utility for getColor(), special-cased for when alpha is 0 or 1.
-    
+    Color getColorClippedAntialiased(Vec2 position, float size) const
+    {
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // TODO experimental 20220123
+        position /= secret_render_scale_factor_;
+        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+        // Read TexSyn Color from Texture at (i, j).
+        Color color(0, 0, 0);
+        resetExpensiveToNest();
+        if (sqrt_of_aa_subsample_count > 1) // anti-aliasing?
+        {
+            float pixel_radius = 2.0 / size;
+            std::vector<Vec2> offsets;
+            RandomSequence rs(position.hash());
+            jittered_grid_NxN_in_square(sqrt_of_aa_subsample_count,
+                                        pixel_radius * 2, rs, offsets);
+            for (Vec2 offset : offsets)
+                color += getColorClipped(position + offset);
+            color = color / sq(sqrt_of_aa_subsample_count);
+        }
+        else
+        {
+            color = getColorClipped(position);
+        }
+        return color;
+    }
+
+//    // Utility for getColor(), special-cased for when alpha is 0 or 1.
 //    Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
 //                                     const Texture& t0, const Texture& t1) const;
     // Utility for getColor(), special-cased for when alpha is 0 or 1.
@@ -92,11 +121,24 @@ public:
     }
 
     
+//    // Display a collection of Textures, each in a window, then wait for a char.
+//    static void displayInWindow(std::vector<const Texture*> textures,
+//                                int size = getDefaultRenderSize(),
+//                                bool wait = true);
+
     // Display a collection of Textures, each in a window, then wait for a char.
+//    void Texture::displayInWindow(std::vector<const Texture*> textures,
+//                                  int size,
+//                                  bool wait)
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = getDefaultRenderSize(),
-                                bool wait = true);
-    
+                                bool wait = true)
+    {
+        for (auto& t : textures) t->displayInWindow(size, false);
+        // Wait for keystroke, close windows, exit function.
+        if (wait) waitKey();
+    }
+
 //    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
 //    static void windowPlacementTool(cv::Mat& mat);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
@@ -278,16 +320,100 @@ public:
     static inline int rows_per_render_thread = 1;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
+//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
+//    // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+//    void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
+
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
-    // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-    void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
-    
+    // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
+    void matteImageCacheDiskOverBG(int size, cv::Mat& bg)
+    {
+        // Ensure the Texture has been rendered to image cache as disk.
+        rasterizeToImageCache(size, true);
+        // Matte cached disk image over bg.
+        matteImageCacheDiskOverBG(*raster_, bg);
+    }
+
+//    // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
+//    static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg);
+
     // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
-    static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg);
+    static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
+    {
+        assert(disk.rows == disk.cols);
+        int size = disk.rows;
+        // For each row.
+        RasterizeHelper rh(size);
+        for (int j = rh.top_j; j <= rh.bot_j; j++)
+        {
+            // Update rh for current row.
+            rh = RasterizeHelper(j, size);
+            // On j-th row, from first to last pixel.
+            cv::Rect row_rect(rh.row_rect_x, rh.row_index, rh.row_rect_w, 1);
+            // Create two submats (ROIs) of the disk mat and the destination mat.
+            cv::Mat disk_row(disk, row_rect);
+            cv::Mat bg_row(bg, row_rect);
+            // Copy the disk row into the destination row.
+            disk_row.copyTo(bg_row);
+        }
+    }
+
+//    // TODO 20211112: using for debugging, make part of UnitTest?
+//    // Verify that given mat is: square and symmetric (vertically, horizontally,
+//    // and diagonally (90° rotation))
+//    static bool isDiskSymmetric(const cv::Mat& mat);
+    
     // TODO 20211112: using for debugging, make part of UnitTest?
     // Verify that given mat is: square and symmetric (vertically, horizontally,
-    // and diagonally (90° rotation))
-    static bool isDiskSymmetric(const cv::Mat& mat);
+    // and diagonally (90° rotation)). Note: this function has multiple return
+    // statements. I try to avoid that, but doing so here made it 9 lines longer.
+    static bool isDiskSymmetric(const cv::Mat& mat)
+    {
+        if (mat.cols != mat.rows) { return false; }
+        auto pixels_differ = [&](int x0, int y0, int x1, int y1)
+        {
+            auto pixel0 = mat.at<cv::Vec3b>(cv::Point(x0, y0));
+            auto pixel1 = mat.at<cv::Vec3b>(cv::Point(x1, y1));
+            return pixel0 != pixel1;
+        };
+        // Check for x/horizontal symmetry.
+        for (int y = 0; y < mat.rows; y++)
+        {
+            int x0 = 0;
+            int x1 = mat.rows - 1;
+            do
+            {
+                if (pixels_differ(x0, y, x1, y)) { return false; }
+                x0++;
+                x1--;
+            }
+            while (x0 < x1);
+        }
+        // Check for y/vertical symmetry.
+        for (int x = 0; x < mat.rows; x++)
+        {
+            int y0 = 0;
+            int y1 = mat.rows - 1;
+            do
+            {
+                if (pixels_differ(x, y0, x, y1)) { return false; }
+                y0++;
+                y1--;
+            }
+            while (y0 < y1);
+        }
+        // Check for 90°/diagonal symmetry.
+        for (int p = 0; p < mat.rows; p++)
+        {
+            for (int q = 0; q < mat.rows; q++)
+            {
+                if (pixels_differ(p, q, q, p)) { return false; }
+            }
+        }
+        return true;
+    }
+
+    
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
