@@ -314,98 +314,98 @@
 //        if (wait) waitKey();
 //    }
 
-// Writes Texture to a file using cv::imwrite(). Generally used with JPEG
-// codec, but pathname's extension names the format to be used. Converts to
-// "24 bit" image (8 bit unsigned values for each of red, green and blue
-// channels) because most codecs do not support 3xfloat format.
-void Texture::writeToFile(int size,
-                          const std::string& pathname,
-                          Color bg_color,
-                          int margin,
-                          const std::string& file_type) const
-{
-    // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
-    cv::Mat opencv_image(size + margin * 2,
-                         size + margin * 2,
-                         CV_8UC3,
-                         cv::Scalar(255 * bg_color.b(),
-                                    255 * bg_color.g(),
-                                    255 * bg_color.r()));
-    // Ensure cached rendering of Texture is available.
-    rasterizeToImageCache(size, getDefaultRenderAsDisk());
-    // Define a new image, a "pointer" to portion of opencv_image inside margin.
-    cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
-    raster_->copyTo(render_target);
-    bool ok = cv::imwrite(pathname + file_type, opencv_image);
-    std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
-    std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
-    std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
-}
+//    // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
+//    // codec, but pathname's extension names the format to be used. Converts to
+//    // "24 bit" image (8 bit unsigned values for each of red, green and blue
+//    // channels) because most codecs do not support 3xfloat format.
+//    void Texture::writeToFile(int size,
+//                              const std::string& pathname,
+//                              Color bg_color,
+//                              int margin,
+//                              const std::string& file_type) const
+//    {
+//        // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
+//        cv::Mat opencv_image(size + margin * 2,
+//                             size + margin * 2,
+//                             CV_8UC3,
+//                             cv::Scalar(255 * bg_color.b(),
+//                                        255 * bg_color.g(),
+//                                        255 * bg_color.r()));
+//        // Ensure cached rendering of Texture is available.
+//        rasterizeToImageCache(size, getDefaultRenderAsDisk());
+//        // Define a new image, a "pointer" to portion of opencv_image inside margin.
+//        cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
+//        raster_->copyTo(render_target);
+//        bool ok = cv::imwrite(pathname + file_type, opencv_image);
+//        std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
+//        std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
+//        std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
+//    }
 
-// Combines display on screen and writing file, but primary benefit is that
-// this allows writing an arbitrarily nested expression of TexSyn
-// constructors, whose lifetime extends across both operations.
-void Texture::displayAndFile(const Texture& texture,
-                             std::string pathname,
-                             int size)
-{
-    texture.displayInWindow(size, false);
-    if (pathname != "") texture.writeToFile(size, pathname);
-}
+//    // Combines display on screen and writing file, but primary benefit is that
+//    // this allows writing an arbitrarily nested expression of TexSyn
+//    // constructors, whose lifetime extends across both operations.
+//    void Texture::displayAndFile(const Texture& texture,
+//                                 std::string pathname,
+//                                 int size)
+//    {
+//        texture.displayInWindow(size, false);
+//        if (pathname != "") texture.writeToFile(size, pathname);
+//    }
 
-void Texture::waitKey()
-{
-    cv::waitKey(0);
-}
+//    void Texture::waitKey()
+//    {
+//        cv::waitKey(0);
+//    }
+//
+//    void Texture::waitKey(int delay_in_milliseconds)
+//    {
+//        cv::waitKey(delay_in_milliseconds);
+//    }
 
-void Texture::waitKey(int delay_in_milliseconds)
-{
-    cv::waitKey(delay_in_milliseconds);
-}
+//    // close the window
+//    void Texture::closeAllWindows()
+//    {
+//        //cv::destroyWindow(name);
+//        //cvReleaseImage(&images[i]);
+//
+//        cv::destroyAllWindows();
+//        window_counter = 0;
+//        window_x = 0;
+//        window_y = 0;
+//    }
 
-// close the window
-void Texture::closeAllWindows()
-{
-    //cv::destroyWindow(name);
-    //cvReleaseImage(&images[i]);
-    
-    cv::destroyAllWindows();
-    window_counter = 0;
-    window_x = 0;
-    window_y = 0;
-}
-
-// Utilities for rasterizing a Texture to tiling of pixels, with versions
-// for a square and a disk of pixels. Each require a "size" (width of the
-// square or diameter of the disk) and a function to be applied at each
-// pixel. The function's parameters are i/j (column/row) indexes of the
-// pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
-void Texture::rasterizeSquare(int size, PixelFunction pixel_function)
-{
-    int half = size / 2;
-    for (int i = -half; i <= half; i++)
-    {
-        for (int j = -half; j <= half; j++)
-        {
-            pixel_function(i, j, Vec2(i / float(half), j / float(half)));
-        }
-    }
-}
-void Texture::rasterizeDisk(int size, PixelFunction pixel_function)
-{
-    int half = size / 2;
-    for (int i = -half; i <= half; i++)
-    {
-        for (int j = -half; j <= half; j++)
-        {
-            float radius = std::sqrt(sq(i) + sq(j));
-            if (radius <= half)
-            {
-                pixel_function(i, j, Vec2(i / float(half), j / float(half)));
-            }
-        }
-    }
-}
+//    // Utilities for rasterizing a Texture to tiling of pixels, with versions
+//    // for a square and a disk of pixels. Each require a "size" (width of the
+//    // square or diameter of the disk) and a function to be applied at each
+//    // pixel. The function's parameters are i/j (column/row) indexes of the
+//    // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
+//    void Texture::rasterizeSquare(int size, PixelFunction pixel_function)
+//    {
+//        int half = size / 2;
+//        for (int i = -half; i <= half; i++)
+//        {
+//            for (int j = -half; j <= half; j++)
+//            {
+//                pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+//            }
+//        }
+//    }
+//    void Texture::rasterizeDisk(int size, PixelFunction pixel_function)
+//    {
+//        int half = size / 2;
+//        for (int i = -half; i <= half; i++)
+//        {
+//            for (int j = -half; j <= half; j++)
+//            {
+//                float radius = std::sqrt(sq(i) + sq(j));
+//                if (radius <= half)
+//                {
+//                    pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+//                }
+//            }
+//        }
+//    }
 
 // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
 std::shared_ptr<cv::Mat> Texture::emptyCvMat() const

@@ -414,15 +414,49 @@ public:
     }
 
     
+//    // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
+//    // codec, but pathname's extension names the format to be used. Converts to
+//    // "24 bit" image (8 bit unsigned values for each of red, green and blue
+//    // channels) because most codecs do not support 3xfloat format.
+//    void writeToFile(int size,
+//                     const std::string& pathname,
+//                     Color bg_color = Color(0.5, 0.5, 0.5),
+//                     int margin = 0,
+//                     const std::string& file_type = ".png") const;
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
     // channels) because most codecs do not support 3xfloat format.
+//    void Texture::writeToFile(int size,
+//                              const std::string& pathname,
+//                              Color bg_color,
+//                              int margin,
+//                              const std::string& file_type) const
     void writeToFile(int size,
                      const std::string& pathname,
                      Color bg_color = Color(0.5, 0.5, 0.5),
                      int margin = 0,
-                     const std::string& file_type = ".png") const;
+                     const std::string& file_type = ".png") const
+    {
+        // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
+        cv::Mat opencv_image(size + margin * 2,
+                             size + margin * 2,
+                             CV_8UC3,
+                             cv::Scalar(255 * bg_color.b(),
+                                        255 * bg_color.g(),
+                                        255 * bg_color.r()));
+        // Ensure cached rendering of Texture is available.
+        rasterizeToImageCache(size, getDefaultRenderAsDisk());
+        // Define a new image, a "pointer" to portion of opencv_image inside margin.
+        cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
+        raster_->copyTo(render_target);
+        bool ok = cv::imwrite(pathname + file_type, opencv_image);
+        std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
+        std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
+        std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
+    }
+
+    
     // Reset statistics for debugging.
     void resetStatistics() const;
     // Collect statistics for debugging.
@@ -455,13 +489,47 @@ public:
         std::cout << "Texture invalid instance count = ";
         std::cout << invalid_instance_counter_ << std::endl;
     }
+//    // Utilities for rasterizing a Texture to tiling of pixels, with versions
+//    // for a square and a disk of pixels. Each require a "size" (width of the
+//    // square or diameter of the disk) and a function to be applied at each
+//    // pixel. The function's parameters are i/j (column/row) indexes of the
+//    // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
+//    static void rasterizeSquare(int size, PixelFunction pixel_function);
+//    static void rasterizeDisk(int size, PixelFunction pixel_function);
+    
     // Utilities for rasterizing a Texture to tiling of pixels, with versions
     // for a square and a disk of pixels. Each require a "size" (width of the
     // square or diameter of the disk) and a function to be applied at each
     // pixel. The function's parameters are i/j (column/row) indexes of the
     // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
-    static void rasterizeSquare(int size, PixelFunction pixel_function);
-    static void rasterizeDisk(int size, PixelFunction pixel_function);
+    static void rasterizeSquare(int size, PixelFunction pixel_function)
+    {
+        int half = size / 2;
+        for (int i = -half; i <= half; i++)
+        {
+            for (int j = -half; j <= half; j++)
+            {
+                pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+            }
+        }
+    }
+    static void rasterizeDisk(int size, PixelFunction pixel_function)
+    {
+        int half = size / 2;
+        for (int i = -half; i <= half; i++)
+        {
+            for (int j = -half; j <= half; j++)
+            {
+                float radius = std::sqrt(sq(i) + sq(j));
+                if (radius <= half)
+                {
+                    pixel_function(i, j, Vec2(i / float(half), j / float(half)));
+                }
+            }
+        }
+    }
+
+    
     // Combines display on screen and (if non-empty "pathname" provided) writing
     // to file. Displays at default resolution (typically 511x511) unless "size"
     // parameter is given. Combined to allow writing inline an arbitrarily
@@ -472,14 +540,49 @@ public:
         { displayAndFile(texture, ""); }
     static void displayAndFile(const Texture& texture, std::string pathname)
         { displayAndFile(texture, pathname, getDefaultRenderSize()); }
+    
+    
+//    static void displayAndFile(const Texture& texture,
+//                               std::string pathname,
+//                               int size);
     static void displayAndFile(const Texture& texture,
                                std::string pathname,
-                               int size);
-    static void waitKey();
-    static void waitKey(int delay_in_milliseconds);
-    // close the window
-    //static void closeWindow(const std::string name);
-    static void closeAllWindows();
+                               int size)
+    {
+        texture.displayInWindow(size, false);
+        if (pathname != "") texture.writeToFile(size, pathname);
+    }
+
+    
+//    static void waitKey();
+//    static void waitKey(int delay_in_milliseconds);
+    // Wait for "any key" to be pressed. Typically used after a call to e.g.
+    // displayAndFile(). Just a wrapper around the corresponding OpenCV utility.
+    // Allows an optional "delay_in_milliseconds" where zero means forever,
+    // otherwise returns after that delay regardless of key presses.
+    static void waitKey()
+    {
+//        cv::waitKey(0);
+        waitKey(0);
+    }
+    static void waitKey(int delay_in_milliseconds)
+    {
+        cv::waitKey(delay_in_milliseconds);
+    }
+
+//    // close the window
+//    //static void closeWindow(const std::string name);
+//    static void closeAllWindows();
+    
+    // Close all open OpenCV windows.
+    static void closeAllWindows()
+    {
+        cv::destroyAllWindows();
+        window_counter = 0;
+        window_x = 0;
+        window_y = 0;
+    }
+
 
     // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
     // is called ONLY from constructors providing backward compatibility. The
