@@ -599,12 +599,43 @@ public:
         { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)
         { diff(t0, t1, "", getDiffSize()); }
+
     // Display row of three textures, at given size, optionally saving to file.
+//    static void displayAndFile3(const Texture& t1,
+//                                const Texture& t2,
+//                                const Texture& t3,
+//                                std::string pathname,
+//                                int size);
+//
+//    // Special utility for Texture::diff() maybe refactor to be more general?
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
                                 std::string pathname,
-                                int size);
+                                int size)
+    {
+        // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
+        cv::Mat mat(size, size * 3, CV_8UC3);
+        // Function to handle each Texture.
+        auto subwindow = [&](const Texture& t, int x)
+        {
+            // Render Texture to its raster_ cv::Mat.
+            t.rasterizeToImageCache(size, getDefaultRenderAsDisk());
+            // Define a size*size portion of "mat" whose left edge is at "x".
+            cv::Mat submat = cv::Mat(mat, cv::Rect(x, 0, size, size));
+            // Copy into submat while conveting from rgb float to rgb uint8_t
+            t.raster_->copyTo(submat);
+        };
+        subwindow(t1, 0);
+        subwindow(t2, size);
+        subwindow(t3, size * 2);
+        // Write "mat" to file if non-empty "pathname" given.
+        std::string file_type = ".png";  // Maybe should be an optional parameter?
+        if (pathname != "") cv::imwrite(pathname + file_type, mat);
+        // Display "mat" in the TexSyn fashion.
+        windowPlacementTool(mat);
+    }
+
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
@@ -636,12 +667,134 @@ public:
     static bool tooExpensiveToNest() { return (expensive_to_nest_ >
                                                max_expensive_nest_); }
 
+//    // Experimental utility. Maybe to be deleted or moved?
+//    // Score a Texture on how much "high" frequency it has.
+//    // TODO temp? Similar in intent to wiggliness() in GP.h
+//    void fft_test();
+//    float highFrequencyScore();
+
+    // Experimental utility. Maybe to be deleted or moved?
     // Score a Texture on how much "high" frequency it has.
     // TODO temp? Similar in intent to wiggliness() in GP.h
-    void fft_test();
-    float highFrequencyScore();
+    void fft_test() // const
+    {
+        Texture::rasterizeToImageCache(201, false);
+        cv::Mat monochrome;
+        cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+        cv::imshow("monochrome", monochrome);
+        
+        // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+        cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+        std::vector<cv::Mat> planes = { monochrome, zeros };
+        cv::Mat complexI;
+        cv::merge(planes, complexI);
+        
+        // Applying DFT
+        cv::dft(complexI, complexI);
+        
+        // Reconstructing original image from the DFT coefficients
+        cv::Mat invDFT;
+        // Applying IDFT
+        cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
+        cv::imshow("DFT-iDFT reconstruction", invDFT);
+        
+        // Split the image into different channels
+        std::vector<cv::Mat> fftChannels(2);
+        split(complexI, fftChannels);
+        cv::imshow("DFT real part", fftChannels[0]);
+        cv::imshow("DFT imginary part", fftChannels[1]);
+        
+        cv::Mat& real = fftChannels[0];
+        int width = real.rows;
+        int y = width / 2;
+        
+        for (int x = width / 2; x < width; x++)
+        {
+            std::cout << real.at<float>(y, x) << " ";
+        }
+        std::cout << std::endl << std::endl;
+        for (int x = width / 2; x < width; x++)
+        {
+            std::cout << int(10 * real.at<float>(y, x)) << " ";
+        }
+        std::cout << std::endl << std::endl;
+        
+        debugPrint(highFrequencyScore());
+    }
+    float highFrequencyScore()
+    {
+        // TODO maybe cache the rendered image used here, or just case the score?
+        Timer t("    highFrequencyScore");
+        float score = cached_high_frequency_score_;
+        if (score == 0)
+        {
+            // Render this texture to monochrome (square image, size x size).
+            int size = 101;
+            cv::Mat temp = *raster_;  // Save raster_
+            Texture::rasterizeToImageCache(size, false);
+            cv::Mat monochrome;
+            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
+            // restore raster_
+            *raster_ = temp;
+            
+            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
+            cv::Mat complexI;
+            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
+            std::vector<cv::Mat> planes = { monochrome, zeros };
+            cv::merge(planes, complexI);
+            
+            // Applying DFT
+            cv::dft(complexI, complexI);
+            
+            // Split the image into different channels
+            std::vector<cv::Mat> fftChannels(2);
+            split(complexI, fftChannels);
+            
+            cv::Mat& real = fftChannels[0];
+            int width = real.rows;
+            float half_width = width * 0.5;
+            Vec2 center(half_width, half_width);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < width; y++)
+                {
+                    float length = (Vec2(x, y) - center).length();
+                    float weight = length / half_width;
+                    if (weight < 1)
+                    {
+                        float real_part = real.at<float>(y, x);
+                        score += std::abs(real_part * weight);
+                    }
+                }
+            }
+            cached_high_frequency_score_ = score;
+        }
+        return score;
+    }
+
+    
+//    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
+//    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
+
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
-    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
+    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs)
+    {
+        if (cached_random_color_samples_.empty())
+        {
+            int n = 10;
+            std::vector<Vec2> positions;
+            jittered_grid_NxN_in_square(n, 1.4, rs, positions);
+            for (auto& p : positions)
+            {
+                Color sample = getColor(p).clipToUnitRGB();
+                cached_random_color_samples_.push_back(sample);
+            }
+        }
+        return cached_random_color_samples_;
+    }
+
+    
+    
     // Print report on constructor vs. destructor count, eg at end of run.
     static void leakCheck()
     {
@@ -782,8 +935,16 @@ private:
     static inline const int validity_key_ = 1234567890;
     static inline int invalid_instance_counter_ = 0;
     int valid_top_ = validity_key_;
+
+//    // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
+//    std::shared_ptr<cv::Mat> emptyCvMat() const;
+
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
-    std::shared_ptr<cv::Mat> emptyCvMat() const;
+    std::shared_ptr<cv::Mat> emptyCvMat() const
+    {
+        return std::make_shared<cv::Mat>();
+    }
+
     std::shared_ptr<cv::Mat> raster_;
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     std::vector<Color> cached_random_color_samples_;
