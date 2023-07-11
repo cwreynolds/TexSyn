@@ -556,29 +556,29 @@
 //        return cached_random_color_samples_;
 //    }
 
-// Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
-int Texture::default_opencv_mat_type_ = CV_8UC3;
+//    // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
+//    int Texture::default_opencv_mat_type_ = CV_8UC3;
 
-// Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
-cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
-                              const Vec2& size_in_pixels,
-                              const cv::Mat cv_mat)
-{
-    {
-        // Try for slightly more readable error messages than OpenCV's.
-        Vec2 ul = upper_left_position;
-        Vec2 lr = upper_left_position + size_in_pixels;
-        assert("rect extends off left edge" && (ul.x() >= 0));
-        assert("rect extends off top edge" && (ul.y() >= 0));
-        assert("rect extends off right edge" && (lr.x() <= cv_mat.cols));
-        assert("rect extends off bottom edge" && (lr.y() <= cv_mat.rows));
-    }
-    return cv::Mat(cv_mat,
-                   cv::Rect(upper_left_position.x(),
-                            upper_left_position.y(),
-                            size_in_pixels.x(),
-                            size_in_pixels.y()));
-}
+//    // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
+//    cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
+//                                  const Vec2& size_in_pixels,
+//                                  const cv::Mat cv_mat)
+//    {
+//        {
+//            // Try for slightly more readable error messages than OpenCV's.
+//            Vec2 ul = upper_left_position;
+//            Vec2 lr = upper_left_position + size_in_pixels;
+//            assert("rect extends off left edge" && (ul.x() >= 0));
+//            assert("rect extends off top edge" && (ul.y() >= 0));
+//            assert("rect extends off right edge" && (lr.x() <= cv_mat.cols));
+//            assert("rect extends off bottom edge" && (lr.y() <= cv_mat.rows));
+//        }
+//        return cv::Mat(cv_mat,
+//                       cv::Rect(upper_left_position.x(),
+//                                upper_left_position.y(),
+//                                size_in_pixels.x(),
+//                                size_in_pixels.y()));
+//    }
 
 // Perform occasional checks for user input (such as clicks, key presses,
 // command keys, such as to hide or unhide a GUI window). Does this via OpenCV's

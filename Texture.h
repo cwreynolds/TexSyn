@@ -254,6 +254,7 @@ public:
         int half = size / 2;
         RasterizeHelper rh(j, size, disk);
         // Create temp cv::Mat to accumulate pixels for this row.
+        assert(default_opencv_mat_type_ == CV_8UC3);
         cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
         cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
         for (int i = rh.first_pixel_index; i <= rh.last_pixel_index; i++)
@@ -438,10 +439,11 @@ public:
                      int margin = 0,
                      const std::string& file_type = ".png") const
     {
-        // Make OpenCV Mat instance of type CV_8UC3 (3 by unsigned 8 bit primaries).
+        // Make OpenCV Mat of type CV_8UC3 (3 by unsigned 8 bit primaries).
         cv::Mat opencv_image(size + margin * 2,
                              size + margin * 2,
-                             CV_8UC3,
+//                             CV_8UC3,
+                             default_opencv_mat_type_,  // normally CV_8UC3
                              cv::Scalar(255 * bg_color.b(),
                                         255 * bg_color.g(),
                                         255 * bg_color.r()));
@@ -615,7 +617,8 @@ public:
                                 int size)
     {
         // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
-        cv::Mat mat(size, size * 3, CV_8UC3);
+//        cv::Mat mat(size, size * 3, CV_8UC3);
+        cv::Mat mat(size, size * 3, default_opencv_mat_type_);//normally CV_8UC3
         // Function to handle each Texture.
         auto subwindow = [&](const Texture& t, int x)
         {
@@ -819,10 +822,36 @@ public:
         { default_opencv_mat_type_ = opencv_mat_type; }
     // TODO 20201204 experiment-- expose a Texture's cv::mat
     const cv::Mat& getCvMat() const { return *raster_; }
+
+//    // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
+//    static cv::Mat getCvMatRect(const Vec2& upper_left_position,
+//                                const Vec2& size_in_pixels,
+//                                const cv::Mat cv_mat);
+    
     // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
+//    cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
+//                                  const Vec2& size_in_pixels,
+//                                  const cv::Mat cv_mat)
     static cv::Mat getCvMatRect(const Vec2& upper_left_position,
                                 const Vec2& size_in_pixels,
-                                const cv::Mat cv_mat);
+                                const cv::Mat cv_mat)
+    {
+        {
+            // Try for slightly more readable error messages than OpenCV's.
+            Vec2 ul = upper_left_position;
+            Vec2 lr = upper_left_position + size_in_pixels;
+            assert("rect extends off left edge" && (ul.x() >= 0));
+            assert("rect extends off top edge" && (ul.y() >= 0));
+            assert("rect extends off right edge" && (lr.x() <= cv_mat.cols));
+            assert("rect extends off bottom edge" && (lr.y() <= cv_mat.rows));
+        }
+        return cv::Mat(cv_mat,
+                       cv::Rect(upper_left_position.x(),
+                                upper_left_position.y(),
+                                size_in_pixels.x(),
+                                size_in_pixels.y()));
+    }
+
     static void checkForUserInput();
     static inline int last_key_read_;
     static int getLastKeyPushed() { return last_key_read_; }
@@ -955,8 +984,12 @@ private:
     static inline bool render_as_disk_ = true;
     // Global for one-thread-per-row rendering.
     static inline bool render_thread_per_row_ = true;
+    
+//    // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
+//    static int default_opencv_mat_type_;
     // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
-    static int default_opencv_mat_type_;
+    inline static int default_opencv_mat_type_ = CV_8UC3;
+
     // Max time, in seconds allowed for texture render, return black if exceeded.
     static inline float render_max_time_ = std::numeric_limits<float>::infinity();
     // TODO 20220522 this render start time SHOULD be per-instance, but stupidly
