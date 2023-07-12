@@ -852,7 +852,44 @@ public:
                                 size_in_pixels.y()));
     }
 
-    static void checkForUserInput();
+//    static void checkForUserInput();
+    
+    // Perform occasional checks for user input (such as clicks, key presses,
+    // command keys, such as to hide or unhide a GUI window). Does this via OpenCV's
+    // waitKey() but takes care not to do too frequently. But if it does not call
+    // cv::waitKey() it will at least do a yield().
+    //
+    // TODO
+    //     maybe move this to Utilities.h ?
+    //     perhaps have global hook which Texture can specialize for OpenCV ?
+//    TimePoint time_of_last_user_input_check = TimeClock::now();
+    static inline TimePoint time_of_last_user_input_check = TimeClock::now();
+//    std::mutex check_user_input_mutex;
+    static inline std::mutex check_user_input_mutex;
+//    void Texture::checkForUserInput()
+    static void checkForUserInput()
+    {
+        const std::lock_guard<std::mutex> lock(check_user_input_mutex);
+        using namespace std::chrono_literals;
+        TimeDuration since_last = TimeClock::now() - time_of_last_user_input_check;
+        TimeDuration target_delay(250ms);
+        if (since_last > target_delay)
+        {
+            // Pause for 1/1000 second (1 millisecond) return key pressed.
+            int key = cv::waitKey(1);
+            if (key > 0) { setLastKeyPushed(key); }
+            if (key > 0) { debugPrint(key); }  // TODO TEMP
+            time_of_last_user_input_check = TimeClock::now();
+        }
+        else
+        {
+            yield();
+        }
+    }
+
+    
+    
+    
     static inline int last_key_read_;
     static int getLastKeyPushed() { return last_key_read_; }
     static void setLastKeyPushed(int key) { last_key_read_ = key; }
@@ -937,12 +974,63 @@ public:
     // pixels by random sampling, as in eg SimpleImageMatch::imageUniformity())
     static float matUniformity(const cv::Mat& cv_mat)
         { return matUniformity(cv_mat, 0); }
-    static float matUniformity(const cv::Mat& cv_mat, int samples);
-    
+//    static float matUniformity(const cv::Mat& cv_mat, int samples);
+    static float matUniformity(const cv::Mat& cv_mat, int samples)
+    {
+        // TODO temp for debugging:
+        assert(samples == 0);
+        
+        float r_max = 0;
+        float g_max = 0;
+        float b_max = 0;
+        float r_min = 1;
+        float g_min = 1;
+        float b_min = 1;
+        for (int y = 0; y < cv_mat.rows; y++)
+        {
+            for (int x = 0; x < cv_mat.cols; x++)
+            {
+                cv::Vec3b p = cv_mat.at<cv::Vec3b>(cv::Point(x, y));
+                float r = p[2] / 255.0f;
+                float g = p[1] / 255.0f;
+                float b = p[0] / 255.0f;
+                r_max = std::max(r, r_max);
+                r_min = std::min(r, r_min);
+                g_max = std::max(g, g_max);
+                g_min = std::min(g, g_min);
+                b_max = std::max(b, b_max);
+                b_min = std::min(b, b_min);
+            }
+        }
+        return 1 - std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
+    };
+
+//    // Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
+//    static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos);
+//    // Static utility function to write a pixel to a cv::Mat from a Color.
+//    static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
+
     // Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
-    static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos);
+    // Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
+//    Color Texture::matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos)
+    static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos)
+    {
+        cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
+        cv::Vec3b cv_vec3b = cv_mat.at<cv::Vec3b>(cv_point);
+        Color color(cv_vec3b[2], cv_vec3b[1], cv_vec3b[0]);
+        return color / 255;
+    }
+    
     // Static utility function to write a pixel to a cv::Mat from a Color.
-    static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
+    // Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
+//    void Texture::matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color)
+    static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color)
+    {
+        cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
+        color *= 255;
+        cv::Vec3b cv_vec3b(color.b(), color.g(), color.r());
+        cv_mat.at<cv::Vec3b>(cv_point) = cv_vec3b;
+    }
 
     // Optional texture render timeout. Defaults to infinite.
     // Get/set max time, in seconds allowed for any texture render.
