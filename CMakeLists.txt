@@ -1,5 +1,6 @@
 ################################################################################
 #
+# CMakeLists.txt
 # CMake for TexSyn
 #
 ################################################################################
@@ -21,8 +22,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Add source files to the executable
-add_executable(texsyn main.cpp Texture.cpp UnitTests.cpp)
+# Add main.cpp to the executable
+add_executable(texsyn main.cpp)
 
 # Link executable with libraries.
 target_link_libraries(texsyn ${OpenCV_LIBS})
