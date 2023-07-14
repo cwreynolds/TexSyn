@@ -5,6 +5,39 @@
 //  Created by Craig Reynolds on 12/15/19.
 //  Copyright © 2019 Craig Reynolds. All rights reserved.
 //
+//  A procedural Texture instance is something like an image which is infinite
+//  in extent and resolution. It is defined by the AbstractTexture::getColor()
+//  virtual function. All Operators overload this method. Its argument is a Vec2
+//  whose x and y components range over the entire floating point range. Its
+//  output is a similarly unbounded Color. A texture can be rendered by sampling
+//  this color over some portion of the texture plane.
+//
+//  Texture class is large and probably too much trouble to understand to be
+//  worth the effort unless you have a pressing need. A few key bits of API are
+//  described in these comments. The intent of Texture is probably better
+//  understood through the lens of a texture Operator (e.g. Add in Operator.h).
+//  Texture provides the shared infrastructure, plumbing, and grunt work, that
+//  allows an Operator definition to be relatively compact.
+//
+//  Texture class largely hides the interface to OpenCV, which does the heavy
+//  lifting for cross-platform image manipulation, such as storing, displaying,
+//  and writing images to file. It also contains various tools for "rendering"
+//  a procedural texture to more traditional image format with stored pixels,
+//  for which it provides a cache. It supports antialiased sampling, clipping to
+//  the unit RGB color space, gamma correction, matting rendered (square or
+//  round) images over others, tools for comparing textures (diff), support for
+//  multi-threaded rendering, prevent locking up the machine during long runs of
+//  multiple renders, and checking for user input (key presses, mouse clicks)
+//  during long runs.
+//
+//  Selected API:
+//      getColor()        maps a 2d location to a color, both defined over the
+//                        full float range.
+//      displayAndFile()  display a Texture in a window, rasterizing/rendering
+//                        if needed, and caching the result. Optionally writes
+//                        the image to a file.
+//      diff()            compare two textures, often to check exact equivalence
+//                        between, say, an old and new implementation.
 
 #pragma once
 #include "Vec2.h"
@@ -13,7 +46,6 @@
 #include "RandomSequence.h"
 #include <vector>
 #include <limits>
-//namespace cv {class Mat;}
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
@@ -459,10 +491,13 @@ public:
     }
 
     
-    // Reset statistics for debugging.
-    void resetStatistics() const;
-    // Collect statistics for debugging.
-    void collectStatistics(Vec2 position, Color color) const;
+    // TODO 20230714 -- hmm these functions do not seem to have implementations
+    // anywhere in TexSyn. I commented them out and they should eventually be
+    // removed unless I can figure out if they have any purpose.
+    //    // Reset statistics for debugging.
+    //    void resetStatistics() const;
+    //    // Collect statistics for debugging.
+    //    void collectStatistics(Vec2 position, Color color) const;
     
     // Added to debug memory leak, but kept as an alarm for potential problems.
     // Used to test if a given Texture (eg a pointer's target) is still valid.
@@ -585,22 +620,25 @@ public:
         window_y = 0;
     }
 
-
     // BACKWARD_COMPATIBILITY reference to new "disposable" Uniform object. This
     // is called ONLY from constructors providing backward compatibility. The
     // tiny Uniform texture object is allowed to "memory leak" for ease of use.
     static Texture& disposableUniform(Color color);
-    // Special utility for Texture::diff() maybe refactor to be more general?
+    
     // Compare textures, print stats, optional file, display inputs and AbsDiff.
-    static void diff(const Texture& t0, const Texture& t1,
-                     std::string pathname, int size, bool binary);
-    static void diff(const Texture& t0, const Texture& t1,
-                     std::string pathname, int size)
-        { diff(t0, t1, pathname, getDiffSize(), false); }
-    static void diff(const Texture& t0, const Texture& t1, std::string pathname)
-        { diff(t0, t1, pathname, getDiffSize()); }
     static void diff(const Texture& t0, const Texture& t1)
         { diff(t0, t1, "", getDiffSize()); }
+    static void diff(const Texture& t0, const Texture& t1, std::string pathname)
+        { diff(t0, t1, pathname, getDiffSize()); }
+    static void diff(const Texture& t0,
+                     const Texture& t1,
+                     std::string pathname,
+                     int size)
+        { diff(t0, t1, pathname, getDiffSize(), false); }
+    // Special utility for Texture::diff() implementation defined in Operators.h
+    // since it uses functionality from there.
+    static void diff(const Texture& t0, const Texture& t1,
+                     std::string pathname, int size, bool binary);
 
     // Display row of three textures, at given size, optionally saving to file.
 //    static void displayAndFile3(const Texture& t1,
