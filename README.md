@@ -13,6 +13,14 @@ The research which **TexSyn** was built to support has been completed. It is des
 
 In that research, **TexSyn** was used with **LazyPredator** to evolve artificial camouflage patterns which were “cryptic” against background images. The fitness metric that drives camouflage evolution is provided by survivial despite being hunted by a coevolving population of predators as maintained by a system called [PredatorEye](https://github.com/cwreynolds/PredatorEye).
 
-On July 25, 2020 this was renamed to be “TexSyn version 2.0”. Changes to basic TexSyn have slowed to a trickle. The `EvoCamoGame` classes are still subject of active development, but really should be broken off into their own project/repository. This is a re-implementation and update to “TexSyn version 1”: the TextureSynthesisTest library as described in [Texture Synthesis Diary](http://www.red3d.com/cwr/texsyn/diary.html) and used as the basis of the 2011 paper [Interactive Evolution of Camouflage](https://www.red3d.com/cwr/iec/).
+### Version history
 
-(**Note** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.)
+| Version | Date | Description |
+| --- | --- | --- |
+| 1.0 | 2009 | Preliminary version: [Texture Synthesis Diary](http://www.red3d.com/cwr/texsyn/diary.html). 2011 paper: [Interactive Evolution of Camouflage](https://www.red3d.com/cwr/iec/) |
+| 2.0 | July 2022 | from January 2020 to July 2022: reimplement and expand v1. |
+| 2.1 | July 2023 | Header only version. |
+
+**Note:** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.
+
+**Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimprementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generation of image stylizations. 
