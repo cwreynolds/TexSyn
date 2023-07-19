@@ -16,9 +16,9 @@ In that research, **TexSyn** was used with **LazyPredator** to evolve artificial
 ### Version history
 
 | Version | Date | Description |
-| --- | --- | --- |
-| 1.0 | 2009 | Preliminary version: [Texture Synthesis Diary](http://www.red3d.com/cwr/texsyn/diary.html). 2011 paper: [Interactive Evolution of Camouflage](https://www.red3d.com/cwr/iec/) |
-| 2.0 | July 2022 | from January 2020 to July 2022: reimplement and expand v1. |
+| :---: | :---: | :--- |
+| 1.0 | 2009 | Preliminary version. Blog: [Texture Synthesis Diary](http://www.red3d.com/cwr/texsyn/diary.html). 2011 paper: [Interactive Evolution of Camouflage](https://www.red3d.com/cwr/iec/) |
+| 2.0 | July 2022 | From January 2020 to July 2022: reimplement and expand version 1.0. Blog: [devo blog](https://cwreynolds.github.io/TexSyn/). 2023 paper preprint: [Coevolution of Camouflage](https://arxiv.org/abs/2304.11793)|
 | 2.1 | July 2023 | Header only version. |
 
 **Note:** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.

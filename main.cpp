@@ -14,7 +14,7 @@ int main(int argc, const char * argv[])
 {
     std::cout << texsyn_version_string << std::endl;
     UnitTests::allTestsOK();
-    std::cout << "June 23, 2023" << std::endl;
+    std::cout << "July 20, 2023" << std::endl;
     {
         // Draw a few test cases and UnitTests::instantiateAllTextureTypes().
         Timer t("Tests");
