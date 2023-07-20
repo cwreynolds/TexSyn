@@ -51,11 +51,6 @@ public:
     void setSeed(uint32_t seed) { state_ = seed; }
     // Get state.
     uint32_t getSeed() { return state_; }
-
-    // TODO these duplicate the function of the same name in global namespace.
-    // Maybe those should be replaced by defining a global RandomSequence which
-    // must be specifically written in source code. This may help avoid the
-    // "attractive nuisance" of random utilities which are non-repeatable.
     
     // Generate a random point inside a unit diameter disk centered on origin.
     Vec2 randomPointInUnitDiameterCircle()

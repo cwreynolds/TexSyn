@@ -63,19 +63,6 @@ inline bool withinEpsilon(float a, float b, float epsilon)
 // Square a float
 inline float sq(float f) { return f * f; }
 
-// Returns a float randomly distributed between 0 and 1
-inline float frandom01()
-{
-    return (((float) rand()) / ((float) RAND_MAX));
-}
-
-// Returns a float randomly distributed between lowerBound and upperBound
-//
-inline float frandom2(float lowerBound, float upperBound)
-{
-    return lowerBound + (frandom01 () * (upperBound - lowerBound));
-}
-
 // Generic interpolation
 template<typename F,typename T>
 T interpolate(const F& alpha, const T& x0, const T& x1)
