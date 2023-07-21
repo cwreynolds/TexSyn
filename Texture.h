@@ -456,25 +456,68 @@ public:
 //                     Color bg_color = Color(0.5, 0.5, 0.5),
 //                     int margin = 0,
 //                     const std::string& file_type = ".png") const;
+    
+//        // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
+//        // codec, but pathname's extension names the format to be used. Converts to
+//        // "24 bit" image (8 bit unsigned values for each of red, green and blue
+//        // channels) because most codecs do not support 3xfloat format.
+//    //    void Texture::writeToFile(int size,
+//    //                              const std::string& pathname,
+//    //                              Color bg_color,
+//    //                              int margin,
+//    //                              const std::string& file_type) const
+//        void writeToFile(int size,
+//                         const std::string& pathname,
+//                         Color bg_color = Color(0.5, 0.5, 0.5),
+//                         int margin = 0,
+//                         const std::string& file_type = ".png") const
+//        {
+//            // Make OpenCV Mat of type CV_8UC3 (3 by unsigned 8 bit primaries).
+//            cv::Mat opencv_image(size + margin * 2,
+//                                 size + margin * 2,
+//    //                             CV_8UC3,
+//                                 default_opencv_mat_type_,  // normally CV_8UC3
+//                                 cv::Scalar(255 * bg_color.b(),
+//                                            255 * bg_color.g(),
+//                                            255 * bg_color.r()));
+//            // Ensure cached rendering of Texture is available.
+//            rasterizeToImageCache(size, getDefaultRenderAsDisk());
+//            // Define a new image, a "pointer" to portion of opencv_image inside margin.
+//            cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
+//            raster_->copyTo(render_target);
+//            bool ok = cv::imwrite(pathname + file_type, opencv_image);
+//            std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
+//            std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
+//            std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
+//        }
+
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
     // channels) because most codecs do not support 3xfloat format.
-//    void Texture::writeToFile(int size,
-//                              const std::string& pathname,
-//                              Color bg_color,
-//                              int margin,
-//                              const std::string& file_type) const
+    void writeToFile(int size, const std::string& pathname) const
+    {
+//        writeToFile(size,
+//                    pathname,
+//                    Color(0.5, 0.5, 0.5),
+//                    0,
+//                    ".png");
+        writeToFile(size, pathname, Color(0.5, 0.5, 0.5), 0, ".png");
+    }
+//    void writeToFile(int size,
+//                     const std::string& pathname,
+//                     Color bg_color = Color(0.5, 0.5, 0.5),
+//                     int margin = 0,
+//                     const std::string& file_type = ".png") const
     void writeToFile(int size,
                      const std::string& pathname,
-                     Color bg_color = Color(0.5, 0.5, 0.5),
-                     int margin = 0,
-                     const std::string& file_type = ".png") const
+                     Color bg_color,
+                     int margin,
+                     const std::string& file_type) const
     {
         // Make OpenCV Mat of type CV_8UC3 (3 by unsigned 8 bit primaries).
         cv::Mat opencv_image(size + margin * 2,
                              size + margin * 2,
-//                             CV_8UC3,
                              default_opencv_mat_type_,  // normally CV_8UC3
                              cv::Scalar(255 * bg_color.b(),
                                         255 * bg_color.g(),

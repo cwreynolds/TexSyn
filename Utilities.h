@@ -100,6 +100,7 @@ inline float clip01 (const float x)
 // Remap a value specified relative to a pair of bounding values
 // to the corresponding value relative to another pair of bounds.
 // Inspired by (dyna:remap-interval y y0 y1 z0 z1) circa 1984.
+// TODO 20230720 just noticed that this assumes but does not assert in0 < in1
 inline float remapInterval(float x,
                            float in0, float in1,
                            float out0, float out1)
@@ -116,6 +117,7 @@ inline float remapIntervalClip(float x,
                                float out0, float out1)
 {
     return clip(remapInterval(x, in0, in1, out0, out1), out0, out1);
+//    return remapInterval(clip01(x), in0, in1, out0, out1);
 }
 
 // Maps from 0 to 1 into a sinusoid ramp ("slow in, slow out") from 0 to 1.
