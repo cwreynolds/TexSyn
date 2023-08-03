@@ -1,9 +1,17 @@
 # TexSyn
 ## Library for evolutionary texture synthesis.
 
-**TexSyn** is a library for procedural texture synthesis. It is primarily intended for use by a _genetic programming_ (“GP”) system, a type of _genetic algorithm_. The GP system performs _simulated evolution_ on a _population_ of programs, according to a _fitness function_ (aka _fitness metric_, _utility function_, or _loss function_.) For a GP texture synthesis application, the programs are compositions of functions from this **TexSyn** library. When executed they describe a _color texture_—which is to say—an _image_.
+**TexSyn** is a library for procedural texture synthesis. It is primarily intended for use by a _genetic programming_ (“GP”) system, a type of _genetic algorithm_. The GP system performs _simulated evolution_ on a _population_ of programs, according to a _fitness function_ (aka _fitness metric_, _utility function_, or _loss function_.) For a GP texture synthesis application, the programs are compositions of functions from this **TexSyn** library. When executed they describe a _color texture_ — which is to say — an _image_. As an example, this code:
+```
+    Noise(0.2, Vec2(1, 2),
+          Furbulence(0.1, Vec2(3, -2), Uniform(1, 1, 0), Uniform(1, 0, 0)),
+          Brownian(0.1, Vec2(-1, 5), Uniform(0, 0, 1), Uniform(0, 1, 1)));
+```
+produces a `Texture` object (two noise textures of two uniform colors each, modulated by a third noise texture) which can be rendered as in this image:
 
-For more information and many sample textures, see **TexSyn**'s [devo blog](https://cwreynolds.github.io/TexSyn/).
+![rendered texture](https://cwreynolds.github.io/TexSyn/images/20200524_less_trivial.png)
+
+For more information, including other operators, and many sample textures, see **TexSyn**'s [devo blog](https://cwreynolds.github.io/TexSyn/).
 
 **TexSyn** is written in c++ (gnu++17) and structured as a “header only” library (as of version 2.1). All that is required to use it is to clone this git repository (or just copy the source files) and `#include "TexSyn.h"`. In addition there is an optional `main.cpp` which can be built to verify that the library is functioning as expected: it runs a unit test suite and displays some sample synthesized textures. You can also run these tests from your own code, e.g. `UnitTests::allTestsOK()`. Building the `main.cpp` test app can be done with with CMake (`CMakeLists.txt`) or macOS Xcode (`TexSyn.xcodeproj`).
 
