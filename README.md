@@ -21,6 +21,10 @@ The research which **TexSyn** was built to support has been completed. It is des
 
 In that research, **TexSyn** was used with **LazyPredator** to evolve artificial camouflage patterns which were “cryptic” against background images. The fitness metric that drives camouflage evolution is provided by survivial despite being hunted by a coevolving population of predators as maintained by a system called [PredatorEye](https://github.com/cwreynolds/PredatorEye).
 
+The sequence of images below show disk-shaped prey (three in each image) whose camouflage improves over evolutionary time, in response to predation, to better blend in with the background (photos oak leaf litter in this run). See the [paper](https://arxiv.org/abs/2304.11793) for details.
+
+![Camouflage improvement over evolutionary time](https://cwreynolds.github.io/TexSyn/images/20230804_coc_ri_small.jpg)
+
 ### Version history
 
 | Version | Date | Description |
