@@ -69,16 +69,6 @@ public:
 class Texture : public AbstractTexture
 {
 public:
-//        // Default constructor.
-//        Texture() : raster_(emptyCvMat()) { constructor_count_++; }
-//    //    virtual ~Texture();
-//        ~Texture()
-//        {
-//            assert("already invalid at top of ~Texture" && valid());
-//            markAsInvalid();
-//            destructor_count_++;
-//        }
-    
     // Default constructor and virtual destructor.
     Texture() : raster_(emptyCvMat()) { constructor_validity_util(); }
     ~Texture() { destructor_validity_util(); }
@@ -88,16 +78,9 @@ public:
     // Get color at position, clipping to unit RGB color cube.
     Color getColorClipped(Vec2 p) const { return getColor(p).clipToUnitRGB(); }
 
-//    // Get color at position, clipping to unit RGB color cube, and anti-aliased.
-//    Color getColorClippedAntialiased(Vec2 position, float size) const;
-
     // Get color at position, clipping to unit RGB color cube, and anti-aliased.
     Color getColorClippedAntialiased(Vec2 position, float size) const
     {
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-        // TODO experimental 20220123
-        position /= secret_render_scale_factor_;
-        //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
         // Read TexSyn Color from Texture at (i, j).
         Color color(0, 0, 0);
         resetExpensiveToNest();
@@ -119,9 +102,6 @@ public:
         return color;
     }
 
-//    // Utility for getColor(), special-cased for when alpha is 0 or 1.
-//    Color interpolatePointOnTextures(float alpha, Vec2 position0, Vec2 position1,
-//                                     const Texture& t0, const Texture& t1) const;
     // Utility for getColor(), special-cased for when alpha is 0 or 1.
     Color interpolatePointOnTextures(float alpha,
                                      Vec2 position0,
@@ -141,9 +121,6 @@ public:
                              t1.getColor(position1))));
     }
 
-//    // Rasterize this texture into size² OpenCV image, display in pop-up window.
-//    void displayInWindow(int size = getDefaultRenderSize(),
-//                         bool wait = true) const;
     // Rasterize this texture into size² OpenCV image, display in pop-up window.
     void displayInWindow(int size, bool wait) const
     {
@@ -152,16 +129,7 @@ public:
         if (wait) waitKey();  // Wait for a keystroke in the window.
     }
 
-    
-//    // Display a collection of Textures, each in a window, then wait for a char.
-//    static void displayInWindow(std::vector<const Texture*> textures,
-//                                int size = getDefaultRenderSize(),
-//                                bool wait = true);
-
     // Display a collection of Textures, each in a window, then wait for a char.
-//    void Texture::displayInWindow(std::vector<const Texture*> textures,
-//                                  int size,
-//                                  bool wait)
     static void displayInWindow(std::vector<const Texture*> textures,
                                 int size = getDefaultRenderSize(),
                                 bool wait = true)
@@ -171,8 +139,6 @@ public:
         if (wait) waitKey();
     }
 
-//    // Display cv::Mat in pop-up window. Stack diagonally from upper left.
-//    static void windowPlacementTool(cv::Mat& mat);
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
     static void windowPlacementTool(cv::Mat& mat)
     {
@@ -192,9 +158,6 @@ public:
     static inline int window_x = 0;
     static inline int window_y = 0;
     
-//    // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
-//    // draw a round image, otherwise a square. Run parallel threads for speed.
-//    void rasterizeToImageCache(int size, bool disk) const;
     // Rasterize this texture into a size² OpenCV image. Arg "disk" true means
     // draw a round image, otherwise a square. Run parallel threads for speed.
     void rasterizeToImageCache(int size, bool disk) const
@@ -264,14 +227,6 @@ public:
         }
     }
 
-
-//    // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
-//    // to run in its own thread, uses mutex to synchonize access to the image.
-//    void rasterizeRowOfDisk(int j, int size, bool disk,
-//                            cv::Mat& opencv_image,
-//                            int& row_counter,
-//                            std::mutex& ocv_image_mutex) const;
-
     // Rasterize the j-th row of this texture into a size² OpenCV image. Expects
     // to run in its own thread, uses mutex to synchonize access to the image.
     //void Texture::rasterizeRowOfDisk(int j, int size, bool disk,
@@ -319,16 +274,6 @@ public:
         row_counter++;
     }
 
-//    // Rasterizes (renders) a horizontal "stripe" -- a range of vertically
-//    // adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
-//    void rasterizeStripeOfDisk(int j,
-//                               int n_rows,
-//                               int size,
-//                               bool disk,
-//                               cv::Mat& opencv_image,
-//                               int& row_counter,
-//                               std::mutex& ocv_image_mutex) const;
-
     // Rasterizes (renders) a horizontal "stripe" -- a range of vertically
     // adjacent pixel rows. Calls rasterizeRowOfDisk() to render each row.
     void rasterizeStripeOfDisk(int j,            // starting row index
@@ -352,10 +297,6 @@ public:
     // On M1 seems to provide almost no benefit. Collecting data to diagnose.
     static inline int rows_per_render_thread = 1;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-//    // Copies disk-shaped portion of image cache onto given background cv::Mat.
-//    // Assumes "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
-//    void matteImageCacheDiskOverBG(int size, cv::Mat& bg);
 
     // Copies disk-shaped portion of image cache onto given background cv::Mat.
     // Normally "bg" is a CV "ROI", a "submat" of a presumably larger cv::Mat.
@@ -366,9 +307,6 @@ public:
         // Matte cached disk image over bg.
         matteImageCacheDiskOverBG(*raster_, bg);
     }
-
-//    // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
-//    static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg);
 
     // Copies disk-shaped portion of one cv::Mat onto a background cv::Mat.
     static void matteImageCacheDiskOverBG(const cv::Mat& disk, cv::Mat& bg)
@@ -391,11 +329,6 @@ public:
         }
     }
 
-//    // TODO 20211112: using for debugging, make part of UnitTest?
-//    // Verify that given mat is: square and symmetric (vertically, horizontally,
-//    // and diagonally (90° rotation))
-//    static bool isDiskSymmetric(const cv::Mat& mat);
-    
     // TODO 20211112: using for debugging, make part of UnitTest?
     // Verify that given mat is: square and symmetric (vertically, horizontally,
     // and diagonally (90° rotation)). Note: this function has multiple return
@@ -446,69 +379,14 @@ public:
         return true;
     }
 
-    
-//    // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
-//    // codec, but pathname's extension names the format to be used. Converts to
-//    // "24 bit" image (8 bit unsigned values for each of red, green and blue
-//    // channels) because most codecs do not support 3xfloat format.
-//    void writeToFile(int size,
-//                     const std::string& pathname,
-//                     Color bg_color = Color(0.5, 0.5, 0.5),
-//                     int margin = 0,
-//                     const std::string& file_type = ".png") const;
-    
-//        // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
-//        // codec, but pathname's extension names the format to be used. Converts to
-//        // "24 bit" image (8 bit unsigned values for each of red, green and blue
-//        // channels) because most codecs do not support 3xfloat format.
-//    //    void Texture::writeToFile(int size,
-//    //                              const std::string& pathname,
-//    //                              Color bg_color,
-//    //                              int margin,
-//    //                              const std::string& file_type) const
-//        void writeToFile(int size,
-//                         const std::string& pathname,
-//                         Color bg_color = Color(0.5, 0.5, 0.5),
-//                         int margin = 0,
-//                         const std::string& file_type = ".png") const
-//        {
-//            // Make OpenCV Mat of type CV_8UC3 (3 by unsigned 8 bit primaries).
-//            cv::Mat opencv_image(size + margin * 2,
-//                                 size + margin * 2,
-//    //                             CV_8UC3,
-//                                 default_opencv_mat_type_,  // normally CV_8UC3
-//                                 cv::Scalar(255 * bg_color.b(),
-//                                            255 * bg_color.g(),
-//                                            255 * bg_color.r()));
-//            // Ensure cached rendering of Texture is available.
-//            rasterizeToImageCache(size, getDefaultRenderAsDisk());
-//            // Define a new image, a "pointer" to portion of opencv_image inside margin.
-//            cv::Mat render_target(opencv_image, cv::Rect(margin, margin, size, size));
-//            raster_->copyTo(render_target);
-//            bool ok = cv::imwrite(pathname + file_type, opencv_image);
-//            std::cout << (ok ? "OK " : "bad") << " write Texture: size=" << size;
-//            std::cout << ", margin=" << margin << ", bg_color=" << bg_color;
-//            std::cout << ", path=\"" << pathname + file_type << "\", " << std::endl;
-//        }
-
     // Writes Texture to a file using cv::imwrite(). Generally used with JPEG
     // codec, but pathname's extension names the format to be used. Converts to
     // "24 bit" image (8 bit unsigned values for each of red, green and blue
     // channels) because most codecs do not support 3xfloat format.
     void writeToFile(int size, const std::string& pathname) const
     {
-//        writeToFile(size,
-//                    pathname,
-//                    Color(0.5, 0.5, 0.5),
-//                    0,
-//                    ".png");
         writeToFile(size, pathname, Color(0.5, 0.5, 0.5), 0, ".png");
     }
-//    void writeToFile(int size,
-//                     const std::string& pathname,
-//                     Color bg_color = Color(0.5, 0.5, 0.5),
-//                     int margin = 0,
-//                     const std::string& file_type = ".png") const
     void writeToFile(int size,
                      const std::string& pathname,
                      Color bg_color,
@@ -569,13 +447,6 @@ public:
         std::cout << "Texture invalid instance count = ";
         std::cout << invalid_instance_counter_ << std::endl;
     }
-//    // Utilities for rasterizing a Texture to tiling of pixels, with versions
-//    // for a square and a disk of pixels. Each require a "size" (width of the
-//    // square or diameter of the disk) and a function to be applied at each
-//    // pixel. The function's parameters are i/j (column/row) indexes of the
-//    // pixel raster, and the corresponding Vec2 in Texture space. [DEPRECATED]
-//    static void rasterizeSquare(int size, PixelFunction pixel_function);
-//    static void rasterizeDisk(int size, PixelFunction pixel_function);
     
     // Utilities for rasterizing a Texture to tiling of pixels, with versions
     // for a square and a disk of pixels. Each require a "size" (width of the
@@ -621,10 +492,6 @@ public:
     static void displayAndFile(const Texture& texture, std::string pathname)
         { displayAndFile(texture, pathname, getDefaultRenderSize()); }
     
-    
-//    static void displayAndFile(const Texture& texture,
-//                               std::string pathname,
-//                               int size);
     static void displayAndFile(const Texture& texture,
                                std::string pathname,
                                int size)
@@ -634,15 +501,12 @@ public:
     }
 
     
-//    static void waitKey();
-//    static void waitKey(int delay_in_milliseconds);
     // Wait for "any key" to be pressed. Typically used after a call to e.g.
     // displayAndFile(). Just a wrapper around the corresponding OpenCV utility.
     // Allows an optional "delay_in_milliseconds" where zero means forever,
     // otherwise returns after that delay regardless of key presses.
     static void waitKey()
     {
-//        cv::waitKey(0);
         waitKey(0);
     }
     static void waitKey(int delay_in_milliseconds)
@@ -650,10 +514,6 @@ public:
         cv::waitKey(delay_in_milliseconds);
     }
 
-//    // close the window
-//    //static void closeWindow(const std::string name);
-//    static void closeAllWindows();
-    
     // Close all open OpenCV windows.
     static void closeAllWindows()
     {
@@ -684,13 +544,7 @@ public:
                      std::string pathname, int size, bool binary);
 
     // Display row of three textures, at given size, optionally saving to file.
-//    static void displayAndFile3(const Texture& t1,
-//                                const Texture& t2,
-//                                const Texture& t3,
-//                                std::string pathname,
-//                                int size);
-//
-//    // Special utility for Texture::diff() maybe refactor to be more general?
+    // Special utility for Texture::diff() maybe refactor to be more general?
     static void displayAndFile3(const Texture& t1,
                                 const Texture& t2,
                                 const Texture& t3,
@@ -698,7 +552,6 @@ public:
                                 int size)
     {
         // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
-//        cv::Mat mat(size, size * 3, CV_8UC3);
         cv::Mat mat(size, size * 3, default_opencv_mat_type_);//normally CV_8UC3
         // Function to handle each Texture.
         auto subwindow = [&](const Texture& t, int x)
@@ -750,12 +603,6 @@ public:
     static void setMaxExpensiveNest(int m) { max_expensive_nest_ = m; }
     static bool tooExpensiveToNest() { return (expensive_to_nest_ >
                                                max_expensive_nest_); }
-
-//    // Experimental utility. Maybe to be deleted or moved?
-//    // Score a Texture on how much "high" frequency it has.
-//    // TODO temp? Similar in intent to wiggliness() in GP.h
-//    void fft_test();
-//    float highFrequencyScore();
 
     // Experimental utility. Maybe to be deleted or moved?
     // Score a Texture on how much "high" frequency it has.
@@ -856,10 +703,6 @@ public:
         return score;
     }
 
-    
-//    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
-//    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs);
-
     // Optional cache of 100 colors randomly sampled in unit-diameter disk.
     const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs)
     {
@@ -903,16 +746,8 @@ public:
         { default_opencv_mat_type_ = opencv_mat_type; }
     // TODO 20201204 experiment-- expose a Texture's cv::mat
     const cv::Mat& getCvMat() const { return *raster_; }
-
-//    // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
-//    static cv::Mat getCvMatRect(const Vec2& upper_left_position,
-//                                const Vec2& size_in_pixels,
-//                                const cv::Mat cv_mat);
     
     // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
-//    cv::Mat Texture::getCvMatRect(const Vec2& upper_left_position,
-//                                  const Vec2& size_in_pixels,
-//                                  const cv::Mat cv_mat)
     static cv::Mat getCvMatRect(const Vec2& upper_left_position,
                                 const Vec2& size_in_pixels,
                                 const cv::Mat cv_mat)
@@ -932,8 +767,6 @@ public:
                                 size_in_pixels.x(),
                                 size_in_pixels.y()));
     }
-
-//    static void checkForUserInput();
     
     // Perform occasional checks for user input (such as clicks, key presses,
     // command keys, such as to hide or unhide a GUI window). Does this via OpenCV's
@@ -943,11 +776,8 @@ public:
     // TODO
     //     maybe move this to Utilities.h ?
     //     perhaps have global hook which Texture can specialize for OpenCV ?
-//    TimePoint time_of_last_user_input_check = TimeClock::now();
     static inline TimePoint time_of_last_user_input_check = TimeClock::now();
-//    std::mutex check_user_input_mutex;
     static inline std::mutex check_user_input_mutex;
-//    void Texture::checkForUserInput()
     static void checkForUserInput()
     {
         const std::lock_guard<std::mutex> lock(check_user_input_mutex);
@@ -1042,20 +872,17 @@ public:
         int row_rect_x;
         int row_rect_w;
     };
-    
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO experimental 20220123
-    static inline float secret_render_scale_factor_ = 1;
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-            
+
     // Static utility function to measure the "uniformity" of a cv::Mat.
     // Returns a float between 1 (when every pixel is identical) and 0 (when the
     // bounding box of all pixels covers the entire RGB gamut).
     // (TODO unimplemented optional arg "samples" says to examine only that many
     // pixels by random sampling, as in eg SimpleImageMatch::imageUniformity())
     static float matUniformity(const cv::Mat& cv_mat)
-        { return matUniformity(cv_mat, 0); }
-//    static float matUniformity(const cv::Mat& cv_mat, int samples);
+    {
+        return matUniformity(cv_mat, 0);
+    }
+
     static float matUniformity(const cv::Mat& cv_mat, int samples)
     {
         // TODO temp for debugging:
@@ -1086,14 +913,8 @@ public:
         return 1 - std::max(r_max - r_min, std::max(g_max - g_min, b_max - b_min));
     };
 
-//    // Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
-//    static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos);
-//    // Static utility function to write a pixel to a cv::Mat from a Color.
-//    static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color);
-
     // Static utility function to read a pixel of a cv::Mat as a TexSyn Color.
-    // Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
-//    Color Texture::matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos)
+    // Note: assumes CV_8UC3, but I'm reluctant to use assert for a pixel op.
     static Color matPixelRead(const cv::Mat& cv_mat, Vec2 pixel_pos)
     {
         cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
@@ -1103,8 +924,7 @@ public:
     }
     
     // Static utility function to write a pixel to a cv::Mat from a Color.
-    // Note: assumes CV_8UC3, but I'm reluctant to put in an assert for a pixel op.
-//    void Texture::matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color)
+    // Note: assumes CV_8UC3, but I'm reluctant to use assert for a pixel op.
     static void matPixelWrite(cv::Mat& cv_mat, Vec2 pixel_pos, Color color)
     {
         cv::Point cv_point(pixel_pos.x(), pixel_pos.y());
@@ -1134,9 +954,6 @@ private:
     static inline int invalid_instance_counter_ = 0;
     int valid_top_ = validity_key_;
 
-//    // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
-//    std::shared_ptr<cv::Mat> emptyCvMat() const;
-
     // Allocate a generic, empty, cv::Mat. Optionally used for rasterization.
     std::shared_ptr<cv::Mat> emptyCvMat() const
     {
@@ -1153,9 +970,7 @@ private:
     static inline bool render_as_disk_ = true;
     // Global for one-thread-per-row rendering.
     static inline bool render_thread_per_row_ = true;
-    
-//    // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
-//    static int default_opencv_mat_type_;
+
     // Global default pixel type for "raster_" -- set to CV_8UC3 -- 24 bit BGR.
     inline static int default_opencv_mat_type_ = CV_8UC3;
 
