@@ -13,7 +13,7 @@
 int main(int argc, const char * argv[])
 {
     std::cout << texsyn_version_string << std::endl;
-    UnitTests::allTestsOK();
+    if (!UnitTests::allTestsOK()) { return EXIT_FAILURE; }
     std::cout << "July 20, 2023" << std::endl;
     {
         // Draw a few test cases and UnitTests::instantiateAllTextureTypes().

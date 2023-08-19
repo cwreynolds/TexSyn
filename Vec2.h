@@ -59,6 +59,10 @@ inline bool withinEpsilon(Vec2 a, Vec2 b, float epsilon)
 {
     return (a - b).length() <= epsilon;
 }
+inline bool withinEpsilon(Vec2 a, Vec2 b)
+{
+    return withinEpsilon(a, b, defaultEpsilon());
+}
 
 // Serialize Vec2 object to stream.
 inline std::ostream& operator<<(std::ostream& os, const Vec2& v)

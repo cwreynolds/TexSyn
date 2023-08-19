@@ -59,6 +59,11 @@ inline bool withinEpsilon(float a, float b, float epsilon)
 {
     return std::abs(a - b) <= epsilon;
 }
+float defaultEpsilon() { return 0.00001; }
+inline bool withinEpsilon(float a, float b)
+{
+    return withinEpsilon(a, b, defaultEpsilon());
+}
 
 // Square a float
 inline float sq(float f) { return f * f; }

@@ -264,6 +264,10 @@ inline bool withinEpsilon(Color a, Color b, float epsilon)
 {
     return (a - b).length() <= epsilon;
 }
+inline bool withinEpsilon(Color a, Color b)
+{
+    return withinEpsilon(a, b, defaultEpsilon());
+}
 
 // Serialize Color object to stream.
 inline std::ostream& operator<<(std::ostream& os, const Color& c)
