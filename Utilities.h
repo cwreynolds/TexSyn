@@ -196,8 +196,6 @@ public:
     float lookup(float input) const { return table_.at(std::floor(input)); }
 private:
     std::vector<float> table_;
-    float minimum_input_value_ = 0;
-    float maximum_input_value_ = 1;
 };
 
 // Compute the inverse Möbius transformation of the complex plane. It is

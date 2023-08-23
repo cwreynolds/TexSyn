@@ -12,14 +12,6 @@
 
 int main(int argc, const char * argv[])
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230822 set explicit optimization flag for c++ compilation: -Os
-    {
-        Timer t("Run 10 times: UnitTests::allTestsOK()");
-        for (int i = 0; i < 10; i++) { UnitTests::allTestsOK(); }
-        return EXIT_SUCCESS;
-    }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     std::cout << texsyn_version_string << std::endl;
     if (!UnitTests::allTestsOK()) { return EXIT_FAILURE; }
     std::cout << "July 20, 2023" << std::endl;

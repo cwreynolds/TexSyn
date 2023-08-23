@@ -682,12 +682,12 @@ private:
     std::vector<cv::Mat> background_images_;
     // The size of background images is adjusted by this value (usually < 1).
     const float background_scale_ = 1;
+    // Seed for RandomSequence LPRS() to be used during this run
+    int random_seed_ = LPRS().defaultSeed();
     // GUI size: drawable area in pixels.
     Vec2 gui_size_;
     // GUI object
     GUI gui_;
-    // Seed for RandomSequence LPRS() to be used during this run
-    int random_seed_ = LPRS().defaultSeed();
     // Default parameters for Population
     int individuals_ = 120;
     int subpops_ = 6;

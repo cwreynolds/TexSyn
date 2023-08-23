@@ -60,8 +60,8 @@ public:
 private:
     const Vec2 center;
     const float inner_radius;
-    const float outer_radius;
     const Texture& inner_texture;
+    const float outer_radius;
     const Texture& outer_texture;
 };
 
@@ -1167,13 +1167,13 @@ public:
                     float _max_radius,
                     float _soft_edge_width,
                     float _margin)
-      : spot_density(std::min(_spot_density, 1.0f)),
+      : disk_occupancy_grid
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60)),
+        spot_density(std::min(_spot_density, 1.0f)),
         min_radius(std::min(_min_radius, _max_radius) + _margin),
         max_radius(std::max(_min_radius, _max_radius) + _margin),
         soft_edge_width(_soft_edge_width),
-        margin(_margin),
-        disk_occupancy_grid
-            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))
+        margin(_margin)
     {
         // Timer timer("LotsOfSpots constructor");
         insertRandomSpots();
@@ -1330,8 +1330,8 @@ public:
                                           color_texture);
     }
 private:
-    const Texture& background_texture;
     const Texture& color_texture;
+    const Texture& background_texture;
 };
 
 // Collection of spots, each containing a portion of "button_texture" near

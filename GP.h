@@ -717,14 +717,14 @@ private:
     const FunctionSet& function_set = GP::fs();
     // GP population for this run.
     Population population;
-    // Number of evolution steps (steady state population updates) in this run.
-    int evolution_steps_;
     // GUI and parameters for it.
     int gui_render_size_ = 151;
     float gui_text_height_ = 15;
     float gui_margin_ = 10;
     std::string gui_title_ = "TexSyn/LazyPredator run: "; // TODO keep?
     GUI gui;
+    // Number of evolution steps (steady state population updates) in this run.
+    int evolution_steps_;
     int step;
     std::string path_for_saving_images_;
     std::function<void(Population&)> per_step_hook_ = nullptr;
