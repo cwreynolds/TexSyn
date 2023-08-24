@@ -121,22 +121,12 @@ public:
                              t1.getColor(position1))));
     }
 
-    // Rasterize this texture into size² OpenCV image, display in pop-up window.
-    void displayInWindow(int size, bool wait) const
+    // Rasterize this texture into size² OpenCV image, display in pop-up window
+    // according to a convention for placing these windows in diagonal ranks.
+    void displayInWindow(int size) const
     {
         rasterizeToImageCache(size, getDefaultRenderAsDisk());
         windowPlacementTool(*raster_);
-        if (wait) waitKey();  // Wait for a keystroke in the window.
-    }
-
-    // Display a collection of Textures, each in a window, then wait for a char.
-    static void displayInWindow(std::vector<const Texture*> textures,
-                                int size = getDefaultRenderSize(),
-                                bool wait = true)
-    {
-        for (auto& t : textures) t->displayInWindow(size, false);
-        // Wait for keystroke, close windows, exit function.
-        if (wait) waitKey();
     }
 
     // Display cv::Mat in pop-up window. Stack diagonally from upper left.
@@ -491,12 +481,11 @@ public:
         { displayAndFile(texture, ""); }
     static void displayAndFile(const Texture& texture, std::string pathname)
         { displayAndFile(texture, pathname, getDefaultRenderSize()); }
-    
     static void displayAndFile(const Texture& texture,
                                std::string pathname,
                                int size)
     {
-        texture.displayInWindow(size, false);
+        texture.displayInWindow(size);
         if (pathname != "") texture.writeToFile(size, pathname);
     }
 
