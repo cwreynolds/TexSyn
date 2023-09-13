@@ -733,7 +733,6 @@ public:
     static int getDefaultOpencvMatType() { return default_opencv_mat_type_; }
     static void setDefaultOpencvMatType(int opencv_mat_type)
         { default_opencv_mat_type_ = opencv_mat_type; }
-    // TODO 20201204 experiment-- expose a Texture's cv::mat
     const cv::Mat& getCvMat() const { return *raster_; }
     
     // Return a "submat"/"ROI" reference into a portion of a given cv::Mat.
@@ -761,10 +760,6 @@ public:
     // command keys, such as to hide or unhide a GUI window). Does this via OpenCV's
     // waitKey() but takes care not to do too frequently. But if it does not call
     // cv::waitKey() it will at least do a yield().
-    //
-    // TODO
-    //     maybe move this to Utilities.h ?
-    //     perhaps have global hook which Texture can specialize for OpenCV ?
     static inline TimePoint time_of_last_user_input_check = TimeClock::now();
     static inline std::mutex check_user_input_mutex;
     static void checkForUserInput()
@@ -787,9 +782,6 @@ public:
         }
     }
 
-    
-    
-    
     static inline int last_key_read_;
     static int getLastKeyPushed() { return last_key_read_; }
     static void setLastKeyPushed(int key) { last_key_read_ = key; }
