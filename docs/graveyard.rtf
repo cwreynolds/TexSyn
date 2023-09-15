@@ -1,0 +1,2249 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue-Bold;\f1\fnil\fcharset0 HelveticaNeue;\f2\fnil\fcharset0 Monaco;
+\f3\fnil\fcharset0 Menlo-Regular;\f4\fnil\fcharset0 Menlo-Bold;\f5\fnil\fcharset0 HelveticaNeue-BoldItalic;
+}
+{\colortbl;\red255\green255\blue255;\red220\green161\blue13;}
+{\*\expandedcolortbl;;\cssrgb\c89412\c68627\c3922;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww14000\viewh18200\viewkind0
+\deftab560
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b\fs26 \cf0 TexSyn Code Graveyard\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+September 14, 2023\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Move graveyard from my laptop to git repository.
+\f1\b0 \
+\
+I have a hard time throwing anything away. Ask my wife.\
+\
+But the software engineer in me does not want obsolete, distracting, unused code sitting in a code base. So I have adopted the \'93graveyard\'94 pattern. Obsolete code is deleted from the active code base (in the case of TexSyn, this is .cpp and .h files) and moved to separate non-code files in a \'93graveyard\'94 archive.\
+\
+I had been doing that for TexSyn since March 2020 but had been saving the obsolete code in the Notes app on my laptop. I think it makes more sense to store that archive along with the TexSyn code itself: in a git repository on GitHub. So I copied that information, stored locally on my laptop, to this file, committed into to git, which will now follow the rest of TexSyn wherever it goes.\
+\
+I should make clear that it seems extremely unlikely that any of this graveyard code will ever be read, let along used. But just in case it is here. You\'92re welcome.\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+January 29, 2023\
+
+\f0\b PredatorEye
+\f1\b0 \
+Clearing out old leftover code. Mostly commented-out earlier versions.\
+\
+
+\f0\b Predator.py
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f2 \cf0     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\
+    # TODO 20221001 try using half the jiggle in replace_in_population()\
+    # Class parameter: default strength of noise used to jiggle CNN models.\
+    jiggle_strength = 0.003\
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\
+    \
+    # How much recent predation success data is kept,\
+    # and how much of it must be non-zero to avoid starvation.\
+    success_history_max_length = 20\
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\
+    # TODO 20220922 lower starvation threshold, must miss more meals: .33 to .2\
+#    success_history_min_meals = success_history_max_length * 0.33\
+#    success_history_min_meals = success_history_max_length * 0.2\
+#    success_history_ratio = 0.2\
+    # TODO 20221030 -- have been seeing too many mediocre predators surviving\
+    # for too long. Increase starvation threshold (more severe) from 0.2 to 0.35.\
+#    success_history_ratio = 0.35\
+    # TODO 20221210 experiment to make this even more severe 0.35 to 0.5\
+#    success_history_ratio = 0.5\
+    # TODO 20221214\
+#    success_history_ratio = 0.42\
+    # TODO 20221215\
+    success_history_ratio = 0.4\
+    success_history_min_meals = success_history_max_length*success_history_ratio\
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+\f1 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+As of September 25, 2022: over the last week or two I moved contents of EvoCamoVsLearnPredPop
+\f0\b .ipynb
+\f1\b0  to EvoCamoVsLearnPredPop
+\f0\b .py
+\f1\b0 . Then I moved each main component into its own .py module file. Now package 
+\f0\b PredatorEye
+\f1\b0  is composed primarily of:\
+\
+EvoCamoVsLearnPredPop.py\
+DiskFind.py\
+FineTuningDataset.py\
+PredatorServer.py\
+Predator.py			\
+Tournament.py\
+\
+plus some older files. I am now about to clean out the support for Rube_Goldberg_mode which dates back to December 2021 ({\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20211215"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20211215}}). This has been obsolete since August 2022 ({\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20220824"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20220824}}) when I started running the simulation in \'93local mode\'94 with TensorFlow/Keras running CPU-only on my M1 laptop. I\'92m placing a copy here of the Rube_Goldberg_mode code from the top of EvoCamoVsLearnPredPop.py in the very unlikely event that I ever need to use it again.\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 # # Evolutionary Camouflage Versus a Learning Predator Population\
+# \
+# ---\
+# \
+# **EvoCamoVsLearnPredPop.ipynb**\
+# \
+# August 23, 2022: this version runs \'93local mode\'94 with both predator and prey running on the same machine.\
+# \
+# (The former behavior available with `Rube_Goldberg_mode = True`)\
+\
+# In[1]:\
+\
+\
+# "Rube Goldberg" mode refers to running camouflage evolution on my laptop while\
+# running predator vision in cloud via Colab. State is passed back and forth via\
+# files on Google Drive.\
+\
+# TODO 20220822\
+# Rube_Goldberg_mode = True\
+Rube_Goldberg_mode = False\
+\
+def if_RG_mode(for_RG_mode, for_normal_mode):\
+    return for_RG_mode if Rube_Goldberg_mode else for_normal_mode\
+\
+# PredatorEye directory on Drive.\
+pe_directory = '/content/drive/My Drive/PredatorEye/'\
+\
+# Shared "communication" directory on Drive.\
+shared_directory = if_RG_mode(pe_directory + 'evo_camo_vs_static_fcd/',\
+                              '/Users/cwr/camo_data/comms/')\
+\
+# This was meant (20220716) to allow reading original pre-trained model from\
+# Google Drive, but I'll need to retrain it for M1 (Apple Silicon).\
+g_drive_pe_dir = ('/Users/cwr/Library/CloudStorage/' +\
+                  'GoogleDrive-craig.w.reynolds@gmail.com/' +\
+                  'My Drive/PredatorEye/')\
+\
+# Directory for pre-trained Keras/TensorFlow models.\
+saved_model_directory = if_RG_mode(pe_directory, g_drive_pe_dir) + 'saved_models/'\
+\
+\
+print('Rube_Goldberg_mode =', Rube_Goldberg_mode)\
+print('shared_directory =', shared_directory)\
+print('saved_model_directory =', saved_model_directory)\
+\
+# Pathname of pre-trained Keras/TensorFlow model\
+trained_model = saved_model_directory + '20220321_1711_FCD6_rc4'\
+\
+# Directory on Drive for storing fine-tuning dataset.\
+fine_tuning_directory = shared_directory + 'fine_tuning/'\
+\
+#    my_prefix = "find_"\
+#    other_prefix = "camo_"\
+#\
+#    my_suffix =  ".txt"\
+#    # other_suffix = ".jpeg"\
+#    other_suffix = ".png"\
+\
+fcd_image_size = 1024\
+fcd_disk_size = 201\
+\
+import time\
+import PIL\
+from pathlib import Path\
+\
+from tensorflow import keras\
+import numpy as np\
+import random\
+import math\
+\
+import tensorflow as tf\
+print('TensorFlow version:', tf.__version__)\
+\
+from tensorflow.keras import backend as keras_backend\
+keras_backend.set_image_data_format('channels_last')\
+\
+# Import DiskFind utilities for PredatorEye.\
+import sys\
+if Rube_Goldberg_mode:\
+    sys.path.append('/content/drive/My Drive/PredatorEye/shared_code/')\
+else:\
+    sys.path.append('/Users/cwr/Documents/code/PredatorEye/')\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+This is actually code removed from 
+\f0\b EvoCamoVsLearnPredPop.ipynb
+\f1\b0  in package 
+\f0\b PredatorEye
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 # Shared "communication" directory on Drive.\
+# TODO 20220822\
+# shared_directory = if_RG_mode(pe_directory + 'evo_camo_vs_static_fcd/',\
+#                               '/Users/cwr/comms/')\
+shared_directory = if_RG_mode(pe_directory + 'evo_camo_vs_static_fcd/',\
+                              '/Users/cwr/camo_data/comms/')\
+\
+\
+# Pathname of pre-trained Keras/TensorFlow model\
+# trained_model = saved_model_directory + '20220202_1211_Find_3_Disks_complex'\
+# trained_model = saved_model_directory + '20220222_1747_F3D_augmented_rc4'\
+# trained_model = saved_model_directory + '20220227_0746_F3D2_a'\
+# trained_model = saved_model_directory + '20220304_1135_FCD5_a'\
+trained_model = saved_model_directory + '20220321_1711_FCD6_rc4'\
+# model = []\
+\
+def write_response_file(step, directory):\
+    ...\uc0\u8232     ###############################################################################\
+    # TODO 20220822 move this up before response file write\
+    # Merge this step's image into fine-tuning dataset, and related bookkeeping.\
+    fine_tuning_dataset.update(pixel_tensor, prediction, step, directory)\
+    ###############################################################################\
+\
+    ###############################################################################\
+    # TODO 20220830 read and store as many xy responses as predator provides.\
+    #               move this up above "Generate response file."\
+\
+    # Logging, maybe only for testing, delete me?\
+    sp = Predator.second_predator()\
+    spm_predict = sp.model.predict(tf.convert_to_tensor([pixel_tensor]))[0]\
+    print('  "other" prediction:', spm_predict,\
+          ' distance to original prediction:', df.dist2d(spm_predict, prediction))\
+    \
+    \
+    tp = Predator.third_predator()\
+    tpm_predict = tp.model.predict(tf.convert_to_tensor([pixel_tensor]))[0]\
+\
+    ###############################################################################\
+\
+\
+    \
+    # Generate response file.\
+    ###############################################################################\
+    # TODO 20220830 read and store as many xy responses as predator provides.\
+#     response_string = str(prediction[0]) + " " + str(prediction[1])\
+\
+#     response_string = (str(prediction[0]) + ' ' + str(prediction[1]) + ' ' +\
+#                        str(spm_predict[0]) + ' ' + str(spm_predict[1]) + ' 0.5 0.5')\
+\
+#     response_string = (str(prediction[0]) + ' ' + str(prediction[1]) + ' ' +\
+#                        str(spm_predict[0]) + ' ' + str(spm_predict[1]))\
+\
+\
+    response_string = (str(prediction[0])  + ' ' + str(prediction[1]) + ' ' +\
+                       str(spm_predict[0]) + ' ' + str(spm_predict[1]) + ' ' +\
+                       str(tpm_predict[0]) + ' ' + str(tpm_predict[1]))\
+\
+\
+    ###############################################################################\
+\
+class FineTuningDataset:\
+    """Manages the dataset of images and labels for fine-tuning."""\
+\
+    # Accumulated a new \'93training set\'94 of the most recent N steps seen so far. (See\
+    # https://cwreynolds.github.io/TexSyn/#20220421 and ...#20220424 for discussion\
+    # of this parameter. Had been 1, then 100, then 200, then finally, infinity.) \
+    # max_training_set_size = float('inf') # keep ALL steps in training set, use GPU.\
+    max_training_set_size = 500 # Try smaller again, "yellow flowers" keeps failing.\
+    # List of "pixel tensors".\
+    fine_tune_images = []\
+    # List of xy3 [[x,y],[x,y],[x,y]] for 3 prey centers.\
+    fine_tune_labels = []\
+\
+    def update(self, pixel_tensor, prediction, step, directory):\
+        \
+#         # TODO 20220822 debugging\
+#         time.sleep(5)\
+        \
+        ...\
+\
+        # print('images_array.shape =', images_array.shape,\
+        #       '-- labels_array.shape =', labels_array.shape)\
+        # print('np.shape(self.fine_tune_images) =',\
+        #       np.shape(self.fine_tune_images),\
+        #       '-- np.shape(self.fine_tune_labels) =',\
+        #       np.shape(self.fine_tune_labels))\
+        print('  fine_tune_images shape =', np.shape(self.fine_tune_images),\
+              '-- fine_tune_labels shape =', np.shape(self.fine_tune_labels))\
+\
+\
+\
+\
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 19, 2022
+\f1\b0 \
+\
+while porting TexSyn from old 2014 Intel laptop to new M1\
+\
+See email \'93still confused, but now with a bit more data\'94 with Xiaoyuan and Erwin.\
+\
+This very temp code convinced me the threads were actually being created, run, and re-joined correctly, as before. Maybe the per-thread workloads are just too small so dominated by the costs of setting up and learning down the thread.\
+\
+// Rasterize the j-th row of this texture into a size\'b2 OpenCV image. Expects\
+// to run in its own thread, uses mutex to synchonize access to the image.\
+void Texture::rasterizeRowOfDisk(int j, int size, bool disk,\
+                                 cv::Mat& opencv_image,\
+                                 int& row_counter,\
+                                 std::mutex& ocv_image_mutex) const\
+\{\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+    \{\
+        grabPrintLock();\
+        std::cout << "j=" << j << " row_counter=" << row_counter << std::endl;\
+    \}\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+    ...\
+\}\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+See file \'93TexSyn graveyard annex.pages\'94 and \'93TexSyn graveyard annex.pdf\'94 on my laptop, or on Google Drive: {\field{\*\fldinst{HYPERLINK "https://drive.google.com/file/d/1okb1OWmXEJOEE62t2weZnh6rvRw6N7Cy/view?usp=sharing"}}{\fldrslt \cf2 https://drive.google.com/file/d/1okb1OWmXEJOEE62t2weZnh6rvRw6N7Cy/view?usp=sharing}}\
+\
+TexSyn graveyard annex\
+June 26, 2021\
+\
+I decided to remove some large sections of unused experimental code from TexSyn. Normally when I remove small snippets I put them in a Notes app document called TexSyn Code Graveyard. Today\'92s removals seemed a couple orders of magnitude larger, so I am putting them in this document, which I will export to PDF and save both on my laptop and on Google Drive, with a link in TexSyn Code Graveyard and the TexSyn devo blog at https://cwreynolds.github.io/TexSyn/\
+\
+I am deleting code in three categories:\
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl0
+\f3\fs18 \cf0 {\listtext	\uc0\u8226 	}
+\f0\b\fs26 Incremental Halton sequence
+\f1\b0  (April 1, 2020: https://cwreynolds.github.io/TexSyn/#20200401) an early experiment in what later became the LotsOfSpots family of texture operators.\
+\ls1\ilvl0
+\f3\fs18 {\listtext	\uc0\u8226 	}
+\f0\b\fs26 Shader texture operator
+\f1\b0  (March 25-26, 2020 https://cwreynolds.github.io/TexSyn/#20200326) which was always \'93experimental\'94 because it seemed at odds with the fundamental 2d nature of TexSyn. It also led to Vec3 (below) to describe a light source position. I considered using a 2d position on the texture plane (Vec2) and a \'93height\'94 above the plane. But either way it was a 3d concept in what should be a 2d model.\
+\ls1\ilvl0
+\f3\fs18 {\listtext	\uc0\u8226 	}
+\f0\b\fs26 Vec3 class
+\f1\b0  (March 25, 2020 https://cwreynolds.github.io/TexSyn/#20200325) this was just a copy-and-tweak of Vec2 and always seemed out of place in TexSyn.\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf0 \'85\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Removed from Operators.h after phasor noise seemed to be complete.
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // TODO WIP prototype, perhaps to be replaced with "Procedural phasor noise"?\
+class GaborNoisePrototype : public Texture\
+\{\
+public:\
+    GaborNoisePrototype(int kernels,\
+                        float min_radius, float max_radius,\
+                        float min_wavelength, float max_wavelength,\
+                        float min_angle, float max_angle,\
+                        const Texture& texture0,\
+                        const Texture& texture1)\
+      : kernels_(kernels),\
+        min_radius_(min_radius),\
+        max_radius_(max_radius),\
+        min_wavelength_(min_wavelength),\
+        max_wavelength_(max_wavelength),\
+        min_angle_(min_angle),\
+        max_angle_(max_angle),\
+        texture0_(texture0),\
+        texture1_(texture1),\
+        disk_occupancy_grid_\
+            (std::make_shared<DiskOccupancyGrid>(Vec2(-5, -5), Vec2(5, 5), 60))\
+    \{\
+        // Randomize Disks (kernels) with uniform distributions of r, x, and y.\
+        // TODO maybe should init a const vector, to emphasize it can't change.\
+        RandomSequence rs(seedForRandomSequence());\
+        for (int i = 0; i < kernels_; i++)\
+        \{\
+            float radius = rs.frandom2(min_radius, max_radius);\
+            Vec2 center(rs.frandom2(-5, +5), rs.frandom2(-5, +5));\
+            float angle = rs.frandom2(min_angle, max_angle);\
+            float wavelength = rs.frandom2(min_wavelength, max_wavelength);\
+            disks_.push_back(Disk(radius, center, angle, wavelength));\
+        \}\
+        // Insert randomized Disks into DiskOccupancyGrid.\
+        for (Disk& d : disks_) \{ disk_occupancy_grid_->insertDiskWrap(d); \}\
+        // TODO XXX TEMP experiment 20210328 start to space them out a little\
+        disk_occupancy_grid_->reduceDiskOverlap(20, disks_);\
+    \}\
+\
+    // TODO this prototype is returning only the "matte" signal, not blending\
+    // texture0 and texture1. Centered on 0.5 and ranging over [0, 1]\
+    Color getColor(Vec2 position) const override\
+    \{\
+        // Sum up the contribition, on [-0.5, +0.5], from each kernel\
+        float sum = 0;\
+        // Adjust "position" to be in center tile of grid.\
+        Vec2 tiled_pos = disk_occupancy_grid_->wrapToCenterTile(position);\
+        // Find all disks that touch "tiled_pos".\
+        std::set<Disk*> nearby_disks;\
+        disk_occupancy_grid_->findNearbyDisks(tiled_pos, nearby_disks);\
+        // Evaluate one kernel at "tiled_pos".\
+        auto kernel_sample = [&](const Disk& d)\
+        \{\
+            Vec2 dp = disk_occupancy_grid_->wrapToCenterTile(d.position);\
+            // Both grat and spot range on [0, 1]\
+            float grat = grating_utility(tiled_pos, dp, d.angle, d.wavelength);\
+            float spot = spot_utility(tiled_pos, dp, 0, d.radius);\
+            // Bias gradient from [0, 1] to [-0.5, +0.5], scale by spot falloff.\
+            float kernel_value = spot * (grat - 0.5);\
+            sum += kernel_value;\
+        \};\
+        // Sum up contributions for all nearby kernels.\
+        for (auto& disk : nearby_disks) \{ kernel_sample(*disk); \}\
+        // Bias back to [0, 1] from [-0.5, +0.5]. Clip to [0, 1]. Interpolate.\
+        return interpolatePointOnTextures(clip01(sum + 0.5),\
+                                          position, position,\
+                                          texture0_, texture1_);\
+    \}\
+\
+    // Seed the random number sequence from some operator parameters.\
+    size_t seedForRandomSequence()\
+    \{\
+        return (hash_float(kernels_) ^\
+                hash_float(min_radius_) ^\
+                hash_float(max_radius_) ^\
+                hash_float(min_wavelength_) ^\
+                hash_float(max_wavelength_) ^\
+                hash_float(min_angle_) ^\
+                hash_float(max_angle_));\
+    \}\
+\
+private:\
+    const int kernels_;\
+    const float min_radius_;\
+    const float max_radius_;\
+    const float min_wavelength_;\
+    const float max_wavelength_;\
+    const float min_angle_;\
+    const float max_angle_;\
+    const Texture& texture0_;\
+    const Texture& texture1_;\
+    std::vector<Disk> disks_;  // TODO should this be const?\
+    std::shared_ptr<DiskOccupancyGrid> disk_occupancy_grid_;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Removed this from the end of the post for May 5, 2021
+\f1\b0  ({\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20210505"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20210505}}):\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 <p>The examples above are what I think of as looking up the kernel\
+parameters \'93per pixel\'94\'97from the input textures\'97as was done in\
+the phasor noise sample code (shader). Then I noticed that if I\
+changed to looking up the parameters \'93per kernel\'94 I get textures\
+that look more like what I was expecting. By \'93per kernel\'94 I mean\
+every pixel within a kernel is computed with (e.g.) an angle\
+looked up at the center of the kernel. Here are two examples of\
+that, on the left with a lot of small kernels (12735 kernels\
+with radius of 0.1 (in a 10x10 portion of the texture field,\
+note that the width of these images is 2 units of texture\
+space)). On the right is the same thing with a smaller number of\
+larger kernels (3184 kernels with radius of 0.2). The right hand\
+image is more clearly composed of regions of constant stripe\
+orientation. The goal, as in the first image above (from April\
+11) is that these regions shrink to the size of pixels,\
+providing smoothly varying orientations.</p>\
+<img src="images/20210505_angle_per_kernel_r01.png"\
+alt="20210505_angle_per_kernel_r01"\
+title="20210505_angle_per_kernel_r01" class="img_flow"\
+height="511" width="511"> <img\
+src="images/20210505_angle_per_kernel_r02.png"\
+alt="20210505_angle_per_kernel_r02"\
+title="20210505_angle_per_kernel_r02" class="img_flow"\
+height="511" width="511">
+\f1 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 removed from main.cpp:
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+// Parsed version of the ("unix") command line that invoked this run.\
+std::vector<std::string> cmd_line_;\
+\
+// background_scale_(cmd_line_.at(3).empty() ?\
+//                   0.5 :\
+//                   std::stof(cmd_line_.at(3))),\
+\
+// Camouflage::positional_argument(5, LPRS().defaultSeed())\
+\
+//    // Return random element of given std::vector.\
+//    template<typename T> T randomSelectElement(const std::vector<T>& collection)\
+//    \{ return collection.at(randomN(collection.size())); \}\
+\
+\
+\
+//    template <typename T>\
+//    T positionalArgument(int arg_index,\
+//                         const T& default_value,\
+//                         std::function<T(std::string)> caster)\
+//    \{\
+//        return (cmd_line_.at(arg_index).empty() ?\
+//                default_value :\
+//                caster(cmd_line_.at(arg_index)));\
+//    \}\
+//\
+//    //template <typename T>\
+//    //T positionalArgument(int arg_index, const T& default_value)\
+//    //\{\
+//    //    return positionalArgument(arg_index,\
+//    //                              default_value,\
+//    //                              [](std::string s)\{ return s; \});\
+//    //\}\
+//\
+//    std::string positionalArgumentX(int arg_index, std::string default_value)\
+//    \{\
+//        return positionalArgument(arg_index,\
+//                                  default_value,\
+//                                  [](std::string s)\{ return s; \});\
+//    \}\
+\
+\
+//    // Used only below in FunctionSet, then undef-ed at end of file.\
+//    #define name_lookup_util(name, map)               \\\
+//    [&]()                                             \\\
+//    \{                                                 \\\
+//        auto it = map.find(name);                     \\\
+//        assert("unknown type" && (it != map.end()));  \\\
+//        return &(it->second);                         \\\
+//    \}()\
+\
+#define positional_argument(arg_index, default_value)  \\\
+(cmd_line_.at(arg_index).empty() ?                     \\\
+ default_value :                                       \\\
+ cmd_line_.at(arg_index));\
+\
+\
+// Three overloads for string, int, and float:\
+std::string positionalArgument(int arg_index, std::string default_value)\
+\{\
+    return (cmd_line_.at(arg_index).empty() ?\
+            default_value :\
+            cmd_line_.at(arg_index));\
+\}\
+\
+int positionalArgument(int arg_index, int default_value)\
+\{\
+    return (cmd_line_.at(arg_index).empty() ?\
+            default_value :\
+            std::stoi(cmd_line_.at(arg_index)));\
+\}\
+\
+float positionalArgument(int arg_index, float default_value)\
+\{\
+    return (cmd_line_.at(arg_index).empty() ?\
+            default_value :\
+            std::stof(cmd_line_.at(arg_index)));\
+\}\
+\
+\
+\
+void testPositionalArgument()\
+\{\
+    std::string s;\
+    int i;\
+    float f;\
+    \
+    cmd_line_.clear();\
+    cmd_line_.resize(10);\
+    s = positionalArgument(0, "foo");\
+    i = positionalArgument(1, 123);\
+    f = positionalArgument(2, 123.456f);\
+    debugPrint(s);\
+    debugPrint(i);\
+    debugPrint(f);\
+    \
+    cmd_line_ = \{"bar", "100", "100000"\};\
+    cmd_line_.resize(10);\
+    s = positionalArgument(0, "foo");\
+    i = positionalArgument(1, 123);\
+    f = positionalArgument(2, 123.456f);\
+    debugPrint(s);\
+    debugPrint(i);\
+    debugPrint(f);\
+\}\
+\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 removed from CommandLine class:
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     void test()\
+    \{\
+        std::string s;\
+        int i;\
+        float f;\
+        \
+        cmd_line_.clear();\
+        s = positionalArgument(0, "foo");\
+        i = positionalArgument(1, 123);\
+        f = positionalArgument(2, 123.456f);\
+        debugPrint(s);\
+        debugPrint(i);\
+        debugPrint(f);\
+        \
+        cmd_line_ = \{"bar", "100", "100000"\};\
+        s = positionalArgument(0, "foo");\
+        i = positionalArgument(1, 123);\
+        f = positionalArgument(2, 123.456f);\
+        debugPrint(s);\
+        debugPrint(i);\
+        debugPrint(f);\
+        \
+        debugPrint(cmd_line_.size());\
+        debugPrint(positionalArgument(9, 999));\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Used this to animate (for debugging) the non-overlapping disk relaxation procedures used in Camouflage, since moved into Disk.h. Removed Jan 28, 2021.
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     // TODO temporary utility for debugging random non-overlapping placement\
+    TournamentGroup testdrawTG;\
+    void testdraw(const std::vector<Disk>& disks)\
+    \{\
+        int p = 0;\
+        gui().clear();\
+        for (auto& tgm : testdrawTG.members())\
+        \{\
+            Texture* texture = GP::textureFromIndividual(tgm.individual);\
+            texture->rasterizeToImageCache(textureSize(), true);\
+            Vec2 center_to_ul = Vec2(1, 1) * textureSize() / 2;\
+            Vec2 position = disks.at(p++).position - center_to_ul;\
+            gui().drawTexture(*texture, position, textureSize());\
+        \}\
+        gui().refresh();\
+        Texture::waitKey(2);\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+This was used before the call to Disk::randomNonOverlappingDisksInRectangle():\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0         testdrawTG = tg;\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 experiment to invoke 
+\f4 zenity
+\f0  (or any unix command) from c/c++:
+\f1\b0 \
+\
+See background:\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://stackoverflow.com/questions/34669719/opencv-creat-an-input-text-box-in-a-gui-and-read-it"}}{\fldrslt \cf2 https://stackoverflow.com/questions/34669719/opencv-creat-an-input-text-box-in-a-gui-and-read-it}}\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://apple.stackexchange.com/questions/73613/is-there-a-mac-osx-equivalent-of-zenity"}}{\fldrslt \cf2 https://apple.stackexchange.com/questions/73613/is-there-a-mac-osx-equivalent-of-zenity}}\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://pubs.opengroup.org/onlinepubs/009695399/functions/popen.html"}}{\fldrslt \cf2 https://pubs.opengroup.org/onlinepubs/009695399/functions/popen.html}}\
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     std::cout << "---------------------------------------------" << std::endl;\
+    FILE *fp;\
+    int status;\
+    char pathname[PATH_MAX];\
+    \
+//    fp = popen("ls *", "r");\
+//    fp = popen("date", "r");\
+    fp = popen("/usr/local/bin/zenity --title \\"Type in pathname for "\
+               "background images.\\" --entry --text \\"Pathname:\\"", "r");\
+    \
+    if (fp == NULL) \{ std::cout << "returned null" << std::endl; \}\
+    \
+    while (fgets(pathname, PATH_MAX, fp) != NULL)\
+        printf("%s", pathname);\
+    \
+    \
+    status = pclose(fp);\
+//    if (status == -1) \{\
+//        /* Error reported by pclose() */\
+//        ...\
+//    \} else \{\
+//        /* Use macros described under wait() to inspect `status' in order\
+//         to determine success/failure of command executed by popen() */\
+//        ...\
+//    \}\
+    \
+    debugPrint(status);\
+    std::cout << "---------------------------------------------" << std::endl;\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 some test fixtures for comparing with and without crossover size limit bias
+\f1\b0 \
+\
+from LimitHue::run():\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+            // TODO 20210116 test min/max crossover limits\
+            if (Population::new_crossover == true)\
+            \{\
+                population.setMinCrossoverTreeSize(100);\
+                population.setMaxCrossoverTreeSize(110);\
+                if (step > 666)\
+                \{\
+                    population.setMinCrossoverTreeSize(40);\
+                    population.setMaxCrossoverTreeSize(50);\
+                \}\
+                if (step > 1333)\
+                \{\
+                    population.setMinCrossoverTreeSize(70);\
+                    population.setMaxCrossoverTreeSize(80);\
+                \}\
+            \}\
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+from from LimitHue::comparison():\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0             Population::new_crossover = false; // TODO TEMP\
+            \'85\
+            Population::new_crossover = true; // TODO TEMP\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+version of GpTree::crossoverDonorRecipient() with logging for size limits:\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0     static void crossoverDonorRecipient(GpTree& donor,\
+                                        GpTree& recipient,\
+                                        int min_size,\
+                                        int max_size,\
+                                        int fs_min_size)\
+    \{\
+        assert(min_size <= max_size);\
+\
+        // Find set of GpTypes which is common to both parents.\
+        std::set<const GpType*> types;\
+        GpTree::sharedSetOfTypes(donor, recipient, types);\
+        assert(!types.empty());\
+        \
+        // TODO TEMP just for debugging:\
+        auto log = [&](const GpTree& d_subtree, const GpTree& r_subtree)\
+        \{\
+            std::cout << "-----------------------------" << std::endl;\
+            debugPrint(donor.size());\
+            debugPrint(recipient.size());\
+            debugPrint(min_size);\
+            debugPrint(max_size);\
+            debugPrint(fs_min_size);\
+            debugPrint(d_subtree.size());\
+            debugPrint(r_subtree.size());\
+            std::cout << ((d_subtree.size() > r_subtree.size()) ?\
+                          "Increase" : "Decrease") << " size from " <<\
+                          recipient.size() << " to " << (recipient.size() -\
+                          r_subtree.size() + d_subtree.size()) << std::endl;\
+            std::cout << "-----------------------------" << std::endl;\
+        \};\
+        // Invoked for each of the three size cases below.\
+        auto crosser = [&](int d_size_bias, int r_size_bias)// -1, 0, +1 (enum?)\
+        \{\
+            GpTree& d_subtree = donor.selectCrossoverSubtreeNEW(fs_min_size,\
+                                                                d_size_bias,\
+                                                                types);\
+            std::set<const GpType*> donor_type = \{ d_subtree.getRootType() \};\
+            GpTree& r_subtree = recipient.selectCrossoverSubtreeNEW(fs_min_size,\
+                                                                    r_size_bias,\
+                                                                    donor_type);\
+            assert(d_subtree.getRootType() == r_subtree.getRootType());\
+            if ((d_size_bias != 0) && (r_size_bias != 0)) \{ log(d_subtree,\
+                                                                r_subtree); \}\
+            r_subtree = d_subtree;\
+        \};\
+        // If "recipient" too big/small, try to fix via relative subtree size.\
+        // In each case, select random subtree from "donor" and "recipient"\
+        // (with size bias when needed) then set offspring recipient to copy of\
+        // donor subtree.\
+        int r_size = recipient.size();\
+        if (r_size > max_size)\
+        \{                        // If recipient too big, small donor subtree\
+            crosser(-1, +1);     // replaces a big recipient subtree.\
+        \}\
+        else if (r_size < min_size)\
+        \{                        // If recipient too small, big donor subtree\
+            crosser(+1, -1);     // replaces a small recipient subtree.\
+        \}\
+        else\
+        \{\
+            crosser(0, 0);       // Otherwise uniform random subtree selection.\
+        \}\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Remove Population::randomIndexWithBias(), etc.\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+After reimplementing \'93absolute fitness\'94 case in terms of \'93relative fitness\'94 tournaments, remove several utilities used for biased \'93fitness proportionate\'94 selection and deletions. Also the unit test I added after finding a bug in them. Sigh.\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 From Population:\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     // Chose 3 random indicies. Sort them by given sorter_function, which can\
+    // look at the Individuals at those indices. Return index sorted to front.\
+    int randomIndexWithBias(std::function<bool(int, int)> sorter_function) const\
+    \{\
+        std::vector<int> indices = \{randomIndex(),randomIndex(),randomIndex()\};\
+        std::sort(indices.begin(), indices.end(), sorter_function);\
+        return indices.front();\
+    \}\
+\
+    // Ad hoc elitism. Does biased selection while explicitely excluding the\
+    // Individual with the best fitness.\
+    // TODO maybe instead of looping here, randomIndexWithBias() should take\
+    // parameters to allow excluding (say) the top 5 fitness Individuals\
+    int randomIndexWithBiasAndElitism(std::function<bool(int, int)> sorter_function) const\
+    \{\
+        int index = -1;\
+        // TODO must be cached if calling this 9 times per step.\
+        Individual* best = nTopFitness(1).at(0);\
+        Individual* selection = best;\
+        // Loop until "best" is not the "selection", usually just one time.\
+        while (selection == best)\
+        \{\
+            index = randomIndexWithBias(sorter_function);\
+            selection = individuals().at(index);\
+        \}\
+        return index;\
+    \}\
+\
+    // Returns random index, biased toward Individuals with higher fitness.\
+    int randomIndexBiasToHighFitness() const\
+    \{\
+        auto high_fitness = [&](int a, int b)\
+        \{\
+            return (individuals().at(a)->getFitness() >\
+                    individuals().at(b)->getFitness());\
+        \};\
+        return randomIndexWithBias(high_fitness);\
+    \}\
+\
+    // Returns random index, biased toward Individuals with lower fitness.\
+    int randomIndexBiasToLowFitness() const\
+    \{\
+        auto low_fitness = [&](int a, int b)\
+        \{\
+            return (individuals().at(a)->getFitness() <\
+                    individuals().at(b)->getFitness());\
+        \};\
+        return randomIndexWithBiasAndElitism(low_fitness);\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 From UnitTests:\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 bool selection_for_tournament()\
+\{\
+    // Make a Population with 100 default Individuals.\
+    int size = 100;\
+    Population population(size);\
+    // Assign a random "absolute" fitness to each.\
+    RandomSequence rs(56251551);\
+    auto random_fitness = [&](Individual* i)\{ i->setFitness(rs.frandom01()); \};\
+    for (int i = 0; i < size; i++)\
+    \{\
+        population.applyToIndividual(i, random_fitness);\
+    \}\
+    // Call randomIndexBiasToLowFitness() and randomIndexBiasToHighFitness() 100\
+    // times, keeping track of average fitness of Individuals returned by both.\
+    float average_low = 0;\
+    float average_high = 0;\
+    for (int i = 0; i < size; i++)\
+    \{\
+        int low_index = population.randomIndexBiasToLowFitness();\
+        int high_index = population.randomIndexBiasToHighFitness();\
+        average_low += population.individuals().at(low_index)->getFitness();\
+        average_high += population.individuals().at(high_index)->getFitness();\
+    \}\
+    average_low /= size;\
+    average_high /= size;\
+    return average_low < (average_high / 2);\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Clean out old/obsolete test code.
+\f1\b0  I made a backup copy of 
+\f3 GP.h
+\f1  and renamed it 
+\f3 GP_TexSyn_20201223.h
+\f1  and now will remove some of the code that no longer seems useful enough to keep in the repository. This includes:\
+\
+
+\f0\b The \'93yellow/green evolution test\'94:\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3\b0 \cf0 GP::ygAverageColorOfTexture()\
+GP::ygAverageColorOfPopulation()\
+GP::runYellowGreenTest()
+\f1 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 The \'93colorful, well exposed\'94 evolution test, aka 
+\f4 namespace CWE
+\f0 :
+\f1\b0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 CWE::logger()\
+CWE::measureScalarHistogram()\
+CWE::measureExposure()\
+CWE::measureSaturation()\
+CWE::measureHue()\
+CWE::worstMetric()\
+CWE::worstExposure()\
+CWE::worstSaturation()\
+CWE::worstHue()\
+CWE::worstSize()\
+CWE::worstNoise()\
+CWE::tournamentFunction()\
+CWE::run()\
+CWE::()\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 And all of 
+\f4 namespace LimitHueOld
+\f0  which was replaced by 
+\f4 class LimitHue
+\f0 .
+\f1\b0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+Today (Dec 22, 2020) I removed this several places in Population.h:\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 //        // TODO 20201211 verify this is doing what I expect\
+//        std::vector<float> fitnesses;\
+//        for (auto& i : indices)\
+//        \{\
+//            fitnesses.push_back(individuals().at(i)->getFitness());\
+//        \}\
+//        std::cout << vec_to_string(fitnesses);\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+        // TODO 20201211 verify this is doing what I expect\
+        return randomIndexWithBiasAndElitism(low_fit);\
+//        std::cout << "        in randomIndexBiasToLowFitness(): ";\
+//        int result = randomIndexWithBiasAndElitism(low_fit);\
+//        std::cout << std::endl;\
+//        return result;\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Cleaning up grasping-at-straws code from diagnosing the \'93memory leak / phantom limb\'94 problem.
+\f1\b0 \
+\
+I\'92m removing 
+\f3 GpTree::clearCachedValues()
+\f1  because now that the problem has been fixed, it seems to be unnecessary. That is, I can do an extended (2000 step) LimitHue run with or without it and get the same result. I am slightly hinky that maybe it 
+\f0\b is
+\f1\b0  the right thing. So in case I need to revert this change, I am removing:\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     // TODO 20201207 -- tracking down Texture::valid() issue\
+    // experiment: clear out old cached values from new tree\
+    void clearCachedValues()\
+    \{\
+        if (!isLeaf())\
+        \{\
+            std::any not_any;\
+            setLeafValue(not_any, getType());\
+            for (auto& subtree : subtrees()) subtree.clearCachedValues();\
+        \}\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+and its call from the end of 
+\f3 GpTree::crossover()
+\f1 :\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0     void crossover(const GpTree& parent0,\
+                   const GpTree& parent1,\
+                   GpTree& offspring) const\
+    \{\
+        ...\
+        // Clear out any old cached values from parents in offspring tree.\
+        offspring.clearCachedValues();\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+Also removing 
+\f3 Individual::validateInitialTreeValue()
+\f1 :\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0     // TODO 20201123 temporary for testing (specific to TexSyn).\
+    //               validate value of initial GpTree\
+    void validateInitialTreeValue() const\
+    \{\
+        tree().verifyTexturePointers();\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+and 
+\f3 GpTree::verifyTexturePointers()
+\f1 :\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0     // TODO 20201123 temporary for testing (specific to TexSyn).\
+    void verifyTexturePointers() const\
+    \{\
+        if (getType().name() == "Texture")\
+        \{\
+            if (!getLeafValue().has_value())\
+            \{\
+                std::cout << "GpTree::verifyTexturePointers() no value ";\
+                std::cout << to_string() << std::endl;\
+            \}\
+            Texture* texture = std::any_cast<Texture*>(getLeafValue());\
+            if (!texture->valid())\
+            \{\
+                std::cout << "GpTree::verifyTexturePointers() invalid Texture ";\
+                std::cout << to_string() << std::endl;\
+            \}\
+            assert(texture->valid());\
+        \}\
+        for (auto& subtree : subtrees()) subtree.verifyTexturePointers();\
+    \}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+// TODO 20201203 for OpenCV bug report \'97 {\field{\*\fldinst{HYPERLINK "https://github.com/opencv/opencv/issues/19005"}}{\fldrslt \cf2 https://github.com/opencv/opencv/issues/19005}}\
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 void compare_putTexts(const std::string& ttf_pathname)\
+\{\
+    auto two_putTexts = [&](const std::string& window, int type, int bright)\
+    \{\
+        // Make white mat of given type.\
+        cv::Mat mat(300, 300, type, cv::Scalar::all(bright));\
+        // Draw text the original way.\
+        cv::putText(mat, "hello world", cv::Point(20, 100), cv::FONT_HERSHEY_SIMPLEX,\
+                    1, CV_RGB(0, 0, 0), 1, cv::LINE_AA);\
+        cv::namedWindow(window);\
+        cv::imshow(window, mat);\
+        cv::waitKey();\
+        // Draw text using TTF.\
+        cv::Ptr<cv::freetype::FreeType2> ft2;\
+        ft2 = cv::freetype::createFreeType2();\
+        ft2->loadFontData(ttf_pathname, 0);\
+        ft2->putText(mat, "hello world", cv::Point(20, 200),\
+                     30, CV_RGB(0, 0, 0), cv::FILLED, cv::LINE_AA, true);\
+        cv::imshow(window, mat);\
+        cv::waitKey();\
+    \};\
+    two_putTexts("window 1", CV_8UC3, 255); // 3 x 8bit color\
+    two_putTexts("window 2", CV_32FC3, 1);  // 3 x float color\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+September 18, 2020\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Remove 
+\f4 FunctionSet::dp
+\f0 , 
+\f4 dp_depth
+\f0 , and 
+\f4 dp_prefix()
+\f0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+Like the previous entry, rather than copy all that code here, look back at yesterday\'92s commit which still has all of it: \
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/cwreynolds/LazyPredator/commit/da5c74912c209fca577ba559a1d02237a40e3c98"}}{\fldrslt \cf2 https://github.com/cwreynolds/LazyPredator/commit/da5c74912c209fca577ba559a1d02237a40e3c98}}\
+\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+September 8, 2020\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Removing a lot of prototyping creating on the road to yesterday\'92s first successful 
+\f4 eval()
+\f0  tests.
+\f1\b0 \
+\
+Rather than move all that now-dead code here, if needed, look back at yesterday\'92s commit which still has all of it, either commented out or 
+\f3 #ifdef
+\f1 -ed out: \
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/cwreynolds/LazyPredator/commit/9c5cdd070ff9769e6c513b5b4412d17a4f5b2c9f"}}{\fldrslt \cf2 https://github.com/cwreynolds/LazyPredator/commit/9c5cdd070ff9769e6c513b5b4412d17a4f5b2c9f}}\
+\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+July 24, 2020\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 removed from FunctionSet\
+replaced by minSizeToTerminateType() and minSizeToTerminateFunction()
+\f1\b0 \
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // Randomly select a function in this set that return the given type.\
+// TODO very prototype, we can probably cache this information per-type\
+// TODO returning a string just for prototyping\
+std::string randomFunctionReturningType(const std::string& return_type)\
+\{\
+    std::vector<std::string> results;\
+    findAllFunctionReturningType(return_type, results);\
+    return results.at(rs_.nextInt() % results.size());\
+\}\
+\
+// Randomly select a function in this set that returns the given type AND is\
+// terminal. Here terminal will mean none of it parameters are of the given\
+// type.\
+//\
+// TODO Ideally it should be one producing the smallest subtree.\
+//\
+// TODO very prototype, we can probably cache this information per-type\
+// TODO should not call rand() directly\
+// TODO returning a string just for prototyping\
+std::string terminalFunctionReturningType(const std::string& return_type)\
+\{\
+    std::vector<std::string> functions_returning_type;\
+    findAllFunctionReturningType(return_type, functions_returning_type);\
+    std::vector<std::string> terminals;\
+    for (auto& function_name : functions_returning_type)\
+    \{\
+        bool is_terminal = true;\
+        FunctionDescription fd = functions_[function_name];\
+        for (auto& pt : fd.parameter_types)\
+            if (pt == return_type) is_terminal = false;\
+        if (is_terminal) \{ terminals.push_back(function_name); \}\
+    \}\
+    return terminals.at(rs_.nextInt() % terminals.size());\
+\}
+\f1 \
+\
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+July 24, 2020\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 failed prototype 
+\f5\i HsvFrom3
+\f0\i0  removed from TexSyn
+\f1\b0 \
+see {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200724"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20200724}}\
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class HsvFrom3 : public Texture\
+\{\
+public:\
+    HsvFrom3(const Texture& hue, const Texture& saturation, const Texture& value)\
+      : h(hue), s(saturation), v(value) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        return Color::makeHSV(h.getColor(position).getH(),\
+                              s.getColor(position).getS(),\
+                              v.getColor(position).getV());\
+    \}\
+private:\
+    const Texture& h;\
+    const Texture& s;\
+    const Texture& v;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+July, 22, 2020\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 failed prototype 
+\f5\i HsvBox
+\f0\i0  removed from TexSyn \'97 also 
+\f5\i HueRing
+\f0\i0  test pattern
+\f1\b0 \
+see {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200722"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20200722}}\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // TODO experimental analog of RgbBox but for HSV color space.\
+class HsvBox : public Texture\
+\{\
+public:\
+    HsvBox(float minh, float maxh,\
+           float mins, float maxs,\
+           float minv, float maxv,\
+           const Texture& _texture)\
+        // trying it without imposing an ordering\
+//      : min_h(clip01(std::min(minh, maxh))),\
+//        max_h(clip01(std::max(minh, maxh))),\
+//        min_s(clip01(std::min(mins, maxs))),\
+//        max_s(clip01(std::max(mins, maxs))),\
+//        min_v(clip01(std::min(minv, maxv))),\
+//        max_v(clip01(std::max(minv, maxv))),\
+        : min_h(clip01(minh)),\
+          max_h(clip01(maxh)),\
+          min_s(clip01(mins)),\
+          max_s(clip01(maxs)),\
+          min_v(clip01(minv)),\
+          max_v(clip01(maxv)),\
+        texture(_texture) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        // TODO do I want to keep the clip?\
+        Color input = texture.getColor(position).clipToUnitRGB();\
+        float h1, s1, v1;\
+        Color::convertRGBtoHSV(input.r(), input.g(), input.b(), h1, s1, v1);\
+        \
+        //float h2 = remapInterval(h1, 0, 1, min_h, max_h);\
+        float h_folded = sinusoid(h1 < 0.5 ? h1 * 2 : 2 - (h1 * 2));\
+        float h2 = remapInterval(h_folded, 0, 1, min_h, max_h);\
+\
+        float s2 = remapInterval(s1, 0, 1, min_s, max_s);\
+        float v2 = remapInterval(v1, 0, 1, min_v, max_v);\
+        return Color::makeHSV(h2, s2, v2);\
+    \}\
+private:\
+    const float min_h;\
+    const float max_h;\
+    const float min_s;\
+    const float max_s;\
+    const float min_v;\
+    const float max_v;\
+    const Texture& texture;\
+\};\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0 // TODO temporary, just for testing\
+class HueRing : public Texture\
+\{\
+public:\
+    HueRing()\{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        Color color(0, 0, 0);\
+        float radius = position.length();\
+        if (radius < 1)\
+        \{\
+            float r1 = 0.4;\
+            float r2 = 0.6;\
+            float h = position.atan2() / (2 * pi);\
+            float s = sinusoid(remapIntervalClip(radius,  0, r1,  0, 1));\
+            float v = sinusoid(remapIntervalClip(radius,  r2, 1,  1, 0));\
+            color = Color::makeHSV(h, s, v);\
+        \}\
+        return color;\
+    \}\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 July 2, 2020\
+Wrote this while (once again!) rewriting StretchSpot. Ended up not using it
+\f1\b0 .\
+\
+I was trying to remember a name for this construction, possibly \'93De Casteljau's algorithm\'94? Via:\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://www.facebook.com/craig.reynolds.184/posts/934371603267493"}}{\fldrslt \cf2 https://www.facebook.com/craig.reynolds.184/posts/934371603267493}}\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://en.wikipedia.org/wiki/B%C3%A9zier_curve"}}{\fldrslt \cf2 \ul \ulc2 https://en.wikipedia.org/wiki/B%C3%A9zier_curve}}\
+\pard\pardeftab560\slleading20\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm"}}{\fldrslt \cf2 https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm}}\
+\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0 // TODO JUST A PROTOTYPE FOR TESTING, RECONSIDER DESIGN IF KEPT\
+Vec2 fourPointLerpSpline(float alpha, Vec2 v0, Vec2 v1, Vec2 v2, Vec2 v3)\
+\{\
+    Vec2 a = interpolate(alpha, v0, v1);\
+    Vec2 b = interpolate(alpha, v1, v2);\
+    Vec2 c = interpolate(alpha, v2, v3);\
+    \
+    Vec2 m = interpolate(alpha, a, b);\
+    Vec2 n = interpolate(alpha, b, c);\
+    \
+    Vec2 r = interpolate(alpha, m, n);\
+    \
+    return r;\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 22, 2020\
+Changed this
+\f1\b0  (see {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200622"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20200622}})
+\f0\b  hope it does not break unit test.
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // remap a value specified relative to a pair of bounding values\
+// to the corresponding value relative to another pair of bounds.\
+// Inspired by (dyna:remap-interval y y0 y1 z0 z1)\
+inline float remapInterval(float x,\
+                           float in0, float in1,\
+                           float out0, float out1)\
+\{\
+    // If the input range is well defined do the linear remapping.\
+    float input_range = in1 - in0;\
+    if (input_range > 0)\
+    \{\
+        // Uninterpolate: what is x relative to input interval?\
+        float relative = (x - in0) / input_range;\
+        // Interpolate relative to output interval.\
+        return interpolate(relative, out0, out1);\
+    \}\
+    // Otherwise treat as step function.\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f4\b \cf0 //    return (x <= in0) ? out0 : out1;\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3\b0 \cf0     return interpolate(0.5, out0, out1);\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+(note that I created a folder 
+\f3 snapshot_1st_c_version
+\f1  for the messy transitional \'93debug\'94 version of this code.)\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 21, 2020\
+Before cleaning up the CotsMap Texture operator:
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class CotsMap : public Texture\
+\{\
+public:\
+    CotsMap(Vec2 A, Vec2 B, Vec2 C, Vec2 D, const Texture& _texture)\
+      : cots_map(A, B, C, D),\
+        texture(_texture) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+//        Vec2 ip = cots_map.Inverse(position);\
+        \
+//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?\
+//                Color(1, 1, 1) :\
+//                Color(0, 0, 0) );\
+        \
+//        float r, g, b;\
+//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);\
+//        return Color(r, g, b);\
+        \
+//        float r, g, b;\
+//        Color::convertHSVtoRGB(ip.x(), ip.y(), 0.5, r, g, b);\
+//        return ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ?\
+//                Color(r, g, b) :\
+//                Color(0, 0, 0) );\
+\
+//        return texture.getColor(ip);\
+        \
+//        Color c = texture.getColor(ip);\
+//        return c * ((between(ip.x(), 0, 1) && between(ip.y(), 0, 1)) ? 1 : 0.5);\
+\
+        return texture.getColor(cots_map.Inverse(position));\
+    \}\
+private:\
+    const COTS cots_map;\
+    const Texture& texture;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 10, 2020\
+This was the fix to VERY old interpolation bug, \
+see:
+\f1\b0  {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200614"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20200614}}\
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0 // Generic interpolation\
+template<typename F,typename T>\
+T interpolate(const F& alpha, const T& x0, const T& x1)\
+\{\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+//    return x0 + ((x1 - x0) * alpha);\
+    return (x0 * (1 - alpha)) + (x1 * alpha);\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 14, 2020\
+Binary display for Texture::diff() \'97 alter AbsDiff to return white for any mismatch
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // Absolute value of the difference of two textures. abs(texture0 - texture1)\
+// (TODO Names AbsDiff Distance, Norm?)\
+class AbsDiff : public Texture\
+\{\
+public:\
+    AbsDiff(const Texture& _texture0, const Texture& _texture1)\
+        : texture0(_texture0), texture1(_texture1) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        Color diff = texture0.getColor(position) - texture1.getColor(position);\
+        // TODO define overload of std::abs() for Color?\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+//        return Color(std::abs(diff.r()),\
+//                     std::abs(diff.g()),\
+//                     std::abs(diff.b()));\
+        \
+        Color black(0,0,0);\
+        Color white(1,1,1);\
+        Vec2 first(-0.847059, 0.14902);\
+        float half_pixel = 1.0 / 511;\
+        if (withinEpsilon(position, first, half_pixel)) debugPrint("Hello!");\
+        return ((diff == black) ? black : white);\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+    \}\
+private:\
+    const Texture& texture0;\
+    const Texture& texture1;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 8, 2020\
+This code had been commented out since the same day it was written (April 26) now I\'92m moving it here.
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class Gamma : public Texture\
+\{\
+public:\
+    Gamma(float _exponent, const Texture& _texture)\
+      : exponent(_exponent),\
+        texture(_texture) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        Color color = texture.getColor(position).gamma(exponent);\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f4\b \cf0         //\
+        // TODO I tried some tests:\
+        //      ColorNoise cn(0.3, Vec2(5, 3), 0.6);\
+        //      Gamma(-1, cn);\
+        //      Gamma(0, cn));\
+        //      Gamma(1, AdjustBrightness(-1, cn));\
+        // None produced any NaN, but there were some Inf. Is that a problem?\
+        // Worked fine when called from Texture::rasterizeToImageCache()\
+        //\
+        //assert(!isnan(color.r()));\
+        //assert(!isnan(color.g()));\
+        //assert(!isnan(color.b()));\
+        //assert(!isinf(color.r()));\
+        //assert(!isinf(color.g()));\
+        //assert(!isinf(color.b()));\
+        //\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3\b0 \cf0         return color;\
+    \}\
+private:\
+    const float exponent;\
+    const Texture& texture;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 7, 2020\
+That \'93blog post\'94 was on January 16 finally moved it here {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200116"}}{\fldrslt 
+\f1\b0 \cf2 https://cwreynolds.github.io/TexSyn/#20200116}}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // TODO updated 2009 version\
+// TODO remember to remove this after the blog post.\
+//\
+// scale a Texture along the X axis leaving the Y axis unchanged\
+// parameters: scale factor, rotation angle, translation vector\
+class Stretch2009 : public Operator\
+\{\
+public:\
+    Stretch2009(float _scale, float _angle, Vec2 _center, const Texture& _texture)\
+      : scale(_scale),\
+        angle(_angle),\
+        center(_center),\
+        texture(_texture) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        Vec2 p = position;\
+        p = p - center;\
+        p = p.rotate(-angle);\
+        p = Vec2(p.x() / scale, p.y());\
+        p = p.rotate(angle);\
+        p = p + center;\
+        return texture.getColor(p);\
+    \}\
+private:\
+    const float scale;\
+    const float angle;\
+    const Vec2 center;\
+    const Texture& texture;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 7, 2020\
+removed this prototype test code from March 25, 2020
+\f1\b0  ({\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200325"}}{\fldrslt \cf2 \ul \ulc2 https://cwreynolds.github.io/TexSyn/#20200325}})\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // TODO add doc\
+// Unit vector toward (distant) light source.\
+class ShadedSphereTest : public Operator\
+\{\
+public:\
+    ShadedSphereTest(Vec3 _toward_light)\
+      : toward_light(_toward_light.normalize()) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        Color shade(0, 0, 0);\
+        // position = position / 0.9;\
+        float radius = position.length();\
+        if (radius < 1)\
+        \{\
+            // Unit surface normal vector:\
+            float h = std::sqrt(1 - sq(radius));\
+            Vec3 surface_normal(position.x(), position.y(), h);\
+            // Return shaded gray value.\
+            float value = lambertian_shading(surface_normal, toward_light);\
+            shade = Color::gray(value);\
+        \}\
+        return shade;\
+    \}\
+private:\
+    const Vec3 toward_light;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 June 7, 2020\
+Maybe 
+\f4 print_mutex
+\f0  should be built into 
+\f4 debugPrint()
+\f0 ?
+\f1\b0 \
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+// TODO super temp\
+static std::mutex print_mutex;\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+        // TODO super temp\
+        \{\
+            const std::lock_guard<std::mutex> lock(print_mutex);\
+            debugPrint(value);\
+        \}\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 May 28, 2020
+\f1\b0 \
+
+\f0\b Use new 
+\f4 jittered_grid_NxN_in_square()
+\f0  utility to replace old inline code in 
+\f4 Blur::getColor()
+\f0 , which served as the starting point for 
+\f4 jittered_grid_NxN_in_square()
+\f1\b0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class Blur : public Operator\
+\{\
+public:\
+    Blur(const float _width, const Texture& _texture)\
+        : width(_width), texture(_texture) \{\}\
+    Color getColor(Vec2 position) const override\
+    \{\
+        float radius = width / 2;\
+        std::vector<Vec2> offsets;\
+        RandomSequence rs(position.hash());\
+        float cell_width = width / sqrt_of_subsample_count;\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+        // qqq\
+//        for (int i = 0; i < sqrt_of_subsample_count; i++)\
+//            for (int j = 0; j < sqrt_of_subsample_count; j++)\
+//                offsets.push_back(Vec2((i * cell_width) - radius, // cell corner\
+//                                       (j * cell_width) - radius) +\
+//                                  Vec2(rs.frandom01() * cell_width,  // jiggle\
+//                                       rs.frandom01() * cell_width));\
+        jittered_grid_NxN_in_square(sqrt_of_subsample_count,\
+                                    width,\
+                                    rs,\
+                                    offsets);\
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+        ...\
+    \}\
+    ...\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 May 26, 2020\
+finally remove this experiment comparing 
+\f4 Texture::rasterizeRowOfDisk()
+\f0  to 
+\f4 cv::Mat::forEach()
+\f1\b0 \
+Keeping only the \'931\'94 side of the 
+\f3 #if
+\f1 \
+\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 // Rasterize this texture into a size\'b2 OpenCV image. Arg "disk" true means\
+// draw a round image, otherwise a square. Run parallel threads for speed.\
+void Texture::rasterizeToImageCache(int size, bool disk) const\
+\{\
+    Timer t("rasterizeToImageCache");\
+    // If size changed, including from initial value of 0x0, generate raster.\
+    // (TODO also ought to re-cache if "disk" changes. Issue ignored for now.)\
+    if ((size != raster_->rows) || (size != raster_->cols))\
+    \{\
+        // Reset our OpenCV Mat to be (size, size) with 3 floats per pixel.\
+        raster_->create(size, size, CV_32FC3);\
+        // Code assumes disk center is at window center, so size must be odd. (TODO)\
+        assert(((!disk) || (size % 2 == 1)) && "For disk, size must be odd.");\
+        \
+#if 1  //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\
+        // Synchronizes access to opencv_image by multiple row threads.\
+        std::mutex ocv_image_mutex;\
+        // Collection of all row threads.\
+        std::vector<std::thread> all_threads;\
+        // Loop all image rows, bottom to top. For each, launch a thread running\
+        // rasterizeRowOfDisk() to compute pixels, write to image via mutex.\
+        for (int j = -(size / 2); j <= (size / 2); j++)\
+        \{\
+            // This requires some unpacking. It creates a thread which is pushed\
+            // (using && move semantics, I think) onto the back of std::vector\
+            // all_row_threads. Because the initial/toplevel thread function is\
+            // member function of this instance, it is specified as two values,\
+            // a function pointer AND an instance pointer. The other four values\
+            // are args to rasterizeRowOfDisk(row, size, disk, image, mutex).\
+            all_threads.push_back(std::thread(&Texture::rasterizeRowOfDisk, this,\
+                                              j, size, disk,\
+                                              std::ref(*raster_),\
+                                              std::ref(ocv_image_mutex)));\
+        \}\
+        // Wait for all row threads to finish.\
+        for (auto& t : all_threads) t.join();\
+#else  //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\
+        // A type for the pixel data structure passed to the lambda below.\
+        typedef cv::Point3_<float> Pixel;\
+        // Default background color. (Should be arg but this is just speed test)\
+        *raster_ = cv::Vec3f(0.5, 0.5, 0.5);\
+        auto get_texture_color_for_pixel = [&](Pixel& pixel, const int coords[])\
+        \{\
+            Vec2 flip(coords[1], size - coords[0]);\
+            Vec2 position = (flip / (size / 2)) - Vec2(1, 1);\
+            if (!disk || (position.length() <= 1))\
+            \{\
+                Color color = reGamma(getColorClipped(position));\
+                pixel.x = color.b();\
+                pixel.y = color.g();\
+                pixel.z = color.r();\
+            \}\
+        \};\
+        raster_->forEach<Pixel>(get_texture_color_for_pixel);\
+#endif //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\
+    \}\
+\}\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 May 3, 2020\
+Related perhaps to the code below, an unused ColorGridCache class was defined in Color.h\
+I moved it here.\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\b0 \cf0 \
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0 #include <map>\
+#include <unordered_map>\
+\
+// TODO experimental cache for Blur at discrete subsample grid cell\
+// make it spectic to int x,y keys and Color values. Maybe generalize later.\
+\
+// Try timing tests with std::unordered_map instead of std::map\
+\
+class ColorGridCache\
+\{\
+public:\
+    typedef std::pair<std::pair<int, int>, Color> ColorGrid;\
+//    ColorGridCache()\{\};\
+    // TODO new March 16\
+    ColorGridCache()\{ cache_.reserve(511 * 511); \};\
+\
+    // TODO for testing, keep?\
+    bool cached(int x, int y)\
+    \{\
+        auto find_result = cache_.find(std::make_pair(x, y));\
+        return find_result != cache_.end();\
+    \}\
+    \
+    size_t size() \{ return cache_.size(); \}\
+    void insert(int x, int y, Color color)\
+    \{\
+        cache_[std::make_pair(x, y)] = color;\
+    \}\
+    Color lookup(int x, int y, bool& present_in_cache)\
+    \{\
+        Color result(0, 0, 0);\
+        present_in_cache = false;\
+        auto find_result = cache_.find(std::make_pair(x, y));\
+        if (find_result != cache_.end())\
+        \{\
+            present_in_cache = true;\
+            result = find_result->second;\
+        \}\
+        return result;\
+    \}\
+private:\
+    // TODO map (red-black tree) version\
+    // std::map<std::pair<int, int>, Color> cache_;\
+    \
+    // TODO hash table version\
+    struct pair_hash\
+    \{\
+        template <class T1, class T2>\
+        std::size_t operator() (const std::pair<T1, T2> &pair) const\
+        \{\
+            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);\
+        \}\
+    \};\
+    std::unordered_map<std::pair<int, int>, Color, pair_hash> cache_;\
+\};\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\'97\
+\
+Version of Blur with \'93hash-table-based-subsample-reusing\'94 which I decided not to use.\
+See: {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200317"}}{\fldrslt \cf2 \ul \ulc2 https://cwreynolds.github.io/TexSyn/#20200317}}\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class Blur : public Operator\
+\{\
+public:\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+//    Blur(const float _width, const Texture& _texture)\
+//        : width(_width), texture(_texture) \{\}\
+    Blur(const float _width, const Texture& _texture)\
+      : width(_width),\
+        texture(_texture),\
+        cgc(std::make_shared<ColorGridCache>()) \{\}\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+    Color getColor(Vec2 position) const override\
+    \{\
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+//        return NEWgetColor(position);\
+//        return NEWERgetColor(position);\
+        //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+        // TODO VERY PROTOTYPE\
+        float radius = width / 2;\
+//        int n = 15;  // number of subsamples is n\'b2\
+//        int n = 11;  // number of subsamples is n\'b2\
+//        int n = 10;  // number of subsamples is n\'b2\
+        \
+//        float cell_width = width / n;\
+//        std::vector<Vec2> offsets;\
+//        for (int i = 0; i < n; i++)\
+//            for (int j = 0; j < n; j++)\
+        \
+        std::vector<Vec2> offsets;\
+        float cell_width = width / sqrt_of_subsample_count;\
+        for (int i = 0; i < sqrt_of_subsample_count; i++)\
+            for (int j = 0; j < sqrt_of_subsample_count; j++)\
+                offsets.push_back(Vec2((i * cell_width) - radius, // cell corner\
+                                       (j * cell_width) - radius) +\
+                                  Vec2(frandom01() * cell_width,  // jiggle\
+                                       frandom01() * cell_width));\
+        Color sum_of_weighted_colors(0, 0, 0);\
+        float sum_of_weights = 0;\
+        for (Vec2 offset : offsets)\
+        \{\
+            float length = offset.length();\
+            if (length <= radius)\
+            \{\
+                float weight = 1 - sinusoid(length / radius);\
+                Color color_at_offset = texture.getColor(position + offset);\
+                sum_of_weighted_colors += color_at_offset * weight;\
+                sum_of_weights += weight;\
+            \}\
+        \}\
+        return sum_of_weighted_colors / sum_of_weights;\
+    \}\
+    \
+    \
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+    Color NEWgetColor(Vec2 position) const // override\
+    \{\
+        float radius = width / 2;\
+        int n = 15;  // number of subsamples is n\'b2\
+//        int n = 32;  // number of subsamples is n\'b2\
+//        int n = 16;  // number of subsamples is n\'b2\
+//        int n = 14;  // number of subsamples is n\'b2\
+//        int n = 12;  // number of subsamples is n\'b2\
+//        int n = 8;  // number of subsamples is n\'b2\
+        float cell_width = width / n;\
+        \
+        auto position_to_cell = [&](float x)\{return std::floor(x/cell_width);\};\
+    \
+        Color sum_of_weighted_colors(0, 0, 0);\
+        float sum_of_weights = 0;\
+        \
+        for (int i = 0; i < n; i++)\
+        \{\
+            for (int j = 0; j < n; j++)\
+            \{\
+                // Position of cell corner in relative to "position".\
+                Vec2 cell_corner_offset((i * cell_width) - radius,\
+                                        (j * cell_width) - radius);\
+                \
+                float length = cell_corner_offset.length();\
+                if (length <= radius)\
+                \{\
+                    // Position of cell corner in global texture space.\
+                    Vec2 cell_corner = cell_corner_offset + position;\
+                    \
+                    // Global +/- indices of cell.\
+                    int global_i = position_to_cell(cell_corner.x());\
+                    int global_j = position_to_cell(cell_corner.y());\
+\
+                    // Look up the cell, has a Color been cached for it?\
+                    bool found = false;\
+                    Color color = cgc->lookup(global_i, global_j, found);\
+                    Texture::total_cache_lookups++;\
+                    \
+                    // Is this cell in the ColorGridCache?\
+                    if (!found)\
+                    \{\
+                        Vec2 jiggle(frandom01() * cell_width,\
+                                    frandom01() * cell_width);\
+//                        Vec2 jiggle(0, 0);\
+                        Vec2 offset = cell_corner + jiggle;\
+                        color = texture.getColor(offset);\
+                        cgc->insert(global_i, global_j, color);\
+                        Texture::total_pixels_cached++;\
+                    \}\
+                    float weight = 1 - sinusoid(length / radius);\
+                    sum_of_weighted_colors += color * weight;\
+                    sum_of_weights += weight;\
+                \}\
+            \}\
+        \}\
+        \
+        Texture::total_pixels_rendered++;\
+        Texture::cache_size = cgc->size();\
+        \
+        return sum_of_weighted_colors / sum_of_weights;\
+    \}\
+    \
+    \
+    Color NEWERgetColor(Vec2 position) const // override\
+    \{\
+        float radius = width / 2;\
+//        int n = 15;  // number of subsamples is n\'b2\
+        // TODO new March 16\
+        int n = 30;  // number of subsamples is n\'b2\
+//        int n = 20;  // number of subsamples is n\'b2\
+//        int n = 40;  // number of subsamples is n\'b2\
+        float cell_width = width / n;\
+        \
+        auto position_to_cell = [&](float x)\{return std::floor(x/cell_width);\};\
+    \
+        Color sum_of_weighted_colors(0, 0, 0);\
+        float sum_of_weights = 0;\
+  \
+        \
+        std::vector<int> is;\
+        std::vector<int> js;\
+        for (int k = 0; k < n; k++) if (frandom01() > 0.75) is.push_back(k);\
+        for (int k = 0; k < n; k++) if (frandom01() > 0.75) js.push_back(k);\
+\
+        for (int i : is)\
+        \{\
+            for (int j : js)\
+            \{\
+            \
+//        for (int i = 0; i < n; i++)\
+//        \{\
+//            for (int j = 0; j < n; j++)\
+//            \{\
+                \
+//                // TODO new March 16 (rewrite if kept)\
+//                if (frandom01() < 0.75) continue;\
+\
+                \
+                // Position of cell corner in relative to "position".\
+                Vec2 cell_corner_offset((i * cell_width) - radius,\
+                                        (j * cell_width) - radius);\
+                \
+                float length = cell_corner_offset.length();\
+                if (length <= radius)\
+                \{\
+                    // Position of cell corner in global texture space.\
+                    Vec2 cell_corner = cell_corner_offset + position;\
+                    \
+                    // Global +/- indices of cell.\
+                    int global_i = position_to_cell(cell_corner.x());\
+                    int global_j = position_to_cell(cell_corner.y());\
+\
+                    // Look up the cell, has a Color been cached for it?\
+                    bool found = false;\
+                    Color color = cgc->lookup(global_i, global_j, found);\
+                    Texture::total_cache_lookups++;\
+                    \
+                    // Is this cell in the ColorGridCache?\
+                    if (!found)\
+                    \{\
+                        Vec2 jiggle(frandom01() * cell_width,\
+                                    frandom01() * cell_width);\
+                        Vec2 offset = cell_corner + jiggle;\
+                        color = texture.getColor(offset);\
+                        cgc->insert(global_i, global_j, color);\
+                        Texture::total_pixels_cached++;\
+                    \}\
+                    float weight = 1 - sinusoid(length / radius);\
+                    sum_of_weighted_colors += color * weight;\
+                    sum_of_weights += weight;\
+                \}\
+            \}\
+        \}\
+        \
+        Texture::total_pixels_rendered++;\
+        Texture::cache_size = cgc->size();\
+        \
+        return sum_of_weighted_colors / sum_of_weights;\
+    \}\
+\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+    \
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+    static int sqrt_of_subsample_count;\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+\
+private:\
+    const float width;\
+    const Texture& texture;\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+    std::shared_ptr<ColorGridCache> cgc;\
+    //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~\
+\};\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Infrastructure / c++ temporaries
+\f1\b0 \
+\'93curiously recurring template pattern\'94\
+see: {\field{\*\fldinst{HYPERLINK "https://cwreynolds.github.io/TexSyn/#20200305"}}{\fldrslt \cf2 https://cwreynolds.github.io/TexSyn/#20200305}} \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Version of Multiply operator written to copy (then leak) its inputs:\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f1\b0 \cf0 \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0 //    class MultiplyTest : public Operator\
+    class MultiplyTest : public CloningTexture<MultiplyTest>\
+    \{\
+    public:\
+        MultiplyTest(const Texture& _texture0, const Texture& _texture1)\
+//          : texture0(_texture0),\
+//            texture1(_texture1) \{\}\
+        : texture0(_texture0.clone()), // TODO these leak memory!\
+          texture1(_texture1.clone()) \{\}\
+        Color getColor(Vec2 position) const override\
+        \{\
+            return texture0.getColor(position) * texture1.getColor(position);\
+        \}\
+    private:\
+        const Texture& texture0;\
+        const Texture& texture1;\
+    \};\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f1 \cf0 \
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Modification to generators used in the test case:
+\f1\b0 \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0 \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f3 \cf0 // Furbulence: two "fold" version of Turbulence producing sharp features at\
+// both low and high ends of the output range.\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+//class Furbulence : public Generator\
+class Furbulence : public CloningTexture<Furbulence>\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\{\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf0 ...\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0 \};\
+\
+// A grating of two alternating colored stripes. The spacing and orientation is\
+// defined by two points. The segment between them is perpendicular to the\
+// stripes, the length of the segment is the width (wavelength) of the stripes.\
+// The softness parameter varies from a square wave at 0 and a sinusoid at 1.\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+//class Grating : public Generator\
+class Grating : public CloningTexture<Grating>\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\{\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf0 ...\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf0 \};
+\f1 \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f0\b \cf0 Changes to Texture.h:
+\f1\b0  \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f3 \cf0 class Texture : public AbstractTexture\
+\{\
+public:\
+    ...\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+    // TODO experiment following https://stackoverflow.com/a/5731259/1991373\
+    // Maybe this could return a shared pointer?\
+//    virtual Texture* clone() const = 0;\
+//    virtual Texture* clone() const\
+    virtual const Texture& clone() const\
+    \{\
+        std::cout << "DON'T CALL ME!!!!!!!!!!!!!!!!!!!" << std::endl;\
+        return *(new Texture(*this)); // call the copy ctor.\
+    \}\
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+    ...\
+\};\
+\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+// TODO experiment following https://stackoverflow.com/a/5731259/1991373\
+// TODO warning: leaks memory like mad!\
+template <class Derived>\
+//class DerivationHelper : public Texture\
+class CloningTexture : public Texture\
+\{\
+public:\
+    const Texture& clone() const override\
+    \{\
+        // call the copy constructor.\
+        // TODO warning: leaks memory like mad!\
+        return *(new Derived(static_cast<const Derived&>(*this)));\
+    \}\
+\};\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1 \cf0 \
+}
