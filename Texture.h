@@ -50,7 +50,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>  // TODO temp(?) for fft_test()
 #include <opencv2/highgui/highgui.hpp>
 #pragma clang diagnostic pop
 
@@ -593,124 +592,6 @@ public:
     static bool tooExpensiveToNest() { return (expensive_to_nest_ >
                                                max_expensive_nest_); }
 
-    // Experimental utility. Maybe to be deleted or moved?
-    // Score a Texture on how much "high" frequency it has.
-    // TODO temp? Similar in intent to wiggliness() in GP.h
-    void fft_test() // const
-    {
-        Texture::rasterizeToImageCache(201, false);
-        cv::Mat monochrome;
-        cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-        cv::imshow("monochrome", monochrome);
-        
-        // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-        cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-        std::vector<cv::Mat> planes = { monochrome, zeros };
-        cv::Mat complexI;
-        cv::merge(planes, complexI);
-        
-        // Applying DFT
-        cv::dft(complexI, complexI);
-        
-        // Reconstructing original image from the DFT coefficients
-        cv::Mat invDFT;
-        // Applying IDFT
-        cv::idft(complexI, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT );
-        cv::imshow("DFT-iDFT reconstruction", invDFT);
-        
-        // Split the image into different channels
-        std::vector<cv::Mat> fftChannels(2);
-        split(complexI, fftChannels);
-        cv::imshow("DFT real part", fftChannels[0]);
-        cv::imshow("DFT imginary part", fftChannels[1]);
-        
-        cv::Mat& real = fftChannels[0];
-        int width = real.rows;
-        int y = width / 2;
-        
-        for (int x = width / 2; x < width; x++)
-        {
-            std::cout << real.at<float>(y, x) << " ";
-        }
-        std::cout << std::endl << std::endl;
-        for (int x = width / 2; x < width; x++)
-        {
-            std::cout << int(10 * real.at<float>(y, x)) << " ";
-        }
-        std::cout << std::endl << std::endl;
-        
-        debugPrint(highFrequencyScore());
-    }
-    float highFrequencyScore()
-    {
-        // TODO maybe cache the rendered image used here, or just case the score?
-        Timer t("    highFrequencyScore");
-        float score = cached_high_frequency_score_;
-        if (score == 0)
-        {
-            // Render this texture to monochrome (square image, size x size).
-            int size = 101;
-            cv::Mat temp = *raster_;  // Save raster_
-            Texture::rasterizeToImageCache(size, false);
-            cv::Mat monochrome;
-            cv::cvtColor(*raster_, monochrome, cv::COLOR_BGR2GRAY);
-            // restore raster_
-            *raster_ = temp;
-            
-            // Complex plane to contain the DFT coefficients {[0]-Real,[1]-Img}
-            cv::Mat complexI;
-            cv::Mat zeros = cv::Mat::zeros(monochrome.size(), CV_32F);
-            std::vector<cv::Mat> planes = { monochrome, zeros };
-            cv::merge(planes, complexI);
-            
-            // Applying DFT
-            cv::dft(complexI, complexI);
-            
-            // Split the image into different channels
-            std::vector<cv::Mat> fftChannels(2);
-            split(complexI, fftChannels);
-            
-            cv::Mat& real = fftChannels[0];
-            int width = real.rows;
-            float half_width = width * 0.5;
-            Vec2 center(half_width, half_width);
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < width; y++)
-                {
-                    float length = (Vec2(x, y) - center).length();
-                    float weight = length / half_width;
-                    if (weight < 1)
-                    {
-                        float real_part = real.at<float>(y, x);
-                        score += std::abs(real_part * weight);
-                    }
-                }
-            }
-            cached_high_frequency_score_ = score;
-        }
-        return score;
-    }
-
-    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
-    const std::vector<Color>& cachedRandomColorSamples(RandomSequence& rs)
-    {
-        if (cached_random_color_samples_.empty())
-        {
-            int n = 10;
-            std::vector<Vec2> positions;
-            jittered_grid_NxN_in_square(n, 1.4, rs, positions);
-            for (auto& p : positions)
-            {
-                Color sample = getColor(p).clipToUnitRGB();
-                cached_random_color_samples_.push_back(sample);
-            }
-        }
-        return cached_random_color_samples_;
-    }
-
-    
-    
     // Print report on constructor vs. destructor count, eg at end of run.
     static void leakCheck()
     {
@@ -942,9 +823,6 @@ private:
     }
 
     std::shared_ptr<cv::Mat> raster_;
-    // Optional cache of 100 colors randomly sampled in unit-diameter disk.
-    std::vector<Color> cached_random_color_samples_;
-    float cached_high_frequency_score_ = 0;
     // Global default render size.
     static inline int render_size_ = 511;
     // Global default "render as disk" flag: render disk if true, else square.
