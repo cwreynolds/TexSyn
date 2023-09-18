@@ -462,8 +462,6 @@ public:
     {
         return fs::path(commandName()).filename();
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20221013 actually write log to file.
     std::string wholeCommandAsString() const
     {
         std::string whole_command;
@@ -476,7 +474,8 @@ public:
         }
         return whole_command;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Return copy(?) of parsed cmd line as vector of strings.
+    std::vector<std::string> parsedTokens() const { return cmd_line_; }
 private:
     // Given traditional main() parameters argc/argv, return BY VALUE an
     // std::vector of std::strings representing the tokens of a unix-style
