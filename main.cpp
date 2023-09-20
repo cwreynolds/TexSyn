@@ -14,11 +14,11 @@ int main(int argc, const char * argv[])
 {
     std::cout << texsyn_version_string << std::endl;
     if (!UnitTests::allTestsOK()) { return EXIT_FAILURE; }
-    std::cout << "September 18, 2023" << std::endl;
+    std::cout << "September 19, 2023" << std::endl;
     auto cmd = CommandLine(argc, argv);
     if (cmd.parsedTokens().size() == 1)
     {
-        // When command given with no arguments, just run the various_examples()
+        // When command given with no arguments, just run various_examples().
         UnitTests::various_examples();
     }
     else
@@ -30,15 +30,6 @@ int main(int argc, const char * argv[])
         // As used in earlier experiments. See here: https://bit.ly/3sV0bUt
         EvoCamoVsLearnPredPop(cmd).run();  // Normal COC run.
         // EvoCamoVsLppSqm(cmd).run();     // Include SQM, runs much slower
-        //
-        // See doc in EvoCamoGame.h, typical usage is something like:
-        //     caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter
-        //                       ~/Desktop/TexSyn_temp/
-        //                       0.25
-        //                       20230308
-        //                       512 512
-        //                       400
-        //                       20
     }
     std::cout << "Type any key to proceed." << std::endl;
     Texture::waitKey();
@@ -48,3 +39,29 @@ int main(int argc, const char * argv[])
     abnormal_value_report();
     return EXIT_SUCCESS;
 }
+
+
+// Notes on running Coevolution of Camouflage from the command line:
+// requires at least one pathname parameter, others may be omitted from the end:
+//    background_image_directory (required)
+//    output_directory (defaults to .)
+//    background_scale (defaults to 0.5)
+//    random_seed (else: default seed)
+//    window width (defaults to 1200)
+//    window height (defaults to 800)
+//    individuals (defaults to 120)
+//    subpopulations (defaults to 6)
+//    max_init_tree_size (defaults to 100)
+//    min_crossover_tree_size (default max_init_tree_size_ * 0.5)
+//    max_crossover_tree_size (default max_init_tree_size_ * 1.5)
+
+// See doc in EvoCamoGame.h and in https://cwreynolds.github.io/TexSyn/
+// Typical usage is something like:
+//     caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter
+//                       ~/Desktop/TexSyn_temp/
+//                       0.25
+//                       20230308
+//                       512 512
+//                       400
+//                       20
+
