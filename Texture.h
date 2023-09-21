@@ -230,7 +230,7 @@ public:
         int half = size / 2;
         RasterizeHelper rh(j, size, disk);
         // Create temp cv::Mat to accumulate pixels for this row.
-        assert(default_opencv_mat_type_ == CV_8UC3);
+        assert(getDefaultOpencvMatType() == CV_8UC3);
         cv::Scalar gray(127, 127, 127);  // Note: assumes CV_8UC3.
         cv::Mat row_image(1, size, getDefaultOpencvMatType(), gray);
         for (int i = rh.first_pixel_index; i <= rh.last_pixel_index; i++)
@@ -385,7 +385,7 @@ public:
         // Make OpenCV Mat of type CV_8UC3 (3 by unsigned 8 bit primaries).
         cv::Mat opencv_image(size + margin * 2,
                              size + margin * 2,
-                             default_opencv_mat_type_,  // normally CV_8UC3
+                             getDefaultOpencvMatType(),  // normally CV_8UC3
                              cv::Scalar(255 * bg_color.b(),
                                         255 * bg_color.g(),
                                         255 * bg_color.r()));
@@ -540,7 +540,7 @@ public:
                                 int size)
     {
         // Make OpenCV Mat instance of type CV_8UC3 which is size*3 x size pixels.
-        cv::Mat mat(size, size * 3, default_opencv_mat_type_);//normally CV_8UC3
+        cv::Mat mat(size, size * 3, getDefaultOpencvMatType());//usually CV_8UC3
         // Function to handle each Texture.
         auto subwindow = [&](const Texture& t, int x)
         {
