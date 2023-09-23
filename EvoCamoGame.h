@@ -117,7 +117,6 @@ public:
             std::cout << "    max_crossover_tree_size "
                          "(default max_init_tree_size_ * 1.5)" << std::endl;
             std::cout << std::endl;
-            exit(EXIT_FAILURE);
         }
         else
         {
@@ -225,6 +224,11 @@ public:
     // Run the evolution simulation.
     void run()
     {
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20230922 max_steps to end run, had always been manual before
+        // Cannot run without background image directory.
+        if (backgroundImageDirectory().empty()) return;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         LPRS().setSeed(random_seed_);
         std::cout << "Create initial population." << std::endl;
         setPopulation(std::make_shared<Population>(individuals_,
