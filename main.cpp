@@ -14,12 +14,14 @@ int main(int argc, const char * argv[])
 {
     std::cout << texsyn_version_string << std::endl;
     if (!UnitTests::allTestsOK()) { return EXIT_FAILURE; }
-    std::cout << "September 21, 2023" << std::endl;
+    std::cout << "September 22, 2023" << std::endl;
     auto cmd = CommandLine(argc, argv);
     if (cmd.parsedTokens().size() == 1)
     {
         // When command given with no arguments, just run various_examples().
         UnitTests::various_examples();
+        std::cout << "Type any key to proceed." << std::endl;
+        Texture::waitKey();
     }
     else
     {
@@ -31,8 +33,6 @@ int main(int argc, const char * argv[])
         EvoCamoVsLearnPredPop(cmd).run();  // Normal COC run.
         // EvoCamoVsLppSqm(cmd).run();     // Include SQM, runs much slower
     }
-    std::cout << "Type any key to proceed." << std::endl;
-    Texture::waitKey();
     Texture::invalidInstanceReport();
     Texture::leakCheck();
     Individual::leakCheck();
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
 //
 //     Craig Reynolds. 2023. Coevolution of Camouflage. 2023 Artificial Life
 //     Conference. MIT Press. https://doi.org/10.1162/isal_a_00583
-//         With supplemental materials and high resolution images:
+//         Preprint with supplemental materials and high resolution images:
 //         https://arxiv.org/abs/2304.11793
 //
 // To run a simulation, two processes are launched, one to run camouflage
