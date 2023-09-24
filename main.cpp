@@ -88,6 +88,7 @@ int main(int argc, const char * argv[])
 //     window height (defaults to 800)
 //     individuals (defaults to 120)
 //     subpopulations (defaults to 6)
+//     max_steps (defaults to 12000)
 //     max_init_tree_size (defaults to 100)
 //     min_crossover_tree_size (default max_init_tree_size_ * 0.5)
 //     max_crossover_tree_size (default max_init_tree_size_ * 1.5)
@@ -97,6 +98,10 @@ int main(int argc, const char * argv[])
 // for each run is created under the "output_directory" named for the background
 // set, the date, and time.
 //
-// 12000 steps is typical run length.
+// Toward the end of CoC experiments 12000 steps was a typical run length, with
+// 400 prey individuals and 40 predators. This is refered to in comments as a
+// “super heavy” run. Shorter runs and smaller populations were used earlier in
+// the research with mixed success. See section “Background Sets” and Figure 7
+// in https://doi.org/10.1162/isal_a_00583 for more detail.
 //
 //------------------------------------------------------------------------------

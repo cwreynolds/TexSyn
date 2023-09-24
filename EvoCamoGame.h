@@ -29,28 +29,6 @@
 class EvoCamoGame
 {
 public:
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230922 max_steps to end run, had always been manual before
-
-//    // Constructor to get parameters from pre-parsed "unix style" command line.
-//    EvoCamoGame(const CommandLine& cmd)
-//      : run_name_(runNameDefault(cmd)),
-//        background_image_directory_(cmd.positionalArgument(1)),
-//        output_directory_(cmd.positionalArgument(2, ".")),
-//        output_directory_this_run_(runOutputDirectory()),
-//        background_scale_(cmd.positionalArgument(3, float(0.5))),
-//        random_seed_(cmd.positionalArgument(4, int(LPRS().defaultSeed()))),
-//        gui_size_(cmd.positionalArgument(5, 1200),
-//                  cmd.positionalArgument(6, 800)),
-//        gui_(gui_size_, Vec2(), run_name_),
-//        individuals_(cmd.positionalArgument(7, 120)),
-//        subpops_(cmd.positionalArgument(8, 6)),
-//        max_init_tree_size_(cmd.positionalArgument(9, 100)),
-//        min_crossover_tree_size_
-//            (cmd.positionalArgument(10, max_init_tree_size_ * 0.5f)),
-//        max_crossover_tree_size_
-//            (cmd.positionalArgument(11, max_init_tree_size_ * 1.5f))
-    
     // Constructor to get parameters from pre-parsed "unix style" command line.
     EvoCamoGame(const CommandLine& cmd)
       : run_name_(runNameDefault(cmd)),
@@ -64,22 +42,12 @@ public:
         gui_(gui_size_, Vec2(), run_name_),
         individuals_(cmd.positionalArgument(7, 120)),
         subpops_(cmd.positionalArgument(8, 6)),
-//        max_init_tree_size_(cmd.positionalArgument(9, 100)),
-//        min_crossover_tree_size_
-//            (cmd.positionalArgument(10, max_init_tree_size_ * 0.5f)),
-//        max_crossover_tree_size_
-//            (cmd.positionalArgument(11, max_init_tree_size_ * 1.5f))
-    
-        // TODO 20230922 how should this default be defined?
         max_steps_(cmd.positionalArgument(9, 12000)),
-    
         max_init_tree_size_(cmd.positionalArgument(10, 100)),
         min_crossover_tree_size_
             (cmd.positionalArgument(11, max_init_tree_size_ * 0.5f)),
         max_crossover_tree_size_
             (cmd.positionalArgument(12, max_init_tree_size_ * 1.5f))
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     {
         if ((backgroundScale() > 10000) || (backgroundScale() <  0.0001))
         {
@@ -105,12 +73,7 @@ public:
             std::cout << "    window height (defaults to 800)" << std::endl;
             std::cout << "    individuals (defaults to 120)" << std::endl;
             std::cout << "    subpopulations (defaults to 6)" << std::endl;
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230922 max_steps to end run, had always been manual before
             std::cout << "    max_steps (defaults to 12000)" << std::endl;
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
             std::cout << "    max_init_tree_size (defaults to 100)"<< std::endl;
             std::cout << "    min_crossover_tree_size "
                          "(default max_init_tree_size_ * 0.5)" << std::endl;
@@ -130,12 +93,7 @@ public:
             debugPrint(gui_.getSize());
             debugPrint(individuals_);
             debugPrint(subpops_);
-            
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230922 max_steps to end run, had always been manual before
-            debugPrint(getMaxSteps());
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            
+            debugPrint(max_steps_);
             debugPrint(max_init_tree_size_);
             debugPrint(min_crossover_tree_size_);
             debugPrint(max_crossover_tree_size_);
@@ -224,11 +182,8 @@ public:
     // Run the evolution simulation.
     void run()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
         // Cannot run without background image directory.
         if (backgroundImageDirectory().empty()) return;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         LPRS().setSeed(random_seed_);
         std::cout << "Create initial population." << std::endl;
         setPopulation(std::make_shared<Population>(individuals_,
@@ -258,10 +213,7 @@ public:
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230922 max_steps to end run, had always been manual before
             setRunningState(getMaxSteps() > getStepCount());
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -620,11 +572,7 @@ public:
     // Returns, as a string, current Population "step" number plus signed offset.
     std::string getStepAsString(int offset) const
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        return std::to_string(offset + getPopulation()->getStepCount());
         return std::to_string(offset + getStepCount());
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
 
     // Get/set a shared_ptr to this run's current Population.
@@ -634,11 +582,7 @@ public:
     
     void logFunctionUsageCounts(const fs::path& out)
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((step % 10) == 0)
         {
             // Preserve each named counter, but set its count to zero.
@@ -672,11 +616,7 @@ public:
     void writeTrainingSetData(const std::vector<Vec2>& prey_texture_positions)
     {
         int n = 10;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        if ((getPopulation()->getStepCount() % n) == 0)
         if ((getStepCount() % n) == 0)
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         {
             // Construct path for training set directory, create if needed.
             fs::path directory = outputDirectoryThisRun();
@@ -734,11 +674,11 @@ public:
     TournamentGroup& getTournamentGroup() { return tournament_group_; }
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230922 max_steps to end run, had always been manual before
+    // Current simulation step, held by Population object.
     int getStepCount() const { return getPopulation()->getStepCount(); }
+
+    // Exit simulation after this many steps.
     int getMaxSteps() const { return max_steps_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 private:
     // Name of run. (Defaults to directory holding background image files.)
@@ -772,10 +712,8 @@ private:
     // Count "invalid tournaments" -- aka "predator fails"
     int predator_fails_ = 0;
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230922 max_steps to end run, had always been manual before
+    // Exit simulation after this many steps.
     int max_steps_ = 12000;
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     // Note: the six variables below communicate "global" state with the mouse
@@ -1594,11 +1532,7 @@ public:
     {
         gui().refresh();
         // Wait for prediction from "predator server".
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Vec2 prediction = getComms().performStep(step, gui().getCvMat());
         Vec2 prediction_in_pixels = prediction * gui().getSize().x();
         // Record predator's response and display on GUI.
@@ -1650,33 +1584,23 @@ public:
     
     // Just a constant, but wrap in API so derived classes can access.
     int stepSaveStride() const { return step_save_stride_; }
-    // Is the current step one that should be saved?
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230102 TEMP  TEMP  TEMP
-    // skip mid-run saves for “twice as big” / superheavy / extra-large runs.
-//    bool saveThisStep() const
-//    {
-//        int step = getStepCount();
-//        return step % step_save_stride_ == 0;
-//    }
+
+    // Should this step's tournament image be saved? (Criteria for file saving.)
     bool saveThisStep() const
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        bool skip = ((step > 100) and (step < 10000));
-        bool savable = ((step % step_save_stride_) == 0);
+        // Normally save every n-th image (where N = 19).
+        bool savable = (step % stepSaveStride()) == 0;
+        // Save only at start and near end of a "superheavy" run (12000 steps).
+        bool skip = (step > 100) and (step < 10000) and (getMaxSteps() > 10000);
+        // Log a message when skipping a savable step.
         if (savable && skip)
         {
             std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
         }
         return savable && !skip;
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    int step_save_stride_ = 19;
-    
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
     virtual void appendStepResultsToRunLog()
@@ -1745,11 +1669,7 @@ public:
     // Count and record "invalid tournaments" -- aka "predator fails"
     void recordPredatorFailTimeSeriesData()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((step % 10) == 0)
         {
             // Open output stream to file in append mode.
@@ -1783,6 +1703,7 @@ public:
 private:
     PythonComms comms_;
     cv::Mat previous_step_image_;
+    int step_save_stride_ = 19;
 };
 
 // This is the version to support a "learning predator" which requires sending a
@@ -1804,11 +1725,7 @@ public:
     void waitForUserInput() override
     {
         float image_size = gui().getCvMat().rows;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         auto make_pathname = [&](int step)
         {
             return getComms().makePathname(step, "prey_", ".txt");
@@ -2087,11 +2004,7 @@ public:
     {
         if (saveThisStep())
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230922 max_steps to end run, had always been manual before
-//            int step = getPopulation()->getStepCount();
             int step = getStepCount();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (step == 0)
             {
                 appendLineToRunLog(getRunID());
@@ -2287,11 +2200,7 @@ public:
     const int sqm_interval_ = 100;
     void handleSQM()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if ((step % sqm_interval_) == 0)
         {
             ensureAllPreyHaveSQM();
@@ -2410,11 +2319,7 @@ public:
         // Helper function to make fs:path from preprefix ("wait_" or "eval_")
         auto p = [&](std::string preprefix)
         {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230922 max_steps to end run, had always been manual before
-//            int step = getPopulation()->getStepCount();
             int step = getStepCount();
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             std::string prefix = preprefix + std::to_string(mife_counter_) + "_";
             return getComms().makePathname(step, prefix, ".png");
         };
@@ -2429,11 +2334,7 @@ public:
     Vec2 waitForEvaluation(Vec2 prey_center)
     {
         // Poll and sleep until file appears.
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         std::string prefix = "sqm_" + std::to_string(mife_counter_) + "_";
         fs::path path = getComms().makePathname(step, prefix, ".txt");
         while (!getComms().isFilePresent(path))
@@ -2457,11 +2358,7 @@ public:
     // Called very 100 steps, to log SQM max and average over the population.
     void logSQM()
     {
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230922 max_steps to end run, had always been manual before
-//        int step = getPopulation()->getStepCount();
         int step = getStepCount();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Open output stream to file in append mode.
         fs::path out = outputDirectoryThisRun();
         std::ofstream outfile;
