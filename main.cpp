@@ -19,15 +19,20 @@ int main(int argc, const char * argv[])
         exit_code = EXIT_SUCCESS;
         std::cout << "September 22, 2023" << std::endl;
         auto cmd = CommandLine(argc, argv);
-
         // Run Coevolution of Camouflage, specifically "EvoCamoVsLearnPredPop",
         // the version which pits evolutionary camouflage against a population
-        // of learning predators.
-        // (As used in earlier experiments. See here: https://bit.ly/3sV0bUt)
-        EvoCamoVsLearnPredPop(cmd).run();  // Normal COC run.
-        // EvoCamoVsLppSqm(cmd).run();     // Include SQM, runs much slower
-        
-        // If no command line arguments run various_examples() as proof of life.
+        // of learning predators. (Code fragments below based on experiments run
+        // between October 2022 and March 2023. See: https://bit.ly/3sV0bUt)
+        bool use_static_quality_metric = true;
+        if (use_static_quality_metric)
+        {
+            EvoCamoVsLppSqm(cmd).run();        // Include SQM, runs much slower
+        }
+        else
+        {
+            EvoCamoVsLearnPredPop(cmd).run();  // Normal COC run, about 6 hours.
+        }
+        // If no cmd line arguments, run various_examples() as "proof of life."
         if (cmd.parsedTokens().size() == 1)
         {
             exit_code = EXIT_FAILURE;
@@ -43,7 +48,6 @@ int main(int argc, const char * argv[])
     }
     return exit_code;
 }
-
 
 //------------------------------------------------------------------------------
 // Usage notes for  running Coevolution of Camouflage from the command line.

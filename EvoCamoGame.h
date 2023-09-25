@@ -16,6 +16,13 @@
 // This class is the top level "main()" for unix-style command evo_camo_game.
 // See doc: https://cwreynolds.github.io/TexSyn/evo_camo_game_doc.html
 //
+// The code in this file became the paper:
+//
+//     Craig Reynolds. 2023. Coevolution of Camouflage. 2023 Artificial Life
+//     Conference. MIT Press. https://doi.org/10.1162/isal_a_00583
+//         Preprint with supplemental materials and high resolution images:
+//         https://arxiv.org/abs/2304.11793
+//
 // Prototyping inside TexSyn, maybe should be its own library/git repository.
 //
 //------------------------------------------------------------------------------
@@ -2246,7 +2253,10 @@ public:
         std::cout << "    **** "; debugPrint(count_new);
     }
 
-    int trialsPerSQM() const { return 10; }
+    // TODO 20230925 to reduce runtime cost. Hoping the already very noisy
+    //               metric is still useful with half the samples.
+    // int trialsPerSQM() const { return 10; }
+    int trialsPerSQM() const { return 5; }
 
     // Set prey individual's SQM as the average of ten trials
     void evaluateIndividualSQM(Individual& individual)
