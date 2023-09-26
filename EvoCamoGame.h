@@ -220,7 +220,11 @@ public:
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
-            setRunningState(getMaxSteps() > getStepCount());
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20230926 fix off-by-one bug that prevented final SQM report
+//            setRunningState(getMaxSteps() > getStepCount());
+            setRunningState(getMaxSteps() >= getStepCount());
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -2253,10 +2257,14 @@ public:
         std::cout << "    **** "; debugPrint(count_new);
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230926 fix off-by-one bug that prevented final SQM report
     // TODO 20230925 to reduce runtime cost. Hoping the already very noisy
     //               metric is still useful with half the samples.
     // int trialsPerSQM() const { return 10; }
-    int trialsPerSQM() const { return 5; }
+    // int trialsPerSQM() const { return 5; }
+    int trialsPerSQM() const { return 10; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Set prey individual's SQM as the average of ten trials
     void evaluateIndividualSQM(Individual& individual)
