@@ -684,6 +684,10 @@ public:
     // TODO 20230308 get reference to TournamentGroup for current step.
     TournamentGroup& getTournamentGroup() { return tournament_group_; }
     //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230927 working toward auto-curate tournament image saving
+    const TournamentGroup& getTournamentGroup() const { return tournament_group_; }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Current simulation step, held by Population object.
     int getStepCount() const { return getPopulation()->getStepCount(); }
@@ -1596,8 +1600,13 @@ public:
     // Just a constant, but wrap in API so derived classes can access.
     int stepSaveStride() const { return step_save_stride_; }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230927 working toward auto-curate tournament image saving
+
     // Should this step's tournament image be saved? (Criteria for file saving.)
-    bool saveThisStep() const
+//    bool saveThisStep() const
+//    virtual bool saveThisStep() const
+    virtual bool saveThisStep()
     {
         int step = getStepCount();
         // Normally save every n-th image (where N = 19).
@@ -1611,6 +1620,8 @@ public:
         }
         return savable && !skip;
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
@@ -2207,17 +2218,113 @@ public:
 //        gui().drawMat(gui_save, Vec2());
 //    }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230927 working toward auto-curate tournament image saving
+
+//    // Every 100 simulation steps, compute and record SQM data.
+//    const int sqm_interval_ = 100;
+//    void handleSQM()
+//    {
+//        int step = getStepCount();
+//        if ((step % sqm_interval_) == 0)
+//        {
+//            ensureAllPreyHaveSQM();
+//            logSQM();
+//        }
+//    }
+
     // Every 100 simulation steps, compute and record SQM data.
     const int sqm_interval_ = 100;
     void handleSQM()
     {
-        int step = getStepCount();
-        if ((step % sqm_interval_) == 0)
+//        ensureAllPreyHaveSQM();
+        auto tournament_group = getTournamentGroup();
+        
+        
+        std::cout << "    ++++ SQMs for tournament_group: ";
+        for (const auto& member : tournament_group.members())
         {
-            ensureAllPreyHaveSQM();
-            logSQM();
+            auto individual = member.individual;
+            ensurePreyHasSQM(individual);
+            std::cout << individual->getStaticQualityMetric();
+            std::cout << ", ";
+        }
+        std::cout << std::endl;
+        if ((getStepCount() % sqm_interval_) == 0) { logSQM(); }
+    }
+    
+//    auto eval_sqm = [&](Individual* i)
+//    {
+//        if (! i->hasStaticQualityMetric())
+//        {
+//            count_new++;
+//            evaluateIndividualSQM(*i);
+//        }
+//    };
+
+//    void ensurePreyHasSQM(Individual* i)
+//    {
+//        if (! i->hasStaticQualityMetric())
+//        {
+//            evaluateIndividualSQM(*i);
+//        }
+//    }
+    
+    // copied bits from ensureAllPreyHaveSQM():
+    
+    void ensurePreyHasSQM(Individual* i)
+    {
+        if (! i->hasStaticQualityMetric())
+        {
+            
+            
+            // Save GUI.
+            cv::Mat gui_save = gui().getCvMat().clone();
+
+//            // Process each prey in population.
+//            getPopulation()->applyToAllIndividuals(eval_sqm);
+            
+            evaluateIndividualSQM(*i);
+
+
+            // Restore GUI.
+            gui().drawMat(gui_save, Vec2());
+
         }
     }
+
+
+    
+    // Should this step's tournament image be saved? (Criteria for file saving.)
+//    bool saveThisStep() const
+//    bool saveThisStep() const override
+    bool saveThisStep() override
+    {
+//        int step = getStepCount();
+//        // Normally save every n-th image (where N = 19).
+//        bool savable = (step % stepSaveStride()) == 0;
+//        // Save only at start and near end of a "superheavy" run (12000 steps).
+//        bool skip = (step > 100) and (step < 10000) and (getMaxSteps() > 10000);
+//        // Log a message when skipping a savable step.
+//        if (savable && skip)
+//        {
+//            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
+//        }
+//        return savable && !skip;
+        
+        bool save = true;
+        auto tournament_group = getTournamentGroup();
+        for (const auto& member : tournament_group.members())
+        {
+            auto individual = member.individual;
+            float sqm = individual->getStaticQualityMetric();
+            if (! withinEpsilon(sqm, 1)) { save = false; }
+        }
+        return save;
+    }
+    
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //    // Loop over all prey, compute SQM for any without one.
 //    void ensureAllPreyHaveSQM()
@@ -2276,9 +2383,12 @@ public:
         }
         
         float average_metric = sum_of_trials / trialsPerSQM();
-        std::cout << mife_counter_ << "  ";  // QQQ
-        debugPrint(average_metric);
-        
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20230927 working toward auto-curate tournament image saving
+//        std::cout << mife_counter_ << "  ";  // QQQ
+//        debugPrint(average_metric);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         // Cache average SQM on this prey, a LazyPredator Population Individual.
         individual.setStaticQualityMetric(average_metric);
     }
