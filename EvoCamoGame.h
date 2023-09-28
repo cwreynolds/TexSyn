@@ -2383,11 +2383,11 @@ public:
         }
         
         float average_metric = sum_of_trials / trialsPerSQM();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // TODO 20230927 working toward auto-curate tournament image saving
 //        std::cout << mife_counter_ << "  ";  // QQQ
 //        debugPrint(average_metric);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Cache average SQM on this prey, a LazyPredator Population Individual.
         individual.setStaticQualityMetric(average_metric);
