@@ -225,6 +225,11 @@ public:
 //            setRunningState(getMaxSteps() > getStepCount());
             setRunningState(getMaxSteps() >= getStepCount());
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20230929 TEMP TESTING
+//            std::cout << "    ++++ (in run()) ";
+//            debugPrint(getTournamentGroup().getValid())
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -287,14 +292,52 @@ public:
         if (worst == nullptr)
         {
             tg.setValid(false);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20230929 TEMP TESTING
+//            std::cout << "    ++++ ";
+//            debugPrint(tg.getValid());
+//            std::cout << "    ++++ ";
+//            debugPrint(getTournamentGroup().getValid());
+
+            tournament_group_ = tg;
+            
+//            std::cout << "    ---- ";
+//            debugPrint(getTournamentGroup().getValid());
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            // TODO 20230929 TEMP TESTING
+            if (saveThisStep())
+            {
+                std::cout << "    ++++ (saving tournament image) ";
+//                writeTournamentImageToFile();
+                writePreviousStepImageToFile();
+            }
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             incrementPredatorFails();
             std::cout << "    Predator fooled: no prey selected." << std::endl;
         }
+        
+
         // Clear GUI, return updated TournamentGroup.
         gui().clear();
         gui().refresh();
         return tg;
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230929 TEMP TESTING
+    virtual bool saveThisStep() { return false; }
+    
+//    bool isTournamentGroupValid() { return }
+    
+    // Like writeTournamentImageToFile() but save "previous step" image to file.
+    virtual void writePreviousStepImageToFile()
+    {
+        writeTournamentImageToFile();
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     
     // Generate and store random non-overlapping prey disks in gui window.
     virtual void generatePreyPlacement()
@@ -1606,7 +1649,8 @@ public:
     // Should this step's tournament image be saved? (Criteria for file saving.)
 //    bool saveThisStep() const
 //    virtual bool saveThisStep() const
-    virtual bool saveThisStep()
+//    virtual bool saveThisStep()
+    bool saveThisStep() override
     {
         int step = getStepCount();
         // Normally save every n-th image (where N = 19).
@@ -1713,14 +1757,20 @@ public:
         }
     }
     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // TODO 20230929 TEMP TESTING
+
     // Like writeTournamentImageToFile() but save "previous step" image to file.
-    void writePreviousStepImageToFile()
+//    void writePreviousStepImageToFile()
+    void writePreviousStepImageToFile() override
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString(-1) + ".png";
         writeTournamentImageToFile(path, previous_step_image_);
     }
-    
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     PythonComms& getComms() { return comms_; }
 private:
     PythonComms comms_;
@@ -2024,6 +2074,10 @@ public:
     
     void appendStepResultsToRunLog() override
     {
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//        // TODO 20230929 TEMP TESTING
+//        std::cout << "    ++++ in appendStepResultsToRunLog()";
+//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (saveThisStep())
         {
             int step = getStepCount();
@@ -2483,6 +2537,18 @@ public:
     bool saveThisStep() override
     {
         bool save = true;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20230929 TEMP TESTING
+//            if (!getTournamentGroup().getValid())
+//            {
+//    //            save = true;
+//                std::cout << "     ++++ ";
+//                debugPrint(getTournamentGroup().getValid())
+//            }
+//        std::cout << "    ++++ (in saveThisStep()) ";
+//        debugPrint(getTournamentGroup().getValid())
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
         // Unless any SQM is less than 80%
         for (const auto& member : getTournamentGroup().members())
         {
