@@ -2530,36 +2530,53 @@ public:
 //        return save and !tournament_group.getValid();
 //    }
 
-    // TODO 20230928 auto-curate part 2
+//        // TODO 20230928 auto-curate part 2
+//        //               try: "all sqm >= 0.8 AND all predator failed"
+//        // Should this step's tournament image be saved? (Criteria for file saving.)
+//        // This override implements "auto-curate" experiments
+//        bool saveThisStep() override
+//        {
+//            bool save = true;
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            // TODO 20230929 TEMP TESTING
+//    //            if (!getTournamentGroup().getValid())
+//    //            {
+//    //    //            save = true;
+//    //                std::cout << "     ++++ ";
+//    //                debugPrint(getTournamentGroup().getValid())
+//    //            }
+//    //        std::cout << "    ++++ (in saveThisStep()) ";
+//    //        debugPrint(getTournamentGroup().getValid())
+//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//            // Unless any SQM is less than 80%
+//            for (const auto& member : getTournamentGroup().members())
+//            {
+//                if (getPreySQM(member.individual) < 0.8) { save = false; }
+//            }
+//            // Unless any predators have sucessfully located prey.
+//            if (getTournamentGroup().getValid()) { save = false; }
+//            return save;
+//        }
+
+    
+    // TODO 20230928 auto-curate part 3
     //               try: "all sqm >= 0.8 AND all predator failed"
     // Should this step's tournament image be saved? (Criteria for file saving.)
     // This override implements "auto-curate" experiments
     bool saveThisStep() override
     {
         bool save = true;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230929 TEMP TESTING
-//            if (!getTournamentGroup().getValid())
-//            {
-//    //            save = true;
-//                std::cout << "     ++++ ";
-//                debugPrint(getTournamentGroup().getValid())
-//            }
-//        std::cout << "    ++++ (in saveThisStep()) ";
-//        debugPrint(getTournamentGroup().getValid())
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
         // Unless any SQM is less than 80%
         for (const auto& member : getTournamentGroup().members())
         {
-            if (getPreySQM(member.individual) < 0.8) { save = false; }
+//            if (getPreySQM(member.individual) < 0.8) { save = false; }
+            if (getPreySQM(member.individual) < 0.9) { save = false; }
         }
         // Unless any predators have sucessfully located prey.
         if (getTournamentGroup().getValid()) { save = false; }
         return save;
     }
-
-    
 
 
 
