@@ -263,6 +263,69 @@ public:
         gui().refresh();
         Texture::waitKey(10);
     }
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // 20231001 clean up auto-curate with invalid TournamentGroup hook
+
+//        // TournamentFunction for "Interactive Evolution of Camouflage".
+//        TournamentGroup tournamentFunction(TournamentGroup tg)
+//        {
+//            // Initialize "global variables" used by mouse callback handler.
+//            tournament_group_ = tg;
+//            background_image_ = selectRandomBackgroundForWindow();
+//            // Generate and store random non-overlapping prey disks in gui window.
+//            generatePreyPlacement();
+//            // Draw the randomly selected background, then the 3 textures on top.
+//            gui().drawMat(background_image_, Vec2());
+//            drawTournamentGroupOverBackground(tg);
+//            // Update the onscreen image. Wait for user to click on one texture.
+//            TimePoint time_start_waiting = TimeClock::now();
+//            gui().refresh();
+//            setMouseCallbackForTournamentFunction();
+//            waitForUserInput();
+//            // Note time user took to respond. Ignored in logging of time per frame.
+//            getPopulation()->setIdleTime(TimeClock::now() - time_start_waiting);
+//            // Designate selected Texture's Individual as worst of TournamentGroup.
+//            Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
+//            tg.designateWorstIndividual(worst);
+//            // Mark returned TournamentGroup as invalid if predator failed to locate
+//            // a prey. That is, if either: the user's mouse click or the xy position
+//            // returned from the "predator vision" neural net--is not inside any of
+//            // the three disks.
+//            if (worst == nullptr)
+//            {
+//                tg.setValid(false);
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                // TODO 20230929 TEMP TESTING
+//    //            std::cout << "    ++++ ";
+//    //            debugPrint(tg.getValid());
+//    //            std::cout << "    ++++ ";
+//    //            debugPrint(getTournamentGroup().getValid());
+//
+//                tournament_group_ = tg;
+//
+//    //            std::cout << "    ---- ";
+//    //            debugPrint(getTournamentGroup().getValid());
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                // TODO 20230929 TEMP TESTING
+//                if (saveThisStep())
+//                {
+//                    std::cout << "    ++++ (saving tournament image) ";
+//    //                writeTournamentImageToFile();
+//                    writePreviousStepImageToFile();
+//                }
+//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                incrementPredatorFails();
+//                std::cout << "    Predator fooled: no prey selected." << std::endl;
+//            }
+//
+//
+//            // Clear GUI, return updated TournamentGroup.
+//            gui().clear();
+//            gui().refresh();
+//            return tg;
+//        }
 
     // TournamentFunction for "Interactive Evolution of Camouflage".
     TournamentGroup tournamentFunction(TournamentGroup tg)
@@ -292,27 +355,15 @@ public:
         if (worst == nullptr)
         {
             tg.setValid(false);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230929 TEMP TESTING
-//            std::cout << "    ++++ ";
-//            debugPrint(tg.getValid());
-//            std::cout << "    ++++ ";
-//            debugPrint(getTournamentGroup().getValid());
-
             tournament_group_ = tg;
             
-//            std::cout << "    ---- ";
-//            debugPrint(getTournamentGroup().getValid());
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230929 TEMP TESTING
-            if (saveThisStep())
-            {
-                std::cout << "    ++++ (saving tournament image) ";
-//                writeTournamentImageToFile();
-                writePreviousStepImageToFile();
-            }
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//            if (saveThisStep())
+//            {
+//                std::cout << "    ++++ (saving tournament image) ";
+//                writePreviousStepImageToFile();
+//            }
+            invalidTournamentGroupHook();
+            
             incrementPredatorFails();
             std::cout << "    Predator fooled: no prey selected." << std::endl;
         }
@@ -324,17 +375,21 @@ public:
         return tg;
     }
     
+    
+    virtual void invalidTournamentGroupHook() {}
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20230929 TEMP TESTING
     virtual bool saveThisStep() { return false; }
     
 //    bool isTournamentGroupValid() { return }
     
-    // Like writeTournamentImageToFile() but save "previous step" image to file.
-    virtual void writePreviousStepImageToFile()
-    {
-        writeTournamentImageToFile();
-    }
+//    // Like writeTournamentImageToFile() but save "previous step" image to file.
+//    virtual void writePreviousStepImageToFile()
+//    {
+//        writeTournamentImageToFile();
+//    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1761,8 +1816,8 @@ public:
     // TODO 20230929 TEMP TESTING
 
     // Like writeTournamentImageToFile() but save "previous step" image to file.
-//    void writePreviousStepImageToFile()
-    void writePreviousStepImageToFile() override
+    void writePreviousStepImageToFile()
+//    void writePreviousStepImageToFile() override
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString(-1) + ".png";
@@ -2582,6 +2637,21 @@ public:
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // 20231001 clean up auto-curate with invalid TournamentGroup hook
+    void invalidTournamentGroupHook() override
+    {
+        if (saveThisStep())
+        {
+            std::cout << "    ++++ (saving tournament image) ";
+            writePreviousStepImageToFile();
+        }
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    
+    
 //    // Loop over all prey, compute SQM for any without one.
 //    void ensureAllPreyHaveSQM()
 //    {
