@@ -220,16 +220,7 @@ public:
             getPopulation()->evolutionStep([&]
                                            (TournamentGroup tg)
                                            { return tournamentFunction(tg); });
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230926 fix off-by-one bug that prevented final SQM report
-//            setRunningState(getMaxSteps() > getStepCount());
             setRunningState(getMaxSteps() >= getStepCount());
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // TODO 20230929 TEMP TESTING
-//            std::cout << "    ++++ (in run()) ";
-//            debugPrint(getTournamentGroup().getValid())
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
         // Delete Population instance.
         setPopulation(nullptr);
@@ -264,69 +255,6 @@ public:
         Texture::waitKey(10);
     }
     
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // 20231001 clean up auto-curate with invalid TournamentGroup hook
-
-//        // TournamentFunction for "Interactive Evolution of Camouflage".
-//        TournamentGroup tournamentFunction(TournamentGroup tg)
-//        {
-//            // Initialize "global variables" used by mouse callback handler.
-//            tournament_group_ = tg;
-//            background_image_ = selectRandomBackgroundForWindow();
-//            // Generate and store random non-overlapping prey disks in gui window.
-//            generatePreyPlacement();
-//            // Draw the randomly selected background, then the 3 textures on top.
-//            gui().drawMat(background_image_, Vec2());
-//            drawTournamentGroupOverBackground(tg);
-//            // Update the onscreen image. Wait for user to click on one texture.
-//            TimePoint time_start_waiting = TimeClock::now();
-//            gui().refresh();
-//            setMouseCallbackForTournamentFunction();
-//            waitForUserInput();
-//            // Note time user took to respond. Ignored in logging of time per frame.
-//            getPopulation()->setIdleTime(TimeClock::now() - time_start_waiting);
-//            // Designate selected Texture's Individual as worst of TournamentGroup.
-//            Individual* worst = selectIndividualFromMouseClick(getLastMouseClick());
-//            tg.designateWorstIndividual(worst);
-//            // Mark returned TournamentGroup as invalid if predator failed to locate
-//            // a prey. That is, if either: the user's mouse click or the xy position
-//            // returned from the "predator vision" neural net--is not inside any of
-//            // the three disks.
-//            if (worst == nullptr)
-//            {
-//                tg.setValid(false);
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                // TODO 20230929 TEMP TESTING
-//    //            std::cout << "    ++++ ";
-//    //            debugPrint(tg.getValid());
-//    //            std::cout << "    ++++ ";
-//    //            debugPrint(getTournamentGroup().getValid());
-//
-//                tournament_group_ = tg;
-//
-//    //            std::cout << "    ---- ";
-//    //            debugPrint(getTournamentGroup().getValid());
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                // TODO 20230929 TEMP TESTING
-//                if (saveThisStep())
-//                {
-//                    std::cout << "    ++++ (saving tournament image) ";
-//    //                writeTournamentImageToFile();
-//                    writePreviousStepImageToFile();
-//                }
-//                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//                incrementPredatorFails();
-//                std::cout << "    Predator fooled: no prey selected." << std::endl;
-//            }
-//
-//
-//            // Clear GUI, return updated TournamentGroup.
-//            gui().clear();
-//            gui().refresh();
-//            return tg;
-//        }
-
     // TournamentFunction for "Interactive Evolution of Camouflage".
     TournamentGroup tournamentFunction(TournamentGroup tg)
     {
@@ -356,44 +284,25 @@ public:
         {
             tg.setValid(false);
             tournament_group_ = tg;
-            
-//            if (saveThisStep())
-//            {
-//                std::cout << "    ++++ (saving tournament image) ";
-//                writePreviousStepImageToFile();
-//            }
             invalidTournamentGroupHook();
-            
             incrementPredatorFails();
             std::cout << "    Predator fooled: no prey selected." << std::endl;
         }
-        
-
         // Clear GUI, return updated TournamentGroup.
         gui().clear();
         gui().refresh();
         return tg;
     }
-    
-    
+
+    // For customizations by derived classed (below).
     virtual void invalidTournamentGroupHook() {}
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230929 TEMP TESTING
+    
+    // TODO 20230929 Keep or move elsewhere? This was added to allow calling
+    // it from here but implementing it in derived classes. But then I added
+    // invalidTournamentGroupHook() as a cleaner way to do that. saveThisStep()
+    // is no longer used in EvoCamoGame.
     virtual bool saveThisStep() { return false; }
-    
-//    bool isTournamentGroupValid() { return }
-    
-//    // Like writeTournamentImageToFile() but save "previous step" image to file.
-//    virtual void writePreviousStepImageToFile()
-//    {
-//        writeTournamentImageToFile();
-//    }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    
     // Generate and store random non-overlapping prey disks in gui window.
     virtual void generatePreyPlacement()
     {
@@ -778,14 +687,8 @@ public:
     // Get center position of i-th prey disk.
     Vec2 getPreyCenter(int i) const { return disks_.at(i).position; }
     
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO 20230308 get reference to TournamentGroup for current step.
-    TournamentGroup& getTournamentGroup() { return tournament_group_; }
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230927 working toward auto-curate tournament image saving
-    const TournamentGroup& getTournamentGroup() const { return tournament_group_; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Read-only access to most recently saved (copied) TournamentGroup().
+    const TournamentGroup& getTournamentGroup() const {return tournament_group_;}
 
     // Current simulation step, held by Population object.
     int getStepCount() const { return getPopulation()->getStepCount(); }
@@ -1698,13 +1601,7 @@ public:
     // Just a constant, but wrap in API so derived classes can access.
     int stepSaveStride() const { return step_save_stride_; }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230927 working toward auto-curate tournament image saving
-
     // Should this step's tournament image be saved? (Criteria for file saving.)
-//    bool saveThisStep() const
-//    virtual bool saveThisStep() const
-//    virtual bool saveThisStep()
     bool saveThisStep() override
     {
         int step = getStepCount();
@@ -1719,8 +1616,6 @@ public:
         }
         return savable && !skip;
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // TODO 20221012 run log
@@ -1811,20 +1706,14 @@ public:
             outfile << step << "," << fails << std::endl;
         }
     }
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230929 TEMP TESTING
 
     // Like writeTournamentImageToFile() but save "previous step" image to file.
     void writePreviousStepImageToFile()
-//    void writePreviousStepImageToFile() override
     {
         fs::path path = outputDirectoryThisRun();
         path /= "step_" + getStepAsString(-1) + ".png";
         writeTournamentImageToFile(path, previous_step_image_);
     }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     PythonComms& getComms() { return comms_; }
 private:
@@ -2129,10 +2018,6 @@ public:
     
     void appendStepResultsToRunLog() override
     {
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//        // TODO 20230929 TEMP TESTING
-//        std::cout << "    ++++ in appendStepResultsToRunLog()";
-//        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if (saveThisStep())
         {
             int step = getStepCount();
@@ -2150,9 +2035,6 @@ public:
                                    "3 in_disk bits, "
                                    "3 xy predator predictions, "
                                    "3 xy prey center positions");
-//                appendLineToRunLog("# step, in1,in2,in3, "
-//                                   "p1x,p1y,p2x,p2y,p3x,p3y, "
-//                                   "c1x,c1y,c2x,c2y,c3x,c3y");
                 appendLineToRunLog("# step  in1 in2 in3  "
                                    "p1x p1y p2x p2y p3x p3y  "
                                    "c1x c1y c2x c2y c3x c3y");
@@ -2327,81 +2209,6 @@ public:
 //        gui().drawMat(gui_save, Vec2());
 //    }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230927 working toward auto-curate tournament image saving
-
-//    // Every 100 simulation steps, compute and record SQM data.
-//    const int sqm_interval_ = 100;
-//    void handleSQM()
-//    {
-//        int step = getStepCount();
-//        if ((step % sqm_interval_) == 0)
-//        {
-//            ensureAllPreyHaveSQM();
-//            logSQM();
-//        }
-//    }
-
-//        // Every 100 simulation steps, compute and record SQM data.
-//        const int sqm_interval_ = 100;
-//        void handleSQM()
-//        {
-//    //        ensureAllPreyHaveSQM();
-//            auto tournament_group = getTournamentGroup();
-//
-//
-//            std::cout << "    ++++ SQMs for tournament_group: ";
-//            for (const auto& member : tournament_group.members())
-//            {
-//                auto individual = member.individual;
-//                ensurePreyHasSQM(individual);
-//                std::cout << individual->getStaticQualityMetric();
-//                std::cout << ", ";
-//            }
-//            std::cout << std::endl;
-//            if ((getStepCount() % sqm_interval_) == 0) { logSQM(); }
-//        }
-
-//    // Every 100 simulation steps, compute and record SQM data.
-//    const int sqm_interval_ = 100;
-//    void handleSQM()
-//    {
-//        auto tournament_group = getTournamentGroup();
-//        std::cout << "    ++++ SQMs for tournament_group: ";
-//        for (const auto& member : tournament_group.members())
-//        {
-//            auto individual = member.individual;
-//            ensurePreyHasSQM(individual);
-//            std::cout << individual->getStaticQualityMetric();
-//            std::cout << ", ";
-//        }
-//        std::cout << std::endl;
-//        if ((getStepCount() % sqm_interval_) == 0) { logSQM(); }
-//    }
-
-//        // Every 100 simulation steps, compute and record SQM data.
-//        const int sqm_interval_ = 100;
-//        void handleSQM()
-//        {
-//    //        auto tournament_group = getTournamentGroup();
-//            std::cout << "    ++++ SQMs for tournament_group: ";
-//    //        for (const auto& member : tournament_group.members())
-//            for (const auto& member : getTournamentGroup().members())
-//            {
-//    //            auto individual = member.individual;
-//    //            ensurePreyHasSQM(individual);
-//    //            std::cout << individual->getStaticQualityMetric();
-//    //            std::cout << ", ";
-//                std::cout << getPreySQM(member.individual);
-//                std::cout << ", ";
-//            }
-//            std::cout << std::endl;
-//            if ((getStepCount() % sqm_interval_) == 0) { logSQM(); }
-//        }
-//
-//    // TODO 20230928 auto-curate part 2
-//    float getPreySQM(Individual* individual)
-
     // Every 100 simulation steps, compute and record SQM data.
     const int sqm_interval_ = 100;
     void handleSQM()
@@ -2417,75 +2224,9 @@ public:
         if ((getStepCount() % sqm_interval_) == 0) { logSQM(); }
     }
 
-
-
-//    auto eval_sqm = [&](Individual* i)
-//    {
-//        if (! i->hasStaticQualityMetric())
-//        {
-//            count_new++;
-//            evaluateIndividualSQM(*i);
-//        }
-//    };
-
-//    void ensurePreyHasSQM(Individual* i)
-//    {
-//        if (! i->hasStaticQualityMetric())
-//        {
-//            evaluateIndividualSQM(*i);
-//        }
-//    }
-    
-    // TODO 20230928 auto-curate part 2
-
-//        // copied bits from ensureAllPreyHaveSQM():
-//        void ensurePreyHasSQM(Individual* i)
-//        {
-//            if (! i->hasStaticQualityMetric())
-//            {
-//
-//
-//                // Save GUI.
-//                cv::Mat gui_save = gui().getCvMat().clone();
-//
-//    //            // Process each prey in population.
-//    //            getPopulation()->applyToAllIndividuals(eval_sqm);
-//
-//                evaluateIndividualSQM(*i);
-//
-//
-//                // Restore GUI.
-//                gui().drawMat(gui_save, Vec2());
-//
-//            }
-//        }
-
-//    // TODO 20230928 auto-curate part 2
-//    // TODO maybe merge into getPreySQM()
-//    // copied bits from ensureAllPreyHaveSQM():
-//    void ensurePreyHasSQM(Individual* individual)
-//    {
-//        if (! individual->hasStaticQualityMetric())
-//        {
-//            // Save GUI.
-//            cv::Mat gui_save = gui().getCvMat().clone();
-//            evaluateIndividualSQM(*individual);
-//            // Restore GUI.
-//            gui().drawMat(gui_save, Vec2());
-//        }
-//    }
-//
-//    // TODO 20230928 auto-curate part 2
-//    float getPreySQM(Individual* individual)
-//    {
-//        ensurePreyHasSQM(individual);
-//        return individual->getStaticQualityMetric();
-//    }
-
-    // TODO 20230928 auto-curate part 2
+    // Get the SQM from a prey Individual, computing and caching it is needed.
     float getPreySQM(Individual* individual)
     {
-//        ensurePreyHasSQM(individual);
         if (! individual->hasStaticQualityMetric())
         {
             // Save GUI.
@@ -2497,149 +2238,27 @@ public:
         return individual->getStaticQualityMetric();
     }
 
-    
-//        // Should this step's tournament image be saved? (Criteria for file saving.)
-//    //    bool saveThisStep() const
-//    //    bool saveThisStep() const override
-//        bool saveThisStep() override
-//        {
-//    //        int step = getStepCount();
-//    //        // Normally save every n-th image (where N = 19).
-//    //        bool savable = (step % stepSaveStride()) == 0;
-//    //        // Save only at start and near end of a "superheavy" run (12000 steps).
-//    //        bool skip = (step > 100) and (step < 10000) and (getMaxSteps() > 10000);
-//    //        // Log a message when skipping a savable step.
-//    //        if (savable && skip)
-//    //        {
-//    //            std::cout << "skip mid-run saves for “super heavy” runs" << std::endl;
-//    //        }
-//    //        return savable && !skip;
-//
-//            bool save = true;
-//            auto tournament_group = getTournamentGroup();
-//            for (const auto& member : tournament_group.members())
-//            {
-//                auto individual = member.individual;
-//                float sqm = individual->getStaticQualityMetric();
-//                if (! withinEpsilon(sqm, 1)) { save = false; }
-//            }
-//            return save;
-//        }
-
-//        // Should this step's tournament image be saved? (Criteria for file saving.)
-//        // This override implements "auto-curate" experiments
-//        bool saveThisStep() override
-//        {
-//            bool save = true;
-//            auto tournament_group = getTournamentGroup();
-//            for (const auto& member : tournament_group.members())
-//            {
-//    //            auto individual = member.individual;
-//    //            float sqm = individual->getStaticQualityMetric();
-//    //            if (! withinEpsilon(sqm, 1)) { save = false; }
-//                float sqm = getPreySQM(member.individual);
-//                if (! withinEpsilon(sqm, 1)) { save = false; }
-//            }
-//            return save;
-//        }
-
-    //
-    
-//        // TODO 20230928 auto-curate part 2
-//        //               try: "all sqm >= 0.8 AND all predator failed"
-//        // Should this step's tournament image be saved? (Criteria for file saving.)
-//        // This override implements "auto-curate" experiments
-//        bool saveThisStep() override
-//        {
-//            bool save = true;
-//            auto tournament_group = getTournamentGroup();
-//            for (const auto& member : tournament_group.members())
-//            {
-//    //            float sqm = getPreySQM(member.individual);
-//    //            if (! withinEpsilon(sqm, 1)) { save = false; }
-//
-//    //            float sqm = getPreySQM(member.individual);
-//    //            bool predator_success = tournament_group.getValid()
-//    //            if ((sqm < 0.8) or predator_success) { save = false; }
-//
-//
-//                bool no_save = ((getPreySQM(member.individual) < 0.8) or
-//                                tournament_group.getValid());
-//                if (no_save) { save = false; }
-//            }
-//            return save;
-//        }
-
-//    // TODO 20230928 auto-curate part 2
-//    //               try: "all sqm >= 0.8 AND all predator failed"
-//    // Should this step's tournament image be saved? (Criteria for file saving.)
-//    // This override implements "auto-curate" experiments
-//    bool saveThisStep() override
-//    {
-//        bool save = true;
-//        auto tournament_group = getTournamentGroup();
-//        for (const auto& member : tournament_group.members())
-//        {
-//            if (getPreySQM(member.individual) < 0.8) { save = false; }
-//        }
-//        return save and !tournament_group.getValid();
-//    }
-
-//        // TODO 20230928 auto-curate part 2
-//        //               try: "all sqm >= 0.8 AND all predator failed"
-//        // Should this step's tournament image be saved? (Criteria for file saving.)
-//        // This override implements "auto-curate" experiments
-//        bool saveThisStep() override
-//        {
-//            bool save = true;
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//            // TODO 20230929 TEMP TESTING
-//    //            if (!getTournamentGroup().getValid())
-//    //            {
-//    //    //            save = true;
-//    //                std::cout << "     ++++ ";
-//    //                debugPrint(getTournamentGroup().getValid())
-//    //            }
-//    //        std::cout << "    ++++ (in saveThisStep()) ";
-//    //        debugPrint(getTournamentGroup().getValid())
-//            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//            // Unless any SQM is less than 80%
-//            for (const auto& member : getTournamentGroup().members())
-//            {
-//                if (getPreySQM(member.individual) < 0.8) { save = false; }
-//            }
-//            // Unless any predators have sucessfully located prey.
-//            if (getTournamentGroup().getValid()) { save = false; }
-//            return save;
-//        }
-
-    
-    // TODO 20230928 auto-curate part 3
-    //               try: "all sqm >= 0.8 AND all predator failed"
-    // Should this step's tournament image be saved? (Criteria for file saving.)
-    // This override implements "auto-curate" experiments
+    // Should this step's tournament image be saved? Defines criteria for image
+    // saving during simulation. For auto-curation it is when all three prey
+    // have perfect SQM of 1.0 and all three predators fail to find prey.
     bool saveThisStep() override
     {
+        // Assume we will save.
         bool save = true;
-        // Unless any SQM is less than 80%
+        // Do not save if any SQM is less than 99%
         for (const auto& member : getTournamentGroup().members())
         {
-//            if (getPreySQM(member.individual) < 0.8) { save = false; }
-            if (getPreySQM(member.individual) < 0.9) { save = false; }
+            if (getPreySQM(member.individual) < 0.99) { save = false; }
         }
-        // Unless any predators have sucessfully located prey.
+        // Do not save if any predators have sucessfully located prey.
         if (getTournamentGroup().getValid()) { save = false; }
         return save;
     }
 
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // 20231001 clean up auto-curate with invalid TournamentGroup hook
+    // For auto-curate: need to revisit saveThisStep() AFTER the tournament has
+    // been completed, and possibly be declared invalid if all three predators
+    // failed to find prey. THAT is what sets getTournamentGroup().getValid() to
+    // be false.
     void invalidTournamentGroupHook() override
     {
         if (saveThisStep())
@@ -2648,7 +2267,6 @@ public:
             writePreviousStepImageToFile();
         }
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     
     
@@ -2690,20 +2308,13 @@ public:
 //        std::cout << "    **** "; debugPrint(count_new);
 //    }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // TODO 20230926 fix off-by-one bug that prevented final SQM report
-    // TODO 20230925 to reduce runtime cost. Hoping the already very noisy
-    //               metric is still useful with half the samples.
-    // int trialsPerSQM() const { return 10; }
-    // int trialsPerSQM() const { return 5; }
-    // int trialsPerSQM() const { return 10; }
-    // TODO 20230928 auto-curate part 2
-    //               change back to just 5 samples, now that auto-curate is
-    //               based on BOTH high-ish sqm AND all predator fail
+    // An SQM measurement is based on this many trials. (Had been 10 for plots
+    // in the ALIFE paper. Reduced it for use in auto-curate. 5 is probably good
+    // enough but more evaluation might be helpful.)
     int trialsPerSQM() const { return 5; }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    // Set prey individual's SQM as the average of ten trials
+    // Set prey individual's SQM as the average of several trials.
     void evaluateIndividualSQM(Individual& individual)
     {
         float sum_of_trials = 0;
@@ -2711,14 +2322,7 @@ public:
         {
             sum_of_trials += sampleSQM(individual);
         }
-        
         float average_metric = sum_of_trials / trialsPerSQM();
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230927 working toward auto-curate tournament image saving
-//        std::cout << mife_counter_ << "  ";  // QQQ
-//        debugPrint(average_metric);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
         // Cache average SQM on this prey, a LazyPredator Population Individual.
         individual.setStaticQualityMetric(average_metric);
     }
@@ -2734,16 +2338,11 @@ public:
         
         Vec2 predator_prediction = waitForEvaluation(prey_center);
         float aim_error = (predator_prediction - prey_center).length();
-//        float disk_radius = diskDiameter() / (2 * gui().getSize().x());
         float disk_radius = diskDiameter() / (2 * guiSize().x());
 
         // Is prediction outside prey disk?
-//        float sqm = (aim_error > disk_radius) ? 1 : 0;
-//        return sqm;
         return (aim_error > disk_radius) ? 1 : 0;
     }
-    
-//    int mife_counter_ = 0;
 
     // Constructs composite image, leaving it in GUI. Return center point.
     Vec2 makeImageForEvaluation(Individual& individual)
@@ -2807,6 +2406,11 @@ public:
         std::string pf2 = "eval_" + std::to_string(mife_counter_) + "_";
         fs::path eval_image_path = getComms().makePathname(step, pf2, ".png");
         fs::remove(eval_image_path);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO 20231002 are we deleting the right SQM temp file?
+        std::cout << std::endl << "    @@@@ delete SQM temp file: "
+                  << eval_image_path << std::endl;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Return prediction from standard predator.
         assert(!xy_points.empty());
