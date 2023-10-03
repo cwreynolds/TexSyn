@@ -2335,8 +2335,8 @@ public:
         Vec2 prey_center = makeImageForEvaluation(individual);
         
         sendForEvaluation();
-        
-        Vec2 predator_prediction = waitForEvaluation(prey_center);
+
+        Vec2 predator_prediction = waitForEvaluation();
         float aim_error = (predator_prediction - prey_center).length();
         float disk_radius = diskDiameter() / (2 * guiSize().x());
 
@@ -2344,7 +2344,7 @@ public:
         return (aim_error > disk_radius) ? 1 : 0;
     }
 
-    // Constructs composite image, leaving it in GUI. Return center point.
+    // Constructs SQM composite image, leaving it in GUI. Return center point.
     Vec2 makeImageForEvaluation(Individual& individual)
     {
         cv::Mat background_image = selectRandomBackgroundForWindow();
@@ -2367,7 +2367,6 @@ public:
         
         mife_counter_++;
         gui().refresh();  // QQQ
-//        return prey_center / gui().getSize().x();
         return prey_center / guiSize().x();
     }
           
@@ -2387,8 +2386,8 @@ public:
         fs::rename(p("wait_"), p("eval_"));
     }
 
-    // TODO may not need prey_center, using it for mock results
-    Vec2 waitForEvaluation(Vec2 prey_center)
+    // Wait for response from SQM evaluation, parse results, delete temp files.
+    Vec2 waitForEvaluation()
     {
         // Poll and sleep until file appears.
         int step = getStepCount();
@@ -2402,15 +2401,18 @@ public:
         // Read response from PredatorEye, xy prediction from standard predator.
         std::vector<Vec2> xy_points = getComms().readResponseFile(path, 1);
         
+        // 20231003 Fix bug where the last response file (eg "sqm_15_0.txt") for
+        // each step was not being deleted from comms directory. The correct fix
+        // would probably be in PredatorServer.process_any_sqm_files() in the
+        // PredatorEye repository since that is where the other response files
+        // are deleted (delete-if-exists). But I am reluctant to touch that for
+        // the first time in 9 months, lest I break something. This will do.
+        fs::remove(path);
+
         // Delete corresponding eval_...png file now that it has been evaluated.
         std::string pf2 = "eval_" + std::to_string(mife_counter_) + "_";
         fs::path eval_image_path = getComms().makePathname(step, pf2, ".png");
         fs::remove(eval_image_path);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20231002 are we deleting the right SQM temp file?
-        std::cout << std::endl << "    @@@@ delete SQM temp file: "
-                  << eval_image_path << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Return prediction from standard predator.
         assert(!xy_points.empty());
