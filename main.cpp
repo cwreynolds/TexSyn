@@ -18,22 +18,12 @@ int main(int argc, const char * argv[])
     {
         exit_code = EXIT_SUCCESS;
         std::cout << "September 22, 2023" << std::endl;
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // TODO 20230929 TEMP TESTING
         auto cmd = CommandLine(argc, argv);
-//        auto cmd = CommandLine
-//        ({"texsyn",
-//            "/Users/cwr/Pictures/camouflage_backgrounds/redwood_leaf_litter",
-//            "/Users/cwr/Desktop/TexSyn_temp/",
-//            "0.25", "20230928", "512", "512", "400", "20", "12000"
-//        });
-//        // texsyn ~/Pictures/camouflage_backgrounds/redwood_leaf_litter ~/Desktop/TexSyn_temp/ 0.25 20230928 512 512 400 20 12000
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Run Coevolution of Camouflage, specifically "EvoCamoVsLearnPredPop",
         // the version which pits evolutionary camouflage against a population
         // of learning predators. (Code fragments below based on experiments run
         // between October 2022 and March 2023. See: https://bit.ly/3sV0bUt)
-        bool use_static_quality_metric = true;
+        bool use_static_quality_metric = false;
         if (use_static_quality_metric)
         {
             EvoCamoVsLppSqm(cmd).run();        // Include SQM, runs much slower

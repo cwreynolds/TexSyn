@@ -1262,17 +1262,6 @@ public:
         return waitForReply(step);
     }
 
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
-    // TODO 20230309 generalize to support SQM
-    
-//    // Write given image to file for given step.
-//    void writeMyFile(int step, const cv::Mat& cv_mat)
-//    {
-//        verifyCommsDirectoryReachable();
-//        bool image_file_written_ok = cv::imwrite(makeMyPathname(step), cv_mat);
-//        assert(image_file_written_ok);
-//    }
-    
     // Write given image to file for given step.
     void writeMyFile(int step, const cv::Mat& cv_mat)
     {
@@ -1286,7 +1275,6 @@ public:
         bool image_file_written_ok = cv::imwrite(pathname, cv_mat);
         assert(image_file_written_ok);
     }
-    //~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
     // Delete file for given step, presumably after having written the next one.
     void deleteMyFile(int step)
@@ -2163,12 +2151,6 @@ class EvoCamoVsLppSqm : public EvoCamoVsLearnPredPop
 public:
     
     EvoCamoVsLppSqm(const CommandLine& cmd) : EvoCamoVsLearnPredPop(cmd) {}
-//    EvoCamoVsLppSqm(const CommandLine& cmd) : EvoCamoVsLearnPredPop(cmd)
-//    {
-//        int size = guiSize().x();
-//        // TODO CV_8UC3 should not appear as an inline constant, make cleaner.
-//        sqm_eval_image_ = cv::Mat(size, size, CV_8UC3);
-//    }
     
     // Using this method name just as a "hook", adding a "before" method to it.
     void waitForUserInput() override
@@ -2180,36 +2162,9 @@ public:
         EvoCamoVsLearnPredPop::waitForUserInput();
     }
 
-    
-//    // Every 100 simulation steps, compute and record SQM data.
-//    const int sqm_interval_ = 100;
-//    void handleSQM()
-//    {
-//        int step = getPopulation()->getStepCount();
-//        if ((step % sqm_interval_) == 0)
-//        {
-//            ensureAllPreyHaveSQM();
-//            logSQM();
-//        }
-//    }
-
-//    // Every 100 simulation steps, compute and record SQM data.
-//    const int sqm_interval_ = 100;
-//    void handleSQM()
-//    {
-//        // Save GUI.
-//        cv::Mat gui_save = gui().getCvMat().clone();
-//        int step = getPopulation()->getStepCount();
-//        if ((step % sqm_interval_) == 0)
-//        {
-//            ensureAllPreyHaveSQM();
-//            logSQM();
-//        }
-//        // Restore GUI.
-//        gui().drawMat(gui_save, Vec2());
-//    }
-
-    // Every 100 simulation steps, compute and record SQM data.
+    // Occasionally log SQM data.
+    // TODO 20231004 Left over from 20230308 prototype.
+    //               Refactor? Rename to logForSQM()? Maybe fold into logSQM()?
     const int sqm_interval_ = 100;
     void handleSQM()
     {
@@ -2268,51 +2223,10 @@ public:
         }
     }
 
-    
-    
-//    // Loop over all prey, compute SQM for any without one.
-//    void ensureAllPreyHaveSQM()
-//    {
-//        int count_new = 0;
-//        auto f = [&](Individual* i)
-//        {
-//            if (! i->hasStaticQualityMetric())
-//            {
-//                count_new++;
-//                evaluateIndividualSQM(*i);
-//            }
-//        };
-//        // Process each prey in population.
-//        getPopulation()->applyToAllIndividuals(f);
-//        std::cout << "    **** "; debugPrint(count_new);
-//    }
-
-//    // Loop over all prey, compute SQM for any without one.
-//    void ensureAllPreyHaveSQM()
-//    {
-//        int count_new = 0;
-//        auto eval_sqm = [&](Individual* i)
-//        {
-//            if (! i->hasStaticQualityMetric())
-//            {
-//                count_new++;
-//                evaluateIndividualSQM(*i);
-//            }
-//        };
-//        // Save GUI.
-//        cv::Mat gui_save = gui().getCvMat().clone();
-//        // Process each prey in population.
-//        getPopulation()->applyToAllIndividuals(eval_sqm);
-//        // Restore GUI.
-//        gui().drawMat(gui_save, Vec2());
-//        std::cout << "    **** "; debugPrint(count_new);
-//    }
-
     // An SQM measurement is based on this many trials. (Had been 10 for plots
     // in the ALIFE paper. Reduced it for use in auto-curate. 5 is probably good
     // enough but more evaluation might be helpful.)
     int trialsPerSQM() const { return 5; }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // Set prey individual's SQM as the average of several trials.
     void evaluateIndividualSQM(Individual& individual)
@@ -2460,7 +2374,6 @@ public:
     }
 
 private:
-//    cv::Mat sqm_eval_image_;
     RandomSequence rs_;
     int mife_counter_ = 0;
 };
