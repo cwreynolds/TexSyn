@@ -36,3 +36,65 @@ The sequence of images below show disk-shaped prey (three in each image) whose c
 **Note:** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.
 
 **Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimprementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generation of image stylizations. 
+
+## Usage notes for  running Coevolution of Camouflage from the command line.
+
+Use this code to run “Coevolution of Camouflage” as described in the paper:
+
+<ul>
+Craig Reynolds. 2023. Coevolution of Camouflage. 2023 Artificial Life
+Conference. MIT Press. https://doi.org/10.1162/isal_a_00583
+</ul>
+
+To run a simulation, two processes are launched, one to run camouflage
+evolution using TexSyn and LazyPredator, the other to run predator evolution
+with PredatorEye. I do this by opening two shell (Terminal on macOS) windows
+and launching a command in each one. In one shell enter these commands:
+
+[Note these pathnames are from my own laptop, you will need to adapt for your
+own environemnt. Contact me (cwr@red3d.com) for help with that if needed.]
+
+```
+   cd ~/Documents/code/PredatorEye
+   conda activate TensorFlow_GPU_M1
+   python3 EvoCamoVsLearnPredPop.py 40
+```
+Then in the other window (typical usage):
+
+```
+    caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.25 20230921 512 512 400 20
+```
+
+At this point both processes should run, trading images and other state via
+the file system. To the extent possible, they execute in parallel.
+
+"caffeinate" is a macOS utility to prevent the laptop from sleeping while the
+command is running.
+
+The parameters to the texsyn side:
+```
+  Requires at least one pathname parameter, others may be omitted from end:
+    background_image_directory (required)
+    output_directory (defaults to .)
+    background_scale (defaults to 0.5)
+    random_seed (else: default seed)
+    window width (defaults to 1200)
+    window height (defaults to 800)
+    individuals (defaults to 120)
+    subpopulations (defaults to 6)
+    max_steps (defaults to 12000)
+    max_init_tree_size (defaults to 100)
+    min_crossover_tree_size (default max_init_tree_size_ * 0.5)
+    max_crossover_tree_size (default max_init_tree_size_ * 1.5)
+```
+
+My habit is to use the date, as YYYYMMDD as the random number seed for unique
+runs. Add a digit at the end if making multiple runs in a day. A directory
+for each run is created under the "output_directory" named for the background
+set, the date, and time.
+
+Toward the end of CoC experiments 12000 steps was a typical run length, with
+400 prey individuals and 40 predators. This is refered to in comments as a
+“super heavy” run. Shorter runs and smaller populations were used earlier in
+the research with mixed success. See section “Background Sets” and Figure 7
+in https://doi.org/10.1162/isal_a_00583 for more detail.

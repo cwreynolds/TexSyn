@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
 }
 
 //------------------------------------------------------------------------------
-// Usage notes for  running Coevolution of Camouflage from the command line.
+// Usage notes for running Coevolution of Camouflage from the command line.
 //------------------------------------------------------------------------------
 //
 // Use this code to run “Coevolution of Camouflage” as described in the paper:
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
 //     caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.25 20230921 512 512 400 20
 //
 // At this point both processes should run, trading images and other state via
-// the file system. To the extend they execute in parallel.
+// the file system. To the extent possible, they execute in parallel.
 //
 // "caffeinate" is a macOS utility to prevent the laptop from sleeping while the
 // command is running.
