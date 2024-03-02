@@ -59,7 +59,11 @@ inline bool withinEpsilon(float a, float b, float epsilon)
 {
     return std::abs(a - b) <= epsilon;
 }
-float defaultEpsilon() { return 0.00001; }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TODO 20240229 fixes in LazyPredator and TexSyn while debugging evoflock.
+//float defaultEpsilon() { return 0.00001; }
+inline float defaultEpsilon() { return 0.00001; }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 inline bool withinEpsilon(float a, float b)
 {
     return withinEpsilon(a, b, defaultEpsilon());
