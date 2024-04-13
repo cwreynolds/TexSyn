@@ -17,7 +17,7 @@ For more information, including other operators, and many sample textures, see *
 
 **TexSyn**'s companion genetic programming system is [LazyPredator](https://github.com/cwreynolds/LazyPredator).
 
-The research which **TexSyn** was built to support has been completed. It is described in the paper _Coevolution of Camouflage_ available as a [preprint on arXiv](https://arxiv.org/abs/2304.11793). That paper will be presented at, and published in the proceedings of, the [2023 Artificial Life conference](https://alife.org/conference/alife-2023/) in Sapporo, Japan, July 24-28, 2023. There will be a [poster](https://doi.org/10.1145/3588028.3603663) about this work at SIGGRAPH 2023 in Los Angeles, California, August 6-10.
+The research which **TexSyn** was built to support is described in the paper _Coevolution of Camouflage_ available as a [preprint on arXiv](https://arxiv.org/abs/2304.11793). That paper was presented at (and published in the proceedings of) the [2023 Artificial Life conference](https://alife.org/conference/alife-2023/) in Sapporo, Japan, July 24-28, 2023. A [poster](https://doi.org/10.1145/3588028.3603663) about this work was presented at SIGGRAPH 2023 in Los Angeles, California, August 6-10.
 
 In that research, **TexSyn** was used with **LazyPredator** to evolve artificial camouflage patterns which were “cryptic” against background images. The fitness metric that drives camouflage evolution is provided by survivial despite being hunted by a coevolving population of predators as maintained by a system called [PredatorEye](https://github.com/cwreynolds/PredatorEye).
 
@@ -35,7 +35,7 @@ The sequence of images below show disk-shaped prey (three in each image) whose c
 
 **Note:** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.
 
-**Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimprementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generation of image stylizations. 
+**Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimplementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generation of image stylizations. 
 
 ## Usage notes for  running Coevolution of Camouflage from the command line.
 
@@ -52,7 +52,7 @@ with PredatorEye. I do this by opening two shell (Terminal on macOS) windows
 and launching a command in each one. In one shell enter these commands:
 
 [Note these pathnames are from my own laptop, you will need to adapt for your
-own environemnt. Contact me (cwr@red3d.com) for help with that if needed.]
+own environment. Contact me (cwr@red3d.com) if you need help with that.]
 
 ```
    cd ~/Documents/code/PredatorEye
