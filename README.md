@@ -1,6 +1,8 @@
 # TexSyn
 ## Library for evolutionary texture synthesis.
 
+_(If you plan to build and run TexSyn, see notes at the bottom of this README.)_
+
 **TexSyn** is a library for procedural texture synthesis. It is primarily intended for use by a _genetic programming_ (“GP”) system, a type of _genetic algorithm_. The GP system performs _simulated evolution_ on a _population_ of programs, according to a _fitness function_ (aka _fitness metric_, _utility function_, or _loss function_.) For a GP texture synthesis application, the programs are compositions of functions from this **TexSyn** library. When executed they describe a _color texture_ — which is to say — an _image_. As an example, this code:
 ```
     Noise(0.2, Vec2(1, 2),
@@ -21,7 +23,7 @@ The research which **TexSyn** was built to support is described in the paper _Co
 
 In that research, **TexSyn** was used with **LazyPredator** to evolve artificial camouflage patterns which were “cryptic” against background images. The fitness metric that drives camouflage evolution is provided by survivial despite being hunted by a coevolving population of predators as maintained by a system called [PredatorEye](https://github.com/cwreynolds/PredatorEye).
 
-The sequence of images below show disk-shaped prey (three in each image) whose camouflage improves over evolutionary time, in response to predation, to better blend in with the background (photos oak leaf litter in this run). See the [paper](https://arxiv.org/abs/2304.11793) for details.
+The sequence of images below show disk-shaped prey (three in each image) whose camouflage improves over evolutionary time, in response to predation, to better blend in with the background (photos of oak leaf litter in this run). See the [paper](https://arxiv.org/abs/2304.11793) for details.
 
 ![Camouflage improvement over evolutionary time](https://cwreynolds.github.io/TexSyn/images/20230804_coc_ri_small.jpg)
 
@@ -35,7 +37,7 @@ The sequence of images below show disk-shaped prey (three in each image) whose c
 
 **Note:** the old `main.cpp` was moved to `docs/main.cpp.old` in case any of that old sample code is ever needed again. It was a 6800 line chronological collection of several years of test jigs and debugging code.
 
-**Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimplementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generation of image stylizations. 
+**Note:** still included in this repository are separate applications of TexSyn, which should be broken off into their own repository. `EvoCamoGame.h` contains a reimplementation of the 2010-2011 "Interactive Evolution of Camouflage" then a series of steps leading to the 2023 "Coevolution of Camouflage". Similarly `SimpleImageMatch.h` contains unfinished experiments on generating image stylizations. 
 
 ## Usage notes for  running Coevolution of Camouflage from the command line.
 
@@ -98,3 +100,17 @@ Toward the end of CoC experiments 12000 steps was a typical run length, with
 “super heavy” run. Shorter runs and smaller populations were used earlier in
 the research with mixed success. See section “Background Sets” and Figure 7
 in https://doi.org/10.1162/isal_a_00583 for more detail.
+
+## Building and running TexSyn with PredatorEye
+
+(This section added January 1, 2025.)
+
+**Note:** I built TexSyn only on macOS on my Macbook Pro (2021 M1 Max). It is unlikely to build on other platforms without changes. If you _have_ built TexSyn on other platforms, please let me know what changes you needed to make.
+
+Build the TexSyn app using Xcode or CMake. Then try to run it in parallel with the predator side (EvoCamoVsLearnPredPop.py) as described in the previous section. The python script will try to load a pre-trained “generalist predator” model in TensorFlow/Keras format called **20220321_1711_FCD6_rc4**. That model is publicly available in this [Google Drive folder](https://drive.google.com/drive/folders/1tJSHUhiqACmXipr-oVvZmCOyDogErVuq?usp=sharing).
+
+You could download that model directory from Google Drive to your local machine. Or as I did, “mount” that Google Drive folder on your local file system using something like [Drive for desktop](https://support.google.com/drive/answer/12178485). The python script will be looking for `My Drive/PredatorEye/saved_models/20220321_1711_FCD6_rc4` so if you have copied/mounted elsewhere, your should change the pathname in the python code.
+
+From the intrepid researchers/developers who _have_ previously tried to build this software, I’ve heard several times about problems with the `withinEpsilon()` function in `Utiliites.h` file. Perhaps because any small numerical difference may lead to failing unit tests, probably via a `withinEpsilon()`. Again: let me know if you can shed any light.
+
+Good luck and feel free to contact me (cwr@red3d.com).
