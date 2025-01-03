@@ -107,6 +107,10 @@ in https://doi.org/10.1162/isal_a_00583 for more detail.
 
 **Note:** I built TexSyn only on macOS on my Macbook Pro (2021 M1 Max). It is unlikely to build on other platforms without changes. If you _have_ built TexSyn on other platforms, please let me know what changes you needed to make.
 
+Install TexSyn from Github using (e.g.): `git clone https://github.com/cwreynolds/TexSyn.git`
+
+**Size warning:** a fresh clone of TexSyn is 1.2 GB in size. Sorry for the large size. Half of that (0.60 GB) is the `docs` directory. Most of the rest (0.56 GB) is the `.git` directory. If you need to reduce that file size on your local machine, both of those directories can be deleted. The doc is available over the [web](https://cwreynolds.github.io/TexSyn/) and the `.git` directory is needed only if you want to submit Pull Requests, etc. Both folders could be deleted, then restored if needed by doing a fresh clone (requisite [xkcd citation](https://xkcd.com/1597/)).
+
 Build the TexSyn app using Xcode or CMake. Then try to run it in parallel with the predator side (EvoCamoVsLearnPredPop.py) as described in the previous section. The python script will try to load a pre-trained “generalist predator” model in TensorFlow/Keras format called **20220321_1711_FCD6_rc4**. That model is publicly available in this [Google Drive folder](https://drive.google.com/drive/folders/1tJSHUhiqACmXipr-oVvZmCOyDogErVuq?usp=sharing).
 
 You could download that model directory from Google Drive to your local machine. Or as I did, “mount” that Google Drive folder on your local file system using something like [Drive for desktop](https://support.google.com/drive/answer/12178485). The python script will be looking for `My Drive/PredatorEye/saved_models/20220321_1711_FCD6_rc4` so if you have copied/mounted elsewhere, you should edit the pathname in the python code.
