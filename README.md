@@ -119,4 +119,8 @@ From the intrepid researchers/developers who _have_ previously tried to build th
 
 **Select a background set for your first run**: a key input for a camouflage run is a set of background images. Prey will evolve to blend in with these backgrounds. Background images are usually photos of a natural texture. A background set is several images in a folder/directory. As discussed the [paper](https://arxiv.org/abs/2304.11793)'s section on _Background Sets_, it is “easier” to evolve camouflage for a background set which is more “stationary.” This means that any prey-sized sample of a background image will be “similar” to any other. They will have similar statistical distributions of color and spatial frequency. Anything “granular” will have this property: gravel, seeds, leaves, and so on. Try running the simulation on an “easy” background set before trying something more challenging.
 
+When you launch the `texsyn` app, it will open two windows for displaying a “tournament image” for the current and previous evolution steps. TexSyn also logs its progress in the original command shell (Terminal app window). Similarly `PredatorEye` logs its progress in the Terminal app window where it was launched. This is how that looked on the screen of my laptop:
+
+![Typical screen during camouflage run](https://cwreynolds.github.io/TexSyn/images/20230126_coc_screen_shot_half.png)
+
 Good luck and feel free to contact me (cwr@red3d.com).
