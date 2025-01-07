@@ -43,18 +43,13 @@ The sequence of images below show disk-shaped prey (three in each image) whose c
 
 Use this code to run “Coevolution of Camouflage” as described in the paper:
 
-<ul>
-Craig Reynolds. 2023. Coevolution of Camouflage. 2023 Artificial Life
-Conference. MIT Press. https://doi.org/10.1162/isal_a_00583
-</ul>
+<ul>Craig Reynolds. 2023. Coevolution of Camouflage. 2023 Artificial Life
+Conference. MIT Press. <a href="https://doi.org/10.1162/isal_a_00583">https://doi.org/10.1162/isal_a_00583</a></ul>
 
 To run a simulation, two processes are launched, one to run camouflage
 evolution using TexSyn and LazyPredator, the other to run predator evolution
 with PredatorEye. I do this by opening two shell (Terminal on macOS) windows
 and launching a command in each one. In one shell enter these commands:
-
-[Note these pathnames are from my own laptop, you will need to adapt for your
-own environment. Contact me (cwr@red3d.com) if you need help with that.]
 
 ```
    cd ~/Documents/code/PredatorEye
@@ -66,6 +61,12 @@ Then in the other window (typical usage):
 ```
     caffeinate texsyn ~/Pictures/camouflage_backgrounds/oak_leaf_litter ~/Desktop/TexSyn_temp/ 0.25 20230921 512 512 400 20
 ```
+
+It is important to launch the two apps in that order, PredatorEye first,
+followed by TexSyn
+
+Note these pathnames are from my own laptop, you will need to adapt for your
+own environment. Contact me (cwr@red3d.com) if you need help with that.
 
 At this point both processes should run, trading images and other state via
 the file system. To the extent possible, they execute in parallel.
@@ -122,5 +123,9 @@ From the intrepid researchers/developers who _have_ previously tried to build th
 When you launch the `texsyn` app, it will open two windows for displaying a “tournament image” for the current and previous evolution steps. TexSyn also logs its progress in the original command shell (Terminal app window). Similarly `PredatorEye` logs its progress in the Terminal app window where it was launched. This is how that looked on the screen of my laptop:
 
 ![Typical screen during camouflage run](https://cwreynolds.github.io/TexSyn/images/20230126_coc_screen_shot_half.png)
+
+While TexSyn is running, it responds to a few “single key” commands. For example typing a **q** will quit from a run after the current step. A **t** will save the current tournament image (prey over background) to a file in the run directory. Typing **1** or **2** similarly save a tournament image for the current or previous evolution step.
+
+Thanks to several “beta testers” who have tried to compile and run this simulation. Their feedback lead to this part of the doc. They include Ziwei Wu, Xiyu Tian, and Wanchao Su.
 
 Good luck and feel free to contact me (cwr@red3d.com).
